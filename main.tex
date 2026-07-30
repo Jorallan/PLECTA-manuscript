@@ -1,0 +1,207 @@
+%==============================================================================
+%  FilaSeg: Geometry-based instance reconstruction of carbon nanotube bundles
+%  from degraded centreline masks
+%
+%  Working format: Materials Characterization research article
+%  (Introduction / Materials and methods / Results / Discussion / Conclusions).
+%
+%  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf main.tex).
+%  Uses only standard CTAN packages.
+%
+%  THIS REPOSITORY IS A SUPERVISOR-REVIEW MIRROR, NOT THE SUBMISSION MANUSCRIPT.
+%  It is a shortened draft of the canonical FilaSeg paper repository, produced
+%  to give a supervisor a quicker read before detailed sections are restored.
+%  Many Materials-and-methods and Discussion subsections are temporarily
+%  replaced by short summaries and visible \reviewnote{} markers; see README.md.
+%==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+%------------------------------- packages -------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[british]{babel}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
+            urlcolor=blue!55!black,breaklinks=true]{hyperref}
+
+%------------------------------- style ----------------------------------------
+\definecolor{fsblue}{HTML}{2B6CB0}
+\definecolor{fsorange}{HTML}{DD6B20}
+\definecolor{fsgreen}{HTML}{2F855A}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\sisetup{detect-all,round-mode=places,round-precision=3}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcommand{\um}{\si{\micro\metre}}
+\newcommand{\Fone}{F\textsubscript{1}}
+\newcommand{\overmerge}{\textit{over-merge}}
+\newcommand{\undermerge}{\textit{under-merge}}
+\newcommand{\Overmerge}{\textit{Over-merge}}
+\newcommand{\Undermerge}{\textit{Under-merge}}
+
+%------------------------------------------------------------------------------
+%  Action-required marker.
+%
+%  \aq{...} flags a point that the manuscript CANNOT resolve from the available
+%  record: an acquisition parameter that is not recorded in the repository or a
+%  protocol fact that requires documentary input.
+%  Nothing has been invented to fill these gaps.
+%
+%  Set \aqfalse below to hide every query and produce a clean submission PDF.
+%------------------------------------------------------------------------------
+\newif\ifaq \aqtrue
+\newcommand{\aq}[1]{\ifaq{\color{fsorange}\textbf{[ACTION REQUIRED: #1]}}\fi}
+
+%------------------------------------------------------------------------------
+%  Submission-blocking missing information.
+%
+%  \missinginfo{...} is deliberately INDEPENDENT of the \ifaq switch above: it
+%  stays visible even in a clean PDF, because the manuscript cannot be submitted
+%  while any of these remain.
+%------------------------------------------------------------------------------
+\newcommand{\missinginfo}[1]{\textcolor{red}{\textbf{[MISSING INFORMATION: #1]}}}
+
+%------------------------------------------------------------------------------
+%  Supervisor review note.
+%
+%  \reviewnote{...} visibly flags a place where this shortened mirror summarizes
+%  or omits material that is present in full in the canonical paper repository,
+%  or where the editorial mapping used to build this mirror needs the
+%  supervisor's confirmation. Used sparingly; never rendered as final prose.
+%------------------------------------------------------------------------------
+\newcommand{\reviewnote}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Supervisor review note:} #1}\par\smallskip}
+
+%------------------------------------------------------------------------------
+%  Generated numerical results.
+%
+%  paper/results/filaseg_results.tex is written by
+%  paper/scripts/results/make_result_macros.py from the machine-readable evaluation
+%  records under paper/results/. It is the single numerical source of truth:
+%  every headline value in the Abstract, Results, Discussion, Conclusions and
+%  the tables is a macro defined there, so no number is typed by hand in more
+%  than one place. Do not edit the generated file.
+%------------------------------------------------------------------------------
+\input{results/filaseg_results}
+
+\title{\vspace{-1.2cm}\bfseries FilaSeg: Geometry-based instance reconstruction
+of carbon nanotube bundles from degraded centreline masks}
+
+\author{%
+  \begin{minipage}{0.94\textwidth}
+  \centering
+  Oday Allan\textsuperscript{a}\quad
+  Stefan Luding\textsuperscript{a}\quad
+  Igor Ostanin\textsuperscript{a,}\thanks{Corresponding author:
+  \texttt{i.ostanin@utwente.nl}}\\[5pt]
+  {\small\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of Engineering
+  Technology, University of Twente, Enschede, The Netherlands}\\[4pt]
+  {\small\aq{add ORCIDs and confirm the official MSM affiliation wording against
+  the current University of Twente convention}}
+  \end{minipage}
+}
+\date{}
+
+%==============================================================================
+\begin{document}
+\maketitle
+
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{\small\centering
+\textcolor{fsorange}{\textbf{Supervisor-review draft.}} This is a shortened
+mirror of the FilaSeg manuscript prepared for early supervisor feedback, not
+the submission manuscript. Several Materials-and-methods and Discussion
+subsections are temporarily replaced by short summaries and visible
+\textcolor{red}{\textbf{Supervisor review note}} markers; the full text lives
+in the canonical paper repository and will be restored after feedback.}}
+\end{center}
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\reviewnote{A broader upstream pipeline also exists around the method
+described in this manuscript: real SEM images and procedurally generated
+masks $\to$ CycleGAN image translation $\to$ U-Net semantic segmentation
+$\to$ binary CNT bundle-axis mask $\to$ FilaSeg instance extraction $\to$
+SEM-assisted Stage-4 width estimation, overlap handling, and rendering.
+This manuscript currently treats the binary axis mask as the formal input
+and evaluates only the instance-extraction stages. Open questions for
+supervisor feedback:
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
+  \item Should the complete upstream CycleGAN/U-Net pipeline be integrated
+  into this paper?
+  \item Should it instead remain a separate paper or companion workflow?
+  \item Should the current manuscript continue to treat the binary axis mask
+  as the formal input?
+  \item How much of Stage 4 should be presented as part of instance
+  extraction versus a separate SEM-assisted measurement/postprocessing stage?
+\end{itemize}
+}
+
+\noindent\textbf{Keywords:} carbon nanotubes; scanning electron microscopy;
+instance segmentation; curvilinear structure extraction; Hough transform;
+filament tracing; image-based microstructural characterization.
+
+\input{sections/01_introduction}
+\input{sections/02_materials_methods}
+\input{sections/03_results}
+\input{sections/04_discussion}
+\input{sections/05_conclusions}
+
+%------------------------------- back matter ----------------------------------
+\section*{CRediT author contribution statement}
+\textcolor{fsorange}{\textbf{TO BE COMPLETED BY THE AUTHORS BEFORE SUBMISSION.}}
+\aq{confirm each author's CRediT roles against actual contributions; do not
+alter the preserved author names or order when completing this statement.}
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported
+in this paper.
+
+\section*{Data and code availability}
+The FilaSeg source code, the procedural synthetic benchmark generator, the
+evaluation subsystem, and the manually annotated real test crop are contained in
+the accompanying repository. Every numerical result reported here is reproducible
+from that repository using Appendix~\ref{app:repro} together with the full
+reproducibility record distributed with the manuscript.
+\aq{a journal will require a citable archived release (for example a Zenodo DOI
+or a tagged GitHub release) rather than a bare repository URL; and
+Section~\ref{sec:limitations} notes that the evaluation subsystem must be
+committed and a clean checkout confirmed to reproduce the reported numbers before
+submission}
+
+\section*{Acknowledgements}
+The authors thank the maintainers of the open-source scientific-Python stack
+(NumPy, SciPy, scikit-image, OpenCV, Matplotlib) on which this work is built.
+The binary centreline masks used in the real case study were produced by a
+separate synthetic-data-driven segmentation workflow (Section~\ref{sec:mm-masks})
+that adapts the open CycleGAN/U-Net particle-segmentation workflow of Rühle and
+colleagues at BAM (Bundesanstalt für Materialforschung und
+-prüfung)~\citep{ruehle2021workflow}; that workflow is not evaluated here and we
+gratefully acknowledge its authors.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\appendix
+\input{sections/06_supplementary}
+
+\end{document}

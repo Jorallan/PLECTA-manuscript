@@ -1,0 +1,186 @@
+\section{Results}
+\label{sec:results}
+
+The primary predefined comparison uses the method-independent common fragments
+and equivalent one-pixel instance centrelines defined in
+Section~\ref{sec:mm-f1}. Overall intervals use density-stratified scene
+resampling, and method differences are paired by scene. Stage-4 rendering and
+the connected-component sanity check are secondary.
+
+\reviewnote{The subsection numbering and figure/table assignments below follow
+the content of the current restructured (Pipeline-2B-only) manuscript rather
+than the section-by-section list in the mirror task brief: two items in that
+brief (a curvature/$q_{\max}$ development study, and a component-ablation
+table) describe material that currently lives in the Appendix, not in this
+chapter, and one item (a figure with x positions at 1, 2 and 3 pixels)
+matches the mask-width sensitivity figure in Section~\ref{sec:res-mask}
+rather than the section the brief associated it with. Please confirm this
+mapping is what was intended.}
+
+\subsection{Locked synthetic grouping comparison}
+\label{sec:res-density}
+\label{sec:res-baselines}
+
+FilaSeg Stage~3 achieved mean common-fragment
+\Fone{}=\LockedFilaSegCommonFOneMean{} (95\% CI
+[\LockedFilaSegCommonFOneCILow{}, \LockedFilaSegCommonFOneCIHigh{}]) on
+\LockedSceneCount{} independently seeded scenes, against
+\LockedFilaSegCommonPrecisionMean{} mean precision and
+\LockedFilaSegCommonRecallMean{} mean recall. Table~\ref{tab:locked} and
+Figure~\ref{fig:density} summarize the comparison against the fixed
+minimum-turn tracer.
+
+\reviewnote{Detailed methods text intentionally omitted from this simplified
+review draft.}
+
+\begin{table}[H]
+  \centering
+  \caption{Locked grouping comparison on equivalent per-instance centreline
+  representations. Values are scene means, with density-stratified 95\%
+  bootstrap intervals for \Fone{} and the paired FilaSeg-minus-minimum-turn
+  contrast. ``Frag. recovery'' is the object-level companion defined in
+  Section~\ref{sec:mm-instance}.}
+  \label{tab:locked}
+  \small
+  \input{results/filaseg_baseline_table}
+\end{table}
+
+The paired FilaSeg-minus-minimum-turn difference,
+\FilaSegMinusBaselineSkeletonCommonFOneMean{} (95\% CI
+[\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
+\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]), excludes zero in aggregate
+but crossed zero at the 30\% density level, so this predefined evaluation
+supports a conditional advantage over this comparator, not a general
+superiority claim.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_locked_method_comparison.pdf}
+  \caption{Common-fragment \Fone{} on equivalent one-pixel instance
+  centrelines, FilaSeg Stage-3 versus the fixed minimum-turn tracer only (the
+  connected-component sanity check is reported separately in the
+  Supplementary Information). The left panel shows every scene plotted at its
+  exact prescribed density, with density means and 95\% bootstrap intervals
+  and no horizontal displacement. The right panel shows the paired
+  FilaSeg-minus-minimum-turn difference; intervals are paired within scene.}
+  \label{fig:density}
+\end{figure}
+
+\subsection{Representation audit}
+\label{sec:res-representation}
+
+The post hoc evaluator audit changed neither method outputs nor the locked
+configuration. It reproduced the stored legacy Stage-4 \Fone{} values exactly,
+then rescored equivalent representations with ground-truth-unassigned common
+fragments retained as singletons. Reducing the Stage-4 output to centrelines
+gave mean \Fone{}=\LockedFilaSegStageFourCenterlineCommonFOneMean{}, whereas the
+rendered Stage-4 masks gave
+\LockedFilaSegStageFourRenderedCommonFOneMean{}. Relative to the Stage-3
+centreline endpoint, the paired changes were
+\FilaSegStageFourCenterlineMinusStageThreeCommonFOneMean{} and
+\FilaSegStageFourRenderedMinusStageThreeCommonFOneMean{}, respectively. These
+are two negative representation diagnostics, not an exact mechanistic
+decomposition: skeletonizing rendered instance layers can shift their
+centrelines. The rendered output is scientifically relevant to downstream use,
+but it is not a representation-neutral grouping endpoint.
+
+\subsection{Locked qualitative examples}
+\label{sec:res-qualitative}
+
+Examples were selected automatically from the corrected per-scene paired
+differences: the three largest FilaSeg wins, the three largest minimum-turn
+wins, and the two closest ties. No image was selected by visual inspection.
+Within each method panel, maximum-total-IoU one-to-one assignment gives a
+matched prediction the color of its ground-truth instance. Unmatched
+predictions are magenta, and missed ground-truth instances have dashed yellow
+outlines. The outcome panel scores the fixed common fragments and therefore
+shows which method grouped each item correctly.
+
+\clearpage
+\begin{landscape}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]
+  {figures/fig_paired_locked_wins.pdf}
+  \caption{The three largest locked FilaSeg wins under the corrected primary
+  endpoint. Rows and paired differences were selected by the stored evaluator
+  rule, not by visual preference.}
+  \label{fig:qual-wins}
+\end{figure}
+\end{landscape}
+
+\clearpage
+\begin{landscape}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.78\textheight,keepaspectratio]
+  {figures/fig_paired_locked_losses.pdf}
+  \caption{The three largest locked minimum-turn wins. These counterexamples
+  remain in the main paper to show where local minimum-turn continuation was
+  more accurate than the FilaSeg gate battery.}
+  \label{fig:qual-losses}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\subsection{Development sensitivity studies}
+\label{sec:res-mask}
+\label{sec:res-width}
+\label{sec:res-clean}
+
+Input-mask width was assessed on the 20-scene development set, not on the locked
+benchmark. The one-pixel mask had the highest mean common \Fone{}. The paired
+interval for the two-pixel mask included zero, whereas the three-pixel mask
+showed a resolved decrease. Thus the tested thin representation was preferable,
+but the two-pixel comparison did not resolve a difference at the 95\% level.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.82\linewidth]{figures/fig_width_sweep.pdf}
+  \caption{Development-only sensitivity to axis-mask width. Thin lines connect
+  each scene across the three mask widths. Larger symbols show density-stratified
+  means and 95\% bootstrap intervals.}
+  \label{fig:width}
+\end{figure}
+
+Replacing the degraded one-pixel masks by their clean procedural axes produced
+a small negative mean change whose paired interval included zero. At 30\%
+coverage, all four available development scenes decreased, but the sample is
+too small for a density-specific inference. Under this generator and
+configuration, removing the modeled degradation did not produce a resolved
+aggregate improvement. This is a conditional diagnostic, not evidence that real
+segmentation errors are unimportant.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_clean_vs_degraded.pdf}
+  \caption{Development-only clean-versus-degraded comparison. Each density panel
+  contains the four paired scenes available at that level; the small per-density
+  sample is shown explicitly rather than summarized by an unpaired bar.}
+  \label{fig:clean}
+\end{figure}
+
+\subsection{Real SEM development case study}
+\label{sec:res-real}
+
+The single $512\times512$ real crop contains 58 manually annotated filament
+instances. It informed development and therefore provides neither a held-out
+estimate nor a population confidence interval; every real-data result in this
+paper comes from this one development crop
+(Section~\ref{sec:limitations}). Figure~\ref{fig:qual-real} is
+descriptive: predicted instances inherit the color of their one-to-one matched
+manual instance, false predictions are magenta, and the one unmatched manual
+instance is outlined in yellow. The final rendered instances are shown because
+this panel illustrates the delivered output, not because the thick
+representation is the primary grouping endpoint.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_qualitative_real.pdf}
+  \caption{Real development crop. Corresponding manual and predicted instances
+  use the same colors after maximum-total-IoU one-to-one assignment. Magenta
+  marks unmatched predictions and dashed yellow marks the missed manual
+  instance. The final panel summarizes instance correspondence without treating
+  width disagreement as a grouping error.}
+  \label{fig:qual-real}
+\end{figure}

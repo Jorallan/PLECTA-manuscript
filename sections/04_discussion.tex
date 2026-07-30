@@ -1,0 +1,94 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What the locked comparison establishes}
+\label{sec:disc-main}
+
+The predefined benchmark isolates one question: given the same degraded
+one-pixel centreline mask, how well do FilaSeg Stage~3 and a fixed
+minimum-turn tracer group a method-independent set of fragments? FilaSeg's
+paired advantage over the tracer is positive in aggregate but crosses zero at
+one density level, and the qualitative counterexamples in
+Section~\ref{sec:res-qualitative} include clear minimum-turn wins, so the
+evidence is conditional on this generator, configuration, comparator and
+density range rather than a general superiority claim. The representation
+audit is scientifically important for the same reason: it shows that scoring
+the rendered Stage-4 output instead of the Stage-3 centreline changes the
+result, so grouping, postprocessing and width representation must be kept
+separate.
+
+\reviewnote{Detailed discussion text intentionally omitted from this
+simplified review draft; the full discussion will be restored after
+supervisor feedback.}
+
+\subsection{Development findings and failure modes}
+\label{sec:disc-failure}
+
+Development-only studies motivated three configuration choices without
+themselves being additional evidence: geometric and legacy curvature
+performed almost identically, so the fit-quality gate was left disabled; the
+one-pixel input mask outperformed wider variants; and a 2-by-2 grouping study
+found no hybrid design better than the current Hough-plus-FilaSeg
+combination. Residual errors have two directions, incorrect joins
+(over-merging) and refused continuations (under-merging), and are hardest to
+resolve exactly at crossings, where tip geometry alone can be ambiguous.
+
+\reviewnote{Detailed discussion text intentionally omitted from this
+simplified review draft; the full discussion will be restored after
+supervisor feedback.}
+
+\subsection{Scope and limitations}
+\label{sec:limitations}
+
+\paragraph{One real development crop.}
+Every real-data result comes from one $512\times512$ crop from one parent image,
+and that crop informed configuration development. It is a case study, not a
+held-out estimate. A useful next study requires independently annotated crops
+from multiple parent images, instruments, materials and operating conditions,
+sealed until configuration lock.
+
+\paragraph{Incomplete acquisition and annotation records.}
+The repository does not establish the SEM instrument and acquisition settings or
+the full annotation protocol. These facts are marked as action required rather
+than inferred. They must be supplied before the manuscript can be submitted.
+
+\paragraph{Synthetic transfer.}
+The procedural generator exposes density, gaps, fading and crossing ambiguity
+under exact instance ground truth, but similarity of these distributions to real
+segmenter errors has not been quantified. The predefined confidence intervals
+characterize repeatability over generator seeds, not domain transfer to unseen
+SEM images. Prescribed density is thick-mask areal coverage, which jointly
+depends on centreline length and bundle width; the development factorial study
+therefore varies those factors independently and treats width as a Stage-3
+negative control.
+
+\paragraph{Input dependence.}
+FilaSeg cannot recover a filament absent from the input centreline mask.
+Conversely, false axes may be retained or joined. The predefined comparison
+controls this dependency by supplying the identical mask to every method, but it
+does not remove it from practical use.
+
+\paragraph{Representation and measurement.}
+The common-fragment grouping metric is designed for instance identity, not
+boundary or width accuracy. The current real evidence does not support a strong
+per-instance width-accuracy claim, so such a claim is not made. Apparent width
+and other exported geometric quantities should be validated separately with
+matched per-instance measurements.
+
+\paragraph{Comparator scope.}
+The minimum-turn tracer is a transparent same-mask comparator, not a survey of
+the full tracing literature. Connected components are only a sanity check, and
+DeFiNe could not be run without introducing an unvalidated graph-construction
+adapter. The present data therefore support only a comparison with the fixed
+minimum-turn implementation used here.
+
+\paragraph{Two-dimensional geometry.}
+All inputs are two-dimensional grayscale SEM images. The output represents
+projected centrelines and overlapping instance layers; it does not recover
+three-dimensional over-and-under topology.
+
+\paragraph{Reproducible release.}
+The working repository records commands, environment versions, configuration
+hashes, seeds and machine-readable results. A citable archived release identifier
+and an independent clean-checkout reproduction remain required before
+submission.

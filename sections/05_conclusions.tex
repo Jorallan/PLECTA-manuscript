@@ -1,0 +1,27 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+FilaSeg reconstructs overlapping filament instances from degraded centreline
+masks through deterministic Hough vectorization, orientation-aware cleaning and
+geometric reconnection. On \LockedSceneCount{} predefined procedural scenes, its
+Stage-3 centreline output achieved common-fragment \Fone{} of
+\LockedFilaSegCommonFOneMean{} (density-stratified 95\% CI
+[\LockedFilaSegCommonFOneCILow{}, \LockedFilaSegCommonFOneCIHigh{}]). The paired
+difference from the fixed minimum-turn comparator was
+\FilaSegMinusBaselineSkeletonCommonFOneMean{} (95\% CI
+[\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
+\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]).
+
+The evaluator audit changed the scientific interpretation without changing any
+frozen method output. Equivalent Stage-3 centrelines are the defensible primary
+grouping representation; Stage-4 centreline changes and width-rendered masks are
+secondary diagnostics. Automatically selected counterexamples show that the
+aggregate advantage is not uniform across scenes or densities. The result is
+therefore evidence for this fixed comparison under the tested generator, not a
+claim of superiority over filament tracing methods generally.
+
+The single real crop remains a development illustration. Independent real
+annotations from multiple parent images, complete acquisition and annotation
+metadata, separate validation of apparent width and other exported
+measurements, and a citable clean-checkout release are required before broader
+SEM or quantitative microstructure claims are justified.
