@@ -1,0 +1,2701 @@
+{
+  "schema_version": 1,
+  "samples_root": "C:\\Repos\\filaments_quantification\\input\\synthetic_thick",
+  "configuration": {
+    "mask_name": "mask_clean.png",
+    "mask_variant": null,
+    "methods": [],
+    "filaseg": "run",
+    "cc_min_area": 15,
+    "max_gap_px": 15.0,
+    "max_turn_deg": 90.0,
+    "sweep_gaps": [],
+    "sweep_turns": [],
+    "configuration_locked": false,
+    "reconnect_config_source": "C:\\Repos\\filaments_quantification\\3.reconnect\\reconnect_config.yaml"
+  },
+  "config_hashes": {
+    "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+    "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+    "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+    "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+    "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+    "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+    "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+    "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+    "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+  },
+  "provenance": {
+    "created_utc": "2026-07-29T11:38:32.202856+00:00",
+    "python": "3.12.9 (tags/v3.12.9:fdb8142, Feb  4 2025, 15:27:58) [MSC v.1942 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "cwd": "C:\\Repos\\filaments_quantification"
+  },
+  "per_scene": [
+    {
+      "geometry_id": "cov20/synth_0000",
+      "density": 20,
+      "seed": 20262720,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov20\\synth_0000\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 75,
+          "n_foreground_pixels": 4734,
+          "n_skeleton_pixels": 4714,
+          "n_common_fragment_pixels": 4539,
+          "common_fragment_foreground_pixel_coverage": 0.958808618504436,
+          "common_fragment_skeleton_coverage": 0.9628765379719983,
+          "n_total_fragments": 75,
+          "n_gt_assigned_fragments": 75,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 75,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 75,
+          "n_scored_fragments": 75,
+          "precision": 0.9619047619047619,
+          "recall": 0.926605504587156,
+          "f1": 0.9439252336448597,
+          "n_gt_groups": 29,
+          "n_pred_groups": 29,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 109.0,
+          "n_pred_pairs": 105.0,
+          "tp": 101.0,
+          "fp": 4.0,
+          "fn": 8.0,
+          "fragment_recovery_n_gt_instances": 29,
+          "fragment_recovery_n_pred_instances": 29,
+          "fragment_recovery_well_recovered": 29,
+          "fragment_recovery_fragmented": 0,
+          "fragment_recovery_absorbed": 0,
+          "fragment_recovery_false_instances": 0,
+          "fragment_recovery_recovery_rate": 1.0,
+          "pixel_recovery_n_gt_instances": 29,
+          "pixel_recovery_well_recovered": 15,
+          "pixel_recovery_fragmented": 14,
+          "pixel_recovery_absorbed": 0,
+          "pixel_recovery_false_instances": 0,
+          "pixel_recovery_recovery_rate": 0.5172413793103449
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 29,
+          "n_pred_instances": 29,
+          "well_recovered": 29,
+          "fragmented": 0,
+          "absorbed": 0,
+          "false_instances": 0,
+          "recovery_rate": 1.0
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 29,
+          "well_recovered": 15,
+          "fragmented": 14,
+          "absorbed": 0,
+          "false_instances": 0,
+          "recovery_rate": 0.5172413793103449
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 64,
+          "clustering": {
+            "n_fragments_with_gt": 64,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 29,
+            "n_pred_instances": 29,
+            "pairwise_precision": 1.0,
+            "pairwise_recall": 1.0,
+            "pairwise_f1": 1.0,
+            "adjusted_rand": 1.0,
+            "voi": 0.0,
+            "voi_split": 0.0,
+            "voi_merge": 0.0,
+            "n_gt_split": 0,
+            "excess_splits": 0,
+            "n_pred_overmerged": 0,
+            "excess_merges": 0
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 29,
+            "well_recovered": 29,
+            "deleted": 0,
+            "fragmented": 0,
+            "false_pred": 0,
+            "recovery_rate": 1.0
+          },
+          "panoptic": {
+            "pq": 0.6960971149014913,
+            "sq": 0.6960971149014913,
+            "rq": 1.0,
+            "tp": 29,
+            "fp": 0,
+            "fn": 0,
+            "f1_by_iou": {
+              "0.3": 1.0,
+              "0.5": 1.0,
+              "0.7": 0.4827586206896552
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov20/synth_0001",
+      "density": 20,
+      "seed": 20262721,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov20\\synth_0001\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 76,
+          "n_foreground_pixels": 4607,
+          "n_skeleton_pixels": 4591,
+          "n_common_fragment_pixels": 4354,
+          "common_fragment_foreground_pixel_coverage": 0.9450835684827437,
+          "common_fragment_skeleton_coverage": 0.9483772598562404,
+          "n_total_fragments": 76,
+          "n_gt_assigned_fragments": 76,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 76,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 76,
+          "n_scored_fragments": 76,
+          "precision": 0.8811881188118812,
+          "recall": 0.898989898989899,
+          "f1": 0.89,
+          "n_gt_groups": 28,
+          "n_pred_groups": 28,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 99.0,
+          "n_pred_pairs": 101.0,
+          "tp": 89.0,
+          "fp": 12.0,
+          "fn": 10.0,
+          "fragment_recovery_n_gt_instances": 28,
+          "fragment_recovery_n_pred_instances": 28,
+          "fragment_recovery_well_recovered": 19,
+          "fragment_recovery_fragmented": 5,
+          "fragment_recovery_absorbed": 4,
+          "fragment_recovery_false_instances": 2,
+          "fragment_recovery_recovery_rate": 0.6785714285714286,
+          "pixel_recovery_n_gt_instances": 28,
+          "pixel_recovery_well_recovered": 14,
+          "pixel_recovery_fragmented": 12,
+          "pixel_recovery_absorbed": 2,
+          "pixel_recovery_false_instances": 1,
+          "pixel_recovery_recovery_rate": 0.5
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 28,
+          "n_pred_instances": 28,
+          "well_recovered": 19,
+          "fragmented": 5,
+          "absorbed": 4,
+          "false_instances": 2,
+          "recovery_rate": 0.6785714285714286
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 28,
+          "well_recovered": 14,
+          "fragmented": 12,
+          "absorbed": 2,
+          "false_instances": 1,
+          "recovery_rate": 0.5
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 68,
+          "clustering": {
+            "n_fragments_with_gt": 68,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 27,
+            "n_pred_instances": 28,
+            "pairwise_precision": 0.9876543209876543,
+            "pairwise_recall": 0.898876404494382,
+            "pairwise_f1": 0.9411764705882353,
+            "adjusted_rand": 0.9389017331738377,
+            "voi": 0.14852743338396923,
+            "voi_split": 0.11911566867808698,
+            "voi_merge": 0.02941176470588225,
+            "n_gt_split": 2,
+            "excess_splits": 2,
+            "n_pred_overmerged": 1,
+            "excess_merges": 1
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 27,
+            "well_recovered": 23,
+            "deleted": 1,
+            "fragmented": 3,
+            "false_pred": 2,
+            "recovery_rate": 0.8518518518518519
+          },
+          "panoptic": {
+            "pq": 0.6069401414631269,
+            "sq": 0.7388836504768501,
+            "rq": 0.8214285714285714,
+            "tp": 23,
+            "fp": 5,
+            "fn": 5,
+            "f1_by_iou": {
+              "0.3": 0.9285714285714286,
+              "0.5": 0.8214285714285714,
+              "0.7": 0.5
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov20/synth_0002",
+      "density": 20,
+      "seed": 20262722,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov20\\synth_0002\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 62,
+          "n_foreground_pixels": 4710,
+          "n_skeleton_pixels": 4700,
+          "n_common_fragment_pixels": 4531,
+          "common_fragment_foreground_pixel_coverage": 0.961995753715499,
+          "common_fragment_skeleton_coverage": 0.9640425531914893,
+          "n_total_fragments": 62,
+          "n_gt_assigned_fragments": 62,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 62,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 62,
+          "n_scored_fragments": 62,
+          "precision": 0.8571428571428571,
+          "recall": 0.8910891089108911,
+          "f1": 0.8737864077669902,
+          "n_gt_groups": 20,
+          "n_pred_groups": 20,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 101.0,
+          "n_pred_pairs": 105.0,
+          "tp": 90.0,
+          "fp": 15.0,
+          "fn": 11.0,
+          "fragment_recovery_n_gt_instances": 20,
+          "fragment_recovery_n_pred_instances": 20,
+          "fragment_recovery_well_recovered": 17,
+          "fragment_recovery_fragmented": 2,
+          "fragment_recovery_absorbed": 1,
+          "fragment_recovery_false_instances": 1,
+          "fragment_recovery_recovery_rate": 0.85,
+          "pixel_recovery_n_gt_instances": 20,
+          "pixel_recovery_well_recovered": 13,
+          "pixel_recovery_fragmented": 6,
+          "pixel_recovery_absorbed": 1,
+          "pixel_recovery_false_instances": 1,
+          "pixel_recovery_recovery_rate": 0.65
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 20,
+          "n_pred_instances": 20,
+          "well_recovered": 17,
+          "fragmented": 2,
+          "absorbed": 1,
+          "false_instances": 1,
+          "recovery_rate": 0.85
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 20,
+          "well_recovered": 13,
+          "fragmented": 6,
+          "absorbed": 1,
+          "false_instances": 1,
+          "recovery_rate": 0.65
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 58,
+          "clustering": {
+            "n_fragments_with_gt": 58,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 19,
+            "n_pred_instances": 20,
+            "pairwise_precision": 0.9868421052631579,
+            "pairwise_recall": 0.9259259259259259,
+            "pairwise_f1": 0.9554140127388535,
+            "adjusted_rand": 0.9531934516947198,
+            "voi": 0.1362092160325883,
+            "voi_split": 0.10172645741189879,
+            "voi_merge": 0.0344827586206895,
+            "n_gt_split": 2,
+            "excess_splits": 2,
+            "n_pred_overmerged": 1,
+            "excess_merges": 1
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 19,
+            "well_recovered": 18,
+            "deleted": 0,
+            "fragmented": 1,
+            "false_pred": 1,
+            "recovery_rate": 0.9473684210526315
+          },
+          "panoptic": {
+            "pq": 0.7086210679922688,
+            "sq": 0.7873567422136319,
+            "rq": 0.9,
+            "tp": 18,
+            "fp": 2,
+            "fn": 2,
+            "f1_by_iou": {
+              "0.3": 0.95,
+              "0.5": 0.9,
+              "0.7": 0.75
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov20/synth_0003",
+      "density": 20,
+      "seed": 20262723,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov20\\synth_0003\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 60,
+          "n_foreground_pixels": 4263,
+          "n_skeleton_pixels": 4244,
+          "n_common_fragment_pixels": 4079,
+          "common_fragment_foreground_pixel_coverage": 0.9568379075768239,
+          "common_fragment_skeleton_coverage": 0.9611215834118756,
+          "n_total_fragments": 60,
+          "n_gt_assigned_fragments": 60,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 60,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 60,
+          "n_scored_fragments": 60,
+          "precision": 0.7802197802197802,
+          "recall": 0.8255813953488372,
+          "f1": 0.8022598870056498,
+          "n_gt_groups": 24,
+          "n_pred_groups": 23,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 86.0,
+          "n_pred_pairs": 91.0,
+          "tp": 71.0,
+          "fp": 20.0,
+          "fn": 15.0,
+          "fragment_recovery_n_gt_instances": 24,
+          "fragment_recovery_n_pred_instances": 23,
+          "fragment_recovery_well_recovered": 20,
+          "fragment_recovery_fragmented": 3,
+          "fragment_recovery_absorbed": 1,
+          "fragment_recovery_false_instances": 0,
+          "fragment_recovery_recovery_rate": 0.8333333333333334,
+          "pixel_recovery_n_gt_instances": 24,
+          "pixel_recovery_well_recovered": 12,
+          "pixel_recovery_fragmented": 11,
+          "pixel_recovery_absorbed": 1,
+          "pixel_recovery_false_instances": 0,
+          "pixel_recovery_recovery_rate": 0.5
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 24,
+          "n_pred_instances": 23,
+          "well_recovered": 20,
+          "fragmented": 3,
+          "absorbed": 1,
+          "false_instances": 0,
+          "recovery_rate": 0.8333333333333334
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 24,
+          "well_recovered": 12,
+          "fragmented": 11,
+          "absorbed": 1,
+          "false_instances": 0,
+          "recovery_rate": 0.5
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 61,
+          "clustering": {
+            "n_fragments_with_gt": 61,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 24,
+            "n_pred_instances": 23,
+            "pairwise_precision": 0.8481012658227848,
+            "pairwise_recall": 0.8701298701298701,
+            "pairwise_f1": 0.8589743589743589,
+            "adjusted_rand": 0.8526968980732783,
+            "voi": 0.3181952382658517,
+            "voi_split": 0.13548627059820273,
+            "voi_merge": 0.182708967667649,
+            "n_gt_split": 2,
+            "excess_splits": 2,
+            "n_pred_overmerged": 3,
+            "excess_merges": 3
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 24,
+            "well_recovered": 19,
+            "deleted": 1,
+            "fragmented": 4,
+            "false_pred": 0,
+            "recovery_rate": 0.7916666666666666
+          },
+          "panoptic": {
+            "pq": 0.6607101931065729,
+            "sq": 0.739366168476403,
+            "rq": 0.8936170212765957,
+            "tp": 21,
+            "fp": 2,
+            "fn": 3,
+            "f1_by_iou": {
+              "0.3": 0.9787234042553191,
+              "0.5": 0.8936170212765957,
+              "0.7": 0.5106382978723404
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov30/synth_0000",
+      "density": 30,
+      "seed": 20263720,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov30\\synth_0000\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 169,
+          "n_foreground_pixels": 7594,
+          "n_skeleton_pixels": 7506,
+          "n_common_fragment_pixels": 6962,
+          "common_fragment_foreground_pixel_coverage": 0.9167764024229655,
+          "common_fragment_skeleton_coverage": 0.9275246469491074,
+          "n_total_fragments": 169,
+          "n_gt_assigned_fragments": 169,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 166,
+          "n_pred_unassigned_fragments": 3,
+          "n_fragments": 169,
+          "n_scored_fragments": 169,
+          "precision": 0.5925925925925926,
+          "recall": 0.7619047619047619,
+          "f1": 0.6666666666666666,
+          "n_gt_groups": 46,
+          "n_pred_groups": 39,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 357.0,
+          "n_pred_pairs": 459.0,
+          "tp": 272.0,
+          "fp": 187.0,
+          "fn": 85.0,
+          "fragment_recovery_n_gt_instances": 46,
+          "fragment_recovery_n_pred_instances": 39,
+          "fragment_recovery_well_recovered": 26,
+          "fragment_recovery_fragmented": 11,
+          "fragment_recovery_absorbed": 9,
+          "fragment_recovery_false_instances": 2,
+          "fragment_recovery_recovery_rate": 0.5652173913043478,
+          "pixel_recovery_n_gt_instances": 46,
+          "pixel_recovery_well_recovered": 20,
+          "pixel_recovery_fragmented": 20,
+          "pixel_recovery_absorbed": 6,
+          "pixel_recovery_false_instances": 0,
+          "pixel_recovery_recovery_rate": 0.43478260869565216
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 46,
+          "n_pred_instances": 39,
+          "well_recovered": 26,
+          "fragmented": 11,
+          "absorbed": 9,
+          "false_instances": 2,
+          "recovery_rate": 0.5652173913043478
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 46,
+          "well_recovered": 20,
+          "fragmented": 20,
+          "absorbed": 6,
+          "false_instances": 0,
+          "recovery_rate": 0.43478260869565216
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 115,
+          "clustering": {
+            "n_fragments_with_gt": 115,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 42,
+            "n_pred_instances": 38,
+            "pairwise_precision": 0.7419354838709677,
+            "pairwise_recall": 0.8679245283018868,
+            "pairwise_f1": 0.8,
+            "adjusted_rand": 0.7946285905771486,
+            "voi": 0.49293227802812645,
+            "voi_split": 0.1770828519704395,
+            "voi_merge": 0.31584942605768696,
+            "n_gt_split": 5,
+            "excess_splits": 6,
+            "n_pred_overmerged": 6,
+            "excess_merges": 9
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 41,
+            "well_recovered": 32,
+            "deleted": 4,
+            "fragmented": 5,
+            "false_pred": 1,
+            "recovery_rate": 0.7804878048780488
+          },
+          "panoptic": {
+            "pq": 0.5850204773215263,
+            "sq": 0.7187394435664466,
+            "rq": 0.813953488372093,
+            "tp": 35,
+            "fp": 5,
+            "fn": 11,
+            "f1_by_iou": {
+              "0.3": 0.9302325581395349,
+              "0.5": 0.813953488372093,
+              "0.7": 0.46511627906976744
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov30/synth_0001",
+      "density": 30,
+      "seed": 20263721,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov30\\synth_0001\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 138,
+          "n_foreground_pixels": 6835,
+          "n_skeleton_pixels": 6736,
+          "n_common_fragment_pixels": 6192,
+          "common_fragment_foreground_pixel_coverage": 0.9059253840526701,
+          "common_fragment_skeleton_coverage": 0.9192399049881235,
+          "n_total_fragments": 138,
+          "n_gt_assigned_fragments": 138,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 138,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 138,
+          "n_scored_fragments": 138,
+          "precision": 0.5542521994134897,
+          "recall": 0.7777777777777778,
+          "f1": 0.6472602739726028,
+          "n_gt_groups": 40,
+          "n_pred_groups": 34,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 243.0,
+          "n_pred_pairs": 341.0,
+          "tp": 189.0,
+          "fp": 152.0,
+          "fn": 54.0,
+          "fragment_recovery_n_gt_instances": 40,
+          "fragment_recovery_n_pred_instances": 34,
+          "fragment_recovery_well_recovered": 16,
+          "fragment_recovery_fragmented": 16,
+          "fragment_recovery_absorbed": 8,
+          "fragment_recovery_false_instances": 1,
+          "fragment_recovery_recovery_rate": 0.4,
+          "pixel_recovery_n_gt_instances": 40,
+          "pixel_recovery_well_recovered": 18,
+          "pixel_recovery_fragmented": 15,
+          "pixel_recovery_absorbed": 7,
+          "pixel_recovery_false_instances": 3,
+          "pixel_recovery_recovery_rate": 0.45
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 40,
+          "n_pred_instances": 34,
+          "well_recovered": 16,
+          "fragmented": 16,
+          "absorbed": 8,
+          "false_instances": 1,
+          "recovery_rate": 0.4
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 40,
+          "well_recovered": 18,
+          "fragmented": 15,
+          "absorbed": 7,
+          "false_instances": 3,
+          "recovery_rate": 0.45
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 91,
+          "clustering": {
+            "n_fragments_with_gt": 91,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 38,
+            "n_pred_instances": 34,
+            "pairwise_precision": 0.7916666666666666,
+            "pairwise_recall": 0.9895833333333334,
+            "pairwise_f1": 0.8796296296296295,
+            "adjusted_rand": 0.8764103635603845,
+            "voi": 0.23346277470150234,
+            "voi_split": 0.021978021978023676,
+            "voi_merge": 0.21148475272347866,
+            "n_gt_split": 1,
+            "excess_splits": 1,
+            "n_pred_overmerged": 4,
+            "excess_merges": 5
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 38,
+            "well_recovered": 28,
+            "deleted": 5,
+            "fragmented": 5,
+            "false_pred": 1,
+            "recovery_rate": 0.7368421052631579
+          },
+          "panoptic": {
+            "pq": 0.5665104259866949,
+            "sq": 0.7587193205178949,
+            "rq": 0.7466666666666667,
+            "tp": 28,
+            "fp": 8,
+            "fn": 11,
+            "f1_by_iou": {
+              "0.3": 0.88,
+              "0.5": 0.7466666666666667,
+              "0.7": 0.5866666666666667
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov30/synth_0002",
+      "density": 30,
+      "seed": 20263722,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov30\\synth_0002\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 164,
+          "n_foreground_pixels": 7379,
+          "n_skeleton_pixels": 7306,
+          "n_common_fragment_pixels": 6813,
+          "common_fragment_foreground_pixel_coverage": 0.9232958395446538,
+          "common_fragment_skeleton_coverage": 0.932521215439365,
+          "n_total_fragments": 164,
+          "n_gt_assigned_fragments": 164,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 164,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 164,
+          "n_scored_fragments": 164,
+          "precision": 0.5276872964169381,
+          "recall": 0.7136563876651982,
+          "f1": 0.6067415730337079,
+          "n_gt_groups": 34,
+          "n_pred_groups": 31,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 454.0,
+          "n_pred_pairs": 614.0,
+          "tp": 324.0,
+          "fp": 290.0,
+          "fn": 130.0,
+          "fragment_recovery_n_gt_instances": 34,
+          "fragment_recovery_n_pred_instances": 31,
+          "fragment_recovery_well_recovered": 21,
+          "fragment_recovery_fragmented": 9,
+          "fragment_recovery_absorbed": 4,
+          "fragment_recovery_false_instances": 1,
+          "fragment_recovery_recovery_rate": 0.6176470588235294,
+          "pixel_recovery_n_gt_instances": 34,
+          "pixel_recovery_well_recovered": 16,
+          "pixel_recovery_fragmented": 14,
+          "pixel_recovery_absorbed": 4,
+          "pixel_recovery_false_instances": 1,
+          "pixel_recovery_recovery_rate": 0.47058823529411764
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 34,
+          "n_pred_instances": 31,
+          "well_recovered": 21,
+          "fragmented": 9,
+          "absorbed": 4,
+          "false_instances": 1,
+          "recovery_rate": 0.6176470588235294
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 34,
+          "well_recovered": 16,
+          "fragmented": 14,
+          "absorbed": 4,
+          "false_instances": 1,
+          "recovery_rate": 0.47058823529411764
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 97,
+          "clustering": {
+            "n_fragments_with_gt": 97,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 33,
+            "n_pred_instances": 31,
+            "pairwise_precision": 0.7816901408450704,
+            "pairwise_recall": 0.888,
+            "pairwise_f1": 0.8314606741573034,
+            "adjusted_rand": 0.8265063114208397,
+            "voi": 0.3559724228142329,
+            "voi_split": 0.13252322651828052,
+            "voi_merge": 0.2234491962959524,
+            "n_gt_split": 3,
+            "excess_splits": 3,
+            "n_pred_overmerged": 5,
+            "excess_merges": 5
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 33,
+            "well_recovered": 24,
+            "deleted": 3,
+            "fragmented": 6,
+            "false_pred": 1,
+            "recovery_rate": 0.7272727272727273
+          },
+          "panoptic": {
+            "pq": 0.6305341857562131,
+            "sq": 0.7318700370384617,
+            "rq": 0.8615384615384616,
+            "tp": 28,
+            "fp": 3,
+            "fn": 6,
+            "f1_by_iou": {
+              "0.3": 0.8615384615384616,
+              "0.5": 0.8615384615384616,
+              "0.7": 0.6461538461538462
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov30/synth_0003",
+      "density": 30,
+      "seed": 20263723,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov30\\synth_0003\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 131,
+          "n_foreground_pixels": 7116,
+          "n_skeleton_pixels": 7070,
+          "n_common_fragment_pixels": 6682,
+          "common_fragment_foreground_pixel_coverage": 0.9390106801573918,
+          "common_fragment_skeleton_coverage": 0.9451202263083451,
+          "n_total_fragments": 131,
+          "n_gt_assigned_fragments": 131,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 130,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 131,
+          "n_scored_fragments": 131,
+          "precision": 0.7290076335877863,
+          "recall": 0.809322033898305,
+          "f1": 0.7670682730923695,
+          "n_gt_groups": 39,
+          "n_pred_groups": 36,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 236.0,
+          "n_pred_pairs": 262.0,
+          "tp": 191.0,
+          "fp": 71.0,
+          "fn": 45.0,
+          "fragment_recovery_n_gt_instances": 39,
+          "fragment_recovery_n_pred_instances": 36,
+          "fragment_recovery_well_recovered": 27,
+          "fragment_recovery_fragmented": 7,
+          "fragment_recovery_absorbed": 5,
+          "fragment_recovery_false_instances": 2,
+          "fragment_recovery_recovery_rate": 0.6923076923076923,
+          "pixel_recovery_n_gt_instances": 39,
+          "pixel_recovery_well_recovered": 21,
+          "pixel_recovery_fragmented": 13,
+          "pixel_recovery_absorbed": 5,
+          "pixel_recovery_false_instances": 2,
+          "pixel_recovery_recovery_rate": 0.5384615384615384
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 39,
+          "n_pred_instances": 36,
+          "well_recovered": 27,
+          "fragmented": 7,
+          "absorbed": 5,
+          "false_instances": 2,
+          "recovery_rate": 0.6923076923076923
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 39,
+          "well_recovered": 21,
+          "fragmented": 13,
+          "absorbed": 5,
+          "false_instances": 2,
+          "recovery_rate": 0.5384615384615384
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 100,
+          "clustering": {
+            "n_fragments_with_gt": 100,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 36,
+            "n_pred_instances": 36,
+            "pairwise_precision": 0.8778625954198473,
+            "pairwise_recall": 0.8778625954198473,
+            "pairwise_f1": 0.8778625954198473,
+            "adjusted_rand": 0.8745424045088699,
+            "voi": 0.24996462422349452,
+            "voi_split": 0.12141709450076199,
+            "voi_merge": 0.12854752972273253,
+            "n_gt_split": 3,
+            "excess_splits": 3,
+            "n_pred_overmerged": 3,
+            "excess_merges": 3
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 36,
+            "well_recovered": 32,
+            "deleted": 1,
+            "fragmented": 3,
+            "false_pred": 1,
+            "recovery_rate": 0.8888888888888888
+          },
+          "panoptic": {
+            "pq": 0.6063090508989422,
+            "sq": 0.733438368022914,
+            "rq": 0.8266666666666667,
+            "tp": 31,
+            "fp": 5,
+            "fn": 8,
+            "f1_by_iou": {
+              "0.3": 0.9066666666666666,
+              "0.5": 0.8266666666666667,
+              "0.7": 0.56
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov40/synth_0000",
+      "density": 40,
+      "seed": 20264720,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov40\\synth_0000\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 269,
+          "n_foreground_pixels": 10245,
+          "n_skeleton_pixels": 10075,
+          "n_common_fragment_pixels": 8899,
+          "common_fragment_foreground_pixel_coverage": 0.8686188384577843,
+          "common_fragment_skeleton_coverage": 0.8832754342431762,
+          "n_total_fragments": 269,
+          "n_gt_assigned_fragments": 269,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 269,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 269,
+          "n_scored_fragments": 269,
+          "precision": 0.6136154553817847,
+          "recall": 0.7305585980284776,
+          "f1": 0.667,
+          "n_gt_groups": 47,
+          "n_pred_groups": 44,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 913.0,
+          "n_pred_pairs": 1087.0,
+          "tp": 667.0,
+          "fp": 420.0,
+          "fn": 246.0,
+          "fragment_recovery_n_gt_instances": 47,
+          "fragment_recovery_n_pred_instances": 44,
+          "fragment_recovery_well_recovered": 21,
+          "fragment_recovery_fragmented": 19,
+          "fragment_recovery_absorbed": 7,
+          "fragment_recovery_false_instances": 4,
+          "fragment_recovery_recovery_rate": 0.44680851063829785,
+          "pixel_recovery_n_gt_instances": 47,
+          "pixel_recovery_well_recovered": 20,
+          "pixel_recovery_fragmented": 20,
+          "pixel_recovery_absorbed": 7,
+          "pixel_recovery_false_instances": 4,
+          "pixel_recovery_recovery_rate": 0.425531914893617
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 47,
+          "n_pred_instances": 44,
+          "well_recovered": 21,
+          "fragmented": 19,
+          "absorbed": 7,
+          "false_instances": 4,
+          "recovery_rate": 0.44680851063829785
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 47,
+          "well_recovered": 20,
+          "fragmented": 20,
+          "absorbed": 7,
+          "false_instances": 4,
+          "recovery_rate": 0.425531914893617
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 133,
+          "clustering": {
+            "n_fragments_with_gt": 133,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 47,
+            "n_pred_instances": 42,
+            "pairwise_precision": 0.7685589519650655,
+            "pairwise_recall": 0.8844221105527639,
+            "pairwise_f1": 0.822429906542056,
+            "adjusted_rand": 0.8180150699348199,
+            "voi": 0.38110685694161095,
+            "voi_split": 0.11462490599877118,
+            "voi_merge": 0.2664819509428398,
+            "n_gt_split": 3,
+            "excess_splits": 3,
+            "n_pred_overmerged": 6,
+            "excess_merges": 8
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 47,
+            "well_recovered": 34,
+            "deleted": 7,
+            "fragmented": 6,
+            "false_pred": 2,
+            "recovery_rate": 0.723404255319149
+          },
+          "panoptic": {
+            "pq": 0.5166208262467995,
+            "sq": 0.6913602233596876,
+            "rq": 0.7472527472527473,
+            "tp": 34,
+            "fp": 10,
+            "fn": 13,
+            "f1_by_iou": {
+              "0.3": 0.8571428571428571,
+              "0.5": 0.7472527472527473,
+              "0.7": 0.3076923076923077
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov40/synth_0001",
+      "density": 40,
+      "seed": 20264721,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov40\\synth_0001\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 256,
+          "n_foreground_pixels": 10265,
+          "n_skeleton_pixels": 10094,
+          "n_common_fragment_pixels": 8874,
+          "common_fragment_foreground_pixel_coverage": 0.8644909887968826,
+          "common_fragment_skeleton_coverage": 0.8791361204676045,
+          "n_total_fragments": 256,
+          "n_gt_assigned_fragments": 256,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 255,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 256,
+          "n_scored_fragments": 256,
+          "precision": 0.7046632124352331,
+          "recall": 0.768361581920904,
+          "f1": 0.7351351351351353,
+          "n_gt_groups": 53,
+          "n_pred_groups": 49,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 708.0,
+          "n_pred_pairs": 772.0,
+          "tp": 544.0,
+          "fp": 228.0,
+          "fn": 164.0,
+          "fragment_recovery_n_gt_instances": 53,
+          "fragment_recovery_n_pred_instances": 49,
+          "fragment_recovery_well_recovered": 24,
+          "fragment_recovery_fragmented": 18,
+          "fragment_recovery_absorbed": 11,
+          "fragment_recovery_false_instances": 7,
+          "fragment_recovery_recovery_rate": 0.4528301886792453,
+          "pixel_recovery_n_gt_instances": 53,
+          "pixel_recovery_well_recovered": 18,
+          "pixel_recovery_fragmented": 27,
+          "pixel_recovery_absorbed": 8,
+          "pixel_recovery_false_instances": 5,
+          "pixel_recovery_recovery_rate": 0.33962264150943394
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 53,
+          "n_pred_instances": 49,
+          "well_recovered": 24,
+          "fragmented": 18,
+          "absorbed": 11,
+          "false_instances": 7,
+          "recovery_rate": 0.4528301886792453
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 53,
+          "well_recovered": 18,
+          "fragmented": 27,
+          "absorbed": 8,
+          "false_instances": 5,
+          "recovery_rate": 0.33962264150943394
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 136,
+          "clustering": {
+            "n_fragments_with_gt": 136,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 49,
+            "n_pred_instances": 49,
+            "pairwise_precision": 0.8315217391304348,
+            "pairwise_recall": 0.9161676646706587,
+            "pairwise_f1": 0.8717948717948718,
+            "adjusted_rand": 0.8693020966082454,
+            "voi": 0.3502608237014684,
+            "voi_split": 0.14900487137125218,
+            "voi_merge": 0.2012559523302162,
+            "n_gt_split": 7,
+            "excess_splits": 8,
+            "n_pred_overmerged": 8,
+            "excess_merges": 8
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 49,
+            "well_recovered": 33,
+            "deleted": 4,
+            "fragmented": 12,
+            "false_pred": 4,
+            "recovery_rate": 0.673469387755102
+          },
+          "panoptic": {
+            "pq": 0.48698138187951445,
+            "sq": 0.6778254369404052,
+            "rq": 0.7184466019417476,
+            "tp": 37,
+            "fp": 13,
+            "fn": 16,
+            "f1_by_iou": {
+              "0.3": 0.8543689320388349,
+              "0.5": 0.7184466019417476,
+              "0.7": 0.3106796116504854
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov40/synth_0002",
+      "density": 40,
+      "seed": 20264722,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov40\\synth_0002\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 250,
+          "n_foreground_pixels": 10236,
+          "n_skeleton_pixels": 10061,
+          "n_common_fragment_pixels": 8876,
+          "common_fragment_foreground_pixel_coverage": 0.8671355998436889,
+          "common_fragment_skeleton_coverage": 0.8822184673491701,
+          "n_total_fragments": 250,
+          "n_gt_assigned_fragments": 250,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 250,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 250,
+          "n_scored_fragments": 250,
+          "precision": 0.6534541336353341,
+          "recall": 0.8092566619915849,
+          "f1": 0.7230576441102757,
+          "n_gt_groups": 51,
+          "n_pred_groups": 47,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 713.0,
+          "n_pred_pairs": 883.0,
+          "tp": 577.0,
+          "fp": 306.0,
+          "fn": 136.0,
+          "fragment_recovery_n_gt_instances": 51,
+          "fragment_recovery_n_pred_instances": 47,
+          "fragment_recovery_well_recovered": 23,
+          "fragment_recovery_fragmented": 18,
+          "fragment_recovery_absorbed": 10,
+          "fragment_recovery_false_instances": 6,
+          "fragment_recovery_recovery_rate": 0.45098039215686275,
+          "pixel_recovery_n_gt_instances": 52,
+          "pixel_recovery_well_recovered": 22,
+          "pixel_recovery_fragmented": 21,
+          "pixel_recovery_absorbed": 9,
+          "pixel_recovery_false_instances": 6,
+          "pixel_recovery_recovery_rate": 0.4230769230769231
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 51,
+          "n_pred_instances": 47,
+          "well_recovered": 23,
+          "fragmented": 18,
+          "absorbed": 10,
+          "false_instances": 6,
+          "recovery_rate": 0.45098039215686275
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 52,
+          "well_recovered": 22,
+          "fragmented": 21,
+          "absorbed": 9,
+          "false_instances": 6,
+          "recovery_rate": 0.4230769230769231
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 125,
+          "clustering": {
+            "n_fragments_with_gt": 125,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 50,
+            "n_pred_instances": 47,
+            "pairwise_precision": 0.7796610169491526,
+            "pairwise_recall": 0.9387755102040817,
+            "pairwise_f1": 0.8518518518518519,
+            "adjusted_rand": 0.8487166536123779,
+            "voi": 0.378887923191602,
+            "voi_split": 0.11200000000000188,
+            "voi_merge": 0.26688792319160015,
+            "n_gt_split": 6,
+            "excess_splits": 6,
+            "n_pred_overmerged": 8,
+            "excess_merges": 9
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 50,
+            "well_recovered": 36,
+            "deleted": 5,
+            "fragmented": 9,
+            "false_pred": 1,
+            "recovery_rate": 0.72
+          },
+          "panoptic": {
+            "pq": 0.5306601600985987,
+            "sq": 0.6871368739738265,
+            "rq": 0.7722772277227723,
+            "tp": 39,
+            "fp": 10,
+            "fn": 13,
+            "f1_by_iou": {
+              "0.3": 0.9108910891089109,
+              "0.5": 0.7722772277227723,
+              "0.7": 0.33663366336633666
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov40/synth_0003",
+      "density": 40,
+      "seed": 20264723,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov40\\synth_0003\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 281,
+          "n_foreground_pixels": 10320,
+          "n_skeleton_pixels": 10166,
+          "n_common_fragment_pixels": 8955,
+          "common_fragment_foreground_pixel_coverage": 0.8677325581395349,
+          "common_fragment_skeleton_coverage": 0.8808774345858745,
+          "n_total_fragments": 281,
+          "n_gt_assigned_fragments": 281,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 281,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 281,
+          "n_scored_fragments": 281,
+          "precision": 0.5676300578034682,
+          "recall": 0.6401564537157758,
+          "f1": 0.6017156862745099,
+          "n_gt_groups": 55,
+          "n_pred_groups": 54,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 767.0,
+          "n_pred_pairs": 865.0,
+          "tp": 491.0,
+          "fp": 374.0,
+          "fn": 276.0,
+          "fragment_recovery_n_gt_instances": 55,
+          "fragment_recovery_n_pred_instances": 54,
+          "fragment_recovery_well_recovered": 25,
+          "fragment_recovery_fragmented": 22,
+          "fragment_recovery_absorbed": 8,
+          "fragment_recovery_false_instances": 7,
+          "fragment_recovery_recovery_rate": 0.45454545454545453,
+          "pixel_recovery_n_gt_instances": 56,
+          "pixel_recovery_well_recovered": 13,
+          "pixel_recovery_fragmented": 34,
+          "pixel_recovery_absorbed": 9,
+          "pixel_recovery_false_instances": 6,
+          "pixel_recovery_recovery_rate": 0.23214285714285715
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 55,
+          "n_pred_instances": 54,
+          "well_recovered": 25,
+          "fragmented": 22,
+          "absorbed": 8,
+          "false_instances": 7,
+          "recovery_rate": 0.45454545454545453
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 56,
+          "well_recovered": 13,
+          "fragmented": 34,
+          "absorbed": 9,
+          "false_instances": 6,
+          "recovery_rate": 0.23214285714285715
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 139,
+          "clustering": {
+            "n_fragments_with_gt": 139,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 54,
+            "n_pred_instances": 55,
+            "pairwise_precision": 0.7528735632183908,
+            "pairwise_recall": 0.7005347593582888,
+            "pairwise_f1": 0.7257617728531855,
+            "adjusted_rand": 0.7205086429564872,
+            "voi": 0.6160118914060471,
+            "voi_split": 0.3293125000778243,
+            "voi_merge": 0.28669939132822275,
+            "n_gt_split": 9,
+            "excess_splits": 12,
+            "n_pred_overmerged": 10,
+            "excess_merges": 11
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 54,
+            "well_recovered": 35,
+            "deleted": 6,
+            "fragmented": 13,
+            "false_pred": 6,
+            "recovery_rate": 0.6481481481481481
+          },
+          "panoptic": {
+            "pq": 0.41602142099042255,
+            "sq": 0.65969111042767,
+            "rq": 0.6306306306306306,
+            "tp": 35,
+            "fp": 20,
+            "fn": 21,
+            "f1_by_iou": {
+              "0.3": 0.8468468468468469,
+              "0.5": 0.6306306306306306,
+              "0.7": 0.21621621621621623
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov50/synth_0000",
+      "density": 50,
+      "seed": 20265720,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov50\\synth_0000\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 486,
+          "n_foreground_pixels": 14537,
+          "n_skeleton_pixels": 14218,
+          "n_common_fragment_pixels": 11770,
+          "common_fragment_foreground_pixel_coverage": 0.8096581137786338,
+          "common_fragment_skeleton_coverage": 0.8278238852159234,
+          "n_total_fragments": 486,
+          "n_gt_assigned_fragments": 486,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 486,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 486,
+          "n_scored_fragments": 486,
+          "precision": 0.5660310734463276,
+          "recall": 0.7114957833999113,
+          "f1": 0.6304818092428712,
+          "n_gt_groups": 68,
+          "n_pred_groups": 66,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 2253.0,
+          "n_pred_pairs": 2832.0,
+          "tp": 1603.0,
+          "fp": 1229.0,
+          "fn": 650.0,
+          "fragment_recovery_n_gt_instances": 68,
+          "fragment_recovery_n_pred_instances": 66,
+          "fragment_recovery_well_recovered": 33,
+          "fragment_recovery_fragmented": 22,
+          "fragment_recovery_absorbed": 13,
+          "fragment_recovery_false_instances": 9,
+          "fragment_recovery_recovery_rate": 0.4852941176470588,
+          "pixel_recovery_n_gt_instances": 69,
+          "pixel_recovery_well_recovered": 27,
+          "pixel_recovery_fragmented": 32,
+          "pixel_recovery_absorbed": 10,
+          "pixel_recovery_false_instances": 8,
+          "pixel_recovery_recovery_rate": 0.391304347826087
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 68,
+          "n_pred_instances": 66,
+          "well_recovered": 33,
+          "fragmented": 22,
+          "absorbed": 13,
+          "false_instances": 9,
+          "recovery_rate": 0.4852941176470588
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 69,
+          "well_recovered": 27,
+          "fragmented": 32,
+          "absorbed": 10,
+          "false_instances": 8,
+          "recovery_rate": 0.391304347826087
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 183,
+          "clustering": {
+            "n_fragments_with_gt": 183,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 66,
+            "n_pred_instances": 64,
+            "pairwise_precision": 0.706959706959707,
+            "pairwise_recall": 0.8143459915611815,
+            "pairwise_f1": 0.7568627450980392,
+            "adjusted_rand": 0.7531009270139705,
+            "voi": 0.5976348836720975,
+            "voi_split": 0.24655418294406317,
+            "voi_merge": 0.3510807007280343,
+            "n_gt_split": 11,
+            "excess_splits": 14,
+            "n_pred_overmerged": 14,
+            "excess_merges": 16
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 66,
+            "well_recovered": 49,
+            "deleted": 5,
+            "fragmented": 12,
+            "false_pred": 3,
+            "recovery_rate": 0.7424242424242424
+          },
+          "panoptic": {
+            "pq": 0.4498403994110841,
+            "sq": 0.6698710295578101,
+            "rq": 0.6715328467153284,
+            "tp": 46,
+            "fp": 22,
+            "fn": 23,
+            "f1_by_iou": {
+              "0.3": 0.8905109489051095,
+              "0.5": 0.6715328467153284,
+              "0.7": 0.24817518248175183
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov50/synth_0001",
+      "density": 50,
+      "seed": 20265721,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov50\\synth_0001\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 430,
+          "n_foreground_pixels": 13336,
+          "n_skeleton_pixels": 13075,
+          "n_common_fragment_pixels": 11290,
+          "common_fragment_foreground_pixel_coverage": 0.8465806838632274,
+          "common_fragment_skeleton_coverage": 0.8634799235181644,
+          "n_total_fragments": 430,
+          "n_gt_assigned_fragments": 430,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 429,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 430,
+          "n_scored_fragments": 430,
+          "precision": 0.5856573705179283,
+          "recall": 0.7135922330097088,
+          "f1": 0.6433260393873086,
+          "n_gt_groups": 68,
+          "n_pred_groups": 64,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 1648.0,
+          "n_pred_pairs": 2008.0,
+          "tp": 1176.0,
+          "fp": 832.0,
+          "fn": 472.0,
+          "fragment_recovery_n_gt_instances": 68,
+          "fragment_recovery_n_pred_instances": 64,
+          "fragment_recovery_well_recovered": 27,
+          "fragment_recovery_fragmented": 28,
+          "fragment_recovery_absorbed": 13,
+          "fragment_recovery_false_instances": 9,
+          "fragment_recovery_recovery_rate": 0.39705882352941174,
+          "pixel_recovery_n_gt_instances": 70,
+          "pixel_recovery_well_recovered": 27,
+          "pixel_recovery_fragmented": 32,
+          "pixel_recovery_absorbed": 11,
+          "pixel_recovery_false_instances": 7,
+          "pixel_recovery_recovery_rate": 0.38571428571428573
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 68,
+          "n_pred_instances": 64,
+          "well_recovered": 27,
+          "fragmented": 28,
+          "absorbed": 13,
+          "false_instances": 9,
+          "recovery_rate": 0.39705882352941174
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 70,
+          "well_recovered": 27,
+          "fragmented": 32,
+          "absorbed": 11,
+          "false_instances": 7,
+          "recovery_rate": 0.38571428571428573
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 172,
+          "clustering": {
+            "n_fragments_with_gt": 172,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 65,
+            "n_pred_instances": 63,
+            "pairwise_precision": 0.7261904761904762,
+            "pairwise_recall": 0.8097345132743363,
+            "pairwise_f1": 0.7656903765690377,
+            "adjusted_rand": 0.761831139152208,
+            "voi": 0.598366091717792,
+            "voi_split": 0.2621719995918621,
+            "voi_merge": 0.3361940921259299,
+            "n_gt_split": 11,
+            "excess_splits": 14,
+            "n_pred_overmerged": 13,
+            "excess_merges": 16
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 65,
+            "well_recovered": 45,
+            "deleted": 7,
+            "fragmented": 13,
+            "false_pred": 4,
+            "recovery_rate": 0.6923076923076923
+          },
+          "panoptic": {
+            "pq": 0.48092156534725866,
+            "sq": 0.6906852268285097,
+            "rq": 0.6962962962962963,
+            "tp": 47,
+            "fp": 19,
+            "fn": 22,
+            "f1_by_iou": {
+              "0.3": 0.8888888888888888,
+              "0.5": 0.6962962962962963,
+              "0.7": 0.37037037037037035
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov50/synth_0002",
+      "density": 50,
+      "seed": 20265722,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov50\\synth_0002\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 421,
+          "n_foreground_pixels": 14014,
+          "n_skeleton_pixels": 13742,
+          "n_common_fragment_pixels": 11780,
+          "common_fragment_foreground_pixel_coverage": 0.8405879834451263,
+          "common_fragment_skeleton_coverage": 0.8572260224130404,
+          "n_total_fragments": 421,
+          "n_gt_assigned_fragments": 421,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 421,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 421,
+          "n_scored_fragments": 421,
+          "precision": 0.5399408284023669,
+          "recall": 0.7208689927583937,
+          "f1": 0.6174231745136735,
+          "n_gt_groups": 67,
+          "n_pred_groups": 62,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 1519.0,
+          "n_pred_pairs": 2028.0,
+          "tp": 1095.0,
+          "fp": 933.0,
+          "fn": 424.0,
+          "fragment_recovery_n_gt_instances": 67,
+          "fragment_recovery_n_pred_instances": 62,
+          "fragment_recovery_well_recovered": 26,
+          "fragment_recovery_fragmented": 29,
+          "fragment_recovery_absorbed": 12,
+          "fragment_recovery_false_instances": 7,
+          "fragment_recovery_recovery_rate": 0.3880597014925373,
+          "pixel_recovery_n_gt_instances": 67,
+          "pixel_recovery_well_recovered": 24,
+          "pixel_recovery_fragmented": 34,
+          "pixel_recovery_absorbed": 9,
+          "pixel_recovery_false_instances": 3,
+          "pixel_recovery_recovery_rate": 0.3582089552238806
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 67,
+          "n_pred_instances": 62,
+          "well_recovered": 26,
+          "fragmented": 29,
+          "absorbed": 12,
+          "false_instances": 7,
+          "recovery_rate": 0.3880597014925373
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 67,
+          "well_recovered": 24,
+          "fragmented": 34,
+          "absorbed": 9,
+          "false_instances": 3,
+          "recovery_rate": 0.3582089552238806
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 176,
+          "clustering": {
+            "n_fragments_with_gt": 176,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 65,
+            "n_pred_instances": 62,
+            "pairwise_precision": 0.7630662020905923,
+            "pairwise_recall": 0.8795180722891566,
+            "pairwise_f1": 0.8171641791044775,
+            "adjusted_rand": 0.8139425707337532,
+            "voi": 0.48405368977222096,
+            "voi_split": 0.18817849703843148,
+            "voi_merge": 0.2958751927337895,
+            "n_gt_split": 11,
+            "excess_splits": 11,
+            "n_pred_overmerged": 12,
+            "excess_merges": 14
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 65,
+            "well_recovered": 44,
+            "deleted": 9,
+            "fragmented": 12,
+            "false_pred": 5,
+            "recovery_rate": 0.676923076923077
+          },
+          "panoptic": {
+            "pq": 0.44572120595182524,
+            "sq": 0.6533867678157438,
+            "rq": 0.6821705426356589,
+            "tp": 44,
+            "fp": 18,
+            "fn": 23,
+            "f1_by_iou": {
+              "0.3": 0.8837209302325582,
+              "0.5": 0.6821705426356589,
+              "0.7": 0.18604651162790697
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov50/synth_0003",
+      "density": 50,
+      "seed": 20265723,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov50\\synth_0003\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 433,
+          "n_foreground_pixels": 13660,
+          "n_skeleton_pixels": 13443,
+          "n_common_fragment_pixels": 11488,
+          "common_fragment_foreground_pixel_coverage": 0.84099560761347,
+          "common_fragment_skeleton_coverage": 0.8545711522725582,
+          "n_total_fragments": 433,
+          "n_gt_assigned_fragments": 433,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 432,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 433,
+          "n_scored_fragments": 433,
+          "precision": 0.6064593301435407,
+          "recall": 0.6719681908548708,
+          "f1": 0.6375353662370323,
+          "n_gt_groups": 68,
+          "n_pred_groups": 67,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 1509.0,
+          "n_pred_pairs": 1672.0,
+          "tp": 1014.0,
+          "fp": 658.0,
+          "fn": 495.0,
+          "fragment_recovery_n_gt_instances": 68,
+          "fragment_recovery_n_pred_instances": 67,
+          "fragment_recovery_well_recovered": 32,
+          "fragment_recovery_fragmented": 30,
+          "fragment_recovery_absorbed": 6,
+          "fragment_recovery_false_instances": 5,
+          "fragment_recovery_recovery_rate": 0.47058823529411764,
+          "pixel_recovery_n_gt_instances": 68,
+          "pixel_recovery_well_recovered": 28,
+          "pixel_recovery_fragmented": 36,
+          "pixel_recovery_absorbed": 4,
+          "pixel_recovery_false_instances": 4,
+          "pixel_recovery_recovery_rate": 0.4117647058823529
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 68,
+          "n_pred_instances": 67,
+          "well_recovered": 32,
+          "fragmented": 30,
+          "absorbed": 6,
+          "false_instances": 5,
+          "recovery_rate": 0.47058823529411764
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 68,
+          "well_recovered": 28,
+          "fragmented": 36,
+          "absorbed": 4,
+          "false_instances": 4,
+          "recovery_rate": 0.4117647058823529
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 176,
+          "clustering": {
+            "n_fragments_with_gt": 176,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 67,
+            "n_pred_instances": 67,
+            "pairwise_precision": 0.8623853211009175,
+            "pairwise_recall": 0.831858407079646,
+            "pairwise_f1": 0.8468468468468467,
+            "adjusted_rand": 0.8446075003887781,
+            "voi": 0.44268978976270024,
+            "voi_split": 0.23513680673439996,
+            "voi_merge": 0.20755298302830028,
+            "n_gt_split": 12,
+            "excess_splits": 13,
+            "n_pred_overmerged": 13,
+            "excess_merges": 13
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 67,
+            "well_recovered": 49,
+            "deleted": 5,
+            "fragmented": 13,
+            "false_pred": 4,
+            "recovery_rate": 0.7313432835820896
+          },
+          "panoptic": {
+            "pq": 0.46208965688159004,
+            "sq": 0.6982688148432916,
+            "rq": 0.6617647058823529,
+            "tp": 45,
+            "fp": 23,
+            "fn": 23,
+            "f1_by_iou": {
+              "0.3": 0.8823529411764706,
+              "0.5": 0.6617647058823529,
+              "0.7": 0.3235294117647059
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov60/synth_0000",
+      "density": 60,
+      "seed": 20266720,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov60\\synth_0000\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 597,
+          "n_foreground_pixels": 17329,
+          "n_skeleton_pixels": 16898,
+          "n_common_fragment_pixels": 13762,
+          "common_fragment_foreground_pixel_coverage": 0.7941600784811588,
+          "common_fragment_skeleton_coverage": 0.8144159072079536,
+          "n_total_fragments": 597,
+          "n_gt_assigned_fragments": 597,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 596,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 597,
+          "n_scored_fragments": 597,
+          "precision": 0.46822541966426856,
+          "recall": 0.6367713004484304,
+          "f1": 0.5396441527034029,
+          "n_gt_groups": 92,
+          "n_pred_groups": 81,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 2453.0,
+          "n_pred_pairs": 3336.0,
+          "tp": 1562.0,
+          "fp": 1774.0,
+          "fn": 891.0,
+          "fragment_recovery_n_gt_instances": 92,
+          "fragment_recovery_n_pred_instances": 81,
+          "fragment_recovery_well_recovered": 25,
+          "fragment_recovery_fragmented": 43,
+          "fragment_recovery_absorbed": 24,
+          "fragment_recovery_false_instances": 11,
+          "fragment_recovery_recovery_rate": 0.2717391304347826,
+          "pixel_recovery_n_gt_instances": 95,
+          "pixel_recovery_well_recovered": 27,
+          "pixel_recovery_fragmented": 43,
+          "pixel_recovery_absorbed": 25,
+          "pixel_recovery_false_instances": 10,
+          "pixel_recovery_recovery_rate": 0.28421052631578947
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 92,
+          "n_pred_instances": 81,
+          "well_recovered": 25,
+          "fragmented": 43,
+          "absorbed": 24,
+          "false_instances": 11,
+          "recovery_rate": 0.2717391304347826
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 95,
+          "well_recovered": 27,
+          "fragmented": 43,
+          "absorbed": 25,
+          "false_instances": 10,
+          "recovery_rate": 0.28421052631578947
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 242,
+          "clustering": {
+            "n_fragments_with_gt": 242,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 87,
+            "n_pred_instances": 78,
+            "pairwise_precision": 0.6195652173913043,
+            "pairwise_recall": 0.7402597402597403,
+            "pairwise_f1": 0.6745562130177515,
+            "adjusted_rand": 0.6707702312432401,
+            "voi": 0.8250317263117655,
+            "voi_split": 0.3279266381664927,
+            "voi_merge": 0.49710508814527277,
+            "n_gt_split": 21,
+            "excess_splits": 23,
+            "n_pred_overmerged": 24,
+            "excess_merges": 32
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 87,
+            "well_recovered": 43,
+            "deleted": 16,
+            "fragmented": 28,
+            "false_pred": 6,
+            "recovery_rate": 0.4942528735632184
+          },
+          "panoptic": {
+            "pq": 0.2921196095933179,
+            "sq": 0.6269884303466335,
+            "rq": 0.4659090909090909,
+            "tp": 41,
+            "fp": 41,
+            "fn": 53,
+            "f1_by_iou": {
+              "0.3": 0.7954545454545454,
+              "0.5": 0.4659090909090909,
+              "0.7": 0.07954545454545454
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov60/synth_0001",
+      "density": 60,
+      "seed": 20266721,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov60\\synth_0001\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 678,
+          "n_foreground_pixels": 19519,
+          "n_skeleton_pixels": 18908,
+          "n_common_fragment_pixels": 14657,
+          "common_fragment_foreground_pixel_coverage": 0.7509093703570879,
+          "common_fragment_skeleton_coverage": 0.7751745292997673,
+          "n_total_fragments": 678,
+          "n_gt_assigned_fragments": 678,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 677,
+          "n_pred_unassigned_fragments": 1,
+          "n_fragments": 678,
+          "n_scored_fragments": 678,
+          "precision": 0.41445728529345116,
+          "recall": 0.610276943610277,
+          "f1": 0.49365721997300954,
+          "n_gt_groups": 101,
+          "n_pred_groups": 79,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 2997.0,
+          "n_pred_pairs": 4413.0,
+          "tp": 1829.0,
+          "fp": 2584.0,
+          "fn": 1168.0,
+          "fragment_recovery_n_gt_instances": 101,
+          "fragment_recovery_n_pred_instances": 79,
+          "fragment_recovery_well_recovered": 21,
+          "fragment_recovery_fragmented": 43,
+          "fragment_recovery_absorbed": 37,
+          "fragment_recovery_false_instances": 12,
+          "fragment_recovery_recovery_rate": 0.2079207920792079,
+          "pixel_recovery_n_gt_instances": 102,
+          "pixel_recovery_well_recovered": 9,
+          "pixel_recovery_fragmented": 56,
+          "pixel_recovery_absorbed": 37,
+          "pixel_recovery_false_instances": 10,
+          "pixel_recovery_recovery_rate": 0.08823529411764706
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 101,
+          "n_pred_instances": 79,
+          "well_recovered": 21,
+          "fragmented": 43,
+          "absorbed": 37,
+          "false_instances": 12,
+          "recovery_rate": 0.2079207920792079
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 102,
+          "well_recovered": 9,
+          "fragmented": 56,
+          "absorbed": 37,
+          "false_instances": 10,
+          "recovery_rate": 0.08823529411764706
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 242,
+          "clustering": {
+            "n_fragments_with_gt": 242,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 89,
+            "n_pred_instances": 76,
+            "pairwise_precision": 0.5176470588235295,
+            "pairwise_recall": 0.7457627118644068,
+            "pairwise_f1": 0.611111111111111,
+            "adjusted_rand": 0.6064105524322047,
+            "voi": 1.0185220062215912,
+            "voi_split": 0.3518946921325279,
+            "voi_merge": 0.6666273140890633,
+            "n_gt_split": 24,
+            "excess_splits": 28,
+            "n_pred_overmerged": 27,
+            "excess_merges": 41
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 89,
+            "well_recovered": 37,
+            "deleted": 25,
+            "fragmented": 27,
+            "false_pred": 10,
+            "recovery_rate": 0.4157303370786517
+          },
+          "panoptic": {
+            "pq": 0.17255884645831726,
+            "sq": 0.5973190838941752,
+            "rq": 0.28888888888888886,
+            "tp": 26,
+            "fp": 53,
+            "fn": 75,
+            "f1_by_iou": {
+              "0.3": 0.6111111111111112,
+              "0.5": 0.28888888888888886,
+              "0.7": 0.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov60/synth_0002",
+      "density": 60,
+      "seed": 20266722,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov60\\synth_0002\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 640,
+          "n_foreground_pixels": 18420,
+          "n_skeleton_pixels": 17955,
+          "n_common_fragment_pixels": 14420,
+          "common_fragment_foreground_pixel_coverage": 0.7828447339847991,
+          "common_fragment_skeleton_coverage": 0.8031189083820662,
+          "n_total_fragments": 640,
+          "n_gt_assigned_fragments": 640,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 640,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 640,
+          "n_scored_fragments": 640,
+          "precision": 0.4739160677022954,
+          "recall": 0.6952380952380952,
+          "f1": 0.5636288432372811,
+          "n_gt_groups": 93,
+          "n_pred_groups": 84,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 2940.0,
+          "n_pred_pairs": 4313.0,
+          "tp": 2044.0,
+          "fp": 2269.0,
+          "fn": 896.0,
+          "fragment_recovery_n_gt_instances": 93,
+          "fragment_recovery_n_pred_instances": 84,
+          "fragment_recovery_well_recovered": 33,
+          "fragment_recovery_fragmented": 37,
+          "fragment_recovery_absorbed": 23,
+          "fragment_recovery_false_instances": 14,
+          "fragment_recovery_recovery_rate": 0.3548387096774194,
+          "pixel_recovery_n_gt_instances": 95,
+          "pixel_recovery_well_recovered": 23,
+          "pixel_recovery_fragmented": 45,
+          "pixel_recovery_absorbed": 27,
+          "pixel_recovery_false_instances": 16,
+          "pixel_recovery_recovery_rate": 0.24210526315789474
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 93,
+          "n_pred_instances": 84,
+          "well_recovered": 33,
+          "fragmented": 37,
+          "absorbed": 23,
+          "false_instances": 14,
+          "recovery_rate": 0.3548387096774194
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 95,
+          "well_recovered": 23,
+          "fragmented": 45,
+          "absorbed": 27,
+          "false_instances": 16,
+          "recovery_rate": 0.24210526315789474
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 234,
+          "clustering": {
+            "n_fragments_with_gt": 234,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 87,
+            "n_pred_instances": 83,
+            "pairwise_precision": 0.6240963855421687,
+            "pairwise_recall": 0.7824773413897281,
+            "pairwise_f1": 0.6943699731903487,
+            "adjusted_rand": 0.6901846557886421,
+            "voi": 0.7550728499746171,
+            "voi_split": 0.3018458736997829,
+            "voi_merge": 0.4532269762748342,
+            "n_gt_split": 22,
+            "excess_splits": 22,
+            "n_pred_overmerged": 19,
+            "excess_merges": 26
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 87,
+            "well_recovered": 49,
+            "deleted": 17,
+            "fragmented": 21,
+            "false_pred": 11,
+            "recovery_rate": 0.5632183908045977
+          },
+          "panoptic": {
+            "pq": 0.32563261787046843,
+            "sq": 0.6623663477137938,
+            "rq": 0.49162011173184356,
+            "tp": 44,
+            "fp": 40,
+            "fn": 51,
+            "f1_by_iou": {
+              "0.3": 0.7262569832402235,
+              "0.5": 0.49162011173184356,
+              "0.7": 0.16759776536312848
+            }
+          }
+        }
+      }
+    },
+    {
+      "geometry_id": "cov60/synth_0003",
+      "density": 60,
+      "seed": 20266723,
+      "mask_variant": "clean",
+      "method": "filaseg",
+      "output_path": "C:\\Repos\\filaments_quantification\\output\\final_development_clean\\filaseg\\cov60\\synth_0003\\clean\\filaseg\\final\\mask_clean_reconnect_multilabel.npz",
+      "config_hashes": {
+        "experiment_runner.py": "5dda381365a33a930d1109ff4c324338a1a9374379992c829c326c2e29847a0a",
+        "baselines.py": "9067a5d2b4b3ea340f05ac35c36dba163e34e07f54b5760fd3518d038f7d14bc",
+        "common_metric.py": "024a91c43953f17337140a8a281253836319c9d432eea0fbce0c8ed36b108f70",
+        "instance_io.py": "958ad6acd9625d892edc9271fa18c0dba709e9af14e4e2eaa97452e1e73ca368",
+        "metrics.py": "c55414387b89a7b2fa7b6d1d165d3b0f9d6825a65bc2416d06778f909152ddae",
+        "stats_util.py": "25a31db0887894511ab7c6333d661008ff6acb9205cac1898b7a3bbc35e7703c",
+        "run_batch.py": "1064054d5a3d7db0c3c6e19b6243fcefb91b233b15cb9b749b6bbbdc34f4e411",
+        "run_full_sem_pipeline.py": "035a49251950217a216f10066e647ef3ca4b719597b4115f6bfb245f26cf6dc9",
+        "reconnect_config_source": "407d317e20551d14a06ce39d85ee4f3260f33cbd1419d796e3a39bd4d78dcef3"
+      },
+      "parameters": {
+        "filaseg_mode": "run"
+      },
+      "status": "ok",
+      "scores": {
+        "common_metric": {
+          "n_common_fragments": 657,
+          "n_foreground_pixels": 17866,
+          "n_skeleton_pixels": 17416,
+          "n_common_fragment_pixels": 14047,
+          "common_fragment_foreground_pixel_coverage": 0.7862420239561178,
+          "common_fragment_skeleton_coverage": 0.8065571887919155,
+          "n_total_fragments": 657,
+          "n_gt_assigned_fragments": 657,
+          "n_gt_unassigned_fragments": 0,
+          "n_pred_assigned_fragments": 657,
+          "n_pred_unassigned_fragments": 0,
+          "n_fragments": 657,
+          "n_scored_fragments": 657,
+          "precision": 0.523359714066888,
+          "recall": 0.6382316313823163,
+          "f1": 0.5751157245055407,
+          "n_gt_groups": 86,
+          "n_pred_groups": 84,
+          "pair_evidence_available": true,
+          "pair_evidence_reason": "ok",
+          "n_gt_pairs": 3212.0,
+          "n_pred_pairs": 3917.0,
+          "tp": 2050.0,
+          "fp": 1867.0,
+          "fn": 1162.0,
+          "fragment_recovery_n_gt_instances": 86,
+          "fragment_recovery_n_pred_instances": 84,
+          "fragment_recovery_well_recovered": 27,
+          "fragment_recovery_fragmented": 42,
+          "fragment_recovery_absorbed": 17,
+          "fragment_recovery_false_instances": 13,
+          "fragment_recovery_recovery_rate": 0.313953488372093,
+          "pixel_recovery_n_gt_instances": 89,
+          "pixel_recovery_well_recovered": 28,
+          "pixel_recovery_fragmented": 42,
+          "pixel_recovery_absorbed": 19,
+          "pixel_recovery_false_instances": 12,
+          "pixel_recovery_recovery_rate": 0.3146067415730337
+        },
+        "shared_fragment_recovery": {
+          "n_gt_instances": 86,
+          "n_pred_instances": 84,
+          "well_recovered": 27,
+          "fragmented": 42,
+          "absorbed": 17,
+          "false_instances": 13,
+          "recovery_rate": 0.313953488372093
+        },
+        "representation_dependent_pixel_recovery": {
+          "n_gt_instances": 89,
+          "well_recovered": 28,
+          "fragmented": 42,
+          "absorbed": 19,
+          "false_instances": 12,
+          "recovery_rate": 0.3146067415730337
+        },
+        "native_diagnostics": {
+          "gt_kind": "label_overlap",
+          "n_fragments": 219,
+          "clustering": {
+            "n_fragments_with_gt": 219,
+            "n_spurious_fragments": 0,
+            "n_gt_instances": 83,
+            "n_pred_instances": 80,
+            "pairwise_precision": 0.7046979865771812,
+            "pairwise_recall": 0.7526881720430108,
+            "pairwise_f1": 0.7279029462738301,
+            "adjusted_rand": 0.7245778602532189,
+            "voi": 0.7072330313772683,
+            "voi_split": 0.32118126222665566,
+            "voi_merge": 0.3860517691506127,
+            "n_gt_split": 18,
+            "excess_splits": 22,
+            "n_pred_overmerged": 19,
+            "excess_merges": 25
+          },
+          "notes": [],
+          "instance": {
+            "n_gt_present": 83,
+            "well_recovered": 43,
+            "deleted": 12,
+            "fragmented": 28,
+            "false_pred": 8,
+            "recovery_rate": 0.5180722891566265
+          },
+          "panoptic": {
+            "pq": 0.34740321910343563,
+            "sq": 0.6260495510926497,
+            "rq": 0.5549132947976878,
+            "tp": 48,
+            "fp": 36,
+            "fn": 41,
+            "f1_by_iou": {
+              "0.3": 0.7861271676300579,
+              "0.5": 0.5549132947976878,
+              "0.7": 0.10404624277456648
+            }
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "by_method": {
+      "filaseg:{\"filaseg_mode\": \"run\"}": {
+        "n_rows": 20,
+        "n_success": 20,
+        "n_failed": 0,
+        "common_f1": {
+          "n": 20,
+          "mean": 0.6812714555251443,
+          "sd": 0.12141619653874004,
+          "ci_lo": 0.6319709367946303,
+          "ci_hi": 0.7348093104351372,
+          "ci_halfwidth": 0.051419186820253426
+        },
+        "shared_fragment_recovery_rate": {
+          "n": 20,
+          "mean": 0.516584722444341,
+          "sd": 0.20543980810505058,
+          "ci_lo": 0.4351565059542638,
+          "ci_hi": 0.6076713255681283,
+          "ci_halfwidth": 0.08625740980693225
+        }
+      }
+    },
+    "paired": [],
+    "failure_count": 0,
+    "by_density": {
+      "20": {
+        "by_method": {
+          "filaseg:{\"filaseg_mode\": \"run\"}": {
+            "n_rows": 4,
+            "n_success": 4,
+            "n_failed": 0,
+            "common_f1": {
+              "n": 4,
+              "mean": 0.8774928821043749,
+              "sd": 0.05843351444959222,
+              "ci_lo": 0.8241949152542373,
+              "ci_hi": 0.9263905271753923,
+              "ci_halfwidth": 0.0510978059605775
+            },
+            "shared_fragment_recovery_rate": {
+              "n": 4,
+              "mean": 0.8404761904761905,
+              "sd": 0.13140614025282502,
+              "ci_lo": 0.7214285714285715,
+              "ci_hi": 0.9583333333333334,
+              "ci_halfwidth": 0.11845238095238092
+            }
+          }
+        },
+        "paired": [],
+        "failure_count": 0
+      },
+      "30": {
+        "by_method": {
+          "filaseg:{\"filaseg_mode\": \"run\"}": {
+            "n_rows": 4,
+            "n_success": 4,
+            "n_failed": 0,
+            "common_f1": {
+              "n": 4,
+              "mean": 0.6719341966913368,
+              "sd": 0.06815942098476097,
+              "ci_lo": 0.6217228464419476,
+              "ci_hi": 0.7371162733124277,
+              "ci_halfwidth": 0.05769671343524002
+            },
+            "shared_fragment_recovery_rate": {
+              "n": 4,
+              "mean": 0.5687930356088924,
+              "sd": 0.1240248094884462,
+              "ci_lo": 0.4544117647058823,
+              "ci_hi": 0.6605351170568562,
+              "ci_halfwidth": 0.10306167617548695
+            }
+          }
+        },
+        "paired": [],
+        "failure_count": 0
+      },
+      "40": {
+        "by_method": {
+          "filaseg:{\"filaseg_mode\": \"run\"}": {
+            "n_rows": 4,
+            "n_success": 4,
+            "n_failed": 0,
+            "common_f1": {
+              "n": 4,
+              "mean": 0.6817271163799803,
+              "sd": 0.06104464457593794,
+              "ci_lo": 0.6320511757334514,
+              "ci_hi": 0.7290963896227055,
+              "ci_halfwidth": 0.04852260694462707
+            },
+            "shared_fragment_recovery_rate": {
+              "n": 4,
+              "mean": 0.4512911365049651,
+              "sd": 0.003324142205853184,
+              "ci_lo": 0.4483139301485347,
+              "ci_hi": 0.4536878216123499,
+              "ci_halfwidth": 0.0026869457319075862
+            }
+          }
+        },
+        "paired": [],
+        "failure_count": 0
+      },
+      "50": {
+        "by_method": {
+          "filaseg:{\"filaseg_mode\": \"run\"}": {
+            "n_rows": 4,
+            "n_success": 4,
+            "n_failed": 0,
+            "common_f1": {
+              "n": 4,
+              "mean": 0.6321915973452215,
+              "sd": 0.011158873208408481,
+              "ci_lo": 0.6224512224445131,
+              "ci_hi": 0.6404307028121705,
+              "ci_halfwidth": 0.008989740183828698
+            },
+            "shared_fragment_recovery_rate": {
+              "n": 4,
+              "mean": 0.43525021949078135,
+              "sd": 0.04979523008620214,
+              "ci_lo": 0.3925592625109745,
+              "ci_hi": 0.4779411764705882,
+              "ci_halfwidth": 0.04269095697980685
+            }
+          }
+        },
+        "paired": [],
+        "failure_count": 0
+      },
+      "60": {
+        "by_method": {
+          "filaseg:{\"filaseg_mode\": \"run\"}": {
+            "n_rows": 4,
+            "n_success": 4,
+            "n_failed": 0,
+            "common_f1": {
+              "n": 4,
+              "mean": 0.5430114851048086,
+              "sd": 0.03606910061748894,
+              "ci_lo": 0.5111501257890774,
+              "ci_hi": 0.5693722838714109,
+              "ci_halfwidth": 0.029111079041166776
+            },
+            "shared_fragment_recovery_rate": {
+              "n": 4,
+              "mean": 0.28711303014087575,
+              "sd": 0.06275599633537607,
+              "ci_lo": 0.23442896615242917,
+              "ci_hi": 0.3343960990247562,
+              "ci_halfwidth": 0.049983566436163515
+            }
+          }
+        },
+        "paired": [],
+        "failure_count": 0
+      }
+    }
+  }
+}

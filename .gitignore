@@ -1,0 +1,91 @@
+# ---------------------------------------------------------------------------
+# LaTeX build debris. The compiled review PDF (main.pdf) is tracked
+# deliberately; every intermediate file below is regenerable and is not.
+# ---------------------------------------------------------------------------
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*.bcf
+*.xdv
+*.dvi
+*.idx
+*.ilg
+*.ind
+*.spl
+
+# ---------------------------------------------------------------------------
+# Python / editor / OS
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+*.bak
+*.swp
+*~
+
+# ---------------------------------------------------------------------------
+# Local scratch. Machine-readable results under results/ ARE tracked; raw
+# per-run pipeline output folders are not.
+# ---------------------------------------------------------------------------
+scratch/
+tmp/
+temp/
+build/
+preview/
+*.tmp
+title_preview*
+
+# ---------------------------------------------------------------------------
+# Internal working documents. These are kept in the local paper/ working folder
+# but are deliberately NOT published in this repository: author-query trackers,
+# development provenance records, and agent/task instruction documents.
+# ---------------------------------------------------------------------------
+ACTION_REQUIRED.md
+TUNING_PROVENANCE.md
+REAL_CROP_FACTS.md
+EVALUATION_LOCK.md
+filaseg_comprehensive_next_actions.md
+filaseg_todolist.md
+
+# ---------------------------------------------------------------------------
+# Raw data must never enter the manuscript repository.
+# ---------------------------------------------------------------------------
+input/
+output/
+raw_results/
+sandbox/
+
+# ---------------------------------------------------------------------------
+# Guard rails: pipeline source lives in the coding repository
+#   https://github.com/Jorallan/FilaSeg
+# and must never be copied here. paper/sync_to_paper_repo.sh already uses an
+# explicit allow-list; these rules make an accidental bulk copy a no-op.
+# ---------------------------------------------------------------------------
+/1.stringart/
+/2.preprocess/
+/3.reconnect/
+/4.postprocess/
+/Tools/
+/tests/
+/eval/

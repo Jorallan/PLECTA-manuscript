@@ -1,0 +1,4137 @@
+{
+  "schema_version": 1,
+  "study": "development_only_factorial_centreline_density_x_bundle_width",
+  "scope": "Exploratory development evidence only. The existing locked set is forbidden and was not read.",
+  "scenes_root": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes",
+  "validation": {
+    "n_cells": 36,
+    "length_density_levels_px_per_px2": [
+      0.02,
+      0.04,
+      0.06
+    ],
+    "bundle_width_levels_px": [
+      6.0,
+      11.0,
+      16.0
+    ],
+    "seeds": [
+      20262001,
+      20262002,
+      20262003,
+      20262004
+    ],
+    "stage3_width_negative_control": {
+      "status": "pass",
+      "basis": "mask, clean centreline, and overlap-aware centreline GT are byte-identical across physical-width cells",
+      "n_geometry_blocks": 12,
+      "blocks": [
+        {
+          "seed": 20262001,
+          "target_length_density_px_per_px2": 0.02,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "8d12c7854e99b08f238f2f6b15da5203930731e6a9d2b89f66906c10e4fb171f",
+            "mask_clean.png": "452cc82f9d9a4d727f94ba6afab30bcb0d189ea0293013e9d8f7b3000ab645b5",
+            "gt_centerlines_multilabel.npz": "523797de2b64060b5b99252d4814bd523ce7bd71d40f796e3556428dc77def7a"
+          }
+        },
+        {
+          "seed": 20262001,
+          "target_length_density_px_per_px2": 0.04,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "2ea9ebf91d9b5707abb808d6f5268ea5b9c5549107c9009a5bb6a008617501d5",
+            "mask_clean.png": "a13de12f6f5aac092fe837e7fbac07ad8f3a2627692d5cebf3d286252ceaa6dd",
+            "gt_centerlines_multilabel.npz": "84a49c38494a436fb27172d973afd32794ef3761a98790b815c353db94e479a6"
+          }
+        },
+        {
+          "seed": 20262001,
+          "target_length_density_px_per_px2": 0.06,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "9ebfade3b7f95b3401bc9fbeae9e7df97a8a028f655716a8676909813ba9d62c",
+            "mask_clean.png": "4fadccfe4d94f9939b1f263a4f1d25f70ca6f85594a9ed7d0a4d6266919cbce0",
+            "gt_centerlines_multilabel.npz": "0710a5054d0cecdaa083a566e043c69140e1928673e368d276d68dfe05ed64c2"
+          }
+        },
+        {
+          "seed": 20262002,
+          "target_length_density_px_per_px2": 0.02,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "7309638cbd1a29dc4dbcd6fd33ca3683810fb6352f94eccff07b70df6153d075",
+            "mask_clean.png": "ab197e2dbf9b709b86facdceb25cfebb9f07a2c9dd1045e9cedb03f8ce202bb0",
+            "gt_centerlines_multilabel.npz": "fa9f0196bf11add25902b91252179855c55d51a1aecafb2e4c81aff2aa92c617"
+          }
+        },
+        {
+          "seed": 20262002,
+          "target_length_density_px_per_px2": 0.04,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "c98b23e483678ed08726baaa46dcaf5c87298c1e5353a976cf9c224c9e5290c8",
+            "mask_clean.png": "5da9f144d68c415072d3f11c2ee51e6ac008d1dda846f7294bb26f9ca94e94d0",
+            "gt_centerlines_multilabel.npz": "6b3c329874665bf38847e6faed13a873b3685ba4ba633bef00cb651f4a076f76"
+          }
+        },
+        {
+          "seed": 20262002,
+          "target_length_density_px_per_px2": 0.06,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "f839cd1fdf26af1288f6f352400c563d8b46bad529e7c389f565aab8800ab9a4",
+            "mask_clean.png": "e6d20316d0df55a3e989eab8d56b034cbea184eca9d885b53a67863b4f049ad4",
+            "gt_centerlines_multilabel.npz": "360254cbf06334d21a5f2f22c86cf0a5e628eccf70c70bac11aff0b13ad8f1b9"
+          }
+        },
+        {
+          "seed": 20262003,
+          "target_length_density_px_per_px2": 0.02,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "64fe127ae7d639e68979f952c3e5c5b7bab077bfb4304c327c7bca321a83ecf5",
+            "mask_clean.png": "818c5de68ea9846936bc8c1b1ec327d145d9e21239b27eb18cfef6aed8dec1eb",
+            "gt_centerlines_multilabel.npz": "f19c92ea7dd145e2d1e42f3cca724062cf6bd5f4c61a7eb74558d1e02dd26c1f"
+          }
+        },
+        {
+          "seed": 20262003,
+          "target_length_density_px_per_px2": 0.04,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "d2ea52be10aaa8e147464a5742d919f0536db0536bc28cf7d4daf8eb482cbdbe",
+            "mask_clean.png": "3e87440f8581fbb92b200aed0730eb2d84427213277362baded35523ed2d6690",
+            "gt_centerlines_multilabel.npz": "646e04d12d9009e2f8b4d8f11b4f47c4fbec1a8fd602a0841b09ecfbad865254"
+          }
+        },
+        {
+          "seed": 20262003,
+          "target_length_density_px_per_px2": 0.06,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "4e0c07579934a2f6e117538dd46010b02db7b56c9e58efdbb55557e5fc11fa33",
+            "mask_clean.png": "39d036663099efd9b6dbbcbbaf668bc7cd00519c704926d4ed9578210fa71373",
+            "gt_centerlines_multilabel.npz": "f5bb640498a0e9c7dcf6f67bd0fa50125cb0e10e081cd68d6bd56bbdd963aa02"
+          }
+        },
+        {
+          "seed": 20262004,
+          "target_length_density_px_per_px2": 0.02,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "5c812a6594200f290a684607f8dd0fffbde4f4f23eb4f2d9b5fc97b9628a952a",
+            "mask_clean.png": "4c7b94a29e4eb34b32054e1f687c6b418368c2b50981662bee85e29d63348846",
+            "gt_centerlines_multilabel.npz": "cb43db1c00f0470334a9ef2541644332802b18207bef9c32180e7ecfd3139e86"
+          }
+        },
+        {
+          "seed": 20262004,
+          "target_length_density_px_per_px2": 0.04,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "14e7ecb1bd16ae7568c607eeeb7c172ac0e85323e6f452630125571c9dd059aa",
+            "mask_clean.png": "ee3615905d2f0d5e9dbc14c60d557791fe49d46048988d9c12f2884b3c8d6132",
+            "gt_centerlines_multilabel.npz": "e38b5d735f2db6b85a8f68a1675798de51d0e611d4ae5b586ed3680466b4de39"
+          }
+        },
+        {
+          "seed": 20262004,
+          "target_length_density_px_per_px2": 0.06,
+          "n_width_cells": 3,
+          "identical_artifact_sha256": {
+            "mask.png": "1c871ee0914d1773b73461d0ea5e7dbca1e06a0e3b20d453e745ddc93d551b5a",
+            "mask_clean.png": "a54ab1d7f8f03121de6ce0c6d411750bca31b81deeca70f92ae9d8f09bee4da6",
+            "gt_centerlines_multilabel.npz": "62fe0f6019c20ad3884a6c59f9f88aa0e95a97c03168e0ccc6f6e315eeb5a79a"
+          }
+        }
+      ]
+    }
+  },
+  "empirical_stage3_width_negative_control": {
+    "status": "not_run"
+  },
+  "factorial_cells": [
+    {
+      "target_length_density_px_per_px2": 0.02,
+      "bundle_width_level_px": 6.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.020824432891768562,
+          "sd": 0.000440063301161662,
+          "min": 0.020271302614613563,
+          "max": 0.021255492458242792
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 19.268872844431634,
+          "sd": 0.4071911027616344,
+          "min": 18.75706073255809,
+          "max": 19.667732780639113
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 5459.000135979778,
+          "sd": 115.35995401972272,
+          "min": 5314.000352605258,
+          "max": 5571.999814973598
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.019268035888671875,
+          "sd": 0.00048015710304172895,
+          "min": 0.018680572509765625,
+          "max": 0.0197906494140625
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.03215599060058594,
+          "sd": 0.0006576675271995326,
+          "min": 0.03150177001953125,
+          "max": 0.033069610595703125
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.12087345123291016,
+          "sd": 0.0040075319326559646,
+          "min": 0.11826324462890625,
+          "max": 0.1267547607421875
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 23.5,
+          "sd": 1.9148542155126762,
+          "min": 21.0,
+          "max": 25.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 31.0,
+          "sd": 5.597618541248888,
+          "min": 24.0,
+          "max": 36.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 30.75,
+          "sd": 5.315072906367325,
+          "min": 24.0,
+          "max": 35.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 118.255615234375,
+          "sd": 21.353220143313937,
+          "min": 91.552734375,
+          "max": 137.3291015625
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 13.0,
+          "sd": 5.354126134736337,
+          "min": 7.0,
+          "max": 20.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01538173248544255,
+          "sd": 0.003209802937206628,
+          "min": 0.011898224418817499,
+          "max": 0.01887470789142549
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 7.120467032967033,
+          "sd": 2.259815738693195,
+          "min": 4.6,
+          "max": 9.285714285714286
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 5.875,
+          "sd": 3.79418414594407,
+          "min": 3.0,
+          "max": 11.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 13.825000000000001,
+          "sd": 3.534944601168925,
+          "min": 11.0,
+          "max": 18.6
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 16.0,
+          "sd": 2.70801280154532,
+          "min": 14.0,
+          "max": 20.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 14.25,
+          "sd": 2.8722813232690143,
+          "min": 12.0,
+          "max": 18.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.02,
+      "bundle_width_level_px": 11.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.020824432891768562,
+          "sd": 0.000440063301161662,
+          "min": 0.020271302614613563,
+          "max": 0.021255492458242792
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 19.268872844431634,
+          "sd": 0.4071911027616344,
+          "min": 18.75706073255809,
+          "max": 19.667732780639113
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 5459.000135979778,
+          "sd": 115.35995401972272,
+          "min": 5314.000352605258,
+          "max": 5571.999814973598
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.019268035888671875,
+          "sd": 0.00048015710304172895,
+          "min": 0.018680572509765625,
+          "max": 0.0197906494140625
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.03215599060058594,
+          "sd": 0.0006576675271995326,
+          "min": 0.03150177001953125,
+          "max": 0.033069610595703125
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.2116994857788086,
+          "sd": 0.006779878220276019,
+          "min": 0.20679855346679688,
+          "max": 0.22173309326171875
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 23.5,
+          "sd": 1.9148542155126762,
+          "min": 21.0,
+          "max": 25.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 31.0,
+          "sd": 5.597618541248888,
+          "min": 24.0,
+          "max": 36.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 30.75,
+          "sd": 5.315072906367325,
+          "min": 24.0,
+          "max": 35.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 118.255615234375,
+          "sd": 21.353220143313937,
+          "min": 91.552734375,
+          "max": 137.3291015625
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 13.0,
+          "sd": 5.354126134736337,
+          "min": 7.0,
+          "max": 20.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01538173248544255,
+          "sd": 0.003209802937206628,
+          "min": 0.011898224418817499,
+          "max": 0.01887470789142549
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 7.120467032967033,
+          "sd": 2.259815738693195,
+          "min": 4.6,
+          "max": 9.285714285714286
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 5.875,
+          "sd": 3.79418414594407,
+          "min": 3.0,
+          "max": 11.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 13.825000000000001,
+          "sd": 3.534944601168925,
+          "min": 11.0,
+          "max": 18.6
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 16.0,
+          "sd": 2.70801280154532,
+          "min": 14.0,
+          "max": 20.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 14.25,
+          "sd": 2.8722813232690143,
+          "min": 12.0,
+          "max": 18.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.02,
+      "bundle_width_level_px": 16.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.020824432891768562,
+          "sd": 0.000440063301161662,
+          "min": 0.020271302614613563,
+          "max": 0.021255492458242792
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 19.268872844431634,
+          "sd": 0.4071911027616344,
+          "min": 18.75706073255809,
+          "max": 19.667732780639113
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 5459.000135979778,
+          "sd": 115.35995401972272,
+          "min": 5314.000352605258,
+          "max": 5571.999814973598
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.019268035888671875,
+          "sd": 0.00048015710304172895,
+          "min": 0.018680572509765625,
+          "max": 0.0197906494140625
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.03215599060058594,
+          "sd": 0.0006576675271995326,
+          "min": 0.03150177001953125,
+          "max": 0.033069610595703125
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.29479312896728516,
+          "sd": 0.010324716345017698,
+          "min": 0.2842559814453125,
+          "max": 0.30892181396484375
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 23.5,
+          "sd": 1.9148542155126762,
+          "min": 21.0,
+          "max": 25.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 31.0,
+          "sd": 5.597618541248888,
+          "min": 24.0,
+          "max": 36.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 30.75,
+          "sd": 5.315072906367325,
+          "min": 24.0,
+          "max": 35.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 118.255615234375,
+          "sd": 21.353220143313937,
+          "min": 91.552734375,
+          "max": 137.3291015625
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 13.0,
+          "sd": 5.354126134736337,
+          "min": 7.0,
+          "max": 20.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01538173248544255,
+          "sd": 0.003209802937206628,
+          "min": 0.011898224418817499,
+          "max": 0.01887470789142549
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 7.120467032967033,
+          "sd": 2.259815738693195,
+          "min": 4.6,
+          "max": 9.285714285714286
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 5.875,
+          "sd": 3.79418414594407,
+          "min": 3.0,
+          "max": 11.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 13.825000000000001,
+          "sd": 3.534944601168925,
+          "min": 11.0,
+          "max": 18.6
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 16.0,
+          "sd": 2.70801280154532,
+          "min": 14.0,
+          "max": 20.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 14.25,
+          "sd": 2.8722813232690143,
+          "min": 12.0,
+          "max": 18.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.04,
+      "bundle_width_level_px": 6.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.04074287489544917,
+          "sd": 0.0004519784267234484,
+          "min": 0.04034424156955974,
+          "max": 0.04123688022687609
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 37.6994312285602,
+          "sd": 0.4182161827995288,
+          "min": 37.33057533183359,
+          "max": 38.15653495691667
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 10680.500196592628,
+          "sd": 118.48343269499166,
+          "min": 10576.00086201067,
+          "max": 10810.000730194206
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.03722667694091797,
+          "sd": 0.00024630412486894947,
+          "min": 0.0368804931640625,
+          "max": 0.0374603271484375
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.06090831756591797,
+          "sd": 0.0014666386541778856,
+          "min": 0.0592193603515625,
+          "max": 0.062282562255859375
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.22168827056884766,
+          "sd": 0.0026703287303192803,
+          "min": 0.21781158447265625,
+          "max": 0.2239227294921875
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 47.75,
+          "sd": 4.112987559751022,
+          "min": 44.0,
+          "max": 53.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 130.5,
+          "sd": 11.73314393786536,
+          "min": 120.0,
+          "max": 147.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 121.5,
+          "sd": 6.855654600401044,
+          "min": 116.0,
+          "max": 131.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 497.8179931640625,
+          "sd": 44.75839209695954,
+          "min": 457.763671875,
+          "max": 560.760498046875
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 49.25,
+          "sd": 11.086778913041726,
+          "min": 35.0,
+          "max": 61.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01797947709818812,
+          "sd": 0.005361755912023997,
+          "min": 0.012482662968099861,
+          "max": 0.024399399399399398
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.88880353521093,
+          "sd": 0.3884410725139619,
+          "min": 3.3617021276595747,
+          "max": 4.262295081967213
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.875,
+          "sd": 1.3250786140200659,
+          "min": 6.799999999999997,
+          "max": 9.700000000000003
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 15.5,
+          "sd": 3.696845502136472,
+          "min": 11.0,
+          "max": 19.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 19.5,
+          "sd": 2.3804761428476167,
+          "min": 16.0,
+          "max": 21.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.04,
+      "bundle_width_level_px": 11.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.04074287489544917,
+          "sd": 0.0004519784267234484,
+          "min": 0.04034424156955974,
+          "max": 0.04123688022687609
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 37.6994312285602,
+          "sd": 0.4182161827995288,
+          "min": 37.33057533183359,
+          "max": 38.15653495691667
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 10680.500196592628,
+          "sd": 118.48343269499166,
+          "min": 10576.00086201067,
+          "max": 10810.000730194206
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.03722667694091797,
+          "sd": 0.00024630412486894947,
+          "min": 0.0368804931640625,
+          "max": 0.0374603271484375
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.06090831756591797,
+          "sd": 0.0014666386541778856,
+          "min": 0.0592193603515625,
+          "max": 0.062282562255859375
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.37162113189697266,
+          "sd": 0.005906813183974914,
+          "min": 0.3637886047363281,
+          "max": 0.3781242370605469
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 47.75,
+          "sd": 4.112987559751022,
+          "min": 44.0,
+          "max": 53.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 130.5,
+          "sd": 11.73314393786536,
+          "min": 120.0,
+          "max": 147.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 121.5,
+          "sd": 6.855654600401044,
+          "min": 116.0,
+          "max": 131.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 497.8179931640625,
+          "sd": 44.75839209695954,
+          "min": 457.763671875,
+          "max": 560.760498046875
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 49.25,
+          "sd": 11.086778913041726,
+          "min": 35.0,
+          "max": 61.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01797947709818812,
+          "sd": 0.005361755912023997,
+          "min": 0.012482662968099861,
+          "max": 0.024399399399399398
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.88880353521093,
+          "sd": 0.3884410725139619,
+          "min": 3.3617021276595747,
+          "max": 4.262295081967213
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.875,
+          "sd": 1.3250786140200659,
+          "min": 6.799999999999997,
+          "max": 9.700000000000003
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 15.5,
+          "sd": 3.696845502136472,
+          "min": 11.0,
+          "max": 19.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 19.5,
+          "sd": 2.3804761428476167,
+          "min": 16.0,
+          "max": 21.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.04,
+      "bundle_width_level_px": 16.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.04074287489544917,
+          "sd": 0.0004519784267234484,
+          "min": 0.04034424156955974,
+          "max": 0.04123688022687609
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 37.6994312285602,
+          "sd": 0.4182161827995288,
+          "min": 37.33057533183359,
+          "max": 38.15653495691667
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 10680.500196592628,
+          "sd": 118.48343269499166,
+          "min": 10576.00086201067,
+          "max": 10810.000730194206
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.03722667694091797,
+          "sd": 0.00024630412486894947,
+          "min": 0.0368804931640625,
+          "max": 0.0374603271484375
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.06090831756591797,
+          "sd": 0.0014666386541778856,
+          "min": 0.0592193603515625,
+          "max": 0.062282562255859375
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.4944581985473633,
+          "sd": 0.01104983560944039,
+          "min": 0.4791259765625,
+          "max": 0.5054817199707031
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 47.75,
+          "sd": 4.112987559751022,
+          "min": 44.0,
+          "max": 53.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 130.5,
+          "sd": 11.73314393786536,
+          "min": 120.0,
+          "max": 147.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 121.5,
+          "sd": 6.855654600401044,
+          "min": 116.0,
+          "max": 131.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 497.8179931640625,
+          "sd": 44.75839209695954,
+          "min": 457.763671875,
+          "max": 560.760498046875
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 49.25,
+          "sd": 11.086778913041726,
+          "min": 35.0,
+          "max": 61.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.01797947709818812,
+          "sd": 0.005361755912023997,
+          "min": 0.012482662968099861,
+          "max": 0.024399399399399398
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.88880353521093,
+          "sd": 0.3884410725139619,
+          "min": 3.3617021276595747,
+          "max": 4.262295081967213
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.875,
+          "sd": 1.3250786140200659,
+          "min": 6.799999999999997,
+          "max": 9.700000000000003
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 15.5,
+          "sd": 3.696845502136472,
+          "min": 11.0,
+          "max": 19.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 19.5,
+          "sd": 2.3804761428476167,
+          "min": 16.0,
+          "max": 21.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.06,
+      "bundle_width_level_px": 6.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.060668945689306975,
+          "sd": 0.00014569139442648657,
+          "min": 0.060462955196605564,
+          "max": 0.060806276108481924
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 56.13704854143102,
+          "sd": 0.13480842279463034,
+          "min": 55.9464452903531,
+          "max": 56.26412054375195
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 15904.000098777688,
+          "sd": 38.192124900536896,
+          "min": 15850.000927058969,
+          "max": 15940.000444181886
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.054840087890625,
+          "sd": 0.000557207020157172,
+          "min": 0.0542755126953125,
+          "max": 0.05541229248046875
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.08808040618896484,
+          "sd": 0.0012436902800573764,
+          "min": 0.0867156982421875,
+          "max": 0.08918380737304688
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.31003379821777344,
+          "sd": 0.004024147632460544,
+          "min": 0.3049125671386719,
+          "max": 0.31475067138671875
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 71.25,
+          "sd": 4.272001872658765,
+          "min": 65.0,
+          "max": 74.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 295.25,
+          "sd": 16.938614661968867,
+          "min": 279.0,
+          "max": 319.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 263.5,
+          "sd": 11.902380714238083,
+          "min": 252.0,
+          "max": 280.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 1126.2893676757812,
+          "sd": 64.61568703448818,
+          "min": 1064.300537109375,
+          "max": 1216.888427734375
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 97.5,
+          "sd": 18.947295321496416,
+          "min": 77.0,
+          "max": 116.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.02379268144751013,
+          "sd": 0.003831362003465739,
+          "min": 0.01905000626644943,
+          "max": 0.0280986575085857
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.9307039715018863,
+          "sd": 0.25387477413269954,
+          "min": 3.6396396396396398,
+          "max": 4.255813953488372
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.975000000000001,
+          "sd": 1.808083700127475,
+          "min": 6.400000000000006,
+          "max": 10.5
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 20.25,
+          "sd": 3.774917217635375,
+          "min": 15.0,
+          "max": 23.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 22.75,
+          "sd": 5.123475382979799,
+          "min": 18.0,
+          "max": 30.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.06,
+      "bundle_width_level_px": 11.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.060668945689306975,
+          "sd": 0.00014569139442648657,
+          "min": 0.060462955196605564,
+          "max": 0.060806276108481924
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 56.13704854143102,
+          "sd": 0.13480842279463034,
+          "min": 55.9464452903531,
+          "max": 56.26412054375195
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 15904.000098777688,
+          "sd": 38.192124900536896,
+          "min": 15850.000927058969,
+          "max": 15940.000444181886
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.054840087890625,
+          "sd": 0.000557207020157172,
+          "min": 0.0542755126953125,
+          "max": 0.05541229248046875
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.08808040618896484,
+          "sd": 0.0012436902800573764,
+          "min": 0.0867156982421875,
+          "max": 0.08918380737304688
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.49639415740966797,
+          "sd": 0.0064032716199651915,
+          "min": 0.4873237609863281,
+          "max": 0.5023155212402344
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 71.25,
+          "sd": 4.272001872658765,
+          "min": 65.0,
+          "max": 74.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 295.25,
+          "sd": 16.938614661968867,
+          "min": 279.0,
+          "max": 319.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 263.5,
+          "sd": 11.902380714238083,
+          "min": 252.0,
+          "max": 280.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 1126.2893676757812,
+          "sd": 64.61568703448818,
+          "min": 1064.300537109375,
+          "max": 1216.888427734375
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 97.5,
+          "sd": 18.947295321496416,
+          "min": 77.0,
+          "max": 116.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.02379268144751013,
+          "sd": 0.003831362003465739,
+          "min": 0.01905000626644943,
+          "max": 0.0280986575085857
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.9307039715018863,
+          "sd": 0.25387477413269954,
+          "min": 3.6396396396396398,
+          "max": 4.255813953488372
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.975000000000001,
+          "sd": 1.808083700127475,
+          "min": 6.400000000000006,
+          "max": 10.5
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 20.25,
+          "sd": 3.774917217635375,
+          "min": 15.0,
+          "max": 23.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 22.75,
+          "sd": 5.123475382979799,
+          "min": 18.0,
+          "max": 30.0
+        }
+      }
+    },
+    {
+      "target_length_density_px_per_px2": 0.06,
+      "bundle_width_level_px": 16.0,
+      "n": 4,
+      "metrics": {
+        "achieved_length_density_px_per_px2": {
+          "n": 4,
+          "mean": 0.060668945689306975,
+          "sd": 0.00014569139442648657,
+          "min": 0.060462955196605564,
+          "max": 0.060806276108481924
+        },
+        "achieved_length_density_um_per_um2": {
+          "n": 4,
+          "mean": 56.13704854143102,
+          "sd": 0.13480842279463034,
+          "min": 55.9464452903531,
+          "max": 56.26412054375195
+        },
+        "total_visible_centreline_length_px": {
+          "n": 4,
+          "mean": 15904.000098777688,
+          "sd": 38.192124900536896,
+          "min": 15850.000927058969,
+          "max": 15940.000444181886
+        },
+        "clean_1px_union_coverage": {
+          "n": 4,
+          "mean": 0.054840087890625,
+          "sd": 0.000557207020157172,
+          "min": 0.0542755126953125,
+          "max": 0.05541229248046875
+        },
+        "degraded_input_coverage": {
+          "n": 4,
+          "mean": 0.08808040618896484,
+          "sd": 0.0012436902800573764,
+          "min": 0.0867156982421875,
+          "max": 0.08918380737304688
+        },
+        "achieved_thick_mask_coverage": {
+          "n": 4,
+          "mean": 0.6347160339355469,
+          "sd": 0.00986008212562757,
+          "min": 0.62109375,
+          "max": 0.6444282531738281
+        },
+        "n_filaments": {
+          "n": 4,
+          "mean": 71.25,
+          "sd": 4.272001872658765,
+          "min": 65.0,
+          "max": 74.0
+        },
+        "pairwise_crossing_events": {
+          "n": 4,
+          "mean": 295.25,
+          "sd": 16.938614661968867,
+          "min": 279.0,
+          "max": 319.0
+        },
+        "unique_crossing_regions": {
+          "n": 4,
+          "mean": 263.5,
+          "sd": 11.902380714238083,
+          "min": 252.0,
+          "max": 280.0
+        },
+        "crossing_density_per_megapixel": {
+          "n": 4,
+          "mean": 1126.2893676757812,
+          "sd": 64.61568703448818,
+          "min": 1064.300537109375,
+          "max": 1216.888427734375
+        },
+        "gap_count": {
+          "n": 4,
+          "mean": 97.5,
+          "sd": 18.947295321496416,
+          "min": 77.0,
+          "max": 116.0
+        },
+        "missing_centreline_sample_fraction": {
+          "n": 4,
+          "mean": 0.02379268144751013,
+          "sd": 0.003831362003465739,
+          "min": 0.01905000626644943,
+          "max": 0.0280986575085857
+        },
+        "mean_gap_length_px": {
+          "n": 4,
+          "mean": 3.9307039715018863,
+          "sd": 0.25387477413269954,
+          "min": 3.6396396396396398,
+          "max": 4.255813953488372
+        },
+        "median_gap_length_px": {
+          "n": 4,
+          "mean": 3.0,
+          "sd": 0.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "p90_gap_length_px": {
+          "n": 4,
+          "mean": 7.975000000000001,
+          "sd": 1.808083700127475,
+          "min": 6.400000000000006,
+          "max": 10.5
+        },
+        "max_gap_length_px": {
+          "n": 4,
+          "mean": 20.25,
+          "sd": 3.774917217635375,
+          "min": 15.0,
+          "max": 23.0
+        },
+        "filaments_with_no_detected_gap": {
+          "n": 4,
+          "mean": 22.75,
+          "sd": 5.123475382979799,
+          "min": 18.0,
+          "max": 30.0
+        }
+      }
+    }
+  ],
+  "records": [
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021255492458242792,
+      "achieved_length_density_um_per_um2": 19.667732780639113,
+      "total_visible_centreline_length_px": 5571.999814973598,
+      "last_filament_length_px": 539.9999804183798,
+      "clean_1px_union_coverage": 0.0197906494140625,
+      "degraded_input_coverage": 0.033069610595703125,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.179939938355101,
+        "sd": 0.3466315724822356,
+        "min": 5.476515467500941,
+        "max": 6.7267927514872605
+      },
+      "achieved_thick_mask_coverage": 0.1267547607421875,
+      "n_filaments": 21,
+      "pairwise_crossing_events": 29,
+      "unique_crossing_regions": 29,
+      "crossing_density_per_megapixel": 110.626220703125,
+      "gap_count": 13,
+      "missing_centreline_sample_fraction": 0.013564162056041407,
+      "mean_gap_length_px": 5.846153846153846,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.0,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5603,
+      "missing_centreline_samples": 76,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20362001,
+      "sem_noise_seed": 20462001,
+      "centreline_gt_content_sha256": "1788b8de0ac908fcfcb10a35616a1fb5386d8488f2e46dc5932bfe7a1209a390",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w06\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "8d12c7854e99b08f238f2f6b15da5203930731e6a9d2b89f66906c10e4fb171f",
+        "mask_clean.png": "452cc82f9d9a4d727f94ba6afab30bcb0d189ea0293013e9d8f7b3000ab645b5",
+        "gt_centerlines_multilabel.npz": "523797de2b64060b5b99252d4814bd523ce7bd71d40f796e3556428dc77def7a",
+        "sem.png": "6250a8cd1689bcb925c8c3b8ef5ab9b1a4244bdf2f2ed9e390fcb6af4ead1062",
+        "gt_thick_multilabel.npz": "eab561e7b4f36dbdf7d2df0d862ee91773c944043b26859289d7879ea68ff409"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021087645204908707,
+      "achieved_length_density_um_per_um2": 19.512423514903478,
+      "total_visible_centreline_length_px": 5527.999664595588,
+      "last_filament_length_px": 305.99994595813746,
+      "clean_1px_union_coverage": 0.01911163330078125,
+      "degraded_input_coverage": 0.03205108642578125,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 5.946888586563023,
+        "sd": 0.4146767896279801,
+        "min": 5.353672711734821,
+        "max": 6.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.1183929443359375,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 36,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 137.3291015625,
+      "gap_count": 12,
+      "missing_centreline_sample_fraction": 0.01887470789142549,
+      "mean_gap_length_px": 8.75,
+      "median_gap_length_px": 6.5,
+      "p90_gap_length_px": 18.6,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 15,
+      "total_centreline_samples": 5563,
+      "missing_centreline_samples": 105,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20362002,
+      "sem_noise_seed": 20462002,
+      "centreline_gt_content_sha256": "19376bf429c55a6f762712b9f2ef086366939a56fee9287994f4632d2d7998b1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w06\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "7309638cbd1a29dc4dbcd6fd33ca3683810fb6352f94eccff07b70df6153d075",
+        "mask_clean.png": "ab197e2dbf9b709b86facdceb25cfebb9f07a2c9dd1045e9cedb03f8ce202bb0",
+        "gt_centerlines_multilabel.npz": "fa9f0196bf11add25902b91252179855c55d51a1aecafb2e4c81aff2aa92c617",
+        "sem.png": "a75b07235c91f064c7bee11f7656d40a6e17a04a9a4c501e8fd026a58f1e21e9",
+        "gt_thick_multilabel.npz": "077bc3af94fa1ec6c695c46c2e33ec3e7819ba52292b56eac9dd819af011b63b"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.0206832912893092,
+      "achieved_length_density_um_per_um2": 19.138274349625863,
+      "total_visible_centreline_length_px": 5422.000711744671,
+      "last_filament_length_px": 214.00002305327928,
+      "clean_1px_union_coverage": 0.019489288330078125,
+      "degraded_input_coverage": 0.032001495361328125,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.17934772733282,
+        "sd": 0.4362659421444689,
+        "min": 5.326315338889247,
+        "max": 6.749663620425836
+      },
+      "achieved_thick_mask_coverage": 0.12008285522460938,
+      "n_filaments": 23,
+      "pairwise_crossing_events": 35,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 133.514404296875,
+      "gap_count": 7,
+      "missing_centreline_sample_fraction": 0.011898224418817499,
+      "mean_gap_length_px": 9.285714285714286,
+      "median_gap_length_px": 11.0,
+      "p90_gap_length_px": 14.4,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 5463,
+      "missing_centreline_samples": 65,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20362003,
+      "sem_noise_seed": 20462003,
+      "centreline_gt_content_sha256": "efc849ce559d223be027eb1c49e56958d56ff898983267f57d46f5cfa5de4e37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w06\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "64fe127ae7d639e68979f952c3e5c5b7bab077bfb4304c327c7bca321a83ecf5",
+        "mask_clean.png": "818c5de68ea9846936bc8c1b1ec327d145d9e21239b27eb18cfef6aed8dec1eb",
+        "gt_centerlines_multilabel.npz": "f19c92ea7dd145e2d1e42f3cca724062cf6bd5f4c61a7eb74558d1e02dd26c1f",
+        "sem.png": "9e672fe63b730c42de37e8f2e86820d983e7af6b846d6224874a92f8167a5e5e",
+        "gt_thick_multilabel.npz": "38f644b7db63b130b08e58bec0af5581eb42f063b960765a08501fa52721d914"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.020271302614613563,
+      "achieved_length_density_um_per_um2": 18.75706073255809,
+      "total_visible_centreline_length_px": 5314.000352605258,
+      "last_filament_length_px": 271.9999865974118,
+      "clean_1px_union_coverage": 0.018680572509765625,
+      "degraded_input_coverage": 0.03150177001953125,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.006312226269955,
+        "sd": 0.48311408605111344,
+        "min": 5.284700009346519,
+        "max": 6.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.11826324462890625,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 24,
+      "unique_crossing_regions": 24,
+      "crossing_density_per_megapixel": 91.552734375,
+      "gap_count": 20,
+      "missing_centreline_sample_fraction": 0.0171898355754858,
+      "mean_gap_length_px": 4.6,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.300000000000004,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5352,
+      "missing_centreline_samples": 92,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20362004,
+      "sem_noise_seed": 20462004,
+      "centreline_gt_content_sha256": "c8cc501d6e475b9150743f006c81207c39f2e9badf81437be6b2b826839f8cb2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w06\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "5c812a6594200f290a684607f8dd0fffbde4f4f23eb4f2d9b5fc97b9628a952a",
+        "mask_clean.png": "4c7b94a29e4eb34b32054e1f687c6b418368c2b50981662bee85e29d63348846",
+        "gt_centerlines_multilabel.npz": "cb43db1c00f0470334a9ef2541644332802b18207bef9c32180e7ecfd3139e86",
+        "sem.png": "eeee3ef053349b4504f97abaff40afd22ec37682164fa6cc5fbb4c7e1a094584",
+        "gt_thick_multilabel.npz": "bea135a4cdfabed54e07a7905c7747d1d39dd589438f11edb11e0b3bff6fae73"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021255492458242792,
+      "achieved_length_density_um_per_um2": 19.667732780639113,
+      "total_visible_centreline_length_px": 5571.999814973598,
+      "last_filament_length_px": 539.9999804183798,
+      "clean_1px_union_coverage": 0.0197906494140625,
+      "degraded_input_coverage": 0.033069610595703125,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.179939938355103,
+        "sd": 0.3466315724822357,
+        "min": 10.476515467500942,
+        "max": 11.726792751487261
+      },
+      "achieved_thick_mask_coverage": 0.22173309326171875,
+      "n_filaments": 21,
+      "pairwise_crossing_events": 29,
+      "unique_crossing_regions": 29,
+      "crossing_density_per_megapixel": 110.626220703125,
+      "gap_count": 13,
+      "missing_centreline_sample_fraction": 0.013564162056041407,
+      "mean_gap_length_px": 5.846153846153846,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.0,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5603,
+      "missing_centreline_samples": 76,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20362001,
+      "sem_noise_seed": 20462001,
+      "centreline_gt_content_sha256": "1788b8de0ac908fcfcb10a35616a1fb5386d8488f2e46dc5932bfe7a1209a390",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w11\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "8d12c7854e99b08f238f2f6b15da5203930731e6a9d2b89f66906c10e4fb171f",
+        "mask_clean.png": "452cc82f9d9a4d727f94ba6afab30bcb0d189ea0293013e9d8f7b3000ab645b5",
+        "gt_centerlines_multilabel.npz": "523797de2b64060b5b99252d4814bd523ce7bd71d40f796e3556428dc77def7a",
+        "sem.png": "3ceb0a4174b732a28d95b7b6aefe220da7290632e7e1411f3646ac34babd1e01",
+        "gt_thick_multilabel.npz": "a2c87b19d303dc774f215fd5332542904a647a86c1b71a4c5dfe49b0b3962140"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021087645204908707,
+      "achieved_length_density_um_per_um2": 19.512423514903478,
+      "total_visible_centreline_length_px": 5527.999664595588,
+      "last_filament_length_px": 305.99994595813746,
+      "clean_1px_union_coverage": 0.01911163330078125,
+      "degraded_input_coverage": 0.03205108642578125,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 10.94688858656302,
+        "sd": 0.4146767896279804,
+        "min": 10.35367271173482,
+        "max": 11.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.20679855346679688,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 36,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 137.3291015625,
+      "gap_count": 12,
+      "missing_centreline_sample_fraction": 0.01887470789142549,
+      "mean_gap_length_px": 8.75,
+      "median_gap_length_px": 6.5,
+      "p90_gap_length_px": 18.6,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 15,
+      "total_centreline_samples": 5563,
+      "missing_centreline_samples": 105,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20362002,
+      "sem_noise_seed": 20462002,
+      "centreline_gt_content_sha256": "19376bf429c55a6f762712b9f2ef086366939a56fee9287994f4632d2d7998b1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w11\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "7309638cbd1a29dc4dbcd6fd33ca3683810fb6352f94eccff07b70df6153d075",
+        "mask_clean.png": "ab197e2dbf9b709b86facdceb25cfebb9f07a2c9dd1045e9cedb03f8ce202bb0",
+        "gt_centerlines_multilabel.npz": "fa9f0196bf11add25902b91252179855c55d51a1aecafb2e4c81aff2aa92c617",
+        "sem.png": "c7db0e39391033f036992860b70e3b1d700db926d53bde57841a1ce5b92c2faa",
+        "gt_thick_multilabel.npz": "5f26967989f4239bc68dded5c1ca54c730aef842b33aff5c6d38be156ee2fd4b"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.0206832912893092,
+      "achieved_length_density_um_per_um2": 19.138274349625863,
+      "total_visible_centreline_length_px": 5422.000711744671,
+      "last_filament_length_px": 214.00002305327928,
+      "clean_1px_union_coverage": 0.019489288330078125,
+      "degraded_input_coverage": 0.032001495361328125,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.179347727332818,
+        "sd": 0.4362659421444689,
+        "min": 10.326315338889247,
+        "max": 11.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.20926666259765625,
+      "n_filaments": 23,
+      "pairwise_crossing_events": 35,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 133.514404296875,
+      "gap_count": 7,
+      "missing_centreline_sample_fraction": 0.011898224418817499,
+      "mean_gap_length_px": 9.285714285714286,
+      "median_gap_length_px": 11.0,
+      "p90_gap_length_px": 14.4,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 5463,
+      "missing_centreline_samples": 65,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20362003,
+      "sem_noise_seed": 20462003,
+      "centreline_gt_content_sha256": "efc849ce559d223be027eb1c49e56958d56ff898983267f57d46f5cfa5de4e37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w11\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "64fe127ae7d639e68979f952c3e5c5b7bab077bfb4304c327c7bca321a83ecf5",
+        "mask_clean.png": "818c5de68ea9846936bc8c1b1ec327d145d9e21239b27eb18cfef6aed8dec1eb",
+        "gt_centerlines_multilabel.npz": "f19c92ea7dd145e2d1e42f3cca724062cf6bd5f4c61a7eb74558d1e02dd26c1f",
+        "sem.png": "504bb7343f2d3534f4a7c37369d815fd4310e2ceb31447a2b48617dee52fc198",
+        "gt_thick_multilabel.npz": "4fd9afdd76fb7b5ab011afe88aa1fdfe1bca5bdd8d1c9fe4523da3c4d234e5d1"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.020271302614613563,
+      "achieved_length_density_um_per_um2": 18.75706073255809,
+      "total_visible_centreline_length_px": 5314.000352605258,
+      "last_filament_length_px": 271.9999865974118,
+      "clean_1px_union_coverage": 0.018680572509765625,
+      "degraded_input_coverage": 0.03150177001953125,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.006312226269957,
+        "sd": 0.4831140860511136,
+        "min": 10.284700009346519,
+        "max": 11.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.2089996337890625,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 24,
+      "unique_crossing_regions": 24,
+      "crossing_density_per_megapixel": 91.552734375,
+      "gap_count": 20,
+      "missing_centreline_sample_fraction": 0.0171898355754858,
+      "mean_gap_length_px": 4.6,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.300000000000004,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5352,
+      "missing_centreline_samples": 92,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20362004,
+      "sem_noise_seed": 20462004,
+      "centreline_gt_content_sha256": "c8cc501d6e475b9150743f006c81207c39f2e9badf81437be6b2b826839f8cb2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w11\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "5c812a6594200f290a684607f8dd0fffbde4f4f23eb4f2d9b5fc97b9628a952a",
+        "mask_clean.png": "4c7b94a29e4eb34b32054e1f687c6b418368c2b50981662bee85e29d63348846",
+        "gt_centerlines_multilabel.npz": "cb43db1c00f0470334a9ef2541644332802b18207bef9c32180e7ecfd3139e86",
+        "sem.png": "822e144fe0d54f0af9bb074561a16c861afa2cab5e7df13b99d3deb42adaebd3",
+        "gt_thick_multilabel.npz": "203611c855085ed10dabb0285b0c59efbeb9d0897a2e0ca8cb7b3a828c7a2aa7"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021255492458242792,
+      "achieved_length_density_um_per_um2": 19.667732780639113,
+      "total_visible_centreline_length_px": 5571.999814973598,
+      "last_filament_length_px": 539.9999804183798,
+      "clean_1px_union_coverage": 0.0197906494140625,
+      "degraded_input_coverage": 0.033069610595703125,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.1799399383551,
+        "sd": 0.3466315724822354,
+        "min": 15.476515467500942,
+        "max": 16.72679275148726
+      },
+      "achieved_thick_mask_coverage": 0.30892181396484375,
+      "n_filaments": 21,
+      "pairwise_crossing_events": 29,
+      "unique_crossing_regions": 29,
+      "crossing_density_per_megapixel": 110.626220703125,
+      "gap_count": 13,
+      "missing_centreline_sample_fraction": 0.013564162056041407,
+      "mean_gap_length_px": 5.846153846153846,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.0,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5603,
+      "missing_centreline_samples": 76,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20362001,
+      "sem_noise_seed": 20462001,
+      "centreline_gt_content_sha256": "1788b8de0ac908fcfcb10a35616a1fb5386d8488f2e46dc5932bfe7a1209a390",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w16\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "8d12c7854e99b08f238f2f6b15da5203930731e6a9d2b89f66906c10e4fb171f",
+        "mask_clean.png": "452cc82f9d9a4d727f94ba6afab30bcb0d189ea0293013e9d8f7b3000ab645b5",
+        "gt_centerlines_multilabel.npz": "523797de2b64060b5b99252d4814bd523ce7bd71d40f796e3556428dc77def7a",
+        "sem.png": "ba3c728709b15a3f0b6e0bbb2ad9f3ab4c84ad9be37921681de8049ffa0ca64a",
+        "gt_thick_multilabel.npz": "a59d8fbce7defb59b6cfd0948d93b5c354e4a7a1adb2e0191b59a2c54a32cea2"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021087645204908707,
+      "achieved_length_density_um_per_um2": 19.512423514903478,
+      "total_visible_centreline_length_px": 5527.999664595588,
+      "last_filament_length_px": 305.99994595813746,
+      "clean_1px_union_coverage": 0.01911163330078125,
+      "degraded_input_coverage": 0.03205108642578125,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 15.94688858656302,
+        "sd": 0.41467678962798027,
+        "min": 15.35367271173482,
+        "max": 16.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.2842559814453125,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 36,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 137.3291015625,
+      "gap_count": 12,
+      "missing_centreline_sample_fraction": 0.01887470789142549,
+      "mean_gap_length_px": 8.75,
+      "median_gap_length_px": 6.5,
+      "p90_gap_length_px": 18.6,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 15,
+      "total_centreline_samples": 5563,
+      "missing_centreline_samples": 105,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20362002,
+      "sem_noise_seed": 20462002,
+      "centreline_gt_content_sha256": "19376bf429c55a6f762712b9f2ef086366939a56fee9287994f4632d2d7998b1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w16\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "7309638cbd1a29dc4dbcd6fd33ca3683810fb6352f94eccff07b70df6153d075",
+        "mask_clean.png": "ab197e2dbf9b709b86facdceb25cfebb9f07a2c9dd1045e9cedb03f8ce202bb0",
+        "gt_centerlines_multilabel.npz": "fa9f0196bf11add25902b91252179855c55d51a1aecafb2e4c81aff2aa92c617",
+        "sem.png": "16d630161859e08dc7b3cad768d81f838e112beb61d0208e063f325e26291288",
+        "gt_thick_multilabel.npz": "7be57ab414fb890af2bb59e6e69321af19de68858b818188c9a72fa9c2875e1a"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.0206832912893092,
+      "achieved_length_density_um_per_um2": 19.138274349625863,
+      "total_visible_centreline_length_px": 5422.000711744671,
+      "last_filament_length_px": 214.00002305327928,
+      "clean_1px_union_coverage": 0.019489288330078125,
+      "degraded_input_coverage": 0.032001495361328125,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.179347727332818,
+        "sd": 0.43626594214446907,
+        "min": 15.326315338889247,
+        "max": 16.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.2918357849121094,
+      "n_filaments": 23,
+      "pairwise_crossing_events": 35,
+      "unique_crossing_regions": 35,
+      "crossing_density_per_megapixel": 133.514404296875,
+      "gap_count": 7,
+      "missing_centreline_sample_fraction": 0.011898224418817499,
+      "mean_gap_length_px": 9.285714285714286,
+      "median_gap_length_px": 11.0,
+      "p90_gap_length_px": 14.4,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 5463,
+      "missing_centreline_samples": 65,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20362003,
+      "sem_noise_seed": 20462003,
+      "centreline_gt_content_sha256": "efc849ce559d223be027eb1c49e56958d56ff898983267f57d46f5cfa5de4e37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w16\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "64fe127ae7d639e68979f952c3e5c5b7bab077bfb4304c327c7bca321a83ecf5",
+        "mask_clean.png": "818c5de68ea9846936bc8c1b1ec327d145d9e21239b27eb18cfef6aed8dec1eb",
+        "gt_centerlines_multilabel.npz": "f19c92ea7dd145e2d1e42f3cca724062cf6bd5f4c61a7eb74558d1e02dd26c1f",
+        "sem.png": "3ebdbdc49e073e7357d02d5a67f1bd1dcd3d48d9c306483393d2d20009f96352",
+        "gt_thick_multilabel.npz": "d23ff3995be017965315081728557cf0aa57efce2c6d83edf9209a97012cbab4"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.020271302614613563,
+      "achieved_length_density_um_per_um2": 18.75706073255809,
+      "total_visible_centreline_length_px": 5314.000352605258,
+      "last_filament_length_px": 271.9999865974118,
+      "clean_1px_union_coverage": 0.018680572509765625,
+      "degraded_input_coverage": 0.03150177001953125,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.006312226269955,
+        "sd": 0.4831140860511138,
+        "min": 15.284700009346519,
+        "max": 16.7416619783393
+      },
+      "achieved_thick_mask_coverage": 0.294158935546875,
+      "n_filaments": 25,
+      "pairwise_crossing_events": 24,
+      "unique_crossing_regions": 24,
+      "crossing_density_per_megapixel": 91.552734375,
+      "gap_count": 20,
+      "missing_centreline_sample_fraction": 0.0171898355754858,
+      "mean_gap_length_px": 4.6,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 11.300000000000004,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 12,
+      "total_centreline_samples": 5352,
+      "missing_centreline_samples": 92,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20362004,
+      "sem_noise_seed": 20462004,
+      "centreline_gt_content_sha256": "c8cc501d6e475b9150743f006c81207c39f2e9badf81437be6b2b826839f8cb2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld020\\w16\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "5c812a6594200f290a684607f8dd0fffbde4f4f23eb4f2d9b5fc97b9628a952a",
+        "mask_clean.png": "4c7b94a29e4eb34b32054e1f687c6b418368c2b50981662bee85e29d63348846",
+        "gt_centerlines_multilabel.npz": "cb43db1c00f0470334a9ef2541644332802b18207bef9c32180e7ecfd3139e86",
+        "sem.png": "d22317767b9338718fa9e67782809c6030a2a4656b852ea1e5acdde8ec0eb366",
+        "gt_thick_multilabel.npz": "1801e4b867867d8584548228fac23181009c6f558e5c1b7d789f2f550b18df16"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.040374754976745954,
+      "achieved_length_density_um_per_um2": 37.358809424266134,
+      "total_visible_centreline_length_px": 10583.999768624091,
+      "last_filament_length_px": 461.9999712659718,
+      "clean_1px_union_coverage": 0.0373077392578125,
+      "degraded_input_coverage": 0.060153961181640625,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.123155098754164,
+        "sd": 0.3955283027298939,
+        "min": 5.251060185944407,
+        "max": 6.736017412152187
+      },
+      "achieved_thick_mask_coverage": 0.2239227294921875,
+      "n_filaments": 49,
+      "pairwise_crossing_events": 130,
+      "unique_crossing_regions": 122,
+      "crossing_density_per_megapixel": 495.91064453125,
+      "gap_count": 61,
+      "missing_centreline_sample_fraction": 0.024399399399399398,
+      "mean_gap_length_px": 4.262295081967213,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 18.0,
+      "filaments_with_no_detected_gap": 16,
+      "total_centreline_samples": 10656,
+      "missing_centreline_samples": 260,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20372001,
+      "sem_noise_seed": 20472001,
+      "centreline_gt_content_sha256": "0a3e66954ff8b42c6dc9f4d12eeb4560b88fb4217ca8ffd70f2372ca4478571e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w06\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "2ea9ebf91d9b5707abb808d6f5268ea5b9c5549107c9009a5bb6a008617501d5",
+        "mask_clean.png": "a13de12f6f5aac092fe837e7fbac07ad8f3a2627692d5cebf3d286252ceaa6dd",
+        "gt_centerlines_multilabel.npz": "84a49c38494a436fb27172d973afd32794ef3761a98790b815c353db94e479a6",
+        "sem.png": "e777b4d2f765cccfd3154950d66531beaf81f928d4ace3787899197bb6831c16",
+        "gt_thick_multilabel.npz": "a4c9b0fb94bb1cf7e8e2c59c3ba0009a3e29899df442c70e32c7f82c005db1a6"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.0410156228086149,
+      "achieved_length_density_um_per_um2": 37.95180520122439,
+      "total_visible_centreline_length_px": 10751.999425541544,
+      "last_filament_length_px": 364.000029606108,
+      "clean_1px_union_coverage": 0.0368804931640625,
+      "degraded_input_coverage": 0.062282562255859375,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 5.930494943544431,
+        "sd": 0.4068741652126476,
+        "min": 5.331521615149212,
+        "max": 6.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.21781158447265625,
+      "n_filaments": 45,
+      "pairwise_crossing_events": 147,
+      "unique_crossing_regions": 131,
+      "crossing_density_per_megapixel": 560.760498046875,
+      "gap_count": 35,
+      "missing_centreline_sample_fraction": 0.012482662968099861,
+      "mean_gap_length_px": 3.857142857142857,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10815,
+      "missing_centreline_samples": 135,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20372002,
+      "sem_noise_seed": 20472002,
+      "centreline_gt_content_sha256": "a2e4e695f5274d4fe0b0d8cf5c4614deba6fa89f30ad2505445a295b1c43e257",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w06\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "c98b23e483678ed08726baaa46dcaf5c87298c1e5353a976cf9c224c9e5290c8",
+        "mask_clean.png": "5da9f144d68c415072d3f11c2ee51e6ac008d1dda846f7294bb26f9ca94e94d0",
+        "gt_centerlines_multilabel.npz": "6b3c329874665bf38847e6faed13a873b3685ba4ba633bef00cb651f4a076f76",
+        "sem.png": "23c6c530f5829c2944b81d8cdf580539651b0592170b5fe46b0df6bb29f02e82",
+        "gt_thick_multilabel.npz": "72fc789afc847d0772cb6cb0410e847eb4b819afe9cd7d673be730dcd37a2505"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04034424156955974,
+      "achieved_length_density_um_per_um2": 37.33057533183359,
+      "total_visible_centreline_length_px": 10576.00086201067,
+      "last_filament_length_px": 175.9999708592561,
+      "clean_1px_union_coverage": 0.0374603271484375,
+      "degraded_input_coverage": 0.0592193603515625,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.162320250908013,
+        "sd": 0.4110181534530732,
+        "min": 5.274614142936568,
+        "max": 6.749663620425836
+      },
+      "achieved_thick_mask_coverage": 0.22261428833007812,
+      "n_filaments": 44,
+      "pairwise_crossing_events": 120,
+      "unique_crossing_regions": 116,
+      "crossing_density_per_megapixel": 457.763671875,
+      "gap_count": 47,
+      "missing_centreline_sample_fraction": 0.014835680751173709,
+      "mean_gap_length_px": 3.3617021276595747,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.799999999999997,
+      "max_gap_length_px": 11.0,
+      "filaments_with_no_detected_gap": 20,
+      "total_centreline_samples": 10650,
+      "missing_centreline_samples": 158,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20372003,
+      "sem_noise_seed": 20472003,
+      "centreline_gt_content_sha256": "1a694d7dd6c17bb487157339b0f9c663371a2ce18a6dbcaa43108c538abfbe37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w06\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "d2ea52be10aaa8e147464a5742d919f0536db0536bc28cf7d4daf8eb482cbdbe",
+        "mask_clean.png": "3e87440f8581fbb92b200aed0730eb2d84427213277362baded35523ed2d6690",
+        "gt_centerlines_multilabel.npz": "646e04d12d9009e2f8b4d8f11b4f47c4fbec1a8fd602a0841b09ecfbad865254",
+        "sem.png": "ff765007adb64ec596d2e7fbe27e2eb57e9fd5831a60fb19a0287d7d0470b0d4",
+        "gt_thick_multilabel.npz": "39abfaba495c1d2805a296ea0eff0754d4376f4be24d61102fab95f092fced83"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04123688022687609,
+      "achieved_length_density_um_per_um2": 38.15653495691667,
+      "total_visible_centreline_length_px": 10810.000730194206,
+      "last_filament_length_px": 470.0000878434489,
+      "clean_1px_union_coverage": 0.037258148193359375,
+      "degraded_input_coverage": 0.061977386474609375,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 5.915307938636933,
+        "sd": 0.47390004031385907,
+        "min": 5.255118211880893,
+        "max": 6.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.22240447998046875,
+      "n_filaments": 53,
+      "pairwise_crossing_events": 125,
+      "unique_crossing_regions": 117,
+      "crossing_density_per_megapixel": 476.837158203125,
+      "gap_count": 54,
+      "missing_centreline_sample_fraction": 0.020200165274079515,
+      "mean_gap_length_px": 4.074074074074074,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 9.700000000000003,
+      "max_gap_length_px": 19.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10891,
+      "missing_centreline_samples": 220,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20372004,
+      "sem_noise_seed": 20472004,
+      "centreline_gt_content_sha256": "28c7d6104b2fb733ab6fe8a16ff85495ec1ad8ea2b6f9652f1097b3e75e83962",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w06\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "14e7ecb1bd16ae7568c607eeeb7c172ac0e85323e6f452630125571c9dd059aa",
+        "mask_clean.png": "ee3615905d2f0d5e9dbc14c60d557791fe49d46048988d9c12f2884b3c8d6132",
+        "gt_centerlines_multilabel.npz": "e38b5d735f2db6b85a8f68a1675798de51d0e611d4ae5b586ed3680466b4de39",
+        "sem.png": "fd743a528dc1253e4d18de9b7d382f8c4274fd3a77d477929fba60a28cd72c60",
+        "gt_thick_multilabel.npz": "dab94fdd8944bedc61e7e946d549e8288975d1b564efd5863fbcdc5948cd4d9c"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.040374754976745954,
+      "achieved_length_density_um_per_um2": 37.358809424266134,
+      "total_visible_centreline_length_px": 10583.999768624091,
+      "last_filament_length_px": 461.9999712659718,
+      "clean_1px_union_coverage": 0.0373077392578125,
+      "degraded_input_coverage": 0.060153961181640625,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.123155098754165,
+        "sd": 0.395528302729894,
+        "min": 10.251060185944407,
+        "max": 11.736017412152188
+      },
+      "achieved_thick_mask_coverage": 0.37255859375,
+      "n_filaments": 49,
+      "pairwise_crossing_events": 130,
+      "unique_crossing_regions": 122,
+      "crossing_density_per_megapixel": 495.91064453125,
+      "gap_count": 61,
+      "missing_centreline_sample_fraction": 0.024399399399399398,
+      "mean_gap_length_px": 4.262295081967213,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 18.0,
+      "filaments_with_no_detected_gap": 16,
+      "total_centreline_samples": 10656,
+      "missing_centreline_samples": 260,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20372001,
+      "sem_noise_seed": 20472001,
+      "centreline_gt_content_sha256": "0a3e66954ff8b42c6dc9f4d12eeb4560b88fb4217ca8ffd70f2372ca4478571e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w11\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "2ea9ebf91d9b5707abb808d6f5268ea5b9c5549107c9009a5bb6a008617501d5",
+        "mask_clean.png": "a13de12f6f5aac092fe837e7fbac07ad8f3a2627692d5cebf3d286252ceaa6dd",
+        "gt_centerlines_multilabel.npz": "84a49c38494a436fb27172d973afd32794ef3761a98790b815c353db94e479a6",
+        "sem.png": "2c89de634678eceea1023d8ab4720a6f8c0a65a117f03f81b0cbad755f4cfe91",
+        "gt_thick_multilabel.npz": "a5e061366f5a560e2b14bc0e80f8b6e9ae100168786b140f7a70c89ce3b7caab"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.0410156228086149,
+      "achieved_length_density_um_per_um2": 37.95180520122439,
+      "total_visible_centreline_length_px": 10751.999425541544,
+      "last_filament_length_px": 364.000029606108,
+      "clean_1px_union_coverage": 0.0368804931640625,
+      "degraded_input_coverage": 0.062282562255859375,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 10.930494943544431,
+        "sd": 0.40687416521264785,
+        "min": 10.331521615149212,
+        "max": 11.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.3637886047363281,
+      "n_filaments": 45,
+      "pairwise_crossing_events": 147,
+      "unique_crossing_regions": 131,
+      "crossing_density_per_megapixel": 560.760498046875,
+      "gap_count": 35,
+      "missing_centreline_sample_fraction": 0.012482662968099861,
+      "mean_gap_length_px": 3.857142857142857,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10815,
+      "missing_centreline_samples": 135,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20372002,
+      "sem_noise_seed": 20472002,
+      "centreline_gt_content_sha256": "a2e4e695f5274d4fe0b0d8cf5c4614deba6fa89f30ad2505445a295b1c43e257",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w11\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "c98b23e483678ed08726baaa46dcaf5c87298c1e5353a976cf9c224c9e5290c8",
+        "mask_clean.png": "5da9f144d68c415072d3f11c2ee51e6ac008d1dda846f7294bb26f9ca94e94d0",
+        "gt_centerlines_multilabel.npz": "6b3c329874665bf38847e6faed13a873b3685ba4ba633bef00cb651f4a076f76",
+        "sem.png": "2781ff7db791b2efaf10e9a06bd32d5dbb048163b66a52d6c3097b11873f405d",
+        "gt_thick_multilabel.npz": "d38e113d4e92d2bc9137b548c53d9c2b11aadf1f4037e48058e9e5ad21500447"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04034424156955974,
+      "achieved_length_density_um_per_um2": 37.33057533183359,
+      "total_visible_centreline_length_px": 10576.00086201067,
+      "last_filament_length_px": 175.9999708592561,
+      "clean_1px_union_coverage": 0.0374603271484375,
+      "degraded_input_coverage": 0.0592193603515625,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.162320250908012,
+        "sd": 0.4110181534530732,
+        "min": 10.274614142936569,
+        "max": 11.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.3720130920410156,
+      "n_filaments": 44,
+      "pairwise_crossing_events": 120,
+      "unique_crossing_regions": 116,
+      "crossing_density_per_megapixel": 457.763671875,
+      "gap_count": 47,
+      "missing_centreline_sample_fraction": 0.014835680751173709,
+      "mean_gap_length_px": 3.3617021276595747,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.799999999999997,
+      "max_gap_length_px": 11.0,
+      "filaments_with_no_detected_gap": 20,
+      "total_centreline_samples": 10650,
+      "missing_centreline_samples": 158,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20372003,
+      "sem_noise_seed": 20472003,
+      "centreline_gt_content_sha256": "1a694d7dd6c17bb487157339b0f9c663371a2ce18a6dbcaa43108c538abfbe37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w11\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "d2ea52be10aaa8e147464a5742d919f0536db0536bc28cf7d4daf8eb482cbdbe",
+        "mask_clean.png": "3e87440f8581fbb92b200aed0730eb2d84427213277362baded35523ed2d6690",
+        "gt_centerlines_multilabel.npz": "646e04d12d9009e2f8b4d8f11b4f47c4fbec1a8fd602a0841b09ecfbad865254",
+        "sem.png": "68782e2f85da560a63f691486a13d331ca8bc76aa94649d4ad04ddb5a9255411",
+        "gt_thick_multilabel.npz": "450fb7c8a2af3431c7a397e307613a40937b28fa66bdf6728f7896d1182eb1be"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04123688022687609,
+      "achieved_length_density_um_per_um2": 38.15653495691667,
+      "total_visible_centreline_length_px": 10810.000730194206,
+      "last_filament_length_px": 470.0000878434489,
+      "clean_1px_union_coverage": 0.037258148193359375,
+      "degraded_input_coverage": 0.061977386474609375,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 10.915307938636932,
+        "sd": 0.4739000403138592,
+        "min": 10.255118211880893,
+        "max": 11.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.3781242370605469,
+      "n_filaments": 53,
+      "pairwise_crossing_events": 125,
+      "unique_crossing_regions": 117,
+      "crossing_density_per_megapixel": 476.837158203125,
+      "gap_count": 54,
+      "missing_centreline_sample_fraction": 0.020200165274079515,
+      "mean_gap_length_px": 4.074074074074074,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 9.700000000000003,
+      "max_gap_length_px": 19.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10891,
+      "missing_centreline_samples": 220,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20372004,
+      "sem_noise_seed": 20472004,
+      "centreline_gt_content_sha256": "28c7d6104b2fb733ab6fe8a16ff85495ec1ad8ea2b6f9652f1097b3e75e83962",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w11\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "14e7ecb1bd16ae7568c607eeeb7c172ac0e85323e6f452630125571c9dd059aa",
+        "mask_clean.png": "ee3615905d2f0d5e9dbc14c60d557791fe49d46048988d9c12f2884b3c8d6132",
+        "gt_centerlines_multilabel.npz": "e38b5d735f2db6b85a8f68a1675798de51d0e611d4ae5b586ed3680466b4de39",
+        "sem.png": "caa7ab9221d4b61352c752bf047b5738db678c9ba84718ca0fdc1e7de3651bf6",
+        "gt_thick_multilabel.npz": "d4147b9e5f3d8e90d2c33f1db57fbb512add2012fdc700c26940ebdf59dd6c27"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.040374754976745954,
+      "achieved_length_density_um_per_um2": 37.358809424266134,
+      "total_visible_centreline_length_px": 10583.999768624091,
+      "last_filament_length_px": 461.9999712659718,
+      "clean_1px_union_coverage": 0.0373077392578125,
+      "degraded_input_coverage": 0.060153961181640625,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.123155098754165,
+        "sd": 0.3955283027298939,
+        "min": 15.251060185944407,
+        "max": 16.736017412152187
+      },
+      "achieved_thick_mask_coverage": 0.4970703125,
+      "n_filaments": 49,
+      "pairwise_crossing_events": 130,
+      "unique_crossing_regions": 122,
+      "crossing_density_per_megapixel": 495.91064453125,
+      "gap_count": 61,
+      "missing_centreline_sample_fraction": 0.024399399399399398,
+      "mean_gap_length_px": 4.262295081967213,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 18.0,
+      "filaments_with_no_detected_gap": 16,
+      "total_centreline_samples": 10656,
+      "missing_centreline_samples": 260,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20372001,
+      "sem_noise_seed": 20472001,
+      "centreline_gt_content_sha256": "0a3e66954ff8b42c6dc9f4d12eeb4560b88fb4217ca8ffd70f2372ca4478571e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w16\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "2ea9ebf91d9b5707abb808d6f5268ea5b9c5549107c9009a5bb6a008617501d5",
+        "mask_clean.png": "a13de12f6f5aac092fe837e7fbac07ad8f3a2627692d5cebf3d286252ceaa6dd",
+        "gt_centerlines_multilabel.npz": "84a49c38494a436fb27172d973afd32794ef3761a98790b815c353db94e479a6",
+        "sem.png": "dcb0c69f2052ae70fa3b54601d1f3f938f13910e900a34025dbbbe6b5802ffbf",
+        "gt_thick_multilabel.npz": "c8382098af4f721b4093424fe26a172f99f8472774af2ff678a9f01a4e1d7f5f"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.0410156228086149,
+      "achieved_length_density_um_per_um2": 37.95180520122439,
+      "total_visible_centreline_length_px": 10751.999425541544,
+      "last_filament_length_px": 364.000029606108,
+      "clean_1px_union_coverage": 0.0368804931640625,
+      "degraded_input_coverage": 0.062282562255859375,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 15.930494943544431,
+        "sd": 0.4068741652126477,
+        "min": 15.331521615149212,
+        "max": 16.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.4791259765625,
+      "n_filaments": 45,
+      "pairwise_crossing_events": 147,
+      "unique_crossing_regions": 131,
+      "crossing_density_per_megapixel": 560.760498046875,
+      "gap_count": 35,
+      "missing_centreline_sample_fraction": 0.012482662968099861,
+      "mean_gap_length_px": 3.857142857142857,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 14.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10815,
+      "missing_centreline_samples": 135,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20372002,
+      "sem_noise_seed": 20472002,
+      "centreline_gt_content_sha256": "a2e4e695f5274d4fe0b0d8cf5c4614deba6fa89f30ad2505445a295b1c43e257",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w16\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "c98b23e483678ed08726baaa46dcaf5c87298c1e5353a976cf9c224c9e5290c8",
+        "mask_clean.png": "5da9f144d68c415072d3f11c2ee51e6ac008d1dda846f7294bb26f9ca94e94d0",
+        "gt_centerlines_multilabel.npz": "6b3c329874665bf38847e6faed13a873b3685ba4ba633bef00cb651f4a076f76",
+        "sem.png": "92df74e707dfad3347416f866b7f760ed184487546fd8507e80c93ed8979b8e2",
+        "gt_thick_multilabel.npz": "da2ef1881779013ea86724cad6c4c407e1c50bb39385ec6b69ce88802101d7d8"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04034424156955974,
+      "achieved_length_density_um_per_um2": 37.33057533183359,
+      "total_visible_centreline_length_px": 10576.00086201067,
+      "last_filament_length_px": 175.9999708592561,
+      "clean_1px_union_coverage": 0.0374603271484375,
+      "degraded_input_coverage": 0.0592193603515625,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.162320250908017,
+        "sd": 0.41101815345307313,
+        "min": 15.274614142936569,
+        "max": 16.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.49615478515625,
+      "n_filaments": 44,
+      "pairwise_crossing_events": 120,
+      "unique_crossing_regions": 116,
+      "crossing_density_per_megapixel": 457.763671875,
+      "gap_count": 47,
+      "missing_centreline_sample_fraction": 0.014835680751173709,
+      "mean_gap_length_px": 3.3617021276595747,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.799999999999997,
+      "max_gap_length_px": 11.0,
+      "filaments_with_no_detected_gap": 20,
+      "total_centreline_samples": 10650,
+      "missing_centreline_samples": 158,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20372003,
+      "sem_noise_seed": 20472003,
+      "centreline_gt_content_sha256": "1a694d7dd6c17bb487157339b0f9c663371a2ce18a6dbcaa43108c538abfbe37",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w16\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "d2ea52be10aaa8e147464a5742d919f0536db0536bc28cf7d4daf8eb482cbdbe",
+        "mask_clean.png": "3e87440f8581fbb92b200aed0730eb2d84427213277362baded35523ed2d6690",
+        "gt_centerlines_multilabel.npz": "646e04d12d9009e2f8b4d8f11b4f47c4fbec1a8fd602a0841b09ecfbad865254",
+        "sem.png": "f003da72dc71519397ce2d843eb4fcd2e15c26f774dbe9e26e2a4caa8a1ec990",
+        "gt_thick_multilabel.npz": "e0df817a8f45c5d1a742e980daa90f1f403357e565e5213bcb4855d438627581"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04123688022687609,
+      "achieved_length_density_um_per_um2": 38.15653495691667,
+      "total_visible_centreline_length_px": 10810.000730194206,
+      "last_filament_length_px": 470.0000878434489,
+      "clean_1px_union_coverage": 0.037258148193359375,
+      "degraded_input_coverage": 0.061977386474609375,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 15.915307938636932,
+        "sd": 0.4739000403138593,
+        "min": 15.255118211880893,
+        "max": 16.7416619783393
+      },
+      "achieved_thick_mask_coverage": 0.5054817199707031,
+      "n_filaments": 53,
+      "pairwise_crossing_events": 125,
+      "unique_crossing_regions": 117,
+      "crossing_density_per_megapixel": 476.837158203125,
+      "gap_count": 54,
+      "missing_centreline_sample_fraction": 0.020200165274079515,
+      "mean_gap_length_px": 4.074074074074074,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 9.700000000000003,
+      "max_gap_length_px": 19.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 10891,
+      "missing_centreline_samples": 220,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20372004,
+      "sem_noise_seed": 20472004,
+      "centreline_gt_content_sha256": "28c7d6104b2fb733ab6fe8a16ff85495ec1ad8ea2b6f9652f1097b3e75e83962",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld040\\w16\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "14e7ecb1bd16ae7568c607eeeb7c172ac0e85323e6f452630125571c9dd059aa",
+        "mask_clean.png": "ee3615905d2f0d5e9dbc14c60d557791fe49d46048988d9c12f2884b3c8d6132",
+        "gt_centerlines_multilabel.npz": "e38b5d735f2db6b85a8f68a1675798de51d0e611d4ae5b586ed3680466b4de39",
+        "sem.png": "d6e3396d497330e000764bc14b95f44a2715ffc88535cca8bbdf988695242065",
+        "gt_thick_multilabel.npz": "5e9f3b142efdcffee3c787ee2755077e1d78317ce4e30a84c7a1b30a5acd0c9f"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06070709130383358,
+      "achieved_length_density_um_per_um2": 56.17234472451107,
+      "total_visible_centreline_length_px": 15913.99974275215,
+      "last_filament_length_px": 261.9999974128673,
+      "clean_1px_union_coverage": 0.05541229248046875,
+      "degraded_input_coverage": 0.08908462524414062,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.085103683968633,
+        "sd": 0.4035504692036044,
+        "min": 5.251060185944407,
+        "max": 6.736017412152187
+      },
+      "achieved_thick_mask_coverage": 0.31475067138671875,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 290,
+      "unique_crossing_regions": 263,
+      "crossing_density_per_megapixel": 1106.26220703125,
+      "gap_count": 111,
+      "missing_centreline_sample_fraction": 0.02521690281505524,
+      "mean_gap_length_px": 3.6396396396396398,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 16021,
+      "missing_centreline_samples": 404,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20382001,
+      "sem_noise_seed": 20482001,
+      "centreline_gt_content_sha256": "ba0591210a3bf20f64e94877c26cc652c1b9881b1623656a03fe73ecfe4a3dd1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w06\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "9ebfade3b7f95b3401bc9fbeae9e7df97a8a028f655716a8676909813ba9d62c",
+        "mask_clean.png": "4fadccfe4d94f9939b1f263a4f1d25f70ca6f85594a9ed7d0a4d6266919cbce0",
+        "gt_centerlines_multilabel.npz": "0710a5054d0cecdaa083a566e043c69140e1928673e368d276d68dfe05ed64c2",
+        "sem.png": "a351e4c68570ca63eafe4139ac5688d1b8b4f8d675f09ba7890914151e83e750",
+        "gt_thick_multilabel.npz": "40cb22068552175b7db9de0c1c05630adb65ec371101fcaedd663a9602193a5b"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06069946014830681,
+      "achieved_length_density_um_per_um2": 56.16528360710799,
+      "total_visible_centreline_length_px": 15911.99928111774,
+      "last_filament_length_px": 191.99997161544673,
+      "clean_1px_union_coverage": 0.0542755126953125,
+      "degraded_input_coverage": 0.08733749389648438,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 5.95499281909575,
+        "sd": 0.410476969192558,
+        "min": 5.320311471719925,
+        "max": 6.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.3049125671386719,
+      "n_filaments": 72,
+      "pairwise_crossing_events": 319,
+      "unique_crossing_regions": 280,
+      "crossing_density_per_megapixel": 1216.888427734375,
+      "gap_count": 116,
+      "missing_centreline_sample_fraction": 0.0280986575085857,
+      "mean_gap_length_px": 3.8793103448275863,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 16015,
+      "missing_centreline_samples": 450,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20382002,
+      "sem_noise_seed": 20482002,
+      "centreline_gt_content_sha256": "a377239fdd79759226d25b9277e9b4d6e796209d1ed9d59b2dba28e78aec9016",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w06\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "f839cd1fdf26af1288f6f352400c563d8b46bad529e7c389f565aab8800ab9a4",
+        "mask_clean.png": "e6d20316d0df55a3e989eab8d56b034cbea184eca9d885b53a67863b4f049ad4",
+        "gt_centerlines_multilabel.npz": "360254cbf06334d21a5f2f22c86cf0a5e628eccf70c70bac11aff0b13ad8f1b9",
+        "sem.png": "edeb72a01fb89b48c3625576fad482d8ce250a1854bf134ed14a2d1517f8813c",
+        "gt_thick_multilabel.npz": "47185e18f0828c45ac0af626a0259bf6c8e2a3624a8c7542b7a5979095dd2a38"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060462955196605564,
+      "achieved_length_density_um_per_um2": 55.9464452903531,
+      "total_visible_centreline_length_px": 15850.000927058969,
+      "last_filament_length_px": 344.00000454952715,
+      "clean_1px_union_coverage": 0.05521392822265625,
+      "degraded_input_coverage": 0.0867156982421875,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 6.074442402646851,
+        "sd": 0.42866928625834066,
+        "min": 5.274614142936568,
+        "max": 6.749663620425836
+      },
+      "achieved_thick_mask_coverage": 0.3103446960449219,
+      "n_filaments": 65,
+      "pairwise_crossing_events": 279,
+      "unique_crossing_regions": 259,
+      "crossing_density_per_megapixel": 1064.300537109375,
+      "gap_count": 77,
+      "missing_centreline_sample_fraction": 0.01905000626644943,
+      "mean_gap_length_px": 3.948051948051948,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.400000000000006,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 22,
+      "total_centreline_samples": 15958,
+      "missing_centreline_samples": 304,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20382003,
+      "sem_noise_seed": 20482003,
+      "centreline_gt_content_sha256": "50472991a9acee97f1d73bcdd02eb4b4eaf733b99d8bd5cf927cbab5af276ed2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w06\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "4e0c07579934a2f6e117538dd46010b02db7b56c9e58efdbb55557e5fc11fa33",
+        "mask_clean.png": "39d036663099efd9b6dbbcbbaf668bc7cd00519c704926d4ed9578210fa71373",
+        "gt_centerlines_multilabel.npz": "f5bb640498a0e9c7dcf6f67bd0fa50125cb0e10e081cd68d6bd56bbdd963aa02",
+        "sem.png": "bd45be8b0931042c75ebcafc5f36798ec981497573a843e4523c594c6ad8c747",
+        "gt_thick_multilabel.npz": "6a9ca1d2d0f27d9633a876bf611d81bb3fecb52620f46d93f3981bba59c9e0cc"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060806276108481924,
+      "achieved_length_density_um_per_um2": 56.26412054375195,
+      "total_visible_centreline_length_px": 15940.000444181886,
+      "last_filament_length_px": 218.00002169011557,
+      "clean_1px_union_coverage": 0.0544586181640625,
+      "degraded_input_coverage": 0.08918380737304688,
+      "bundle_width_level_px": 6.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 5.928185873623003,
+        "sd": 0.46777843407843944,
+        "min": 5.255118211880893,
+        "max": 6.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.31012725830078125,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 293,
+      "unique_crossing_regions": 252,
+      "crossing_density_per_megapixel": 1117.706298828125,
+      "gap_count": 86,
+      "missing_centreline_sample_fraction": 0.022805159199950152,
+      "mean_gap_length_px": 4.255813953488372,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 10.5,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 30,
+      "total_centreline_samples": 16049,
+      "missing_centreline_samples": 366,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20382004,
+      "sem_noise_seed": 20482004,
+      "centreline_gt_content_sha256": "a5a4cc9fc35eb79d76fa3c041efdd63a9e2d8236656640f6311d8e7e785dfb7e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w06\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "1c871ee0914d1773b73461d0ea5e7dbca1e06a0e3b20d453e745ddc93d551b5a",
+        "mask_clean.png": "a54ab1d7f8f03121de6ce0c6d411750bca31b81deeca70f92ae9d8f09bee4da6",
+        "gt_centerlines_multilabel.npz": "62fe0f6019c20ad3884a6c59f9f88aa0e95a97c03168e0ccc6f6e315eeb5a79a",
+        "sem.png": "4e1d04d8bccf79d5a974fcc5c07ee82a41f3beb58162c445a98df272f0946a6a",
+        "gt_thick_multilabel.npz": "087f97b3bbbbf3573386d99c50ed17dc5d5a3d5ef89d994c9ea529570b094607"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06070709130383358,
+      "achieved_length_density_um_per_um2": 56.17234472451107,
+      "total_visible_centreline_length_px": 15913.99974275215,
+      "last_filament_length_px": 261.9999974128673,
+      "clean_1px_union_coverage": 0.05541229248046875,
+      "degraded_input_coverage": 0.08908462524414062,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.085103683968633,
+        "sd": 0.40355046920360443,
+        "min": 10.251060185944407,
+        "max": 11.736017412152188
+      },
+      "achieved_thick_mask_coverage": 0.498565673828125,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 290,
+      "unique_crossing_regions": 263,
+      "crossing_density_per_megapixel": 1106.26220703125,
+      "gap_count": 111,
+      "missing_centreline_sample_fraction": 0.02521690281505524,
+      "mean_gap_length_px": 3.6396396396396398,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 16021,
+      "missing_centreline_samples": 404,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20382001,
+      "sem_noise_seed": 20482001,
+      "centreline_gt_content_sha256": "ba0591210a3bf20f64e94877c26cc652c1b9881b1623656a03fe73ecfe4a3dd1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w11\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "9ebfade3b7f95b3401bc9fbeae9e7df97a8a028f655716a8676909813ba9d62c",
+        "mask_clean.png": "4fadccfe4d94f9939b1f263a4f1d25f70ca6f85594a9ed7d0a4d6266919cbce0",
+        "gt_centerlines_multilabel.npz": "0710a5054d0cecdaa083a566e043c69140e1928673e368d276d68dfe05ed64c2",
+        "sem.png": "7e4cde02d493a35e478de7536e635321850dbf3b5858172cb9d5992c2ac682ab",
+        "gt_thick_multilabel.npz": "90d9546e2469276787eedaf9f00d88cdc1861ee628b6a7356798fd4d417346f1"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06069946014830681,
+      "achieved_length_density_um_per_um2": 56.16528360710799,
+      "total_visible_centreline_length_px": 15911.99928111774,
+      "last_filament_length_px": 191.99997161544673,
+      "clean_1px_union_coverage": 0.0542755126953125,
+      "degraded_input_coverage": 0.08733749389648438,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 10.954992819095748,
+        "sd": 0.4104769691925581,
+        "min": 10.320311471719926,
+        "max": 11.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.4873237609863281,
+      "n_filaments": 72,
+      "pairwise_crossing_events": 319,
+      "unique_crossing_regions": 280,
+      "crossing_density_per_megapixel": 1216.888427734375,
+      "gap_count": 116,
+      "missing_centreline_sample_fraction": 0.0280986575085857,
+      "mean_gap_length_px": 3.8793103448275863,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 16015,
+      "missing_centreline_samples": 450,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20382002,
+      "sem_noise_seed": 20482002,
+      "centreline_gt_content_sha256": "a377239fdd79759226d25b9277e9b4d6e796209d1ed9d59b2dba28e78aec9016",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w11\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "f839cd1fdf26af1288f6f352400c563d8b46bad529e7c389f565aab8800ab9a4",
+        "mask_clean.png": "e6d20316d0df55a3e989eab8d56b034cbea184eca9d885b53a67863b4f049ad4",
+        "gt_centerlines_multilabel.npz": "360254cbf06334d21a5f2f22c86cf0a5e628eccf70c70bac11aff0b13ad8f1b9",
+        "sem.png": "f7b1858a20699fc1d9a16f2a7775f251cfc9a2e375c9b0fa4ff73249578a2f73",
+        "gt_thick_multilabel.npz": "1c42f5c7ff6dad2d5cfe58ba2d17bce3810134ae6bce5560058895a596d2842d"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060462955196605564,
+      "achieved_length_density_um_per_um2": 55.9464452903531,
+      "total_visible_centreline_length_px": 15850.000927058969,
+      "last_filament_length_px": 344.00000454952715,
+      "clean_1px_union_coverage": 0.05521392822265625,
+      "degraded_input_coverage": 0.0867156982421875,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 11.07444240264685,
+        "sd": 0.4286692862583406,
+        "min": 10.274614142936569,
+        "max": 11.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.4973716735839844,
+      "n_filaments": 65,
+      "pairwise_crossing_events": 279,
+      "unique_crossing_regions": 259,
+      "crossing_density_per_megapixel": 1064.300537109375,
+      "gap_count": 77,
+      "missing_centreline_sample_fraction": 0.01905000626644943,
+      "mean_gap_length_px": 3.948051948051948,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.400000000000006,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 22,
+      "total_centreline_samples": 15958,
+      "missing_centreline_samples": 304,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20382003,
+      "sem_noise_seed": 20482003,
+      "centreline_gt_content_sha256": "50472991a9acee97f1d73bcdd02eb4b4eaf733b99d8bd5cf927cbab5af276ed2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w11\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "4e0c07579934a2f6e117538dd46010b02db7b56c9e58efdbb55557e5fc11fa33",
+        "mask_clean.png": "39d036663099efd9b6dbbcbbaf668bc7cd00519c704926d4ed9578210fa71373",
+        "gt_centerlines_multilabel.npz": "f5bb640498a0e9c7dcf6f67bd0fa50125cb0e10e081cd68d6bd56bbdd963aa02",
+        "sem.png": "b70b61d1f2e03cc95b47946ddc9393b0eea034fea4c62ac5ff5020ae50a274da",
+        "gt_thick_multilabel.npz": "38eca54d4ce374dc0e255df5803606d33d07ea3c21f6f37df37c832b241b2ea7"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060806276108481924,
+      "achieved_length_density_um_per_um2": 56.26412054375195,
+      "total_visible_centreline_length_px": 15940.000444181886,
+      "last_filament_length_px": 218.00002169011557,
+      "clean_1px_union_coverage": 0.0544586181640625,
+      "degraded_input_coverage": 0.08918380737304688,
+      "bundle_width_level_px": 11.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 10.928185873623004,
+        "sd": 0.4677784340784395,
+        "min": 10.255118211880893,
+        "max": 11.741661978339302
+      },
+      "achieved_thick_mask_coverage": 0.5023155212402344,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 293,
+      "unique_crossing_regions": 252,
+      "crossing_density_per_megapixel": 1117.706298828125,
+      "gap_count": 86,
+      "missing_centreline_sample_fraction": 0.022805159199950152,
+      "mean_gap_length_px": 4.255813953488372,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 10.5,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 30,
+      "total_centreline_samples": 16049,
+      "missing_centreline_samples": 366,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20382004,
+      "sem_noise_seed": 20482004,
+      "centreline_gt_content_sha256": "a5a4cc9fc35eb79d76fa3c041efdd63a9e2d8236656640f6311d8e7e785dfb7e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w11\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "1c871ee0914d1773b73461d0ea5e7dbca1e06a0e3b20d453e745ddc93d551b5a",
+        "mask_clean.png": "a54ab1d7f8f03121de6ce0c6d411750bca31b81deeca70f92ae9d8f09bee4da6",
+        "gt_centerlines_multilabel.npz": "62fe0f6019c20ad3884a6c59f9f88aa0e95a97c03168e0ccc6f6e315eeb5a79a",
+        "sem.png": "9b85f3335dd2722b4f208644706f9da84de5963cf2482a81f15b0c1452ccaa82",
+        "gt_thick_multilabel.npz": "315b94ec52da21c108a99328509a9e4f54a66da3ec6453c499ed70cdbb61a75f"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262001,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06070709130383358,
+      "achieved_length_density_um_per_um2": 56.17234472451107,
+      "total_visible_centreline_length_px": 15913.99974275215,
+      "last_filament_length_px": 261.9999974128673,
+      "clean_1px_union_coverage": 0.05541229248046875,
+      "degraded_input_coverage": 0.08908462524414062,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.085103683968633,
+        "sd": 0.4035504692036045,
+        "min": 15.251060185944407,
+        "max": 16.736017412152187
+      },
+      "achieved_thick_mask_coverage": 0.6352348327636719,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 290,
+      "unique_crossing_regions": 263,
+      "crossing_density_per_megapixel": 1106.26220703125,
+      "gap_count": 111,
+      "missing_centreline_sample_fraction": 0.02521690281505524,
+      "mean_gap_length_px": 3.6396396396396398,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 8.0,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 21,
+      "total_centreline_samples": 16021,
+      "missing_centreline_samples": 404,
+      "geometry_seed": 20262001,
+      "degradation_seed": 20382001,
+      "sem_noise_seed": 20482001,
+      "centreline_gt_content_sha256": "ba0591210a3bf20f64e94877c26cc652c1b9881b1623656a03fe73ecfe4a3dd1",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w16\\seed_20262001",
+      "artifact_sha256": {
+        "mask.png": "9ebfade3b7f95b3401bc9fbeae9e7df97a8a028f655716a8676909813ba9d62c",
+        "mask_clean.png": "4fadccfe4d94f9939b1f263a4f1d25f70ca6f85594a9ed7d0a4d6266919cbce0",
+        "gt_centerlines_multilabel.npz": "0710a5054d0cecdaa083a566e043c69140e1928673e368d276d68dfe05ed64c2",
+        "sem.png": "fcf0302c485c36954be8e25ec6eae8539f556d3da3797f4a73ed0b98a10fc70b",
+        "gt_thick_multilabel.npz": "168ab8a64aff0fb4b5be67bb4de1e9d0ef19c37bdcefbf4150243c2b0eff45dd"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262002,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06069946014830681,
+      "achieved_length_density_um_per_um2": 56.16528360710799,
+      "total_visible_centreline_length_px": 15911.99928111774,
+      "last_filament_length_px": 191.99997161544673,
+      "clean_1px_union_coverage": 0.0542755126953125,
+      "degraded_input_coverage": 0.08733749389648438,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 15.954992819095748,
+        "sd": 0.41047696919255794,
+        "min": 15.320311471719926,
+        "max": 16.74597208910003
+      },
+      "achieved_thick_mask_coverage": 0.62109375,
+      "n_filaments": 72,
+      "pairwise_crossing_events": 319,
+      "unique_crossing_regions": 280,
+      "crossing_density_per_megapixel": 1216.888427734375,
+      "gap_count": 116,
+      "missing_centreline_sample_fraction": 0.0280986575085857,
+      "mean_gap_length_px": 3.8793103448275863,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 7.0,
+      "max_gap_length_px": 20.0,
+      "filaments_with_no_detected_gap": 18,
+      "total_centreline_samples": 16015,
+      "missing_centreline_samples": 450,
+      "geometry_seed": 20262002,
+      "degradation_seed": 20382002,
+      "sem_noise_seed": 20482002,
+      "centreline_gt_content_sha256": "a377239fdd79759226d25b9277e9b4d6e796209d1ed9d59b2dba28e78aec9016",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w16\\seed_20262002",
+      "artifact_sha256": {
+        "mask.png": "f839cd1fdf26af1288f6f352400c563d8b46bad529e7c389f565aab8800ab9a4",
+        "mask_clean.png": "e6d20316d0df55a3e989eab8d56b034cbea184eca9d885b53a67863b4f049ad4",
+        "gt_centerlines_multilabel.npz": "360254cbf06334d21a5f2f22c86cf0a5e628eccf70c70bac11aff0b13ad8f1b9",
+        "sem.png": "7a8f8028d6bb4caf5aa3309657694646c0e6b2486a7c1db2b01a04afd1eca660",
+        "gt_thick_multilabel.npz": "706ec021fc8896747c0bf4a48cad6d7ee3be8fc48751472a7844eb5731e3bc30"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262003,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060462955196605564,
+      "achieved_length_density_um_per_um2": 55.9464452903531,
+      "total_visible_centreline_length_px": 15850.000927058969,
+      "last_filament_length_px": 344.00000454952715,
+      "clean_1px_union_coverage": 0.05521392822265625,
+      "degraded_input_coverage": 0.0867156982421875,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 16.074442402646852,
+        "sd": 0.42866928625834066,
+        "min": 15.274614142936569,
+        "max": 16.749663620425835
+      },
+      "achieved_thick_mask_coverage": 0.6381072998046875,
+      "n_filaments": 65,
+      "pairwise_crossing_events": 279,
+      "unique_crossing_regions": 259,
+      "crossing_density_per_megapixel": 1064.300537109375,
+      "gap_count": 77,
+      "missing_centreline_sample_fraction": 0.01905000626644943,
+      "mean_gap_length_px": 3.948051948051948,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 6.400000000000006,
+      "max_gap_length_px": 15.0,
+      "filaments_with_no_detected_gap": 22,
+      "total_centreline_samples": 15958,
+      "missing_centreline_samples": 304,
+      "geometry_seed": 20262003,
+      "degradation_seed": 20382003,
+      "sem_noise_seed": 20482003,
+      "centreline_gt_content_sha256": "50472991a9acee97f1d73bcdd02eb4b4eaf733b99d8bd5cf927cbab5af276ed2",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w16\\seed_20262003",
+      "artifact_sha256": {
+        "mask.png": "4e0c07579934a2f6e117538dd46010b02db7b56c9e58efdbb55557e5fc11fa33",
+        "mask_clean.png": "39d036663099efd9b6dbbcbbaf668bc7cd00519c704926d4ed9578210fa71373",
+        "gt_centerlines_multilabel.npz": "f5bb640498a0e9c7dcf6f67bd0fa50125cb0e10e081cd68d6bd56bbdd963aa02",
+        "sem.png": "c44e7279d865269ea081709b190358fc57b1eff5a06879a8a3c5495a034c1832",
+        "gt_thick_multilabel.npz": "3d34e724e148794b26ad8745b8eb9d5529417637b2018b6c069482d475e64ea2"
+      }
+    },
+    {
+      "dataset_role": "development",
+      "study": "factorial_centreline_density_x_bundle_width",
+      "seed": 20262004,
+      "shape": [
+        512,
+        512
+      ],
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060806276108481924,
+      "achieved_length_density_um_per_um2": 56.26412054375195,
+      "total_visible_centreline_length_px": 15940.000444181886,
+      "last_filament_length_px": 218.00002169011557,
+      "clean_1px_union_coverage": 0.0544586181640625,
+      "degraded_input_coverage": 0.08918380737304688,
+      "bundle_width_level_px": 16.0,
+      "bundle_width_half_range_px": 0.75,
+      "achieved_bundle_width_px": {
+        "mean": 15.928185873623004,
+        "sd": 0.46777843407843944,
+        "min": 15.255118211880893,
+        "max": 16.7416619783393
+      },
+      "achieved_thick_mask_coverage": 0.6444282531738281,
+      "n_filaments": 74,
+      "pairwise_crossing_events": 293,
+      "unique_crossing_regions": 252,
+      "crossing_density_per_megapixel": 1117.706298828125,
+      "gap_count": 86,
+      "missing_centreline_sample_fraction": 0.022805159199950152,
+      "mean_gap_length_px": 4.255813953488372,
+      "median_gap_length_px": 3.0,
+      "p90_gap_length_px": 10.5,
+      "max_gap_length_px": 23.0,
+      "filaments_with_no_detected_gap": 30,
+      "total_centreline_samples": 16049,
+      "missing_centreline_samples": 366,
+      "geometry_seed": 20262004,
+      "degradation_seed": 20382004,
+      "sem_noise_seed": 20482004,
+      "centreline_gt_content_sha256": "a5a4cc9fc35eb79d76fa3c041efdd63a9e2d8236656640f6311d8e7e785dfb7e",
+      "params": {
+        "um_per_px": 0.0010807291666666667,
+        "n_filaments": 25,
+        "width_range": [
+          7.0,
+          16.0
+        ],
+        "bright_range": [
+          0.55,
+          0.98
+        ],
+        "curviness": 0.035,
+        "curve_smooth_px": 20.0,
+        "len_frac": [
+          0.25,
+          0.85
+        ],
+        "break_depth": 0.3,
+        "mask_thr": 0.27,
+        "edge_jagged": 0.06,
+        "break_prob": 0.12,
+        "false_pos": 2.5,
+        "occlusion_prob": 0.15,
+        "bg_level": 0.06,
+        "bg_amp": 0.1,
+        "grain": 0.04,
+        "psf": 1.0,
+        "preview": false
+      },
+      "scene_dir": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes\\ld060\\w16\\seed_20262004",
+      "artifact_sha256": {
+        "mask.png": "1c871ee0914d1773b73461d0ea5e7dbca1e06a0e3b20d453e745ddc93d551b5a",
+        "mask_clean.png": "a54ab1d7f8f03121de6ce0c6d411750bca31b81deeca70f92ae9d8f09bee4da6",
+        "gt_centerlines_multilabel.npz": "62fe0f6019c20ad3884a6c59f9f88aa0e95a97c03168e0ccc6f6e315eeb5a79a",
+        "sem.png": "763af17a72e855cfce913d38e4caff551ff6b2b96564d136e62f1d5580e89cab",
+        "gt_thick_multilabel.npz": "98840989373bdaf07d5cd571675faf64c20c7d2daa3abf4ca1f9e0eeaf4abee6"
+      }
+    }
+  ]
+}
