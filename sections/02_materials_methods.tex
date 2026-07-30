@@ -14,14 +14,9 @@ FilaSeg implementation.
 % =========================================================================
 \subsection{Workflow overview}
 \label{sec:mm-workflow}
-\label{sec:mm-overview}
-\label{sec:mm-impl}
 
 The complete workflow contains two connected pipelines
 (Figure~\ref{fig:scope}).
-
-\subsubsection{Binary segmentation of SEM images}
-\label{sec:mm-binary-segmentation}
 
 The first pipeline converts a real SEM image into a binary mask representing
 the apparent axes of the CNT bundles.
@@ -45,11 +40,9 @@ than the complete bundle silhouettes. Instance identity is not yet available
 at this stage: crossings appear as shared foreground regions, and several
 physical bundles may belong to one connected binary structure.
 
-\subsubsection{Instance segmentation of dense filament networks}
-\label{sec:mm-instance-workflow}
-
-The second pipeline receives a binary image of a dense filament network and
-separates it into individual filament instances.
+Recovering that identity is the task of the second pipeline, which receives a
+binary image of a dense filament network and separates it into individual
+filament instances.
 
 The input can originate from either of two sources:
 
@@ -119,7 +112,6 @@ SEM-to-instance workflow?
 
 % =========================================================================
 \subsection{Input images, masks, and reference annotations}
-\label{sec:mm-data}
 \label{sec:mm-masks}
 
 For the simplified description in this manuscript, the procedural filament
@@ -237,7 +229,6 @@ in both uses.
 \end{figure}
 
 \subsubsection{Real SEM images and manual reference annotation}
-\label{sec:mm-sem}
 \label{sec:mm-real}
 
 The real images used in this study are 8-bit grayscale secondary-electron SEM
@@ -327,72 +318,6 @@ where $\widehat{K}$ is the number of predicted instances. Each instance
 contains an ordered centreline, endpoints, and derived geometric
 measurements. Stage~4 additionally uses a paired grayscale image to estimate
 apparent projected widths and render the reconstructed instances.
-
-\paragraph{Physical-scale adaptation.}
-
-FilaSeg's pixel-valued parameters, such as maximum gap lengths, minimum
-fragment areas, morphological kernel sizes, and curvature thresholds, were
-tuned using images represented at the reference physical pixel size
-$u_{\mathrm{ref}}$. If an image is acquired at a different magnification or
-pixel size, applying the same numerical pixel values would correspond to
-different physical distances and areas. The parameters are therefore rescaled
-so that they retain approximately the same physical meaning across images.
-
-For a current image with physical pixel size $u$, the pixel-scale conversion
-factor is defined as
-
-\begin{equation}
-    s_{\mathrm{px}}
-    =
-    \frac{u_{\mathrm{ref}}}{u},
-    \label{eq:spx}
-\end{equation}
-
-where $u_{\mathrm{ref}}$ is the physical size represented by one pixel in the
-reference image and $u$ is the physical size represented by one pixel in the
-current image.
-
-Parameters are scaled according to their physical dimension:
-
-\begin{equation}
-\begin{split}
-    d_{\mathrm{px}}(u)
-    &=
-    s_{\mathrm{px}}\,d_{\mathrm{px,ref}},
-    \\
-    A_{\mathrm{px}}(u)
-    &=
-    s_{\mathrm{px}}^{2}\,A_{\mathrm{px,ref}},
-    \\
-    \kappa_{\mathrm{px}}(u)
-    &=
-    \frac{\kappa_{\mathrm{px,ref}}}{s_{\mathrm{px}}},
-\end{split}
-\label{eq:scaling}
-\end{equation}
-
-where $d_{\mathrm{px,ref}}$ is a reference distance or length measured in
-pixels, $A_{\mathrm{px,ref}}$ is a reference area measured in pixels squared,
-and $\kappa_{\mathrm{px,ref}}$ is a reference curvature threshold measured in
-inverse pixels. The corresponding quantities
-$d_{\mathrm{px}}(u)$, $A_{\mathrm{px}}(u)$, and
-$\kappa_{\mathrm{px}}(u)$ are the values used for the current image.
-
-Each exponent follows the physical dimension of the parameter, because
-$s_{\mathrm{px}}$ converts a single physical length into pixels.
-
-For example, consider an image whose pixel size is twice as large as the
-reference pixel size, so that $u=2u_{\mathrm{ref}}$ and
-$s_{\mathrm{px}}=0.5$. A reference maximum gap of $20$~px is then reduced to
-$10$~px, while a reference minimum area of $100$~px$^{2}$ is reduced to
-$25$~px$^{2}$. Both adjusted values represent approximately the same physical
-distance and area as in the reference image.
-
-Dimensionless parameters, such as fractions, angular thresholds expressed as
-cosines, and iteration counts, are not rescaled. The physical pixel size of
-the current image is supplied explicitly or obtained from available SEM
-acquisition metadata. The reference scale is used only as a documented
-fallback when image-specific scale information is unavailable.
 
 \subsubsection{Stage 1: tiled residual Hough vectorization}
 \label{sec:mm-vector}
@@ -508,10 +433,75 @@ To discuss: should Stage~4 stay part of the main FilaSeg pipeline, or be
 presented as a separate SEM-assisted measurement and postprocessing module?
 }
 
+\paragraph{Physical-scale adaptation.}
+
+The pixel-valued parameters of Stages~1--4, such as maximum gap lengths,
+minimum fragment areas, morphological kernel sizes, and curvature thresholds,
+were tuned using images represented at the reference physical pixel size
+$u_{\mathrm{ref}}$. If an image is acquired at a different magnification or
+pixel size, applying the same numerical pixel values would correspond to
+different physical distances and areas. The parameters are therefore rescaled
+so that they retain approximately the same physical meaning across images.
+
+For a current image with physical pixel size $u$, the pixel-scale conversion
+factor is defined as
+
+\begin{equation}
+    s_{\mathrm{px}}
+    =
+    \frac{u_{\mathrm{ref}}}{u},
+    \label{eq:spx}
+\end{equation}
+
+where $u_{\mathrm{ref}}$ is the physical size represented by one pixel in the
+reference image and $u$ is the physical size represented by one pixel in the
+current image.
+
+Parameters are scaled according to their physical dimension:
+
+\begin{equation}
+\begin{split}
+    d_{\mathrm{px}}(u)
+    &=
+    s_{\mathrm{px}}\,d_{\mathrm{px,ref}},
+    \\
+    A_{\mathrm{px}}(u)
+    &=
+    s_{\mathrm{px}}^{2}\,A_{\mathrm{px,ref}},
+    \\
+    \kappa_{\mathrm{px}}(u)
+    &=
+    \frac{\kappa_{\mathrm{px,ref}}}{s_{\mathrm{px}}},
+\end{split}
+\label{eq:scaling}
+\end{equation}
+
+where $d_{\mathrm{px,ref}}$ is a reference distance or length measured in
+pixels, $A_{\mathrm{px,ref}}$ is a reference area measured in pixels squared,
+and $\kappa_{\mathrm{px,ref}}$ is a reference curvature threshold measured in
+inverse pixels. The corresponding quantities
+$d_{\mathrm{px}}(u)$, $A_{\mathrm{px}}(u)$, and
+$\kappa_{\mathrm{px}}(u)$ are the values used for the current image.
+
+Each exponent follows the physical dimension of the parameter, because
+$s_{\mathrm{px}}$ converts a single physical length into pixels.
+
+For example, consider an image whose pixel size is twice as large as the
+reference pixel size, so that $u=2u_{\mathrm{ref}}$ and
+$s_{\mathrm{px}}=0.5$. A reference maximum gap of $20$~px is then reduced to
+$10$~px, while a reference minimum area of $100$~px$^{2}$ is reduced to
+$25$~px$^{2}$. Both adjusted values represent approximately the same physical
+distance and area as in the reference image.
+
+Dimensionless parameters, such as fractions, angular thresholds expressed as
+cosines, and iteration counts, are not rescaled. The physical pixel size of
+the current image is supplied explicitly or obtained from available SEM
+acquisition metadata. The reference scale is used only as a documented
+fallback when image-specific scale information is unavailable.
+
 % =========================================================================
 \subsection{Evaluation metrics, comparison protocol, and statistical analysis}
 \label{sec:mm-metrics}
-\label{sec:mm-protocol}
 
 FilaSeg is evaluated primarily as a binary-mask-to-instance method. The
 procedural evaluation scenes provide exact instance references, while the

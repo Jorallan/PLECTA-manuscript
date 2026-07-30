@@ -90,7 +90,7 @@ range on average, not that it dominates at every density.
 \paragraph{Relationship to the upstream segmentation pipeline.}
 FilaSeg consumes a binary bundle-axis mask, which in the real case study was
 produced by the CycleGAN/U-Net workflow summarized in
-Section~\ref{sec:mm-binary-segmentation} and Figure~\ref{fig:scope}. The two
+Section~\ref{sec:mm-workflow} and Figure~\ref{fig:scope}. The two
 pipelines are evaluated separately here, and deliberately so: supplying every
 method the identical mask isolates grouping from segmentation quality, which is
 the only way the comparison reported in Section~\ref{sec:res-density} can be
@@ -135,7 +135,6 @@ the parameter rescaling depends.
 % =========================================================================
 \subsection{Failure modes and limitations}
 \label{sec:limitations}
-\label{sec:disc-failure}
 
 \paragraph{Residual grouping errors have two opposite directions.}
 Errors are either incorrect joins, which lower pairwise precision by merging
