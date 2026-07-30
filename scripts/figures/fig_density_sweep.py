@@ -183,15 +183,10 @@ def build(report_path: Path) -> dict[str, Any]:
     secax.tick_params(colors=GRAY, labelsize=8.0)
     secax.spines["top"].set_color(GRAY)
 
-    n_seeds = len({int(r["seed"]) for r in rows})
-    fig.text(
-        0.5, -0.04,
-        f"Development-only, exploratory: n = {n_seeds} seeds per density, "
-        f"paired scene-by-scene between methods.\n"
-        f"Bands are 95% bootstrap CIs of the mean "
-        f"(seed {BOOTSTRAP_SEED}, {N_BOOTSTRAP} replicates).",
-        fontsize=7.6, color=GRAY, ha="center", va="top", linespacing=1.5,
-    )
+    # No in-figure footer note: the development-only scope, the replicate count,
+    # the pairing and the bootstrap settings are all stated in the LaTeX caption,
+    # and repeating them under the axes only crowds the figure.
+    summary["n_seeds"] = len({int(r["seed"]) for r in rows})
 
     save_fig(fig, "fig_density_sweep", bbox_inches="tight", pad_inches=0.06)
     return summary
