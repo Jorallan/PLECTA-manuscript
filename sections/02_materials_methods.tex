@@ -109,14 +109,11 @@ known filament geometry.
         keepaspectratio
     ]{figures/fig_filaseg_scope.pdf}
     \caption{%
-    Relationship between the two analysis pipelines. Pipeline~A converts real
-    SEM images into binary CNT bundle-axis masks through CycleGAN image
-    translation and a U-Net segmenter. Pipeline~B separates a dense filament
-    network into individual instances, taking either this SEM-derived mask or a
-    procedurally generated axis mask, the latter being the development and
-    evaluation path. Stages~1--3 operate on the binary axis mask alone;
-    Stage~4 additionally requires the paired grayscale SEM image for
-    apparent-width estimation and rendering.
+    Relationship between the two pipelines. Pipeline~A converts real SEM images
+    into binary CNT bundle-axis masks. Pipeline~B separates a
+    dense filament network into instances from either this mask or a procedurally
+    generated one. Stages~1--3 use the binary axis mask alone; Stage~4 also
+    requires the paired grayscale SEM image.
     }
     \label{fig:scope}
 \end{figure}
@@ -176,14 +173,24 @@ shown in Figure~\ref{fig:synth-examples}:
 The degraded axis masks may contain finite axis thickness, small gaps, irregularities, and other segmentation-like imperfections. These degraded
 masks are the direct inputs to the primary FilaSeg evaluation.
 
-The synthetic scenes span five prescribed areal-coverage levels from
-$20\%$ to $60\%$. Areal coverage is calculated from the union of the thick
+The nominal axis width names the generator's \emph{stamping} width, not the
+width of the realized binary mask. Each filament axis is first rendered as a
+continuous-valued ridge of nominal width~1~px with an anti-aliased shoulder
+(soft-edge extent 0.6~px), then binarized at a low threshold (0.27) chosen to
+resemble a U-Net-like segmenter. Because a low threshold on a soft-shouldered
+ridge retains most of that shoulder, the realized degraded one-pixel mask
+measures approximately 1.7--1.8~px in mean foreground width. The undegraded
+one-pixel mask is instead drawn as a raw polyline with no ridge and no
+thresholding, so it measures almost exactly one pixel.
+
+The synthetic scenes span five target areal-density levels from
+$20\%$ to $60\%$. Areal density is calculated from the union of the thick
 filament supports, not from the thin centreline mask.
 
-Two further scene descriptors are reported alongside coverage where the
+Two further scene descriptors are reported alongside areal density where the
 difficulty of the grouping problem is at issue. The \emph{centreline-length
 density} is the total visible centreline arc length divided by the image area,
-in px~px$^{-2}$; unlike areal coverage it does not depend on how wide the
+in px~px$^{-2}$; unlike areal density it does not depend on how wide the
 bundles are rendered. The \emph{crossing density} counts pairwise centreline
 crossing events per megapixel of image area: for each pair of filaments, every
 connected region of pixels shared by their one-pixel centrelines counts as one
@@ -221,7 +228,8 @@ folding it into the primary results.
 The same procedural mask generator is currently assumed to support both the
 CycleGAN/U-Net workflow and the FilaSeg evaluation. The final manuscript
 should document whether the generator settings, image dimensions, filament
-densities, width distributions, and degradation settings are exactly the same
+density settings (both areal and centreline-length), width distributions, and
+degradation settings are exactly the same
 in both uses.
 
 \begin{figure}[t]
@@ -229,12 +237,9 @@ in both uses.
     \includegraphics[width=\linewidth]
     {figures/fig_synthetic_examples.pdf}
     \caption{%
-    Examples of the procedural synthetic data. Each row shows the
-    overlap-aware thick-instance reference, an SEM-like grayscale image, the
-    a degraded thin-axis mask of the kind supplied to FilaSeg, and the
-    undegraded one-pixel axis representation. The degraded example is shown at
-    a nominal two-pixel axis width to make the degradation visible; the primary
-    evaluation uses the nominal one-pixel variant. The geometric instance
+    Examples of the procedural synthetic data (columns as labelled). The degraded
+    thin-axis mask is shown at a nominal two-pixel width to make the degradation
+    visible; the primary evaluation uses the nominal one-pixel variant. Instance
     identity is retained across all representations.
     }
     \label{fig:synth-examples}
@@ -482,12 +487,9 @@ candidate merges.
     \includegraphics[width=\linewidth]
     {figures/fig_reconnect_gates.pdf}
     \caption{%
-    Representative reconnection decisions: (a) a short approximately
-    collinear gap accepted during an early pass; (b) a longer gap accepted
-    because the reconstructed trajectory remains smooth; and (c) two
-    fragments rejected because their local orientations are inconsistent,
-    despite their tips pointing approximately toward one another. Numerical
-    thresholds are to be added.
+    Representative reconnection decisions (see panel titles and legend for the
+    accepted/rejected criteria in each case). Numerical thresholds are to be
+    added.
     }
     \label{fig:gates}
 \end{figure}
@@ -538,13 +540,14 @@ configuration, comparison settings, and metric implementation were then fixed
 before evaluating a disjoint set of previously unevaluated synthetic scenes.
 
 The predefined synthetic evaluation contains \LockedSceneCount{}
-independently seeded scenes distributed across five areal-coverage levels.
+independently seeded scenes distributed across five target areal-density
+levels.
 Each comparison method receives the same degraded binary mask for a given
 scene.
 
 The development set contains 20 procedural geometries together with the single
 real crop. The disjoint predefined set was generated from base seed 20260801
-with 25 scenes at each prescribed coverage: for coverage
+with 25 scenes at each target areal density: for areal density
 $d\in\{20,30,40,50,60\}$ and zero-based index $i$, the scene seed is
 $20260801+100d+i$. Exact scene paths, seeds, input and ground-truth hashes,
 method outputs and failure states are recorded per scene in the evaluation
@@ -657,7 +660,7 @@ filament instances.
 Uncertainty is estimated using paired, density-stratified bootstrap resampling
 of the synthetic evaluation scenes. Pairing preserves the comparison between
 methods within each scene, while density stratification preserves the number
-of scenes contributed by each predefined areal-coverage level.
+of scenes contributed by each target areal-density level.
 
 The primary reported contrast is the within-scene difference between FilaSeg
 and the minimum-turn comparator. Confidence intervals are calculated from the
