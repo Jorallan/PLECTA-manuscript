@@ -1,0 +1,29 @@
+Converting a dense filament centreline mask into individual bundle instances
+is difficult: gaps break true trajectories, and crossings create several
+locally plausible continuations. We present FilaSeg, a deterministic
+geometry-based method that takes a binary carbon-nanotube (CNT) bundle-axis
+mask and separates it into individual bundle instances through staged,
+topology-checked geometric reconnection; a final stage then uses the paired
+scanning electron microscopy (SEM) image to estimate each instance's apparent
+width and render it. Methods are compared on a common, method-independent
+partition of the input skeleton into fragments, using pairwise grouping
+\Fone{} on equivalent per-instance centreline representations, evaluated
+before width rendering. After the evaluation configuration was frozen,
+FilaSeg and a minimum-turn skeleton tracer were evaluated on
+\LockedSceneCount{} independently seeded procedural scenes. FilaSeg achieved
+mean common-fragment \Fone{}=\LockedFilaSegCommonFOneMean{}
+(density-stratified 95\% bootstrap CI [\LockedFilaSegCommonFOneCILow{},
+\LockedFilaSegCommonFOneCIHigh{}]), with a paired
+FilaSeg-minus-minimum-turn difference of
+\FilaSegMinusBaselineSkeletonCommonFOneMean{} (95\% CI
+[\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
+\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]). This advantage was not
+uniform: it held at four of the five tested densities, and its interval
+crossed zero at the fifth. Scoring the rendered Stage-4 output instead of the
+Stage-3 centreline gave a lower score, showing that grouping accuracy and
+rendering accuracy must be assessed separately. A single manually annotated
+SEM crop was used during development and is not a held-out test. Taken
+together, this predefined synthetic evaluation supports a conditional
+advantage over the fixed minimum-turn comparator for the tested generator; it
+does not establish general superiority over filament-tracing methods, or
+transfer to other SEM instruments, materials, or upstream segmenters.
