@@ -3,10 +3,10 @@
   "study": "development_mask_sensitivity",
   "interpretation": "development diagnostic only",
   "reports": {
-    "w1": "paper\\results\\development_w1.json",
-    "w2": "paper\\results\\development_w2.json",
-    "w3": "paper\\results\\development_w3.json",
-    "clean": "paper\\results\\development_clean.json"
+    "w1": "results\\development_w1.json",
+    "w2": "results\\development_w2.json",
+    "w3": "results\\development_w3.json",
+    "clean": "results\\development_clean.json"
   },
   "overall": {
     "w1": {
@@ -238,6 +238,19 @@
       "ci_lo": -0.04590003414999059,
       "ci_hi": 0.03197585908722037,
       "ci_halfwidth": 0.03893794661860548
+    }
+  },
+  "curve_bootstrap": {
+    "method": "non-parametric percentile bootstrap, paired by scene within each density (the same resampled scene indices are reused across every x setting of a panel)",
+    "seed_formula": "CURVE_BOOTSTRAP_SEED + density",
+    "seed": 20260729,
+    "n_boot": 10000,
+    "n_scenes_per_density": {
+      "20": 4,
+      "30": 4,
+      "40": 4,
+      "50": 4,
+      "60": 4
     }
   },
   "per_scene": {
