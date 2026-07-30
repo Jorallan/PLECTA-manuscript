@@ -1,3 +1,54 @@
+\par
+\medskip
+\begingroup
+\color{red}
+
+\noindent\textbf{Review note:}
+A central framing question for this manuscript is how the Introduction should
+be organized. Should the paper begin with the general problem of instance
+segmentation and disentanglement in dense filamentary-network images, with CNT
+bundle sheets presented as the main application and validation case?
+Alternatively, should the Introduction begin with the need to characterize CNT
+sheets from SEM images, with FilaSeg presented primarily as a CNT-specific
+analysis method?
+
+A possible general-to-specific structure is:
+
+\begin{enumerate}
+    \item Introduce the general difficulty of separating individual filaments
+    in dense, crossing, and fragmented networks.
+
+    \item Explain why conventional connected-component methods and
+    compact-object instance-segmentation approaches are poorly suited to long,
+    thin, intersecting structures.
+
+    \item Introduce CNT bundle sheets as an important application for which
+    individual bundle geometry must be recovered from SEM images.
+
+    \item Describe how the upstream CycleGAN/U-Net workflow produces the binary
+    CNT bundle-axis mask supplied to FilaSeg.
+
+    \item Review relevant filament-tracing, learned instance-segmentation, and
+    CNT-image-analysis methods.
+
+    \item Identify the methodological gap addressed by FilaSeg.
+
+    \item State the contribution, evaluation strategy, and principal
+    limitations.
+\end{enumerate}
+
+The alternative CNT-first structure would begin with the scientific need to
+measure individual bundles in CNT sheets and would then introduce dense
+filament disentanglement as the image-analysis problem preventing this.
+
+Which framing is more appropriate: a general filament-instance-segmentation
+paper demonstrated on CNT SEM images, or a CNT-sheet characterization paper
+centred on the complete SEM-to-instance workflow?
+
+\endgroup
+\medskip
+\par
+
 \section{Introduction}
 \label{sec:intro}
 
@@ -75,10 +126,7 @@ mask.
 \reviewnote{\citet{liu2019intersection} is included here as the closest
 published methodological analog to FilaSeg's own orientation-binned
 vectorization and tip-pairing reconnection (orientation separation, then
-pairing of fragment endpoints). This repository has no internal record of
-FilaSeg's design being directly derived from that work; please confirm
-before this is described as a direct methodological predecessor rather than
-an independently convergent design.}
+pairing of fragment endpoints).}
 Instance tracing of
 crossing curvilinear objects is also mature in other domains, in neuron
 reconstruction \citep{brown2011diadem,gillette2011diademmetric,xiao2013app2},
@@ -111,7 +159,7 @@ in design, not a head-to-head performance comparison with \citet{peters2026fibre
 or the other related methods above; the present evidence does not establish
 quantitative superiority over them (Section~\ref{sec:limitations}).
 
-This paper presents FilaSeg, a deterministic, geometry-based postprocessing
+This paper presents FilaSeg, geometry-based postprocessing
 method that converts a binary filament-centreline mask and its paired SEM image
 into separated filament instances. The
 input is a binary centreline mask together with the grayscale SEM image from
