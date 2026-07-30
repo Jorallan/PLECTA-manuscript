@@ -40,11 +40,11 @@ Supervised instance segmentation of these images is limited by the reference
 data rather than by model capacity. Exact instance identity in a dense crossing
 network is not reliably annotatable by hand: the single real crop used here is
 one human interpretation of an ambiguous image, not ground truth. A method
-built from explicit geometric criteria avoids that dependency, needs no
-instance-labelled training set, and exposes every decision as an inspectable
-rule with a physical meaning. It also transfers across acquisition scales by
-construction, because its pixel-valued parameters are rescaled to hold their
-physical interpretation (Equations~\ref{eq:spx}--\ref{eq:scaling}). The cost is
+built from explicit geometric criteria needs no instance-labelled training set
+and exposes every decision as an inspectable rule with a physical meaning. It
+also transfers across acquisition scales by construction, because its
+pixel-valued parameters are rescaled to hold their physical interpretation
+(Equations~\ref{eq:spx}--\ref{eq:scaling}). The cost is
 that the rules are hand-specified, so the method cannot learn a regularity the
 designer did not anticipate.
 
@@ -69,13 +69,11 @@ Re-scoring the same 125 scenes on the undegraded, exactly one-pixel axis mask
 (Section~\ref{sec:res-density}) separates two contributions the paired
 degraded-input comparison mixes together: recovering structure that mask
 degradation interrupted, and grouping structure that was already fully
-visible. The minimum-turn tracer improved on clean input while FilaSeg did
-not, narrowing the margin from \FilaSegMinusBaselineSkeletonCommonFOneMean{}
-to $+0.042$ $[0.031, 0.053]$. Much of FilaSeg's aggregate advantage over this
-comparator is therefore attributable to insensitivity to mask degradation
-rather than to better grouping of intact topology. The advantage does not
-vanish on clean input, and, as reported in Section~\ref{sec:res-density}, it
-remains largest at the highest tested crossing density even with clean masks.
+visible. The minimum-turn tracer improved on clean input while FilaSeg did not,
+so much of FilaSeg's aggregate advantage over this comparator is attributable
+to insensitivity to mask degradation rather than to better grouping of intact
+topology. The advantage nevertheless does not vanish on clean input, where it
+remains largest at the highest tested crossing density.
 
 \paragraph{Why the advantage is conditional rather than universal.}
 The same ordering that recovers long filaments becomes a liability where the
@@ -103,30 +101,26 @@ the grouping stage on images the upstream model has demonstrably never seen.
 
 \paragraph{What the sensitivity analyses do and do not show.}
 The input-representation analyses in Section~\ref{sec:res-mask} are
-development-only diagnostics on small samples. They indicate that a thin axis
-representation is preferable, with the one-pixel and two-pixel comparison
-unresolved at the 95\% level and a resolved decrease at three pixels; this is
-consistent with the vectorization stage estimating local orientation from a
-foreground whose thickness begins to compete with the geometry it is meant to
-measure. Removing the modeled degradation did not produce a resolved aggregate
-improvement -- a limit of this generator's degradation model and
-its small per-density samples, not evidence that segmentation errors are
-unimportant in practice.
+development-only diagnostics on small samples. Their preference for a thin axis
+representation is consistent with the vectorization stage estimating local
+orientation from a foreground whose thickness begins to compete with the
+geometry it is meant to measure. Removing the modeled degradation did not
+produce a resolved aggregate improvement -- a limit of this generator's
+degradation model and its small per-density samples, not evidence that
+segmentation errors are unimportant in practice.
 
 \paragraph{Separating network complexity from bundle width.}
-Target areal density conflates two distinct things, because the union of
-thick filament supports grows both when the network contains more centreline
-and when the rendered bundles are wider. The factorial study
-(Section~\ref{sec:res-factorial}, Table~\ref{tab:factorial}) isolates them:
-bundle width is an exact structural negative control for Stage~3, and the
-common-fragment \Fone{} range across width levels was exactly zero in every
-geometry block, so thick-mask areal density cannot by itself drive grouping
-performance. The difficulty that rises with centreline-length density is
-instead the geometric complexity of the network -- crossing density and gap
-count outpacing centreline length -- not areal density; width remains an
-active factor only for SEM rendering and Stage~4, where it is the quantity
-being measured. This is an attribution result that the exact control settles
-cleanly; the four-seed cells remain too small to support
+The factorial study (Section~\ref{sec:res-factorial},
+Table~\ref{tab:factorial}) separates the two contributions that target areal
+density conflates: bundle width is an exact structural negative control for
+Stage~3, and the common-fragment \Fone{} range across width levels was exactly
+zero in every geometry block, so thick-mask areal density cannot by itself
+drive grouping performance. The difficulty that rises with centreline-length
+density is instead the geometric complexity of the network, crossing density
+and gap count outpacing centreline length, not areal density; width remains an
+active factor only for SEM rendering and Stage~4, where it is the quantity being
+measured. This is an attribution result that the exact control settles cleanly;
+the four-seed cells remain too small to support
 centreline-length-density-specific effect sizes.
 
 \paragraph{Applicability beyond CNT bundles.}
@@ -194,11 +188,11 @@ measurements, which do not exist in this work.
 
 \paragraph{Synthetic-generator assumptions.}
 The generator exposes areal density, centreline-length density, crossings,
-gaps and intensity variation under exact instance ground truth, which is
-precisely why it can support a primary endpoint at all. Whether its degradation and appearance distributions resemble
-those of real upstream segmenter output has not been quantified. The reported
-confidence intervals characterize repeatability over generator seeds, not
-transfer to unseen SEM images.
+gaps and intensity variation under exact instance ground truth, which is why it
+can support a primary endpoint. Whether its degradation and appearance
+distributions resemble those of real upstream segmenter output has not been
+quantified. The reported confidence intervals characterize repeatability over
+generator seeds, not transfer to unseen SEM images.
 
 \paragraph{Metric weighting and small development samples.}
 Pairwise fragment statistics weight each instance by roughly the square of the
@@ -225,19 +219,19 @@ centrelines with overlapping instance layers and does not recover
 three-dimensional over-and-under topology at crossings.
 
 \paragraph{Next validation steps.}
-The results here justify a specific programme rather than a broad claim. In
-approximate order of value: annotate multiple independent real crops from
-several parent images, instruments and specimens, by more than one annotator,
-and seal them before the configuration is fixed, so that inter-annotator
-agreement bounds the achievable score; retrain or otherwise establish an
-upstream segmenter with a documented split that provably excludes those crops,
-and report end-to-end SEM-to-instance performance with upstream error included;
-validate Stage~4 apparent widths against matched per-instance reference
-measurements, independently of the grouping endpoint; quantify how the
-generator's degradation statistics compare with real segmenter output, and
-recalibrate the generator where they differ; and extend the comparison to
-additional published tracing methods on the identical input masks. Until then,
-an explicit geometric grouping procedure outperforms local minimum-turn
-continuation on average under the tested synthetic conditions, with the
-mechanism, failure regimes and representation dependence documented well
-enough to be checked.
+The results here justify a specific programme rather than a broad claim, in
+approximate order of value. Multiple independent real crops from several parent
+images, instruments and specimens should be annotated by more than one
+annotator and sealed before the configuration is fixed, so that inter-annotator
+agreement bounds the achievable score. An upstream segmenter should then be
+retrained, or otherwise established, with a documented split that provably
+excludes those crops, so that end-to-end SEM-to-instance performance can be
+reported with upstream error included. Stage~4 apparent widths need validation
+against matched per-instance reference measurements, independently of the
+grouping endpoint. The generator's degradation statistics need to be quantified
+against real segmenter output and the generator recalibrated where they differ.
+Finally, the comparison should be extended to additional published tracing
+methods on the identical input masks. Until then, an explicit geometric
+grouping procedure outperforms local minimum-turn continuation on average under
+the tested synthetic conditions, with the mechanism, failure regimes and
+representation dependence documented well enough to be checked.

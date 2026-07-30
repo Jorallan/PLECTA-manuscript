@@ -93,7 +93,7 @@ artefacts dominate naive approaches. Standard instance-segmentation priors
 assume a compact object with a clear interior and boundary: a bounded blob, a
 flow field pointing toward a centre, or a star-convex shape
 \citep{stringer2021cellpose,schmidt2018stardist,kirillov2023sam}. CNT bundles
-do not fit that assumption. They are long, thin, crossing curves with no
+do not fit that assumption: they are long, thin, crossing curves with no
 meaningful centre, and they may overlap.
 
 Four classes of existing method address parts of this problem. \emph{Ridge and
@@ -109,45 +109,40 @@ graph rather than a set of separately rendered, individually addressable
 instances. \emph{Aggregate measurement tools} such as DiameterJ
 \citep{hotaling2015diameterj} deliver well-validated width and pore-size
 distributions over a whole micrograph, but as image-level distributions rather
-than per-instance geometry, and they do not resolve crossing ownership; the
-individual-fibre separation approach of \citet{depriester2022fibre} addresses
-that separation step directly for fibrous materials. \emph{Learned instance
-methods} for filaments are emerging: FibeR-CNN \citep{frei2020fiber} extends Mask
-R-CNN to image-based fibre analysis, including CNT-like fibres, as an
+than per-instance geometry, and they do not resolve crossing ownership.
+\citet{depriester2022fibre} address that separation step directly, recovering
+individual fibres in fibrous materials. \emph{Learned instance methods} for
+filaments are emerging: FibeR-CNN \citep{frei2020fiber} extends Mask R-CNN to
+image-based fibre analysis, including CNT-like fibres, as an
 independent raw-image detector rather than a centreline-mask grouping method,
 and Pick and Trace \citep{liu2023picktrace} segments filamentous instances
-with a recurrent network. Methodologically closest to the present
-reconnection stage is the terminus-pairing approach of
+with a recurrent network. The closest published methodological relative of the
+present reconnection stage is the terminus-pairing approach of
 \citet{liu2019intersection}, which separates a raw microscopy image into
 orientation-specific branches with a learned network and then pairs terminus
-points across branches to regroup fragments into individual filaments; it was
+points across branches to regroup fragments into individual filaments,
 validated on microtubule micrographs rather than on a precomputed centreline
-mask. That two-step strategy of first separating the network by local
-orientation and then reconnecting fragments by pairing their endpoints is the
-same decomposition FilaSeg applies, although the two methods realise it
-differently: \citet{liu2019intersection} obtain the orientation separation from
-a trained network operating on the grayscale image, whereas the orientation
-binning and endpoint pairing used here are explicit geometric criteria applied
-to a binary axis mask, with no learned component. We therefore regard that work
-as the closest published methodological relative of the reconnection stage
-rather than as a component this method builds on.
-Instance tracing of
-crossing curvilinear objects is also mature in other domains, in neuron
-reconstruction \citep{brown2011diadem,gillette2011diademmetric,xiao2013app2},
-plant-root architecture
-\citep{pound2013rootnav} and crack segmentation \citep{yang2018crack}, but each
+mask. FilaSeg applies the same decomposition of orientation separation followed
+by endpoint pairing, but realises both steps as explicit geometric criteria on
+a binary axis mask rather than as a trained network on the grayscale image, and
+does not build on that work as a component. Instance tracing of crossing
+curvilinear objects is also mature in other domains, in neuron reconstruction
+\citep{brown2011diadem,gillette2011diademmetric,xiao2013app2}, plant-root
+architecture \citep{pound2013rootnav} and crack segmentation
+\citep{yang2018crack}, but each
 embeds a domain-specific prior that dense CNT bundle films or networks
 (referred to here as \emph{CNT mats}) do not satisfy: bundles are open curves
 that cross freely and carry neither a root nor a hierarchy.
 
-The closest published work is that of \citet{peters2026fibre}, who combine
-U-Net-like semantic segmentation with algorithmic fibre tracing, crossing
-separation and width refinement from transverse grayscale profiles, and validate
-on SEM images of CNT materials for aerosol characterization and exposure
-assessment. Two-stage semantic-segmentation-plus-tracing designs therefore
-already exist for CNT SEM, and the contribution claimed here is not the two-stage
-idea itself. What distinguishes the present work is the operating regime and the
-representation. \citet{peters2026fibre} target low-occupancy aerosol-filter
+Closest at the level of the complete workflow is that of
+\citet{peters2026fibre}, who combine U-Net-like semantic segmentation with
+algorithmic fibre tracing, crossing separation and width refinement from
+transverse grayscale profiles, and validate on SEM images of CNT materials for
+aerosol characterization and exposure assessment. Two-stage
+semantic-segmentation-plus-tracing designs therefore already exist for CNT SEM,
+and the contribution claimed here is not the two-stage idea itself. What
+distinguishes the present work is the operating regime and the representation.
+\citet{peters2026fibre} target low-occupancy aerosol-filter
 images, in which fibres are comparatively isolated; the target here is a dense
 CNT mat in which the crossing density, not the detectability of a single fibre,
 sets the difficulty. The input representation differs accordingly: FilaSeg
@@ -163,26 +158,24 @@ in design, not a head-to-head performance comparison with \citet{peters2026fibre
 or the other related methods above; the present evidence does not establish
 quantitative superiority over them (Section~\ref{sec:limitations}).
 
-This paper presents FilaSeg, a geometry-based postprocessing
-method that converts a binary filament-centreline mask and its paired SEM image
-into separated filament instances. The
-input is a binary centreline mask together with the grayscale SEM image from
-which it was derived; the output is a set of possibly overlapping instances, each
-carrying a pixel support, an ordered centreline, a width, a length and endpoints,
-stored as a multi-label stack so that crossings are preserved. These geometric
-fields are exported for downstream use but are not claimed as validated
-measurements in the present study. The method
-proceeds in four stages: tiled Hough-based residual vectorization,
-orientation-aware fragment cleaning, geometry-based instance reconnection, and
-SEM-gradient-based width estimation with final rendering. It is evaluated on one
-manually annotated real SEM crop and on a procedural synthetic benchmark that
-renders thick bundles for the SEM channel while feeding the method the thin axis
-that an upstream segmenter actually reconstructs. Three questions are addressed:
-how grouping accuracy depends on the generator's target areal density; whether
-the conclusion changes when methods are scored on equivalent centreline
-representations; and
-which scenes favour FilaSeg or a minimum-turn comparator. The semantic
-segmentation that produces the input mask is treated throughout as an external
-upstream process and is not evaluated here. The real-data evidence rests on a
+This paper presents FilaSeg, a geometry-based postprocessing method that takes
+a binary filament-centreline mask together with the grayscale SEM image from
+which it was derived and returns a set of possibly overlapping instances, each
+carrying a pixel support, an ordered centreline, a width, a length and
+endpoints, stored as a multi-label stack so that crossings are preserved. These
+geometric fields are exported for downstream use but are not claimed as
+validated measurements in the present study. The method proceeds in four
+stages: tiled Hough-based residual vectorization, orientation-aware fragment
+cleaning, geometry-based instance reconnection, and SEM-gradient-based width
+estimation with final rendering. It is evaluated on one manually annotated real
+SEM crop and on a procedural synthetic benchmark that renders thick bundles for
+the SEM channel while feeding the method the thin axis that an upstream
+segmenter actually reconstructs. Three questions are addressed: how grouping
+accuracy depends on the generator's target areal density; whether the
+conclusion changes when methods are scored on equivalent centreline
+representations; and which scenes favour FilaSeg or a minimum-turn comparator.
+The semantic segmentation that produces the input mask is treated
+throughout as an external upstream process and is not evaluated here. The
+real-data evidence rests on a
 single annotated development crop, so it is presented qualitatively rather than
 as a population estimate.

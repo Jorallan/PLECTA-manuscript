@@ -26,11 +26,11 @@ indicating that much of the aggregate advantage reflects insensitivity to mask
 degradation rather than crossing disambiguation alone.
 
 FilaSeg was subsequently applied to scanning electron microscopy (SEM) images
-of carbon-nanotube (CNT) sheets. For this application, a separate upstream
-CycleGAN/U-Net workflow converts the SEM data into binary masks representing
-the axes of the CNT bundles. These masks are supplied to FilaSeg, while the
-paired SEM image is used again in Stage~4 to estimate apparent bundle widths,
-handle overlapping rendered instances, and produce the final output.
+of carbon-nanotube (CNT) sheets. There, a separate upstream CycleGAN/U-Net
+workflow converts the SEM data into binary masks representing the axes of the
+CNT bundles. These masks are supplied to FilaSeg, while the paired SEM image is
+used again in Stage~4 to estimate apparent bundle widths, handle overlapping
+rendered instances, and produce the final output.
 Evaluating the rendered Stage~4 output instead of the Stage~3 centreline
 representation produced a lower grouping score, indicating that centreline
 grouping should be assessed separately from width rendering and final-output

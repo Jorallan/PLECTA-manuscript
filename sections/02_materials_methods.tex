@@ -5,11 +5,6 @@ This section describes the two connected image-analysis pipelines used in this
 work, the synthetic and real input data, the four stages of FilaSeg, and the
 procedure used to evaluate its instance-segmentation performance.
 
-The upstream binary-segmentation pipeline converts an SEM image into a binary
-mask representing the axes of the CNT bundles. FilaSeg then receives either
-this binary SEM-derived mask or a procedurally generated binary filament mask
-and separates the dense network into individual filament instances.
-
 FilaSeg is implemented in Python using NumPy, SciPy, scikit-image, OpenCV,
 Matplotlib, tifffile, and PyYAML. Its four processing stages are implemented
 as separate modules and coordinated by one end-to-end runner. The upstream
@@ -23,7 +18,7 @@ FilaSeg implementation.
 \label{sec:mm-impl}
 
 The complete workflow contains two connected pipelines
-(Figure~\ref{fig:scope}), described in turn below.
+(Figure~\ref{fig:scope}).
 
 \subsubsection{Binary segmentation of SEM images}
 \label{sec:mm-binary-segmentation}
@@ -127,13 +122,11 @@ SEM-to-instance workflow?
 \label{sec:mm-data}
 \label{sec:mm-masks}
 
-The two pipelines use related synthetic data. For the simplified description
-in this manuscript, the procedural filament generator is treated as the common
-source of masks for both CycleGAN/U-Net development and FilaSeg evaluation.
-
-The generator preserves the identity and geometry of every synthetic filament.
-It can therefore provide both binary foreground representations and exact
-instance-level references.
+For the simplified description in this manuscript, the procedural filament
+generator is treated as the common source of masks for both CycleGAN/U-Net
+development and FilaSeg evaluation. It preserves the identity and geometry of
+every synthetic filament and can therefore provide both binary foreground
+representations and exact instance-level references.
 
 \subsubsection{Procedural synthetic masks and SEM-like images}
 \label{sec:mm-synth}
@@ -150,10 +143,10 @@ where $K$ is the number of generated filaments and $B_k$ denotes the
 $k$th instance. Each filament is defined by an ordered centreline
 $\mathcal{C}_k$ and a thick rendered support $\Omega_k$.
 
-The individual supports are retained separately. Consequently, multiple
-filaments may own the same image location at a crossing. This produces an
-overlap-aware instance reference rather than a conventional label image in
-which each pixel can belong to only one object.
+The individual supports are retained separately, so multiple filaments may own
+the same image location at a crossing. This produces an overlap-aware instance
+reference rather than a conventional label image in which each pixel can belong
+to only one object.
 
 The following representations are derived from the same procedural geometry, as
 shown in Figure~\ref{fig:synth-examples}:
@@ -167,7 +160,8 @@ shown in Figure~\ref{fig:synth-examples}:
     \item one or more SEM-like grayscale representations.
 \end{itemize}
 
-The degraded axis masks may contain finite axis thickness, small gaps, irregularities, and other segmentation-like imperfections. These degraded
+The degraded axis masks may contain finite axis thickness, small gaps,
+irregularities, and other segmentation-like imperfections. These degraded
 masks are the direct inputs to the primary FilaSeg evaluation.
 
 The nominal axis width names the generator's \emph{stamping} width, not the
@@ -336,13 +330,13 @@ apparent projected widths and render the reconstructed instances.
 
 \paragraph{Physical-scale adaptation.}
 
-FilaSeg's pixel-valued parameters were tuned using images represented at the
-reference physical pixel size $u_{\mathrm{ref}}$. Examples include maximum gap
-lengths, minimum fragment areas, morphological kernel sizes, and curvature
-thresholds. If an image is acquired at a different magnification or pixel
-size, applying the same numerical pixel values would correspond to different
-physical distances and areas. The parameters are therefore rescaled so that
-they retain approximately the same physical meaning across images.
+FilaSeg's pixel-valued parameters, such as maximum gap lengths, minimum
+fragment areas, morphological kernel sizes, and curvature thresholds, were
+tuned using images represented at the reference physical pixel size
+$u_{\mathrm{ref}}$. If an image is acquired at a different magnification or
+pixel size, applying the same numerical pixel values would correspond to
+different physical distances and areas. The parameters are therefore rescaled
+so that they retain approximately the same physical meaning across images.
 
 For a current image with physical pixel size $u$, the pixel-scale conversion
 factor is defined as
@@ -357,10 +351,6 @@ factor is defined as
 where $u_{\mathrm{ref}}$ is the physical size represented by one pixel in the
 reference image and $u$ is the physical size represented by one pixel in the
 current image.
-
-Finer sampling than the reference ($u<u_{\mathrm{ref}}$) gives
-$s_{\mathrm{px}}>1$, so the same physical distance occupies more pixels;
-coarser sampling gives $s_{\mathrm{px}}<1$ and fewer pixels.
 
 Parameters are scaled according to their physical dimension:
 
@@ -388,10 +378,8 @@ inverse pixels. The corresponding quantities
 $d_{\mathrm{px}}(u)$, $A_{\mathrm{px}}(u)$, and
 $\kappa_{\mathrm{px}}(u)$ are the values used for the current image.
 
-Length-valued parameters scale linearly because a physical distance is
-represented by a different number of pixels. Area-valued parameters scale
-with $s_{\mathrm{px}}^{2}$ because both image dimensions change. Curvature
-scales inversely because it has units of inverse pixels.
+Each exponent follows the physical dimension of the parameter, because
+$s_{\mathrm{px}}$ converts a single physical length into pixels.
 
 For example, consider an image whose pixel size is twice as large as the
 reference pixel size, so that $u=2u_{\mathrm{ref}}$ and
@@ -433,9 +421,9 @@ Small artefacts are removed, short along-filament gaps are closed using
 orientation-matched morphology, and each retained fragment is reduced to a
 smooth curve with two well-defined tips.
 
-The purpose of this stage is to provide the reconnection stage with physically
-plausible fragments whose endpoint positions and local directions are not
-dominated by raster noise, isolated pixels, or small branches.
+This stage supplies the reconnection stage with physically plausible fragments
+whose endpoint positions and local directions are not dominated by raster
+noise, isolated pixels, or small branches.
 
 \todo{Add the morphology settings, skeleton-cleaning operations, smoothing
 rules and branch-removal criteria.}
@@ -591,8 +579,8 @@ output.
 
 This fragment-level adaptation is appropriate because the main objective is to
 determine which visible parts of the network belong to the same physical
-filament. It also prevents arbitrary instance numbering, centreline thickness,
-and Stage~4 width rendering from influencing the grouping score.
+filament, and because it makes the score invariant to arbitrary instance
+numbering.
 
 For all valid pairs of common fragments:
 
