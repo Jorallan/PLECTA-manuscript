@@ -76,20 +76,6 @@ win by chance on a given scene. The aggregate interval should therefore be read
 as evidence that the multi-criterion approach helps across the tested density
 range on average, not that it dominates at every density.
 
-\paragraph{Grouping is not width or rendering.}
-The representation analysis is the clearest internal check in this work.
-Scoring FilaSeg's rendered Stage~4 output instead of its Stage~3 centrelines
-changes the common-fragment \Fone{} by
-\FilaSegStageFourRenderedMinusStageThreeCommonFOneMean{}, while reducing the
-Stage~4 result back to a centreline representation recovers almost all of that
-difference
-(\FilaSegStageFourCenterlineMinusStageThreeCommonFOneMean{}). The gap is
-therefore a property of the representation being scored, not of the grouping
-decision. Two consequences follow. Reported grouping performance must state
-which representation was scored, or it is not comparable between methods. And
-the apparent widths Stage~4 produces are a separate measurement claim
-requiring separate validation, which this manuscript does not provide.
-
 \paragraph{Relationship to the upstream segmentation pipeline.}
 FilaSeg consumes a binary bundle-axis mask, which in the real case study was
 produced by the CycleGAN/U-Net workflow summarized in
@@ -118,9 +104,9 @@ unimportant in practice.
 Prescribed areal coverage conflates two distinct things, because the union of
 thick filament supports grows both when the network contains more centreline
 and when the rendered bundles are wider. The factorial study
-(Section~\ref{sec:res-factorial}, Appendix~\ref{app:factorial}) separates them
+(Section~\ref{sec:res-factorial}, Table~\ref{tab:factorial}) separates them
 by stopping generation on summed visible centreline length instead, then
-varying true bundle width at fixed centreline geometry. Within each geometry
+varying target bundle width at fixed centreline geometry. Within each geometry
 block the degraded input mask, the clean centreline and the overlap-aware
 centreline reference are byte-identical across all three width levels, while
 thick-mask coverage varies by more than a factor of two. Bundle width is

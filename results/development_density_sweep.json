@@ -1,0 +1,1785 @@
+{
+  "schema_version": 1,
+  "study": "development_density_sweep_filaseg_vs_minimum_turn_tracer",
+  "provenance": {
+    "study": "development_only_density_sweep_filaseg_vs_minimum_turn_tracer",
+    "scope": "Exploratory development evidence only, extending development_factorial_density_width.json with two additional length-density levels (0.01, 0.03) and a second method (baseline_skeleton, the minimum-turn skeleton tracer), both restricted to bundle width 6px (Stages 1-3 negative control already established width is inert for this family). The primary locked evaluation was never read or touched.",
+    "created_utc": "2026-07-30T14:31:52.152229+00:00",
+    "python": "3.12.9 (tags/v3.12.9:fdb8142, Feb  4 2025, 15:27:58) [MSC v.1942 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "generator": {
+      "module": "eval/generators/synth_factorial.py::generate_factorial",
+      "new_scenes_length_densities_px_per_px2": [
+        0.01,
+        0.03
+      ],
+      "reused_scenes_length_densities_px_per_px2": [
+        0.02,
+        0.04,
+        0.06
+      ],
+      "bundle_width_level_px": 6.0,
+      "seeds": [
+        20262001,
+        20262002,
+        20262003,
+        20262004
+      ],
+      "shape": [
+        512,
+        512
+      ],
+      "params": "None -> synth_thick.thick_params() defaults, identical to the existing factorial (verified: width_range, occlusion_prob, false_pos overridden; all other keys match synth_generator.default_params()).",
+      "note_on_geometry_family": "generate_geometry_sequence draws filaments sequentially from np.random.default_rng(seed) independent of the requested max density, and only the stopping point (arc length) differs; the 0.01/0.03 scenes generated here for a given seed are therefore prefixes of the exact same underlying per-seed geometry sequence used for the existing 0.02/0.04/0.06 scenes, so the geometry family is directly comparable.",
+      "note_on_degradation_seed_offsets": "degradation_seed/sem_noise_seed = seed + 100000/200000 + density_index*10000, where density_index is the position within the density tuple PASSED TO THIS CALL. Because the new 0.01/0.03 scenes were generated via a separate call with densities=(0.01,0.03) rather than a single 5-level call, their density_index is 0/1 (not 0/2 as it would be within a unified 5-level run). This only changes which RNG stream seeds the mask-degradation/SEM-noise draw for those two density levels; it does not affect the geometry sequence (see note above) or reproducibility -- it is documented here so the exact seed value is traceable, not hand-picked."
+    },
+    "scenes": {
+      "new_scenes_generated": [
+        "ld010/w06/seed_20262001",
+        "ld010/w06/seed_20262002",
+        "ld010/w06/seed_20262003",
+        "ld010/w06/seed_20262004",
+        "ld030/w06/seed_20262001",
+        "ld030/w06/seed_20262002",
+        "ld030/w06/seed_20262003",
+        "ld030/w06/seed_20262004"
+      ],
+      "new_scenes_root": "C:\\Repos\\filaments_quantification\\output\\development_density_sweep\\scenes",
+      "reused_scenes": [
+        "ld020/w06/seed_20262001",
+        "ld020/w06/seed_20262002",
+        "ld020/w06/seed_20262003",
+        "ld020/w06/seed_20262004",
+        "ld040/w06/seed_20262001",
+        "ld040/w06/seed_20262002",
+        "ld040/w06/seed_20262003",
+        "ld040/w06/seed_20262004",
+        "ld060/w06/seed_20262001",
+        "ld060/w06/seed_20262002",
+        "ld060/w06/seed_20262003",
+        "ld060/w06/seed_20262004"
+      ],
+      "reused_scenes_root": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\scenes",
+      "reused_scenes_were_regenerated": false
+    },
+    "input_mask": {
+      "name": "mask.png",
+      "description": "The degraded, nominal one-pixel-axis mask (byte-identical to mask_w1.png in all 20 scenes measured here). Its actual mean foreground width is NOT 1px -- the degradation model adds thickness -- confirmed by direct skeleton-based measurement over all 20 scenes in this sweep, consistent with the single-scene figure (1.72px) already established for the parent factorial.",
+      "measured": {
+        "n_scenes_measured": 20,
+        "mask.png_mean_foreground_width_px": 1.7493664384072525,
+        "mask.png_sd_foreground_width_px": 0.04493682773578682,
+        "mask_clean.png_mean_foreground_width_px": 1.010926955438651,
+        "mask_clean.png_sd_foreground_width_px": 0.00649123050968596,
+        "mask.png_mean_coverage": 0.04879074096679688,
+        "mask_clean.png_mean_coverage": 0.0297882080078125,
+        "mask.png_and_mask_w1.png_byte_identical_all_scenes": true
+      }
+    },
+    "metric_module": "eval/core/common_metric.py::score_method (common-fragment pairwise clustering + fragment_instance_recovery)",
+    "metric_representation": "gt_centerlines_multilabel.npz (overlap-aware one-pixel centreline GT); both methods scored against the SAME common-fragment decomposition of the degraded mask.png",
+    "methods": {
+      "filaseg": {
+        "pipeline_entry_point": "Tools/run_full_sem_pipeline.py (stages 1-4 executed; SCORED artifact is the Stage-3 reconnect output, not the Stage-4 render)",
+        "scored_stage": "3.reconnect (pre-render centreline instances)",
+        "reconnect_config": "C:\\Repos\\filaments_quantification\\3.reconnect\\reconnect_config.yaml",
+        "invocation": "same subprocess call as eval/runners/experiment_runner.py::_run_filaseg mode='run' (no tuning flags forwarded)",
+        "new_scenes_run": true,
+        "reused_scenes_source": "C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+        "reused_scenes_source_key": "empirical_stage3_per_scene (rows with bundle_width_level_px == 6.0)",
+        "reused_scenes_prior_provenance": {
+          "metric_module": "eval/core/common_metric.py::score_method (common-fragment pairwise clustering + fragment_instance_recovery)",
+          "pipeline_entry_point": "Tools/run_full_sem_pipeline.py (stages 1-4 executed; SCORED artifact is the Stage-3 reconnect output, not Stage-4 render)",
+          "scored_stage": "3.reconnect (pre-render centreline instances)",
+          "reconnect_config": "C:\\Repos\\filaments_quantification\\3.reconnect\\reconnect_config.yaml",
+          "gt_unassigned_policy": "singleton",
+          "created_utc": "2026-07-30T13:12:31.904407+00:00",
+          "n_scenes_total": 36,
+          "n_scenes_run": 36,
+          "n_scenes_ok": 36,
+          "n_scenes_failed": 0,
+          "total_elapsed_seconds": 520.900309085846,
+          "source_files": {
+            "structural_validation_report": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\factorial_report.json",
+            "empirical_per_scene_results": "C:\\Repos\\filaments_quantification\\output\\development_factorial_density_width\\empirical_stage3_results.json"
+          }
+        },
+        "reuse_verification": "for each reused scene, achieved_length_density_px_per_px2 in this sweep's gt_meta.json was asserted equal (abs diff < 1e-9) to the value in the prior per-scene row before reuse"
+      },
+      "baseline_skeleton": {
+        "implementation": "eval/baseline/baselines.py::baseline_skeleton_minturn (skeleton graph + minimum-turn continuation; the minimum-turn tracer used as 'baseline_skeleton' in eval/runners/experiment_runner.py)",
+        "invoked_via": "direct call to baseline_skeleton_minturn(mask, max_gap_px=28.0, max_turn_deg=20.0) -- same fixed parameters used for baseline_skeleton in the primary (locked) evaluation",
+        "parameters": {
+          "max_gap_px": 28.0,
+          "max_turn_deg": 20.0
+        },
+        "all_20_scenes_run": true,
+        "never_previously_run_on_these_scenes": true
+      }
+    },
+    "runtimes": {
+      "scene_generation_seconds": null,
+      "filaseg_new_scenes_total_seconds": 55.837103605270386,
+      "baseline_skeleton_total_seconds": 12.444905519485474,
+      "sweep_script_total_elapsed_seconds": 70.06356692314148
+    },
+    "n_scenes": {
+      "total": 20,
+      "filaseg_ok": 20,
+      "filaseg_failed": 0,
+      "baseline_skeleton_ok": 20,
+      "baseline_skeleton_failed": 0
+    },
+    "reject_locked_guard": "eval/generators/synth_factorial.py::reject_locked and this driver script's own reject_locked both checked every path touched; input/synthetic_locked_v1 and locked_evaluation were never read"
+  },
+  "per_scene": [
+    {
+      "geometry_id": "ld010/w06/seed_20262001",
+      "seed": 20262001,
+      "target_length_density_px_per_px2": 0.01,
+      "achieved_length_density_px_per_px2": 0.011299133065311618,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.01044464111328125,
+      "degraded_input_coverage": 0.01790618896484375,
+      "achieved_thick_mask_coverage": 0.06841659545898438,
+      "n_filaments": 11,
+      "crossing_density_per_megapixel": 30.517578125,
+      "gap_count": 8,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.9855072463768115,
+          "common_precision": 1.0,
+          "common_recall": 0.9714285714285714,
+          "fragment_recovery": {
+            "n_gt_instances": 11,
+            "n_pred_instances": 12,
+            "well_recovered": 10,
+            "fragmented": 1,
+            "absorbed": 0,
+            "false_instances": 1,
+            "recovery_rate": 0.9090909090909091
+          },
+          "source": "run",
+          "runtime_seconds": 4.435655117034912
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.955223880597015,
+          "common_precision": 1.0,
+          "common_recall": 0.9142857142857143,
+          "fragment_recovery": {
+            "n_gt_instances": 11,
+            "n_pred_instances": 14,
+            "well_recovered": 9,
+            "fragmented": 2,
+            "absorbed": 0,
+            "false_instances": 3,
+            "recovery_rate": 0.8181818181818182
+          },
+          "source": "run",
+          "runtime_seconds": 0.17378926277160645
+        }
+      }
+    },
+    {
+      "geometry_id": "ld010/w06/seed_20262002",
+      "seed": 20262002,
+      "target_length_density_px_per_px2": 0.01,
+      "achieved_length_density_px_per_px2": 0.010276794566561269,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.009250640869140625,
+      "degraded_input_coverage": 0.0161285400390625,
+      "achieved_thick_mask_coverage": 0.0616455078125,
+      "n_filaments": 13,
+      "crossing_density_per_megapixel": 22.88818359375,
+      "gap_count": 5,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.909090909090909,
+          "common_precision": 0.8695652173913043,
+          "common_recall": 0.9523809523809523,
+          "fragment_recovery": {
+            "n_gt_instances": 13,
+            "n_pred_instances": 14,
+            "well_recovered": 12,
+            "fragmented": 1,
+            "absorbed": 0,
+            "false_instances": 1,
+            "recovery_rate": 0.9230769230769231
+          },
+          "source": "run",
+          "runtime_seconds": 4.356628179550171
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.8641975308641975,
+          "common_precision": 0.8974358974358975,
+          "common_recall": 0.8333333333333334,
+          "fragment_recovery": {
+            "n_gt_instances": 13,
+            "n_pred_instances": 15,
+            "well_recovered": 11,
+            "fragmented": 2,
+            "absorbed": 0,
+            "false_instances": 2,
+            "recovery_rate": 0.8461538461538461
+          },
+          "source": "run",
+          "runtime_seconds": 0.15464091300964355
+        }
+      }
+    },
+    {
+      "geometry_id": "ld010/w06/seed_20262003",
+      "seed": 20262003,
+      "target_length_density_px_per_px2": 0.01,
+      "achieved_length_density_px_per_px2": 0.010200502132608688,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.009380340576171875,
+      "degraded_input_coverage": 0.01615142822265625,
+      "achieved_thick_mask_coverage": 0.06296157836914062,
+      "n_filaments": 14,
+      "crossing_density_per_megapixel": 30.517578125,
+      "gap_count": 4,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8108108108108109,
+          "common_precision": 0.8333333333333334,
+          "common_recall": 0.7894736842105263,
+          "fragment_recovery": {
+            "n_gt_instances": 14,
+            "n_pred_instances": 15,
+            "well_recovered": 11,
+            "fragmented": 2,
+            "absorbed": 1,
+            "false_instances": 2,
+            "recovery_rate": 0.7857142857142857
+          },
+          "source": "run",
+          "runtime_seconds": 4.513692617416382
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.9743589743589743,
+          "common_precision": 0.95,
+          "common_recall": 1.0,
+          "fragment_recovery": {
+            "n_gt_instances": 14,
+            "n_pred_instances": 15,
+            "well_recovered": 13,
+            "fragmented": 1,
+            "absorbed": 0,
+            "false_instances": 1,
+            "recovery_rate": 0.9285714285714286
+          },
+          "source": "run",
+          "runtime_seconds": 0.1625688076019287
+        }
+      }
+    },
+    {
+      "geometry_id": "ld010/w06/seed_20262004",
+      "seed": 20262004,
+      "target_length_density_px_per_px2": 0.01,
+      "achieved_length_density_px_per_px2": 0.01024627702402388,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.009490966796875,
+      "degraded_input_coverage": 0.015735626220703125,
+      "achieved_thick_mask_coverage": 0.06296157836914062,
+      "n_filaments": 14,
+      "crossing_density_per_megapixel": 7.62939453125,
+      "gap_count": 5,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.7058823529411764,
+          "common_precision": 0.8571428571428571,
+          "common_recall": 0.6,
+          "fragment_recovery": {
+            "n_gt_instances": 14,
+            "n_pred_instances": 14,
+            "well_recovered": 10,
+            "fragmented": 2,
+            "absorbed": 2,
+            "false_instances": 1,
+            "recovery_rate": 0.7142857142857143
+          },
+          "source": "run",
+          "runtime_seconds": 4.262401342391968
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.888888888888889,
+          "common_precision": 1.0,
+          "common_recall": 0.8,
+          "fragment_recovery": {
+            "n_gt_instances": 14,
+            "n_pred_instances": 15,
+            "well_recovered": 13,
+            "fragmented": 1,
+            "absorbed": 0,
+            "false_instances": 1,
+            "recovery_rate": 0.9285714285714286
+          },
+          "source": "run",
+          "runtime_seconds": 0.18021607398986816
+        }
+      }
+    },
+    {
+      "geometry_id": "ld020/w06/seed_20262001",
+      "seed": 20262001,
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021255492458242792,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0197906494140625,
+      "degraded_input_coverage": 0.033069610595703125,
+      "achieved_thick_mask_coverage": 0.1267547607421875,
+      "n_filaments": 21,
+      "crossing_density_per_megapixel": 110.626220703125,
+      "gap_count": 13,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8192771084337349,
+          "common_precision": 0.8869565217391304,
+          "common_recall": 0.7611940298507462,
+          "fragment_recovery": {
+            "n_gt_instances": 21,
+            "n_pred_instances": 22,
+            "well_recovered": 16,
+            "fragmented": 3,
+            "absorbed": 2,
+            "false_instances": 3,
+            "recovery_rate": 0.7619047619047619
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 6.704550743103027
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.8630705394190871,
+          "common_precision": 0.9719626168224299,
+          "common_recall": 0.7761194029850746,
+          "fragment_recovery": {
+            "n_gt_instances": 21,
+            "n_pred_instances": 26,
+            "well_recovered": 17,
+            "fragmented": 4,
+            "absorbed": 0,
+            "false_instances": 5,
+            "recovery_rate": 0.8095238095238095
+          },
+          "source": "run",
+          "runtime_seconds": 0.34844374656677246
+        }
+      }
+    },
+    {
+      "geometry_id": "ld020/w06/seed_20262002",
+      "seed": 20262002,
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.021087645204908707,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.01911163330078125,
+      "degraded_input_coverage": 0.03205108642578125,
+      "achieved_thick_mask_coverage": 0.1183929443359375,
+      "n_filaments": 25,
+      "crossing_density_per_megapixel": 137.3291015625,
+      "gap_count": 12,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.9097744360902257,
+          "common_precision": 0.9029850746268657,
+          "common_recall": 0.9166666666666666,
+          "fragment_recovery": {
+            "n_gt_instances": 25,
+            "n_pred_instances": 26,
+            "well_recovered": 19,
+            "fragmented": 4,
+            "absorbed": 2,
+            "false_instances": 3,
+            "recovery_rate": 0.76
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 6.899998664855957
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7692307692307692,
+          "common_precision": 0.78125,
+          "common_recall": 0.7575757575757576,
+          "fragment_recovery": {
+            "n_gt_instances": 25,
+            "n_pred_instances": 29,
+            "well_recovered": 15,
+            "fragmented": 8,
+            "absorbed": 2,
+            "false_instances": 6,
+            "recovery_rate": 0.6
+          },
+          "source": "run",
+          "runtime_seconds": 0.3230593204498291
+        }
+      }
+    },
+    {
+      "geometry_id": "ld020/w06/seed_20262003",
+      "seed": 20262003,
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.0206832912893092,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.019489288330078125,
+      "degraded_input_coverage": 0.032001495361328125,
+      "achieved_thick_mask_coverage": 0.12008285522460938,
+      "n_filaments": 23,
+      "crossing_density_per_megapixel": 133.514404296875,
+      "gap_count": 7,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8324873096446701,
+          "common_precision": 0.8282828282828283,
+          "common_recall": 0.8367346938775511,
+          "fragment_recovery": {
+            "n_gt_instances": 23,
+            "n_pred_instances": 23,
+            "well_recovered": 17,
+            "fragmented": 5,
+            "absorbed": 1,
+            "false_instances": 1,
+            "recovery_rate": 0.7391304347826086
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 6.642882823944092
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.686868686868687,
+          "common_precision": 0.68,
+          "common_recall": 0.6938775510204082,
+          "fragment_recovery": {
+            "n_gt_instances": 23,
+            "n_pred_instances": 27,
+            "well_recovered": 16,
+            "fragmented": 5,
+            "absorbed": 2,
+            "false_instances": 6,
+            "recovery_rate": 0.6956521739130435
+          },
+          "source": "run",
+          "runtime_seconds": 0.3228428363800049
+        }
+      }
+    },
+    {
+      "geometry_id": "ld020/w06/seed_20262004",
+      "seed": 20262004,
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": 0.020271302614613563,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.018680572509765625,
+      "degraded_input_coverage": 0.03150177001953125,
+      "achieved_thick_mask_coverage": 0.11826324462890625,
+      "n_filaments": 25,
+      "crossing_density_per_megapixel": 91.552734375,
+      "gap_count": 20,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8756218905472637,
+          "common_precision": 0.88,
+          "common_recall": 0.8712871287128713,
+          "fragment_recovery": {
+            "n_gt_instances": 25,
+            "n_pred_instances": 22,
+            "well_recovered": 18,
+            "fragmented": 3,
+            "absorbed": 4,
+            "false_instances": 0,
+            "recovery_rate": 0.72
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 6.186559438705444
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.9285714285714285,
+          "common_precision": 0.9578947368421052,
+          "common_recall": 0.900990099009901,
+          "fragment_recovery": {
+            "n_gt_instances": 25,
+            "n_pred_instances": 27,
+            "well_recovered": 20,
+            "fragmented": 4,
+            "absorbed": 1,
+            "false_instances": 3,
+            "recovery_rate": 0.8
+          },
+          "source": "run",
+          "runtime_seconds": 0.3059999942779541
+        }
+      }
+    },
+    {
+      "geometry_id": "ld030/w06/seed_20262001",
+      "seed": 20262001,
+      "target_length_density_px_per_px2": 0.03,
+      "achieved_length_density_px_per_px2": 0.03070068322125872,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.028484344482421875,
+      "degraded_input_coverage": 0.046817779541015625,
+      "achieved_thick_mask_coverage": 0.17831039428710938,
+      "n_filaments": 38,
+      "crossing_density_per_megapixel": 251.77001953125,
+      "gap_count": 39,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8794788273615635,
+          "common_precision": 0.8970099667774086,
+          "common_recall": 0.8626198083067093,
+          "fragment_recovery": {
+            "n_gt_instances": 38,
+            "n_pred_instances": 41,
+            "well_recovered": 29,
+            "fragmented": 9,
+            "absorbed": 0,
+            "false_instances": 3,
+            "recovery_rate": 0.7631578947368421
+          },
+          "source": "run",
+          "runtime_seconds": 9.618090629577637
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.8556521739130435,
+          "common_precision": 0.9389312977099237,
+          "common_recall": 0.7859424920127795,
+          "fragment_recovery": {
+            "n_gt_instances": 38,
+            "n_pred_instances": 48,
+            "well_recovered": 27,
+            "fragmented": 9,
+            "absorbed": 2,
+            "false_instances": 11,
+            "recovery_rate": 0.7105263157894737
+          },
+          "source": "run",
+          "runtime_seconds": 0.4806962013244629
+        }
+      }
+    },
+    {
+      "geometry_id": "ld030/w06/seed_20262002",
+      "seed": 20262002,
+      "target_length_density_px_per_px2": 0.03,
+      "achieved_length_density_px_per_px2": 0.030662535022811067,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.027477264404296875,
+      "degraded_input_coverage": 0.046901702880859375,
+      "achieved_thick_mask_coverage": 0.16688919067382812,
+      "n_filaments": 34,
+      "crossing_density_per_megapixel": 301.361083984375,
+      "gap_count": 25,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8672566371681415,
+          "common_precision": 0.8618090452261307,
+          "common_recall": 0.8727735368956743,
+          "fragment_recovery": {
+            "n_gt_instances": 34,
+            "n_pred_instances": 34,
+            "well_recovered": 25,
+            "fragmented": 5,
+            "absorbed": 4,
+            "false_instances": 4,
+            "recovery_rate": 0.7352941176470589
+          },
+          "source": "run",
+          "runtime_seconds": 8.903634071350098
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7263157894736841,
+          "common_precision": 0.7520435967302452,
+          "common_recall": 0.7022900763358778,
+          "fragment_recovery": {
+            "n_gt_instances": 34,
+            "n_pred_instances": 40,
+            "well_recovered": 19,
+            "fragmented": 9,
+            "absorbed": 6,
+            "false_instances": 11,
+            "recovery_rate": 0.5588235294117647
+          },
+          "source": "run",
+          "runtime_seconds": 0.4914724826812744
+        }
+      }
+    },
+    {
+      "geometry_id": "ld030/w06/seed_20262003",
+      "seed": 20262003,
+      "target_length_density_px_per_px2": 0.03,
+      "achieved_length_density_px_per_px2": 0.030174259075401926,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.028347015380859375,
+      "degraded_input_coverage": 0.04546356201171875,
+      "achieved_thick_mask_coverage": 0.17098236083984375,
+      "n_filaments": 34,
+      "crossing_density_per_megapixel": 278.472900390625,
+      "gap_count": 21,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.7450980392156863,
+          "common_precision": 0.7728813559322034,
+          "common_recall": 0.7192429022082019,
+          "fragment_recovery": {
+            "n_gt_instances": 34,
+            "n_pred_instances": 36,
+            "well_recovered": 21,
+            "fragmented": 12,
+            "absorbed": 1,
+            "false_instances": 3,
+            "recovery_rate": 0.6176470588235294
+          },
+          "source": "run",
+          "runtime_seconds": 8.630423307418823
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7495559502664297,
+          "common_precision": 0.8577235772357723,
+          "common_recall": 0.6656151419558359,
+          "fragment_recovery": {
+            "n_gt_instances": 34,
+            "n_pred_instances": 47,
+            "well_recovered": 23,
+            "fragmented": 10,
+            "absorbed": 1,
+            "false_instances": 14,
+            "recovery_rate": 0.6764705882352942
+          },
+          "source": "run",
+          "runtime_seconds": 0.4877445697784424
+        }
+      }
+    },
+    {
+      "geometry_id": "ld030/w06/seed_20262004",
+      "seed": 20262004,
+      "target_length_density_px_per_px2": 0.03,
+      "achieved_length_density_px_per_px2": 0.03030395737414908,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.02754974365234375,
+      "degraded_input_coverage": 0.046131134033203125,
+      "achieved_thick_mask_coverage": 0.1673431396484375,
+      "n_filaments": 41,
+      "crossing_density_per_megapixel": 247.955322265625,
+      "gap_count": 27,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8405797101449275,
+          "common_precision": 0.9219653179190751,
+          "common_recall": 0.7723970944309927,
+          "fragment_recovery": {
+            "n_gt_instances": 41,
+            "n_pred_instances": 42,
+            "well_recovered": 27,
+            "fragmented": 9,
+            "absorbed": 5,
+            "false_instances": 5,
+            "recovery_rate": 0.6585365853658537
+          },
+          "source": "run",
+          "runtime_seconds": 11.116578340530396
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.8664169787765293,
+          "common_precision": 0.8943298969072165,
+          "common_recall": 0.8401937046004843,
+          "fragment_recovery": {
+            "n_gt_instances": 41,
+            "n_pred_instances": 44,
+            "well_recovered": 30,
+            "fragmented": 7,
+            "absorbed": 4,
+            "false_instances": 7,
+            "recovery_rate": 0.7317073170731707
+          },
+          "source": "run",
+          "runtime_seconds": 0.4963107109069824
+        }
+      }
+    },
+    {
+      "geometry_id": "ld040/w06/seed_20262001",
+      "seed": 20262001,
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.040374754976745954,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0373077392578125,
+      "degraded_input_coverage": 0.060153961181640625,
+      "achieved_thick_mask_coverage": 0.2239227294921875,
+      "n_filaments": 49,
+      "crossing_density_per_megapixel": 495.91064453125,
+      "gap_count": 61,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8027444253859348,
+          "common_precision": 0.8357142857142857,
+          "common_recall": 0.7722772277227723,
+          "fragment_recovery": {
+            "n_gt_instances": 48,
+            "n_pred_instances": 53,
+            "well_recovered": 33,
+            "fragmented": 15,
+            "absorbed": 0,
+            "false_instances": 5,
+            "recovery_rate": 0.6875
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 13.11581802368164
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.6734883720930233,
+          "common_precision": 0.7718550106609808,
+          "common_recall": 0.5973597359735974,
+          "fragment_recovery": {
+            "n_gt_instances": 48,
+            "n_pred_instances": 64,
+            "well_recovered": 26,
+            "fragmented": 19,
+            "absorbed": 3,
+            "false_instances": 18,
+            "recovery_rate": 0.5416666666666666
+          },
+          "source": "run",
+          "runtime_seconds": 0.7402958869934082
+        }
+      }
+    },
+    {
+      "geometry_id": "ld040/w06/seed_20262002",
+      "seed": 20262002,
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.0410156228086149,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0368804931640625,
+      "degraded_input_coverage": 0.062282562255859375,
+      "achieved_thick_mask_coverage": 0.21781158447265625,
+      "n_filaments": 45,
+      "crossing_density_per_megapixel": 560.760498046875,
+      "gap_count": 35,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8815871047737136,
+          "common_precision": 0.8597339782345829,
+          "common_recall": 0.9045801526717557,
+          "fragment_recovery": {
+            "n_gt_instances": 45,
+            "n_pred_instances": 43,
+            "well_recovered": 37,
+            "fragmented": 4,
+            "absorbed": 4,
+            "false_instances": 2,
+            "recovery_rate": 0.8222222222222222
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 12.082913398742676
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7306701030927835,
+          "common_precision": 0.7402088772845953,
+          "common_recall": 0.7213740458015268,
+          "fragment_recovery": {
+            "n_gt_instances": 45,
+            "n_pred_instances": 52,
+            "well_recovered": 28,
+            "fragmented": 12,
+            "absorbed": 5,
+            "false_instances": 12,
+            "recovery_rate": 0.6222222222222222
+          },
+          "source": "run",
+          "runtime_seconds": 0.7503879070281982
+        }
+      }
+    },
+    {
+      "geometry_id": "ld040/w06/seed_20262003",
+      "seed": 20262003,
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04034424156955974,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0374603271484375,
+      "degraded_input_coverage": 0.0592193603515625,
+      "achieved_thick_mask_coverage": 0.22261428833007812,
+      "n_filaments": 44,
+      "crossing_density_per_megapixel": 457.763671875,
+      "gap_count": 47,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.7237762237762239,
+          "common_precision": 0.6981450252951096,
+          "common_recall": 0.7513611615245009,
+          "fragment_recovery": {
+            "n_gt_instances": 44,
+            "n_pred_instances": 47,
+            "well_recovered": 29,
+            "fragmented": 13,
+            "absorbed": 2,
+            "false_instances": 5,
+            "recovery_rate": 0.6590909090909091
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 13.37984323501587
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7160731472569778,
+          "common_precision": 0.7622950819672131,
+          "common_recall": 0.6751361161524501,
+          "fragment_recovery": {
+            "n_gt_instances": 44,
+            "n_pred_instances": 57,
+            "well_recovered": 26,
+            "fragmented": 16,
+            "absorbed": 2,
+            "false_instances": 15,
+            "recovery_rate": 0.5909090909090909
+          },
+          "source": "run",
+          "runtime_seconds": 0.7407379150390625
+        }
+      }
+    },
+    {
+      "geometry_id": "ld040/w06/seed_20262004",
+      "seed": 20262004,
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": 0.04123688022687609,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.037258148193359375,
+      "degraded_input_coverage": 0.061977386474609375,
+      "achieved_thick_mask_coverage": 0.22240447998046875,
+      "n_filaments": 53,
+      "crossing_density_per_megapixel": 476.837158203125,
+      "gap_count": 54,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.8045283018867925,
+          "common_precision": 0.8367346938775511,
+          "common_recall": 0.7747093023255814,
+          "fragment_recovery": {
+            "n_gt_instances": 53,
+            "n_pred_instances": 52,
+            "well_recovered": 35,
+            "fragmented": 9,
+            "absorbed": 9,
+            "false_instances": 7,
+            "recovery_rate": 0.660377358490566
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 13.745896816253662
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.7375178316690442,
+          "common_precision": 0.7240896358543417,
+          "common_recall": 0.751453488372093,
+          "fragment_recovery": {
+            "n_gt_instances": 53,
+            "n_pred_instances": 57,
+            "well_recovered": 29,
+            "fragmented": 15,
+            "absorbed": 9,
+            "false_instances": 12,
+            "recovery_rate": 0.5471698113207547
+          },
+          "source": "run",
+          "runtime_seconds": 0.7617461681365967
+        }
+      }
+    },
+    {
+      "geometry_id": "ld060/w06/seed_20262001",
+      "seed": 20262001,
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06070709130383358,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.05541229248046875,
+      "degraded_input_coverage": 0.08908462524414062,
+      "achieved_thick_mask_coverage": 0.31475067138671875,
+      "n_filaments": 74,
+      "crossing_density_per_megapixel": 1106.26220703125,
+      "gap_count": 111,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.6451169188445667,
+          "common_precision": 0.6126714565643371,
+          "common_recall": 0.6811909949164852,
+          "fragment_recovery": {
+            "n_gt_instances": 70,
+            "n_pred_instances": 74,
+            "well_recovered": 36,
+            "fragmented": 22,
+            "absorbed": 12,
+            "false_instances": 15,
+            "recovery_rate": 0.5142857142857142
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 20.519815921783447
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.5237388724035609,
+          "common_precision": 0.535253980288097,
+          "common_recall": 0.5127087872185911,
+          "fragment_recovery": {
+            "n_gt_instances": 70,
+            "n_pred_instances": 92,
+            "well_recovered": 26,
+            "fragmented": 31,
+            "absorbed": 13,
+            "false_instances": 31,
+            "recovery_rate": 0.37142857142857144
+          },
+          "source": "run",
+          "runtime_seconds": 1.3569579124450684
+        }
+      }
+    },
+    {
+      "geometry_id": "ld060/w06/seed_20262002",
+      "seed": 20262002,
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.06069946014830681,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0542755126953125,
+      "degraded_input_coverage": 0.08733749389648438,
+      "achieved_thick_mask_coverage": 0.3049125671386719,
+      "n_filaments": 72,
+      "crossing_density_per_megapixel": 1216.888427734375,
+      "gap_count": 116,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.744573297650907,
+          "common_precision": 0.7065462753950339,
+          "common_recall": 0.7869264613450659,
+          "fragment_recovery": {
+            "n_gt_instances": 72,
+            "n_pred_instances": 70,
+            "well_recovered": 44,
+            "fragmented": 16,
+            "absorbed": 12,
+            "false_instances": 10,
+            "recovery_rate": 0.6111111111111112
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 22.015305757522583
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.5585088022091819,
+          "common_precision": 0.6194486983154671,
+          "common_recall": 0.5084852294154619,
+          "fragment_recovery": {
+            "n_gt_instances": 72,
+            "n_pred_instances": 106,
+            "well_recovered": 24,
+            "fragmented": 36,
+            "absorbed": 12,
+            "false_instances": 43,
+            "recovery_rate": 0.3333333333333333
+          },
+          "source": "run",
+          "runtime_seconds": 1.4404027462005615
+        }
+      }
+    },
+    {
+      "geometry_id": "ld060/w06/seed_20262003",
+      "seed": 20262003,
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060462955196605564,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.05521392822265625,
+      "degraded_input_coverage": 0.0867156982421875,
+      "achieved_thick_mask_coverage": 0.3103446960449219,
+      "n_filaments": 65,
+      "crossing_density_per_megapixel": 1064.300537109375,
+      "gap_count": 77,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.6806971390989807,
+          "common_precision": 0.6529968454258676,
+          "common_recall": 0.7108516483516484,
+          "fragment_recovery": {
+            "n_gt_instances": 65,
+            "n_pred_instances": 66,
+            "well_recovered": 28,
+            "fragmented": 28,
+            "absorbed": 9,
+            "false_instances": 9,
+            "recovery_rate": 0.4307692307692308
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 17.598668098449707
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.570898292501856,
+          "common_precision": 0.6211631663974152,
+          "common_recall": 0.5281593406593407,
+          "fragment_recovery": {
+            "n_gt_instances": 65,
+            "n_pred_instances": 96,
+            "well_recovered": 24,
+            "fragmented": 36,
+            "absorbed": 5,
+            "false_instances": 36,
+            "recovery_rate": 0.36923076923076925
+          },
+          "source": "run",
+          "runtime_seconds": 1.382326364517212
+        }
+      }
+    },
+    {
+      "geometry_id": "ld060/w06/seed_20262004",
+      "seed": 20262004,
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": 0.060806276108481924,
+      "bundle_width_level_px": 6.0,
+      "clean_1px_union_coverage": 0.0544586181640625,
+      "degraded_input_coverage": 0.08918380737304688,
+      "achieved_thick_mask_coverage": 0.31012725830078125,
+      "n_filaments": 74,
+      "crossing_density_per_megapixel": 1117.706298828125,
+      "gap_count": 86,
+      "methods": {
+        "filaseg": {
+          "common_f1": 0.7818636201356658,
+          "common_precision": 0.799853907962016,
+          "common_recall": 0.7646648044692738,
+          "fragment_recovery": {
+            "n_gt_instances": 74,
+            "n_pred_instances": 76,
+            "well_recovered": 42,
+            "fragmented": 22,
+            "absorbed": 10,
+            "false_instances": 11,
+            "recovery_rate": 0.5675675675675675
+          },
+          "source": "reused:C:\\Repos\\Paper-marked----FilaSeg-Geometry-Driven-Instance-Extraction-of-thin-filaments\\results\\development_factorial_density_width.json",
+          "runtime_seconds": 20.877395153045654
+        },
+        "baseline_skeleton": {
+          "common_f1": 0.5850914205344585,
+          "common_precision": 0.5892351274787535,
+          "common_recall": 0.5810055865921788,
+          "fragment_recovery": {
+            "n_gt_instances": 74,
+            "n_pred_instances": 88,
+            "well_recovered": 30,
+            "fragmented": 30,
+            "absorbed": 14,
+            "false_instances": 27,
+            "recovery_rate": 0.40540540540540543
+          },
+          "source": "run",
+          "runtime_seconds": 1.3442656993865967
+        }
+      }
+    }
+  ],
+  "per_density": {
+    "ld010": {
+      "target_length_density_px_per_px2": 0.01,
+      "achieved_length_density_px_per_px2": {
+        "n": 4,
+        "mean": 0.010505676697126364,
+        "sd": 0.0005298992807254286,
+        "per_seed_values": [
+          0.011299133065311618,
+          0.010276794566561269,
+          0.010200502132608688,
+          0.01024627702402388
+        ]
+      },
+      "crossing_density_per_megapixel": {
+        "n": 4,
+        "mean": 22.88818359375,
+        "sd": 10.789593218788871,
+        "per_seed_values": [
+          30.517578125,
+          22.88818359375,
+          30.517578125,
+          7.62939453125
+        ]
+      },
+      "gap_count": {
+        "n": 4,
+        "mean": 5.5,
+        "sd": 1.7320508075688772,
+        "per_seed_values": [
+          8.0,
+          5.0,
+          4.0,
+          5.0
+        ]
+      },
+      "n_filaments": {
+        "n": 4,
+        "mean": 13.0,
+        "sd": 1.4142135623730951,
+        "per_seed_values": [
+          11.0,
+          13.0,
+          14.0,
+          14.0
+        ]
+      },
+      "methods": {
+        "filaseg": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.852822829804927,
+            "sd": 0.1212817169904617,
+            "per_seed_values": [
+              0.9855072463768115,
+              0.909090909090909,
+              0.8108108108108109,
+              0.7058823529411764
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.8900103519668737,
+            "sd": 0.07485159285648188,
+            "per_seed_values": [
+              1.0,
+              0.8695652173913043,
+              0.8333333333333334,
+              0.8571428571428571
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.8283208020050125,
+            "sd": 0.17273316779533893,
+            "per_seed_values": [
+              0.9714285714285714,
+              0.9523809523809523,
+              0.7894736842105263,
+              0.6
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.833041958041958,
+            "sd": 0.10038707068731684,
+            "per_seed_values": [
+              0.9090909090909091,
+              0.9230769230769231,
+              0.7857142857142857,
+              0.7142857142857143
+            ]
+          }
+        },
+        "baseline_skeleton": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.9206673186772689,
+            "sd": 0.05252191732037323,
+            "per_seed_values": [
+              0.955223880597015,
+              0.8641975308641975,
+              0.9743589743589743,
+              0.888888888888889
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.9618589743589743,
+            "sd": 0.04899130462637306,
+            "per_seed_values": [
+              1.0,
+              0.8974358974358975,
+              0.95,
+              1.0
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.8869047619047619,
+            "sd": 0.08937297323392121,
+            "per_seed_values": [
+              0.9142857142857143,
+              0.8333333333333334,
+              1.0,
+              0.8
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.8803696303696305,
+            "sd": 0.05681804459260415,
+            "per_seed_values": [
+              0.8181818181818182,
+              0.8461538461538461,
+              0.9285714285714286,
+              0.9285714285714286
+            ]
+          }
+        }
+      }
+    },
+    "ld020": {
+      "target_length_density_px_per_px2": 0.02,
+      "achieved_length_density_px_per_px2": {
+        "n": 4,
+        "mean": 0.020824432891768562,
+        "sd": 0.000440063301161662,
+        "per_seed_values": [
+          0.021255492458242792,
+          0.021087645204908707,
+          0.0206832912893092,
+          0.020271302614613563
+        ]
+      },
+      "crossing_density_per_megapixel": {
+        "n": 4,
+        "mean": 118.255615234375,
+        "sd": 21.353220143313937,
+        "per_seed_values": [
+          110.626220703125,
+          137.3291015625,
+          133.514404296875,
+          91.552734375
+        ]
+      },
+      "gap_count": {
+        "n": 4,
+        "mean": 13.0,
+        "sd": 5.354126134736337,
+        "per_seed_values": [
+          13.0,
+          12.0,
+          7.0,
+          20.0
+        ]
+      },
+      "n_filaments": {
+        "n": 4,
+        "mean": 23.5,
+        "sd": 1.9148542155126762,
+        "per_seed_values": [
+          21.0,
+          25.0,
+          23.0,
+          25.0
+        ]
+      },
+      "methods": {
+        "filaseg": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.8592901861789736,
+            "sd": 0.04137158702070224,
+            "per_seed_values": [
+              0.8192771084337349,
+              0.9097744360902257,
+              0.8324873096446701,
+              0.8756218905472637
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.874556106162206,
+            "sd": 0.03231526357757443,
+            "per_seed_values": [
+              0.8869565217391304,
+              0.9029850746268657,
+              0.8282828282828283,
+              0.88
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.8464706297769589,
+            "sd": 0.06560037895538423,
+            "per_seed_values": [
+              0.7611940298507462,
+              0.9166666666666666,
+              0.8367346938775511,
+              0.8712871287128713
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.7452587991718427,
+            "sd": 0.019748036719739293,
+            "per_seed_values": [
+              0.7619047619047619,
+              0.76,
+              0.7391304347826086,
+              0.72
+            ]
+          }
+        },
+        "baseline_skeleton": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.8119353560224929,
+            "sd": 0.105962467988943,
+            "per_seed_values": [
+              0.8630705394190871,
+              0.7692307692307692,
+              0.686868686868687,
+              0.9285714285714285
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.8477768384161338,
+            "sd": 0.14156617634012497,
+            "per_seed_values": [
+              0.9719626168224299,
+              0.78125,
+              0.68,
+              0.9578947368421052
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.7821407026477853,
+            "sd": 0.08670881448245146,
+            "per_seed_values": [
+              0.7761194029850746,
+              0.7575757575757576,
+              0.6938775510204082,
+              0.900990099009901
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.7262939958592132,
+            "sd": 0.09874018359869645,
+            "per_seed_values": [
+              0.8095238095238095,
+              0.6,
+              0.6956521739130435,
+              0.8
+            ]
+          }
+        }
+      }
+    },
+    "ld030": {
+      "target_length_density_px_per_px2": 0.03,
+      "achieved_length_density_px_per_px2": {
+        "n": 4,
+        "mean": 0.0304603586734052,
+        "sd": 0.0002613717090956346,
+        "per_seed_values": [
+          0.03070068322125872,
+          0.030662535022811067,
+          0.030174259075401926,
+          0.03030395737414908
+        ]
+      },
+      "crossing_density_per_megapixel": {
+        "n": 4,
+        "mean": 269.88983154296875,
+        "sd": 24.99039205809726,
+        "per_seed_values": [
+          251.77001953125,
+          301.361083984375,
+          278.472900390625,
+          247.955322265625
+        ]
+      },
+      "gap_count": {
+        "n": 4,
+        "mean": 28.0,
+        "sd": 7.745966692414834,
+        "per_seed_values": [
+          39.0,
+          25.0,
+          21.0,
+          27.0
+        ]
+      },
+      "n_filaments": {
+        "n": 4,
+        "mean": 36.75,
+        "sd": 3.4034296427770228,
+        "per_seed_values": [
+          38.0,
+          34.0,
+          34.0,
+          41.0
+        ]
+      },
+      "methods": {
+        "filaseg": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.8331033034725797,
+            "sd": 0.060876822661705084,
+            "per_seed_values": [
+              0.8794788273615635,
+              0.8672566371681415,
+              0.7450980392156863,
+              0.8405797101449275
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.8634164214637046,
+            "sd": 0.06520654699248103,
+            "per_seed_values": [
+              0.8970099667774086,
+              0.8618090452261307,
+              0.7728813559322034,
+              0.9219653179190751
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.8067583354603944,
+            "sd": 0.07375219072791388,
+            "per_seed_values": [
+              0.8626198083067093,
+              0.8727735368956743,
+              0.7192429022082019,
+              0.7723970944309927
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.693658914143321,
+            "sd": 0.06726806721926269,
+            "per_seed_values": [
+              0.7631578947368421,
+              0.7352941176470589,
+              0.6176470588235294,
+              0.6585365853658537
+            ]
+          }
+        },
+        "baseline_skeleton": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.7994852231074216,
+            "sd": 0.07183612040485483,
+            "per_seed_values": [
+              0.8556521739130435,
+              0.7263157894736841,
+              0.7495559502664297,
+              0.8664169787765293
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.8607570921457893,
+            "sd": 0.07972069144479214,
+            "per_seed_values": [
+              0.9389312977099237,
+              0.7520435967302452,
+              0.8577235772357723,
+              0.8943298969072165
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.7485103537262444,
+            "sd": 0.07919371183104243,
+            "per_seed_values": [
+              0.7859424920127795,
+              0.7022900763358778,
+              0.6656151419558359,
+              0.8401937046004843
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.6693819376274258,
+            "sd": 0.07713780606166014,
+            "per_seed_values": [
+              0.7105263157894737,
+              0.5588235294117647,
+              0.6764705882352942,
+              0.7317073170731707
+            ]
+          }
+        }
+      }
+    },
+    "ld040": {
+      "target_length_density_px_per_px2": 0.04,
+      "achieved_length_density_px_per_px2": {
+        "n": 4,
+        "mean": 0.04074287489544917,
+        "sd": 0.0004519784267234484,
+        "per_seed_values": [
+          0.040374754976745954,
+          0.0410156228086149,
+          0.04034424156955974,
+          0.04123688022687609
+        ]
+      },
+      "crossing_density_per_megapixel": {
+        "n": 4,
+        "mean": 497.8179931640625,
+        "sd": 44.75839209695954,
+        "per_seed_values": [
+          495.91064453125,
+          560.760498046875,
+          457.763671875,
+          476.837158203125
+        ]
+      },
+      "gap_count": {
+        "n": 4,
+        "mean": 49.25,
+        "sd": 11.086778913041726,
+        "per_seed_values": [
+          61.0,
+          35.0,
+          47.0,
+          54.0
+        ]
+      },
+      "n_filaments": {
+        "n": 4,
+        "mean": 47.75,
+        "sd": 4.112987559751022,
+        "per_seed_values": [
+          49.0,
+          45.0,
+          44.0,
+          53.0
+        ]
+      },
+      "methods": {
+        "filaseg": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.8031590139556661,
+            "sd": 0.0644324960434245,
+            "per_seed_values": [
+              0.8027444253859348,
+              0.8815871047737136,
+              0.7237762237762239,
+              0.8045283018867925
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.8075819957803823,
+            "sd": 0.0737960823851049,
+            "per_seed_values": [
+              0.8357142857142857,
+              0.8597339782345829,
+              0.6981450252951096,
+              0.8367346938775511
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.8007319610611526,
+            "sd": 0.07002088584774098,
+            "per_seed_values": [
+              0.7722772277227723,
+              0.9045801526717557,
+              0.7513611615245009,
+              0.7747093023255814
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.7072976224509243,
+            "sd": 0.0777281756516188,
+            "per_seed_values": [
+              0.6875,
+              0.8222222222222222,
+              0.6590909090909091,
+              0.660377358490566
+            ]
+          }
+        },
+        "baseline_skeleton": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.7144373635279572,
+            "sd": 0.028726906849024708,
+            "per_seed_values": [
+              0.6734883720930233,
+              0.7306701030927835,
+              0.7160731472569778,
+              0.7375178316690442
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.7496121514417827,
+            "sd": 0.021567119107137434,
+            "per_seed_values": [
+              0.7718550106609808,
+              0.7402088772845953,
+              0.7622950819672131,
+              0.7240896358543417
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.6863308465749168,
+            "sd": 0.06710728921546232,
+            "per_seed_values": [
+              0.5973597359735974,
+              0.7213740458015268,
+              0.6751361161524501,
+              0.751453488372093
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.5754919477796836,
+            "sd": 0.03815625727505439,
+            "per_seed_values": [
+              0.5416666666666666,
+              0.6222222222222222,
+              0.5909090909090909,
+              0.5471698113207547
+            ]
+          }
+        }
+      }
+    },
+    "ld060": {
+      "target_length_density_px_per_px2": 0.06,
+      "achieved_length_density_px_per_px2": {
+        "n": 4,
+        "mean": 0.060668945689306975,
+        "sd": 0.00014569139442648657,
+        "per_seed_values": [
+          0.06070709130383358,
+          0.06069946014830681,
+          0.060462955196605564,
+          0.060806276108481924
+        ]
+      },
+      "crossing_density_per_megapixel": {
+        "n": 4,
+        "mean": 1126.2893676757812,
+        "sd": 64.61568703448818,
+        "per_seed_values": [
+          1106.26220703125,
+          1216.888427734375,
+          1064.300537109375,
+          1117.706298828125
+        ]
+      },
+      "gap_count": {
+        "n": 4,
+        "mean": 97.5,
+        "sd": 18.947295321496416,
+        "per_seed_values": [
+          111.0,
+          116.0,
+          77.0,
+          86.0
+        ]
+      },
+      "n_filaments": {
+        "n": 4,
+        "mean": 71.25,
+        "sd": 4.272001872658765,
+        "per_seed_values": [
+          74.0,
+          72.0,
+          65.0,
+          74.0
+        ]
+      },
+      "methods": {
+        "filaseg": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.7130627439325301,
+            "sd": 0.06161883663589545,
+            "per_seed_values": [
+              0.6451169188445667,
+              0.744573297650907,
+              0.6806971390989807,
+              0.7818636201356658
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.6930171213368136,
+            "sd": 0.08094068881522551,
+            "per_seed_values": [
+              0.6126714565643371,
+              0.7065462753950339,
+              0.6529968454258676,
+              0.799853907962016
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.7359084772706183,
+            "sd": 0.048482328751914425,
+            "per_seed_values": [
+              0.6811909949164852,
+              0.7869264613450659,
+              0.7108516483516484,
+              0.7646648044692738
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.5309334059334059,
+            "sd": 0.07763275474891829,
+            "per_seed_values": [
+              0.5142857142857142,
+              0.6111111111111112,
+              0.4307692307692308,
+              0.5675675675675675
+            ]
+          }
+        },
+        "baseline_skeleton": {
+          "common_f1": {
+            "n": 4,
+            "mean": 0.5595593469122643,
+            "sd": 0.02623400152940653,
+            "per_seed_values": [
+              0.5237388724035609,
+              0.5585088022091819,
+              0.570898292501856,
+              0.5850914205344585
+            ]
+          },
+          "common_precision": {
+            "n": 4,
+            "mean": 0.5912752431199333,
+            "sd": 0.04012304199417281,
+            "per_seed_values": [
+              0.535253980288097,
+              0.6194486983154671,
+              0.6211631663974152,
+              0.5892351274787535
+            ]
+          },
+          "common_recall": {
+            "n": 4,
+            "mean": 0.5325897359713931,
+            "sd": 0.033366661772752354,
+            "per_seed_values": [
+              0.5127087872185911,
+              0.5084852294154619,
+              0.5281593406593407,
+              0.5810055865921788
+            ]
+          },
+          "fragment_recovery_rate": {
+            "n": 4,
+            "mean": 0.36984951984951986,
+            "sd": 0.02944219835296308,
+            "per_seed_values": [
+              0.37142857142857144,
+              0.3333333333333333,
+              0.36923076923076925,
+              0.40540540540540543
+            ]
+          }
+        }
+      }
+    }
+  }
+}

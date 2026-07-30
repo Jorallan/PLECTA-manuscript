@@ -41,104 +41,147 @@ def _value(row: dict, method: str | None = None) -> float | None:
     return value if math.isfinite(value) else None
 
 
-def locked_comparison(document: dict) -> None:
-    """Plot the locked Stage-3 centreline comparison and paired differences."""
-    apply_style()
-    methods = (
-        ("minimum_turn_centerline", "Minimum-turn centreline", ORANGE, "^"),
-        ("filaseg_stage3_centerline", "FilaSeg Stage-3 centreline", GREEN, "o"),
-    )
-    rows = document.get("per_scene", [])
-    if not rows:
-        raise ValueError("corrected representation report has no per-scene rows")
-    densities = sorted({int(row["density"]) for row in rows})
-    available = set().union(*(row.get("scores", {}) for row in rows))
-    required = {method for method, *_ in methods}
-    missing = sorted(required - available)
-    if missing:
-        raise ValueError(
-            "locked comparison requires corrected representation scores for "
-            + ", ".join(missing)
-        )
+_METHODS = (
+    ("minimum_turn_centerline", "Minimum-turn centreline", ORANGE, "^"),
+    ("filaseg_stage3_centerline", "FilaSeg Stage-3 centreline", GREEN, "o"),
+)
 
-    fig, (ax, ax_delta) = plt.subplots(
-        1, 2, figsize=(9.2, 4.7), gridspec_kw={"width_ratios": [1.55, 1.0]}
-    )
-    # Simplified review mirror: plot every scene at its exact prescribed
-    # density, with no horizontal jitter (see mirror README).
-    scene_jitter = {
-        (int(row["density"]), str(row.get("geometry_id", row.get("seed", index)))): 0.0
-        for index, row in enumerate(rows)
-    }
-    by_density: dict[int, list[tuple[float, float, float]]] = defaultdict(list)
-    for row in rows:
-        density = int(row["density"])
-        baseline = _value(row, "minimum_turn_centerline")
-        filaseg = _value(row, "filaseg_stage3_centerline")
-        if baseline is None or filaseg is None:
-            continue
-        key = (density, str(row.get("geometry_id", row.get("seed"))))
-        by_density[density].append((scene_jitter[key], baseline, filaseg))
 
-    for method, label, color, marker in methods:
-        means, lo, hi = [], [], []
+def _density_summaries(rows: list[dict], densities: list[int]) -> dict[str, dict[int, "stats_util.Summary"]]:
+    """Per-method, per-density `stats_util.summarize` over scene F1 values."""
+    out: dict[str, dict[int, "stats_util.Summary"]] = {}
+    for method, *_ in _METHODS:
+        per_density: dict[int, "stats_util.Summary"] = {}
         for density in densities:
             values = [_value(row, method) for row in rows if int(row["density"]) == density]
             values = [value for value in values if value is not None]
-            summary = stats_util.summarize(values)
-            means.append(summary.mean)
-            lo.append(summary.ci_lo)
-            hi.append(summary.ci_hi)
-            for jitter, baseline, filaseg in by_density[density]:
-                value = baseline if method == "minimum_turn_centerline" else filaseg
-                ax.scatter(density + jitter, value, s=15, alpha=0.55, color=color,
-                           edgecolor="none", zorder=2)
-        means_arr = np.asarray(means, float)
-        lower = means_arr - np.asarray(lo, float)
-        upper = np.asarray(hi, float) - means_arr
-        ax.errorbar(densities, means_arr, yerr=np.vstack([lower, upper]),
+            per_density[density] = stats_util.summarize(values)
+        out[method] = per_density
+    return out
+
+
+def _plot_panel(ax, rows: list[dict], densities: list[int], title: str,
+                *, show_legend: bool) -> None:
+    """Draw one degraded/clean panel: per-density mean, 95% CI, and the line
+    connecting means across density levels. No individual scene points are
+    drawn (25 scenes x 2 methods x 5 densities would bury the means).
+
+    Identical statistical treatment and visual conventions for every caller:
+    same `stats_util.summarize` bootstrap (seed and replicate count fixed in
+    `eval/stats/stats_util.py`), same colours/markers, same y-limits.
+    """
+    summaries = _density_summaries(rows, densities)
+    for method, label, color, marker in _METHODS:
+        means = np.asarray([summaries[method][d].mean for d in densities], float)
+        lo = np.asarray([summaries[method][d].ci_lo for d in densities], float)
+        hi = np.asarray([summaries[method][d].ci_hi for d in densities], float)
+        ax.errorbar(densities, means, yerr=np.vstack([means - lo, hi - means]),
                     color=color, marker=marker, lw=1.8, ms=5.5, capsize=3,
                     label=label, zorder=4)
-
-    for density, pairs in by_density.items():
-        for jitter, baseline, filaseg in pairs:
-            ax.plot([density + jitter, density + jitter], [baseline, filaseg],
-                    color=GRAY, lw=0.55, alpha=0.3, zorder=1)
-    delta_means, delta_lo, delta_hi = [], [], []
-    for density in densities:
-        pairs = by_density[density]
-        differences = [filaseg - baseline for _, baseline, filaseg in pairs]
-        summary = stats_util.summarize(differences)
-        delta_means.append(summary.mean)
-        delta_lo.append(summary.ci_lo)
-        delta_hi.append(summary.ci_hi)
-        ax_delta.scatter([density + jitter for jitter, *_ in pairs], differences,
-                         s=16, alpha=0.6, color=GREEN, edgecolor="none", zorder=2)
-    delta_means_arr = np.asarray(delta_means, float)
-    ax_delta.errorbar(
-        densities, delta_means_arr,
-        yerr=np.vstack([delta_means_arr - np.asarray(delta_lo),
-                         np.asarray(delta_hi) - delta_means_arr]),
-        color=GREEN, marker="o", lw=1.8, ms=5.5, capsize=3, zorder=4,
-    )
-    ax_delta.axhline(0, color=GRAY, lw=0.9, zorder=1)
     ax.set_xticks(densities)
     ax.set_xticklabels([f"{density}%" for density in densities])
     ax.set_xlabel("Target areal density")
-    ax.set_ylabel("Common-fragment pairwise F$_1$\n(per-scene points; mean and 95% CI)")
-    ax.set_ylim(0, 1.02)
-    ax.set_title("Stage-3 centreline comparison", loc="left")
-    ax.legend(frameon=False, loc="lower left", fontsize=8.5)
-    ax_delta.set_xticks(densities)
-    ax_delta.set_xticklabels([f"{density}%" for density in densities])
-    ax_delta.set_xlabel("Target areal density")
-    ax_delta.set_ylabel("FilaSeg Stage-3 centreline minus\nminimum-turn centreline F$_1$")
-    delta_limit = max(0.05, float(np.nanmax(np.abs(np.r_[delta_lo, delta_hi]))))
-    ax_delta.set_ylim(-delta_limit * 1.15, delta_limit * 1.15)
-    ax_delta.set_title("Paired scene differences", loc="left")
+    ax.set_title(title, loc="left")
+    if show_legend:
+        ax.legend(frameon=False, loc="lower left", fontsize=8)
     thin_spines(ax)
-    thin_spines(ax_delta)
-    fig.tight_layout()
+
+
+def _shared_ylim(rows: list[dict], clean_rows: list[dict], densities: list[int]) -> tuple[float, float]:
+    """Tight shared y-limits spanning every plotted mean +/- CI in both panels.
+
+    Padding is a fixed fraction of the observed CI range, then snapped
+    outward to the nearest 0.05 so no error bar touches a panel edge; the
+    axis is not forced to start at 0.
+    """
+    bounds: list[float] = []
+    for data in (rows, clean_rows):
+        summaries = _density_summaries(data, densities)
+        for method, *_ in _METHODS:
+            for density in densities:
+                s = summaries[method][density]
+                bounds.append(s.ci_lo)
+                bounds.append(s.ci_hi)
+    lo, hi = min(bounds), max(bounds)
+    pad = 0.10 * (hi - lo)
+    lo_padded = float(np.floor((lo - pad) / 0.05) * 0.05)
+    hi_padded = float(np.ceil((hi + pad) / 0.05) * 0.05)
+    return max(0.0, lo_padded), min(1.0, hi_padded)
+
+
+def locked_comparison(document: dict, clean_document: dict) -> None:
+    """Plot the locked Stage-3 centreline comparison: degraded vs clean masks.
+
+    Panel (a) is the primary evaluation (`mask_w1.png`, degraded/realistic
+    UNet-like input). Panel (b) is the secondary analysis on the same 125
+    scenes' undegraded 1px-axis input (`mask_clean.png`). Both panels share
+    identical axes, colours, markers, and bootstrap statistics -- only the
+    input mask differs.
+    """
+    apply_style()
+    rows = document.get("per_scene", [])
+    clean_rows = clean_document.get("per_scene", [])
+    if not rows:
+        raise ValueError("corrected representation report has no per-scene rows")
+    if not clean_rows:
+        raise ValueError("clean-mask secondary report has no per-scene rows")
+
+    required = {method for method, *_ in _METHODS}
+    for name, data in (("degraded", rows), ("clean", clean_rows)):
+        available = set().union(*(row.get("scores", {}) for row in data))
+        missing = sorted(required - available)
+        if missing:
+            raise ValueError(
+                f"locked comparison requires {name}-mask scores for " + ", ".join(missing)
+            )
+
+    densities = sorted({int(row["density"]) for row in rows})
+    clean_densities = sorted({int(row["density"]) for row in clean_rows})
+    if densities != clean_densities:
+        raise ValueError(
+            f"degraded densities {densities} != clean densities {clean_densities}"
+        )
+
+    scene_ids = {str(row.get("geometry_id")) for row in rows}
+    clean_scene_ids = {str(row.get("geometry_id")) for row in clean_rows}
+    if scene_ids != clean_scene_ids:
+        raise ValueError(
+            "panels are not paired scene-by-scene: degraded and clean scene-ID "
+            f"sets differ (degraded-only={sorted(scene_ids - clean_scene_ids)[:5]}, "
+            f"clean-only={sorted(clean_scene_ids - scene_ids)[:5]})"
+        )
+    n_scenes = len(scene_ids)
+    n_per_density = {
+        density: sum(1 for row in rows if int(row["density"]) == density)
+        for density in densities
+    }
+    if len(set(n_per_density.values())) != 1:
+        raise ValueError(f"unequal scene counts per density: {n_per_density}")
+    n_each = next(iter(n_per_density.values()))
+
+    fig, (ax_deg, ax_clean) = plt.subplots(1, 2, figsize=(6.5, 3.3), sharey=True)
+    _plot_panel(ax_deg, rows, densities, "(a) Degraded masks", show_legend=True)
+    _plot_panel(ax_clean, clean_rows, densities, "(b) Clean masks", show_legend=False)
+    ylo, yhi = _shared_ylim(rows, clean_rows, densities)
+    ax_deg.set_ylim(ylo, yhi)  # shared via sharey=True; set once is sufficient
+    ax_deg.set_ylabel("Common-fragment pairwise F$_1$")
+    fig.suptitle(
+        "Stage-3 centreline comparison: degraded vs. clean input masks",
+        x=0.02, ha="left", fontsize=10.5, y=0.975,
+    )
+    note = (
+        f"Same {n_scenes} scenes in both panels ({n_each} per density level), paired scene-by-scene. "
+        "Markers show the per-density mean common-fragment F$_1$ (individual scenes not plotted); "
+        "error bars are 95% percentile bootstrap CIs over scenes "
+        f"(seed {stats_util.BOOTSTRAP_SEED}, {stats_util.N_BOOTSTRAP} resamples). "
+        "(a) mask_w1.png -- the primary, predefined input (degraded/UNet-realistic; "
+        "mean foreground width ~1.8 px, area/skeleton-length). "
+        "(b) mask_clean.png -- a secondary, non-predefined analysis on the undegraded, "
+        "exactly-1px axis mask."
+    )
+    fig.text(0.5, 0.005, note, ha="center", va="bottom", fontsize=6.3, color=GRAY,
+              wrap=True)
+    fig.tight_layout(rect=(0.0, 0.155, 1.0, 0.90))
     # Fixed metadata keeps the PDF byte-stable across repeated locked renders.
     save_fig(fig, "fig_locked_method_comparison", metadata={
         "Creator": "FilaSeg locked evaluation",
@@ -197,14 +240,23 @@ def main() -> int:
     ap.add_argument("--locked-json", type=Path,
                     help="Legacy locked report path (retained for compatibility).")
     ap.add_argument("--corrected-representation-json", type=Path,
-                    help="Corrected representation-audit report for Figure 4.")
-    ap.add_argument("--curvature-json", type=Path, required=True)
+                    help="Corrected representation-audit report for Figure 4 panel (a).")
+    ap.add_argument("--clean-mask-json", type=Path,
+                    default=HERE.parents[1] / "results" / "clean_mask_secondary.json",
+                    help="Clean-mask secondary-analysis report for Figure 4 panel (b) "
+                         "(default: <paper repo>/results/clean_mask_secondary.json).")
+    # Optional: the curvature/q_max development study was cut from this draft,
+    # so its figure is no longer part of the manuscript. Emitting it
+    # unconditionally left an orphan fig_curvature_qfit.pdf/.png in figures/ on
+    # every run. Pass --curvature-json only if you actually want that figure.
+    ap.add_argument("--curvature-json", type=Path, default=None)
     args = ap.parse_args()
     locked_path = args.corrected_representation_json or args.locked_json
     if locked_path is None:
         ap.error("one of --corrected-representation-json or --locked-json is required")
-    locked_comparison(_read(locked_path))
-    curvature_study(_read(args.curvature_json))
+    locked_comparison(_read(locked_path), _read(args.clean_mask_json))
+    if args.curvature_json is not None:
+        curvature_study(_read(args.curvature_json))
     return 0
 
 
