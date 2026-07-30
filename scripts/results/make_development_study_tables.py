@@ -126,8 +126,13 @@ def _factorial_table(report: Mapping[str, Any]) -> str:
     ]
     if has_empirical:
         lines += [
-            r"\shortstack{Target length\\density} & "
-            r"\shortstack{Achieved length\\density} & "
+            # "centreline-length density" is spelled out in full (the
+            # manuscript never abbreviates it to "length density", which would
+            # collide with the areal-density axis). Set on one line it widens
+            # these two columns enough to overrun the text block, so it is
+            # stacked and broken at its own hyphen instead of shortened.
+            r"\shortstack{Target\\centreline-\\length density} & "
+            r"\shortstack{Achieved\\centreline-\\length density} & "
             r"\shortstack{Crossings\\per Mpx} & "
             r"\shortstack{Mean gap\\count} & "
             r"\multicolumn{3}{c}{\shortstack{Thick-mask areal\\density by width}} & "
@@ -142,11 +147,11 @@ def _factorial_table(report: Mapping[str, Any]) -> str:
         ]
     else:
         lines += [
-            r"\shortstack{Target length\\density} & "
-            r"\shortstack{Achieved length\\density} & "
+            r"\shortstack{Target\\centreline-\\length density} & "
+            r"\shortstack{Achieved\\centreline-\\length density} & "
             r"\shortstack{Crossings\\per Mpx} & "
             r"\shortstack{Mean gap\\count} & "
-            r"\multicolumn{3}{c}{Thick-mask coverage by width} \\",
+            r"\multicolumn{3}{c}{Thick-mask areal density by width} \\",
             r"\cmidrule(lr){5-7}",
             r" & & & & 6 px & 11 px & 16 px \\",
         ]
@@ -185,11 +190,12 @@ def _factorial_table(report: Mapping[str, Any]) -> str:
             # once, in prose, at Section~\ref{sec:res-factorial} (see the
             # manuscript's Task I edit spec) rather than repeated here.
             rf"\multicolumn{{{n_cols}}}{{@{{}}p{{0.97\linewidth}}@{{}}}}"
-            r"{\itshape Common-fragment $F_1$/$P$/$R$/object recovery: "
+            r"{\itshape Common-fragment $F_1$/$P$/$R$/object-level recovery: "
             r"FilaSeg Stage-3 (pre-render) centreline output vs.\ "
             r"overlap-aware centreline ground truth; exactly width-invariant "
-            r"within every (seed, density) block (max.\ range across widths "
-            r"$=0.0$); pooled over widths, averaged over 4 seeds.} \\"
+            r"within every (seed, centreline-length density) block (max.\ "
+            r"range across widths $=0.0$); pooled over widths, averaged over "
+            r"4 seeds.} \\"
         )
     lines.append(r"\bottomrule")
     lines.append(r"\end{tabular}")

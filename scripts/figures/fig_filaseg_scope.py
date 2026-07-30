@@ -117,12 +117,15 @@ def main():
     # ------------------------------------------------------------------
     yA = 8.15
     hA = 0.75
+    # Widths are set so the widest line of each label clears the box edge;
+    # the row is then packed left-to-right from x=0.20 with a uniform 0.28
+    # gap between boxes (the gap the inter-box arrowheads sit in).
     boxesA = [
-        (1.55, 2.70, "Procedural binary masks\n+ real SEM images", GRAY, "white", False, (0, (4, 2)), 7.0),
-        (4.35, 2.05, "CycleGAN\nimage translation", BLUE, BLUE_TINT, True, "solid", 7.4),
-        (6.85, 2.35, "SEM-like synthetic\ntraining images", GRAY, "white", False, (0, (4, 2)), 7.4),
-        (9.35, 2.05, "U-Net\nsegmentation", BLUE, BLUE_TINT, True, "solid", 7.4),
-        (11.85, 2.35, "Binary CNT\nbundle-axis mask", DARK, "white", True, "solid", 7.4),
+        (1.60, 2.80, "Procedural binary masks\n+ real SEM images", GRAY, "white", False, (0, (4, 2)), 7.0),
+        (4.505, 2.45, "CycleGAN\nimage translation", BLUE, BLUE_TINT, True, "solid", 7.4),
+        (7.185, 2.35, "SEM-like synthetic\ntraining images", GRAY, "white", False, (0, (4, 2)), 7.4),
+        (9.665, 2.05, "U-Net\nsegmentation", BLUE, BLUE_TINT, True, "solid", 7.4),
+        (12.145, 2.35, "Binary CNT\nbundle-axis mask", DARK, "white", True, "solid", 7.4),
     ]
     for xc, w, title, edge, face, bold, ls, fs in boxesA:
         lw = 2.0 if edge == DARK else 1.5
@@ -136,12 +139,14 @@ def main():
     # (relationship 1: Pipeline A's output can feed Pipeline B).
     # ------------------------------------------------------------------
     junc_x, junc_y = 3.10, 5.55
-    elbow(ax, [(11.85, yA - hA / 2 - 0.03), (11.85, 6.90), (junc_x, 6.90), (junc_x, junc_y + 0.20)],
+    xA_out = boxesA[-1][0]  # centre of the Pipeline-A output box
+    elbow(ax, [(xA_out, yA - hA / 2 - 0.03), (xA_out, 6.90), (junc_x, 6.90), (junc_x, junc_y + 0.20)],
           color=DARK, lw=1.6, ls="solid")
-    # Sits just BELOW the horizontal run of the elbow and to the right of its
-    # vertical drop, so the connector cannot pass through the text. A
-    # right-aligned label ending past x=11.85 would be crossed by the drop.
-    ax.text(11.78, 6.74, "SEM-derived mask", ha="left", va="top",
+    # Sits just BELOW the horizontal run of the elbow, whose vertical drop
+    # stops at y=6.90, so the connector cannot pass through the text. Right-
+    # aligned so the label ends inside the tinted band instead of hanging off
+    # its right edge.
+    ax.text(13.28, 6.74, "SEM-derived mask", ha="right", va="top",
              fontsize=7.2, color=DARK, style="italic", zorder=4)
 
     # ------------------------------------------------------------------
@@ -151,8 +156,11 @@ def main():
     b_in = rbox(ax, 1.55, junc_y, 2.35, 0.85,
                  "Procedural binary\naxis mask", GRAY, face="white",
                  fontsize=7.4, fontcolor=DARK, ls=(0, (4, 2)), lw=1.5, bold=False)
-    ax.text(1.55, junc_y - 0.425 - 0.20, "(development / evaluation path)",
-             ha="center", va="top", fontsize=6.8, color=GRAY, style="italic", zorder=4)
+    # Two lines: set on one line the caption is wider than the band and hangs
+    # off its left edge.
+    ax.text(1.55, junc_y - 0.425 - 0.20, "(development /\nevaluation path)",
+             ha="center", va="top", fontsize=6.8, color=GRAY, style="italic",
+             zorder=4, linespacing=1.3)
 
     harrow(ax, 1.55 + 2.35 / 2 + 0.04, junc_y, junc_x - 0.21, junc_y, color=GRAY, lw=1.4)
 
@@ -160,7 +168,8 @@ def main():
     ax.text(junc_x, junc_y, "OR", ha="center", va="center", fontsize=7.0, fontweight="bold", color=DARK, zorder=6)
 
     panel_left = 3.45
-    stage_w, stage_gap, panel_pad = 2.30, 0.15, 0.15
+    # stage_w is sized off the widest stage label ("Geometry-based").
+    stage_w, stage_gap, panel_pad = 2.42, 0.15, 0.15
     panel_right = panel_left + 2 * panel_pad + 3 * stage_w + 2 * stage_gap
     stage_y = 5.40
     stage_h = 1.30
