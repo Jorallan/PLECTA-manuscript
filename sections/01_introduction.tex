@@ -122,11 +122,15 @@ reconnection stage is the terminus-pairing approach of
 orientation-specific branches with a learned network and then pairs terminus
 points across branches to regroup fragments into individual filaments; it was
 validated on microtubule micrographs rather than on a precomputed centreline
-mask.
-\reviewnote{\citet{liu2019intersection} is included here as the closest
-published methodological analog to FilaSeg's own orientation-binned
-vectorization and tip-pairing reconnection (orientation separation, then
-pairing of fragment endpoints).}
+mask. That two-step strategy of first separating the network by local
+orientation and then reconnecting fragments by pairing their endpoints is the
+same decomposition FilaSeg applies, although the two methods realise it
+differently: \citet{liu2019intersection} obtain the orientation separation from
+a trained network operating on the grayscale image, whereas the orientation
+binning and endpoint pairing used here are explicit geometric criteria applied
+to a binary axis mask, with no learned component. We therefore regard that work
+as the closest published methodological relative of the reconnection stage
+rather than as a component this method builds on.
 Instance tracing of
 crossing curvilinear objects is also mature in other domains, in neuron
 reconstruction \citep{brown2011diadem,gillette2011diademmetric,xiao2013app2},

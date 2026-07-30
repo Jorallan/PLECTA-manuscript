@@ -120,11 +120,11 @@ known filament geometry.
     \label{fig:scope}
 \end{figure}
 
-\reviewnote{%
-The manuscript currently evaluates the FilaSeg instance-segmentation pipeline
-separately from the upstream CycleGAN/U-Net pipeline. feedback is
-requested on whether the final paper should retain this separation or present
-the two pipelines as one complete SEM-to-instance workflow.
+\note{%
+We currently evaluate the FilaSeg instance-segmentation pipeline separately
+from the upstream CycleGAN/U-Net pipeline. To discuss: should the final paper
+keep this separation, or present the two pipelines as one complete
+SEM-to-instance workflow?
 }
 
 % =========================================================================
@@ -196,12 +196,12 @@ image as the paired grayscale input for the Stage~4 width and rendering
 analysis. The grouping evaluation itself is performed on the binary axis mask
 before Stage~4.
 
-\reviewnote{%
-The current synthetic FilaSeg experiments use fully procedural SEM-like images
-during Stage~4. A future revision is intended to replace these images with
-CycleGAN-generated SEM-like images so that the synthetic Stage~4 input more
-closely matches the upstream segmentation workflow. The effect of this change
-should be evaluated before it is introduced into the primary results.
+\note{%
+The synthetic FilaSeg experiments currently use fully procedural SEM-like
+images during Stage~4. We intend to replace these with CycleGAN-generated
+SEM-like images so the synthetic Stage-4 input more closely matches the
+upstream segmentation workflow -- evaluate the effect of that change before
+folding it into the primary results.
 }
 
 The same procedural mask generator is currently assumed to support both the
@@ -276,12 +276,11 @@ The real annotation is treated as one human interpretation of an ambiguous
 dense image rather than as exact ground truth. Exact instance references are
 available only for the procedurally generated scenes.
 
-\missinginfo{%
-The SEM instrument model, detector type, accelerating voltage, working
-distance, specimen preparation, CNT material identity, and complete
-acquisition settings must be added before submission. The relation between
-the reported 1536-pixel calibration width and the stored 1534-pixel image
-width should also be confirmed.
+\needed{%
+Add the SEM instrument model, detector type, accelerating voltage, working
+distance, specimen preparation and CNT material identity before submission,
+and confirm the relation between the reported 1536-pixel calibration width and
+the stored 1534-pixel image width.
 }
 
 % =========================================================================
@@ -407,10 +406,8 @@ The tiled design allows large images to be processed locally, while overlap
 between neighbouring tiles reduces boundary artefacts. Selected vectorization
 parameters also adapt to the observed foreground width.
 
-\reviewnote{%
-Detailed tile dimensions, orientation bins, overlap rules, residual-update
-logic, and stopping criteria are to be added
-}
+\todo{Add the tile dimensions, orientation bins, overlap rules, residual-update
+logic and stopping criteria.}
 
 \subsubsection{Stage 2: orientation-aware fragment cleaning}
 \label{sec:mm-clean}
@@ -424,10 +421,8 @@ The purpose of this stage is to provide the reconnection stage with physically
 plausible fragments whose endpoint positions and local directions are not
 dominated by raster noise, isolated pixels, or small branches.
 
-\reviewnote{%
-Detailed morphology settings, skeleton-cleaning operations, smoothing rules,
-and branch-removal criteria are to be added.
-}
+\todo{Add the morphology settings, skeleton-cleaning operations, smoothing
+rules and branch-removal criteria.}
 
 \subsubsection{Stage 3: geometry-based instance reconnection}
 \label{sec:mm-reconnect}
@@ -463,6 +458,8 @@ Candidate merges are evaluated in ordered passes. The earliest pass handles
 short, high-confidence gaps. Later passes consider geometrically more
 difficult cases. A topology-checked repair procedure addresses configurations
 that cannot be recovered through direct endpoint-to-endpoint continuation.
+Figure~\ref{fig:gates} shows representative examples of accepted and rejected
+candidate merges.
 
 \begin{figure}[t]
     \centering
@@ -479,10 +476,8 @@ that cannot be recovered through direct endpoint-to-endpoint continuation.
     \label{fig:gates}
 \end{figure}
 
-\reviewnote{%
-Detailed candidate scoring, pass-specific thresholds, merge ordering,
-crossing-prevention rules, topology tests, and repair logic are are to be added.
-}
+\todo{Add the candidate scoring, pass-specific thresholds, merge ordering,
+crossing-prevention rules, topology tests and repair logic.}
 
 \subsubsection{Stage 4: SEM-assisted apparent-width estimation and rendering}
 \label{sec:mm-width}
@@ -507,10 +502,9 @@ Stage~4 is not part of the primary centreline-grouping endpoint. Its apparent
 widths and rendered outputs require validation separately from the Stage~3
 instance-grouping result.
 
-\reviewnote{%
-The final manuscript should decide whether Stage~4 should remain part of the
-main FilaSeg pipeline or be presented as a separate SEM-assisted measurement
-and postprocessing module.
+\note{%
+To discuss: should Stage~4 stay part of the main FilaSeg pipeline, or be
+presented as a separate SEM-assisted measurement and postprocessing module?
 }
 
 % =========================================================================
@@ -532,6 +526,14 @@ independently seeded scenes distributed across five areal-coverage levels.
 Each comparison method receives the same degraded binary mask for a given
 scene.
 
+The development set contains 20 procedural geometries together with the single
+real crop. The disjoint predefined set was generated from base seed 20260801
+with 25 scenes at each prescribed coverage: for coverage
+$d\in\{20,30,40,50,60\}$ and zero-based index $i$, the scene seed is
+$20260801+100d+i$. Exact scene paths, seeds, input and ground-truth hashes,
+method outputs and failure states are recorded per scene in the evaluation
+manifest distributed with the manuscript.
+
 \subsubsection{Comparison methods}
 \label{sec:mm-baselines}
 
@@ -540,7 +542,7 @@ skeletonizes the binary mask and continues branches through junctions or gaps
 by selecting the continuation with the smallest turning angle, subject to a
 maximum allowed gap and turning angle selected during development.
 
-A connected-component method is retained only as a supplementary lower-bound
+A connected-component method is retained only as an additional lower-bound
 sanity check. It assigns one label to each connected foreground component and
 does not attempt to resolve crossings or reconnect gaps.
 
@@ -648,7 +650,5 @@ bootstrap distribution of the corresponding aggregate statistic.
 Density-specific results are reported separately because the difficulty of
 the grouping problem changes as the synthetic filament network becomes denser.
 
-\reviewnote{%
-Detailed metric edge cases, object-recovery thresholds, bootstrap replicate
-counts, random seeds, and complete ablation configurations are to be added.
-}
+\todo{Add the metric edge cases, object-recovery thresholds, bootstrap
+replicate counts, random seeds and complete ablation configurations.}

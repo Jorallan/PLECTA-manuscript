@@ -8,11 +8,10 @@
 %  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf main.tex).
 %  Uses only standard CTAN packages.
 %
-%  THIS REPOSITORY IS A REVIEW MIRROR, NOT THE SUBMISSION MANUSCRIPT.
-%  It is a shortened draft of the canonical FilaSeg paper repository, produced
-%  to give a supervisor a quicker read before detailed sections are restored.
-%  Many Materials-and-methods and Discussion subsections are temporarily
-%  replaced by short summaries and visible \reviewnote{} markers; see README.md.
+%  WORKING DRAFT - NOT THE SUBMISSION VERSION.
+%  Several Materials-and-methods and Discussion subsections are still condensed
+%  to short summaries. Open points are flagged inline with \note{}, \todo{} and
+%  \needed{} so they stay visible while we finish the draft.
 %==============================================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -58,36 +57,27 @@
 \newcommand{\Undermerge}{\textit{Under-merge}}
 
 %------------------------------------------------------------------------------
-%  Action-required marker.
-%
-%  \aq{...} flags a point that the manuscript CANNOT resolve from the available
-%  record: an acquisition parameter that is not recorded in the repository or a
-%  protocol fact that requires documentary input.
-%  Nothing has been invented to fill these gaps.
-%
-%  Set \aqfalse below to hide every query and produce a clean submission PDF.
+%  \todo{...} - a short reminder to ourselves about something still to be
+%  settled or added before submission. Set \aqfalse to hide them all and produce
+%  a clean PDF.
 %------------------------------------------------------------------------------
 \newif\ifaq \aqtrue
-\newcommand{\aq}[1]{\ifaq{\color{fsorange}\textbf{[ACTION REQUIRED: #1]}}\fi}
+\newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
+\newcommand{\aq}[1]{\todo{#1}}          % older name, kept so both still work
 
 %------------------------------------------------------------------------------
-%  Submission-blocking missing information.
-%
-%  \missinginfo{...} is deliberately INDEPENDENT of the \ifaq switch above: it
-%  stays visible even in a clean PDF, because the manuscript cannot be submitted
-%  while any of these remain.
+%  \needed{...} - information we do not yet have and cannot submit without.
+%  Deliberately independent of the switch above so it stays visible.
 %------------------------------------------------------------------------------
-\newcommand{\missinginfo}[1]{\textcolor{red}{\textbf{[MISSING INFORMATION: #1]}}}
+\newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed before submission: #1]}}}
+\newcommand{\missinginfo}[1]{\needed{#1}}   % older name, kept so both still work
 
 %------------------------------------------------------------------------------
-%  Review note.
-%
-%  \reviewnote{...} visibly flags a place where this shortened mirror summarizes
-%  or omits material that is present in full in the canonical paper repository,
-%  or where the editorial mapping used to build this mirror needs the
-%  supervisor's confirmation. Used sparingly; never rendered as final prose.
+%  \note{...} - a point to discuss between co-authors, or a section still
+%  condensed that we intend to expand.
 %------------------------------------------------------------------------------
-\newcommand{\reviewnote}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Review note:} #1}\par\smallskip}
+\newcommand{\note}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Note:} #1}\par\smallskip}
+\newcommand{\reviewnote}[1]{\note{#1}}      % older name, kept so both still work
 
 %------------------------------------------------------------------------------
 %  Generated numerical results.
@@ -113,7 +103,7 @@ of carbon nanotube bundles from degraded centreline masks}
   \texttt{i.ostanin@utwente.nl}}\\[5pt]
   {\small\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of Engineering
   Technology, University of Twente, Enschede, The Netherlands}\\[4pt]
-  {\small\aq{add ORCIDs }}
+  {\small\todo{Add ORCIDs.}}
   \end{minipage}
 }
 \date{}
@@ -127,21 +117,21 @@ of carbon nanotube bundles from degraded centreline masks}
 \input{sections/00_abstract}
 \end{abstract}
 
-\reviewnote{A broader upstream pipeline also exists around the method
-described in this manuscript: real SEM images and procedurally generated
-masks $\to$ CycleGAN image translation $\to$ U-Net semantic segmentation
-$\to$ binary CNT bundle-axis mask $\to$ FilaSeg instance extraction $\to$
-SEM-assisted Stage-4 width estimation, overlap handling, and rendering.
-This manuscript currently treats the binary axis mask as the formal input
-and evaluates only the instance-extraction stages. Open questions for
-supervisor feedback:
+\note{A broader upstream pipeline also exists around the method described in
+this manuscript: real SEM images and procedurally generated masks $\to$
+CycleGAN image translation $\to$ U-Net semantic segmentation $\to$ binary CNT
+bundle-axis mask $\to$ FilaSeg instance extraction $\to$ SEM-assisted Stage-4
+width estimation, overlap handling, and rendering. This manuscript currently
+treats the binary axis mask as the formal input and evaluates only the
+instance-extraction stages. To discuss:
 \begin{itemize}[leftmargin=1.4em,itemsep=1pt]
   \item Should the complete upstream CycleGAN/U-Net pipeline be integrated
   into this paper?
   \item Should it instead remain a separate paper or companion workflow?
   \item Should the current manuscript continue to treat the binary axis mask
   as the formal input?
-  \item Stage 4 of filaseg is not discussed yet: SEM-assisted measurement/postprocessing stage
+  \item Give Stage 4 (SEM-assisted measurement/postprocessing) its own
+  discussion.
 \end{itemize}
 }
 
@@ -157,9 +147,8 @@ filament tracing; image-based microstructural characterization.
 
 %------------------------------- back matter ----------------------------------
 \section*{CRediT author contribution statement}
-\textcolor{fsorange}{\textbf{TO BE COMPLETED BY THE AUTHORS BEFORE SUBMISSION.}}
-\aq{confirm each author's CRediT roles against actual contributions; do not
-alter the preserved author names or order when completing this statement.}
+\todo{Fill in each author's CRediT roles before submission, checked against
+actual contributions; keep the author names and order as listed above.}
 
 \section*{Declaration of competing interest}
 The authors declare that they have no known competing financial interests or
@@ -170,13 +159,12 @@ in this paper.
 The FilaSeg source code, the procedural synthetic benchmark generator, the
 evaluation subsystem, and the manually annotated real test crop are contained in
 the accompanying repository. Every numerical result reported here is reproducible
-from that repository using Appendix~\ref{app:repro} together with the full
-reproducibility record distributed with the manuscript.
-\aq{a journal will require a citable archived release (for example a Zenodo DOI
-or a tagged GitHub release) rather than a bare repository URL; and
-Section~\ref{sec:limitations} notes that the evaluation subsystem must be
-committed and a clean checkout confirmed to reproduce the reported numbers before
-submission}
+from that repository using the commands, environment versions, configuration
+hashes and seeds recorded in \texttt{docs/REPRODUCIBILITY.md}, together with the
+per-scene evaluation manifest distributed with the manuscript.
+\todo{Replace the repository link with a citable archived release (a Zenodo DOI
+or a tagged GitHub release) before submission, and confirm a clean checkout
+reproduces the reported numbers first -- see Section~\ref{sec:limitations}.}
 
 \section*{Acknowledgements}
 The authors thank the maintainers of the open-source scientific-Python stack
@@ -190,12 +178,5 @@ gratefully acknowledge its authors.
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}
-
-%------------------------------- appendices -----------------------------------
-%  Restored: main.tex references Appendix~\ref{app:repro} and Section~3 refers to
-%  the Supplementary Information, so this input must be present for those
-%  cross-references to resolve.
-\appendix
-\input{sections/06_supplementary}
 
 \end{document}
