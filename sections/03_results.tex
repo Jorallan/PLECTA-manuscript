@@ -177,10 +177,11 @@ filament fragments more accurately than FilaSeg.
 \subsection{Sensitivity to input-mask and synthetic scene properties}
 \label{sec:res-mask}
 
-These experiments use development data and are therefore interpreted as
-sensitivity analyses rather than independent validation. Because the same
-scenes recur at every condition, their confidence intervals come from a
-percentile bootstrap that resamples scenes within an areal-density level and
+The experiments in this subsection use development data and are therefore
+interpreted as sensitivity analyses rather than independent validation.
+Because the same scenes recur at every condition, their confidence intervals
+come from a percentile bootstrap that resamples scenes within an
+areal-density level and
 reuses the resampled scene set across conditions, preserving the within-scene
 pairing.
 
@@ -344,7 +345,8 @@ all nine cells.
 \subsection{Real SEM development case study}
 \label{sec:res-real}
 
-FilaSeg was also applied to the real SEM development crop described in
+All results reported so far come from procedurally generated scenes. FilaSeg
+was therefore also applied to the real SEM development crop described in
 Section~\ref{sec:mm-real} (a $512\times512$ crop with 58 manually annotated
 filament instances). As noted there, the crop informed method development; it
 does not provide an independent estimate of generalization or a population

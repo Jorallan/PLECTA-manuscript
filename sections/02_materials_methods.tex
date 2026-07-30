@@ -16,12 +16,10 @@ FilaSeg implementation.
 \label{sec:mm-workflow}
 
 The complete workflow contains two connected pipelines
-(Figure~\ref{fig:scope}).
-
-The first pipeline converts a real SEM image into a binary mask representing
-the apparent axes of the CNT bundles.
-
-Procedurally generated binary filament masks provide the structural mask
+(Figure~\ref{fig:scope}). The first pipeline converts a real SEM image into a
+binary mask representing the apparent axes of the CNT bundles, and its
+segmentation model is trained on synthetic image--mask pairs. Procedurally
+generated binary filament masks provide the structural mask
 domain, while real SEM images provide the microscopy-image domain. CycleGAN
 image translation is used to generate SEM-like images from the procedural
 masks. Because each generated SEM-like image originates from a known binary
@@ -30,10 +28,9 @@ segmentation model.
 
 After training, the U-Net receives a real SEM image and predicts a binary
 CNT bundle-axis mask. This binary mask is then supplied to the FilaSeg
-instance-segmentation pipeline. The implementation of this upstream workflow is
+instance-segmentation pipeline. This sequence is shown as Pipeline~A in
+Figure~\ref{fig:scope}, and the implementation of this upstream workflow is
 maintained separately~\citep{allan2026cntsem}.
-
-This sequence is shown as Pipeline~A in Figure~\ref{fig:scope}.
 
 The output is a thin binary mask representing the estimated bundle axes rather
 than the complete bundle silhouettes. Instance identity is not yet available
@@ -42,9 +39,7 @@ physical bundles may belong to one connected binary structure.
 
 Recovering that identity is the task of the second pipeline, which receives a
 binary image of a dense filament network and separates it into individual
-filament instances.
-
-The input can originate from either of two sources:
+filament instances. Its input can originate from either of two sources:
 
 \begin{itemize}[
     leftmargin=2em,
@@ -80,7 +75,6 @@ FilaSeg processes the binary mask through four consecutive stages:
 Stages~1--3 use the binary filament-axis mask to recover individual centreline
 instances; Stage~4 uses a paired grayscale image to estimate their apparent
 width and render the final output (Section~\ref{sec:mm-filaseg}).
-
 For a real CNT image, the paired grayscale image is the original SEM
 micrograph. For the present synthetic instance-segmentation experiments, the
 paired image is a fully procedural SEM-like rendering generated from the same
@@ -483,8 +477,9 @@ inverse pixels. The corresponding quantities
 $d_{\mathrm{px}}(u)$, $A_{\mathrm{px}}(u)$, and
 $\kappa_{\mathrm{px}}(u)$ are the values used for the current image.
 
-Each exponent follows the physical dimension of the parameter, because
-$s_{\mathrm{px}}$ converts a single physical length into pixels.
+Because $s_{\mathrm{px}}$ converts a single physical length into pixels,
+lengths scale linearly with it, areas with its square, and curvatures, being
+inverse lengths, with its reciprocal.
 
 For example, consider an image whose pixel size is twice as large as the
 reference pixel size, so that $u=2u_{\mathrm{ref}}$ and

@@ -22,7 +22,8 @@ the density-specific interval crosses zero, and the qualitative
 counterexamples in Section~\ref{sec:res-qualitative} contain scenes the
 minimum-turn tracer groups better.
 
-First, the primary endpoint is Stage~3 centreline grouping, scored on one-pixel
+Two scope conditions bound what that result can support. First, the primary
+endpoint is Stage~3 centreline grouping, scored on one-pixel
 representations after every method output is reduced to an equivalent form
 (Section~\ref{sec:mm-f1}); Stage~4 apparent-width estimation and rendering are
 downstream of the endpoint and are not validated by it. Second, the evidence
@@ -87,18 +88,6 @@ win by chance on a given scene. The aggregate interval should therefore be read
 as evidence that the multi-criterion approach helps across the tested density
 range on average, not that it dominates at every density.
 
-\paragraph{Relationship to the upstream segmentation pipeline.}
-FilaSeg consumes a binary bundle-axis mask, which in the real case study was
-produced by the CycleGAN/U-Net workflow summarized in
-Section~\ref{sec:mm-workflow} and Figure~\ref{fig:scope}. The two
-pipelines are evaluated separately here, and deliberately so: supplying every
-method the identical mask isolates grouping from segmentation quality, which is
-the only way the comparison reported in Section~\ref{sec:res-density} can be
-attributed to grouping at all. The corollary is that no end-to-end
-SEM-to-instance performance figure is established by these results. An
-end-to-end number would require propagating upstream segmentation error into
-the grouping stage on images the upstream model has demonstrably never seen.
-
 \paragraph{What the sensitivity analyses do and do not show.}
 The input-representation analyses in Section~\ref{sec:res-mask} are
 development-only diagnostics on small samples. Their preference for a thin axis
@@ -122,6 +111,18 @@ active factor only for SEM rendering and Stage~4, where it is the quantity being
 measured. This is an attribution result that the exact control settles cleanly;
 the four-seed cells remain too small to support
 centreline-length-density-specific effect sizes.
+
+\paragraph{Relationship to the upstream segmentation pipeline.}
+FilaSeg consumes a binary bundle-axis mask, which in the real case study was
+produced by the CycleGAN/U-Net workflow summarized in
+Section~\ref{sec:mm-workflow} and Figure~\ref{fig:scope}. The two
+pipelines are evaluated separately here, and deliberately so: supplying every
+method the identical mask isolates grouping from segmentation quality, which is
+the only way the comparison reported in Section~\ref{sec:res-density} can be
+attributed to grouping at all. The corollary is that no end-to-end
+SEM-to-instance performance figure is established by these results. An
+end-to-end number would require propagating upstream segmentation error into
+the grouping stage on images the upstream model has demonstrably never seen.
 
 \paragraph{Applicability beyond CNT bundles.}
 FilaSeg's criteria refer to filament geometry rather than to nanotube physics,
