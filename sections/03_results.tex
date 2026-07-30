@@ -41,11 +41,10 @@ with the minimum-turn tracer.
     \centering
     \caption{%
     Predefined synthetic comparison of FilaSeg Stage~3 and the minimum-turn
-    skeleton tracer. All methods are scored using equivalent one-pixel
-    centreline representations. Values are scene means. The \Fone{} intervals
-    and the FilaSeg-minus-minimum-turn contrast use density-stratified
-    bootstrap resampling. Fragment recovery is the object-level companion
-    measure defined in Section~\ref{sec:mm-instance}.
+    tracer, scored on equivalent one-pixel centreline representations. $F_1$
+    intervals and the paired difference use density-stratified bootstrap
+    resampling; object-level recovery is the companion measure defined in
+    Section~\ref{sec:mm-instance}.
     }
     \label{tab:primary}
     \small
@@ -61,7 +60,7 @@ of
 The aggregate interval excludes zero, supporting an advantage for FilaSeg
 over the selected minimum-turn comparator under the tested generator and
 evaluation conditions. The advantage was not uniform across density. The
-density-specific interval crossed zero at the 30\% coverage level
+density-specific interval crossed zero at the 30\% areal-density level
 (\LockedDensityThreeZeroFilaSegMinusBaselineSkeletonCommonFOne{}). The result
 therefore supports a conditional advantage over this comparator rather than a
 general superiority claim.
@@ -94,14 +93,9 @@ therefore narrows from
 \FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}] on degraded input to $+0.042$
 $[0.031, 0.053]$ on clean input.
 
-Much of FilaSeg's aggregate advantage over this comparator is therefore
-attributable to insensitivity to mask degradation rather than to better
-grouping of intact topology. The advantage does not vanish on clean input, and
-it remains largest where crossings rather than gaps dominate: at 60\% coverage
-FilaSeg reached 0.640 against 0.518 for the tracer even with clean masks. The
-honest reading is that the reconnection stage buys robustness to imperfect
-upstream segmentation, and buys a smaller but still resolved improvement in
-crossing disambiguation on top of that.
+The FilaSeg-minus-minimum-turn margin on clean input remains resolved and is
+largest where crossings rather than gaps dominate: at 60\% areal density
+FilaSeg reached 0.640 against 0.518 for the tracer even with clean masks.
 
 \begin{figure}[t]
     \centering
@@ -111,14 +105,10 @@ crossing disambiguation on top of that.
         keepaspectratio
     ]{figures/fig_locked_method_comparison.pdf}
     \caption{%
-    Common-fragment \Fone{} for FilaSeg Stage~3 and the minimum-turn skeleton
-    tracer, by prescribed areal-coverage level. (a)~the predefined evaluation
-    input, the degraded axis mask (nominal one pixel; measured mean foreground
-    width $\approx1.8$~px). (b)~a secondary, non-predefined analysis on the
-    same 125 scenes using the undegraded, exactly one-pixel axis mask. Both
-    panels share axes, scales and conventions and are paired scene by scene
-    (25 scenes per density level). Markers are per-density means and error
-    bars are 95\% percentile bootstrap confidence intervals over scenes.
+    Common-fragment $F_1$ for FilaSeg Stage~3 and the minimum-turn tracer, by
+    target areal-density level: (a)~predefined degraded mask; (b)~secondary,
+    non-predefined analysis on the same 125 scenes with the undegraded one-pixel
+    mask. Per-density means; 95\% bootstrap CIs (25 scenes/level).
     }
     \label{fig:density}
 \end{figure}
@@ -150,7 +140,9 @@ width-rendered output is reported only as a secondary diagnostic.
 Figures~\ref{fig:qual-wins} and~\ref{fig:qual-losses} show the three scenes
 with the largest paired advantage for each method. Scene selection used the
 stored numerical differences alone, not visual inspection, so both directions
-of error are represented. The loss cases in Figure~\ref{fig:qual-losses} are
+of error are represented; predicted and reference centrelines in both figures
+use a 3-pixel display-only dilation for print legibility, and the underlying
+one-pixel skeletons used for matching and scoring are unchanged. The loss cases in Figure~\ref{fig:qual-losses} are
 genuine counterexamples: they show conditions under which local minimum-turn
 continuation grouped the visible filament fragments more accurately than
 FilaSeg.
@@ -163,14 +155,9 @@ FilaSeg.
         keepaspectratio
     ]{figures/fig_paired_locked_wins.pdf}
     \caption{%
-    The three predefined synthetic scenes with the largest paired advantages
-    for FilaSeg under the primary common-fragment grouping endpoint. Scene
-    selection was based on the stored numerical differences and not on visual
-    inspection. Columns show the degraded input mask, the overlap-aware
-    reference, the minimum-turn centrelines and the FilaSeg Stage-3
-    centrelines. Predicted and reference centrelines are drawn with a
-    3-pixel display-only dilation for print legibility; the underlying
-    one-pixel skeletons used for matching and scoring are unchanged.
+    The three predefined scenes with FilaSeg's largest paired advantage under the
+    primary common-fragment endpoint, selected from stored numerical differences
+    rather than visual inspection (Section~\ref{sec:res-qualitative}).
     }
     \label{fig:qual-wins}
 \end{figure}
@@ -183,12 +170,9 @@ FilaSeg.
         keepaspectratio
     ]{figures/fig_paired_locked_losses.pdf}
     \caption{%
-    The three predefined synthetic scenes with the largest paired advantages
-    for the minimum-turn tracer, selected from the stored numerical
-    differences and not by visual inspection. Columns are as in
-    Figure~\ref{fig:qual-wins}. Predicted and reference centrelines are drawn
-    with a 3-pixel display-only dilation for print legibility; the underlying
-    one-pixel skeletons used for matching and scoring are unchanged.
+    The three predefined scenes with the minimum-turn tracer's largest paired
+    advantage, selected the same way as Figure~\ref{fig:qual-wins}; these are
+    genuine counterexamples (Section~\ref{sec:res-qualitative}).
     }
     \label{fig:qual-losses}
 \end{figure}
@@ -206,7 +190,7 @@ representation supplied to the algorithm. These experiments use development
 data and are therefore interpreted as sensitivity analyses rather than
 independent validation. Because the same scenes recur at every condition, their
 confidence intervals come from a percentile bootstrap that resamples scenes
-within a coverage level and reuses the resampled scene set across conditions,
+within an areal-density level and reuses the resampled scene set across conditions,
 preserving the within-scene pairing.
 
 \paragraph{Axis-mask width and input degradation.}
@@ -227,7 +211,7 @@ small gaps and local raster irregularities (Figure~\ref{fig:sensitivity}b).
 Replacing the degraded masks with clean procedural axes produced a small
 negative mean change whose paired confidence interval included zero. The
 analysis therefore did not show a resolved aggregate improvement from removing
-the modeled degradation. At 30\% areal coverage all four available development
+the modeled degradation. At 30\% areal density all four available development
 scenes scored lower for the clean representation, but four scenes cannot support
 a density-specific conclusion. This is a conditional development diagnostic, not
 evidence that segmentation errors are unimportant.
@@ -240,31 +224,23 @@ evidence that segmentation errors are unimportant.
         keepaspectratio
     ]{figures/fig_development_sensitivity.pdf}
     \caption{%
-    Development-only sensitivity of the common-fragment \Fone{} to the input
-    mask representation, resolved by prescribed areal coverage.
-    (a)~nominal binary filament-axis widths of one, two and three pixels;
-    (b)~clean versus degraded nominal one-pixel axis masks. Each of the five
-    curves is the mean over the four development scenes belonging to one
-    coverage level ($n=4$ per level, 20 scenes in total), with individual
-    scenes drawn lightly behind the means and shaded 95\% percentile bootstrap
-    confidence intervals that preserve the within-scene pairing
-    (10\,000 replicates, fixed seed). The two panels share the vertical scale
-    and the legend, but their horizontal axes are different conditions and are
-    not pooled. With four scenes per level these are sensitivity diagnostics,
-    not precise estimates.
+    Sensitivity of the common-fragment $F_1$ to the input representation, by
+    target areal density (Section~\ref{sec:res-mask}); panels as labelled.
+    Curves are means over 4 scenes per level (20 total); bands are 95\%
+    bootstrap CIs preserving within-scene pairing (10\,000 replicates).
     }
     \label{fig:sensitivity}
 \end{figure}
 
-\paragraph{Separating centreline-network density from bundle width.}
+\paragraph{Separating centreline-length density from bundle width.}
 \label{sec:res-factorial}
 
-The prescribed areal-coverage levels used above are computed from the union of
-the thick rendered filament supports. Coverage therefore rises both when the
+The target areal-density levels used above are computed from the union of
+the thick rendered filament supports. Areal density therefore rises both when the
 network contains more or longer centrelines and when the rendered bundles are
 wider, so it cannot by itself attribute difficulty to either cause. A separate
 development generator was used to break that coupling: it stops on summed
-visible centreline arc length rather than on areal coverage, which allows the
+visible centreline arc length rather than on areal density, which allows the
 target bundle width to be varied at fixed centreline geometry.
 
 The resulting development-only factorial spans three centreline length-density
@@ -276,11 +252,11 @@ The design yields an exact structural control. Within each seed and
 length-density block, the degraded one-pixel input mask, the clean centreline
 mask and the overlap-aware centreline reference are byte-identical across all
 three width levels, verified by SHA-256 comparison, while achieved thick-mask
-coverage varies by more than a factor of two across those same cells. Crossing
+areal density varies by more than a factor of two across those same cells. Crossing
 density, gap count, filament count and one-pixel axis coverage are likewise
 invariant across width within a block. Because Stages~1--3 consume only the
 binary axis mask, target bundle width is therefore an exact negative control for
-centreline grouping, and thick areal coverage cannot by itself change the
+centreline grouping, and thick-mask areal density cannot by itself change the
 grouping result. Width acts as an active factor only for the SEM-like rendering
 and the Stage~4 apparent-width measurement.
 
@@ -288,9 +264,9 @@ The empirical arm confirms the structural argument. Scoring the Stage-3
 centreline output of all 36 scenes with the same common-fragment metric used
 for the primary evaluation, the maximum within-geometry range of
 common-fragment \Fone{} across the three width levels was exactly zero in all
-twelve seed-by-density blocks, even though achieved thick-mask coverage varied
+twelve seed-by-density blocks, even though achieved thick-mask areal density varied
 by a factor of two to two-and-a-half across those same cells. Rendered bundle
-width, and the areal coverage it produces, therefore have no effect whatsoever
+width, and the areal density it produces, therefore have no effect whatsoever
 on centreline grouping. Because the three width levels are exact replicates of
 one grouping problem rather than independent conditions, they are pooled in
 what follows, and width is not shown as a separate series.
@@ -300,14 +276,14 @@ of the centreline network. Mean common-fragment \Fone{} decreased from 0.859 at
 118 crossings per megapixel to 0.803 at 498 and 0.713 at 1126, with pairwise
 precision falling from 0.875 to 0.693, pairwise recall from 0.846 to 0.736, and
 object-level recovery from 0.745 to 0.531 over the same range. Increasing
-centreline length density raised crossing density and gap count far more
+centreline-length density raised crossing density and gap count far more
 steeply than it raised centreline length itself, identifying network geometric
-complexity, rather than areal coverage, as the quantity that makes grouping
+complexity, rather than areal density, as the quantity that makes grouping
 harder.
 
 \paragraph{Density sweep against the minimum-turn tracer.}
 
-Because bundle width is inert for Stages~1--3, the density axis was extended
+Because bundle width is inert for Stages~1--3, the centreline-length-density axis was extended
 and both methods compared on it directly. Two further length-density levels
 (0.01 and 0.03~px~px$^{-2}$) were generated with the same four seeds and the
 same generator settings, giving five levels spanning 23 to 1126 crossings per
@@ -315,7 +291,7 @@ megapixel at a single target bundle width of 6~px. FilaSeg and the minimum-turn
 tracer received the identical degraded axis mask for every scene, so the two
 are paired scene by scene (Figure~\ref{fig:density-sweep}).
 
-The two methods respond to density very differently. At the sparsest level the
+The two methods respond to centreline-length density very differently. At the sparsest level the
 minimum-turn tracer was the better of the two, reaching a mean
 common-fragment \Fone{} of 0.921 against 0.853 for FilaSeg. The ordering
 reverses as the network fills in: 0.859 against 0.812 at 0.02~px~px$^{-2}$,
@@ -330,39 +306,32 @@ better, because almost every junction is unambiguous and the additional
 geometric criteria can only reject continuations that were in fact correct. The
 advantage of the multi-criterion approach appears once crossings become common
 enough that the locally smoothest continuation is frequently the wrong one.
-With four seeds per level this is exploratory and development-only, but the
-crossing of the two curves is consistent with the density-specific behaviour of
-the predefined evaluation, where the interval also failed to resolve at the
-lowest coverage levels.
+With four seeds per level, the crossing of the two curves is consistent with the
+density-specific behaviour of the predefined evaluation, where the interval
+also failed to resolve at the lowest areal-density levels.
 
 These values are not comparable with the primary evaluation in
 Section~\ref{sec:res-density}: this development generator stops on centreline
-arc length rather than areal coverage and therefore produces a different scene
-population. With four seeds per cell the analysis is exploratory and
-development-only, and no density-specific claim is made from it. Its purpose is
+arc length rather than areal density and therefore produces a different scene
+population. With four seeds per cell, no claim specific to centreline-length
+density is made from it. Its purpose is
 the attribution question, which it answers cleanly because the width control is
 exact rather than estimated. Table~\ref{tab:factorial} reports the achieved
 scene properties and outcomes of all nine cells.
 
-\begin{table}[htbp]
+\begin{table}[t]
     \centering
     \caption{%
-    Achieved properties and Stage-3 grouping outcomes of the nine-cell
-    development factorial, with four seeded replicates per cell (36 scenes
-    total); each entry is the mean of four seeds. Length density is in px per
-    px$^2$; thick-mask coverage is the union-area fraction. Crossing density,
-    gap count, all centreline quantities and all grouping scores are invariant
-    across width within a geometry block and are therefore pooled over the
-    three width levels, leaving thick-mask coverage as the only reported
-    quantity that responds to width. These are development-only, exploratory
-    data: the seeds are disjoint from the predefined evaluation set and the
-    values are not comparable with it.
+    Achieved properties and Stage-3 outcomes of the nine-cell development
+    factorial (four seeds/cell, 36 scenes). Crossing density, gap count and all
+    grouping scores are width-invariant within a geometry block; thick-mask
+    areal density is the only quantity that responds to width.
     }
     \label{tab:factorial}
     \input{results/development_factorial_table}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[t]
     \centering
     \includegraphics[
         width=\linewidth,
@@ -370,18 +339,11 @@ scene properties and outcomes of all nine cells.
         keepaspectratio
     ]{figures/fig_density_sweep.pdf}
     \caption{%
-    Development-only, exploratory density sweep: common-fragment \Fone{} for
-    FilaSeg Stage~3 and the minimum-turn skeleton tracer against achieved
-    centreline-length density, with crossing density per megapixel on the
-    upper axis. Both methods receive the identical degraded axis mask for each
-    scene, so the curves are paired scene by scene; that input is the nominal
-    one-pixel axis mask in its degraded form, whose measured mean foreground
-    width is 1.7~px, at the single target bundle width of 6~px shown to be
-    inert for this endpoint in Section~\ref{sec:res-factorial}.
-    Bands are 95\% non-parametric bootstrap confidence intervals
-    of the mean ($n=4$ seeds per density, 10\,000 replicates, fixed seed).
-    Seeds are disjoint from the predefined evaluation set and these values are
-    not comparable with it.
+    Density sweep (Section~\ref{sec:res-factorial}): common-fragment $F_1$ for
+    FilaSeg Stage~3 and the minimum-turn tracer against achieved
+    centreline-length density, paired scene by scene at the single inert target
+    bundle width of 6~px. Bands are 95\% bootstrap CIs of the mean ($n=4$
+    seeds/density, 10\,000 replicates).
     }
     \label{fig:density-sweep}
 \end{figure}
@@ -419,12 +381,10 @@ endpoint.
         keepaspectratio
     ]{figures/fig_qualitative_real.pdf}
     \caption{%
-    Real SEM development crop. Corresponding manual reference and predicted
-    instances use the same colours after maximum-total-IoU one-to-one
-    assignment. Magenta indicates unmatched predictions, while a dashed yellow
-    outline indicates the missed manual reference instance. The final panel
-    summarizes instance correspondence without treating apparent-width
-    disagreement as a centreline-grouping error.
+    Real SEM development crop. Matched manual reference and predicted instances
+    share colour after maximum-total-IoU assignment (unmatched/missed markers in
+    legend). The final panel summarizes correspondence without treating
+    apparent-width disagreement as a grouping error.
     }
     \label{fig:qual-real}
 \end{figure}

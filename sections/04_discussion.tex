@@ -17,7 +17,7 @@ receiving the identical mask, a paired difference of
 \FilaSegMinusBaselineSkeletonCommonFOneMean{} with a 95\% confidence interval
 of [\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
 \FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}] that excludes zero. The
-interval is an aggregate statement, not a uniform one: at 30\% areal coverage
+interval is an aggregate statement, not a uniform one: at 30\% areal density
 the density-specific interval crosses zero, and the qualitative
 counterexamples in Section~\ref{sec:res-qualitative} contain scenes the
 minimum-turn tracer groups better.
@@ -64,9 +64,26 @@ mechanism: an evidence-ordered procedure with an explicit crossing-prevention
 criterion can accept long continuations that a purely local rule refuses,
 without accepting proportionally more wrong ones.
 
+\paragraph{How much of the advantage is robustness to degradation, versus
+better grouping.}
+Re-scoring the same 125 scenes on the undegraded, exactly one-pixel axis mask
+(Section~\ref{sec:res-density}) separates two contributions the paired
+degraded-input comparison mixes together: recovering structure that mask
+degradation interrupted, and grouping structure that was already fully
+visible. The minimum-turn tracer improved on clean input while FilaSeg did
+not, narrowing the margin from \FilaSegMinusBaselineSkeletonCommonFOneMean{}
+to $+0.042$ $[0.031, 0.053]$. Much of FilaSeg's aggregate advantage over this
+comparator is therefore attributable to insensitivity to mask degradation
+rather than to better grouping of intact topology. The advantage does not
+vanish on clean input, and, as reported in Section~\ref{sec:res-density}, it
+remains largest at the highest tested crossing density even with clean masks.
+The honest reading is that the reconnection stage buys robustness to
+imperfect upstream segmentation, and buys a smaller but still resolved
+improvement in crossing disambiguation on top of that.
+
 \paragraph{Why the advantage is conditional rather than universal.}
 The same ordering that recovers long filaments becomes a liability where the
-geometry genuinely under-determines the answer. At 30\% coverage the paired
+geometry genuinely under-determines the answer. At 30\% areal density the paired
 interval includes zero, and the losses in Section~\ref{sec:res-qualitative}
 show the mechanism: where two filaments cross at a shallow angle and both are
 locally smooth, the multi-criterion test and the minimum-turn rule are
@@ -101,7 +118,7 @@ its small per-density samples, not evidence that segmentation errors are
 unimportant in practice.
 
 \paragraph{Separating network complexity from bundle width.}
-Prescribed areal coverage conflates two distinct things, because the union of
+Target areal density conflates two distinct things, because the union of
 thick filament supports grows both when the network contains more centreline
 and when the rendered bundles are wider. The factorial study
 (Section~\ref{sec:res-factorial}, Table~\ref{tab:factorial}) separates them
@@ -109,18 +126,19 @@ by stopping generation on summed visible centreline length instead, then
 varying target bundle width at fixed centreline geometry. Within each geometry
 block the degraded input mask, the clean centreline and the overlap-aware
 centreline reference are byte-identical across all three width levels, while
-thick-mask coverage varies by more than a factor of two. Bundle width is
+thick-mask areal density varies by more than a factor of two. Bundle width is
 therefore an exact structural negative control for Stage~3, and running the
 grouping stage on all 36 scenes confirms it empirically: the common-fragment
 \Fone{} range across width levels is exactly zero in every geometry block.
-Thick areal coverage cannot by itself drive grouping performance. The
-difficulty that rises with density is the geometric complexity of the
-centreline network itself: crossing density and gap count increase far faster
-than centreline length over the tested range, and grouping performance tracks
-that complexity rather than coverage. Width remains an active factor for SEM
-rendering and for Stage~4, where it is the quantity being measured. This is a
+Thick-mask areal density cannot by itself drive grouping performance. The
+difficulty that rises with centreline-length density is the geometric complexity
+of the centreline network itself: crossing density and gap count increase far
+faster than centreline length over the tested range, and grouping performance
+tracks that complexity rather than areal density. Width remains an active
+factor for SEM rendering and for Stage~4, where it is the quantity being measured. This is a
 statement about attribution, which the exact control settles cleanly; the
-four-seed cells are too small to support density-specific effect sizes.
+four-seed cells are too small to support centreline-length-density-specific
+effect sizes.
 
 \paragraph{Applicability beyond CNT bundles.}
 FilaSeg's criteria refer to filament geometry rather than to nanotube physics,
@@ -187,9 +205,9 @@ width accuracy. A width claim requires matched per-instance reference
 measurements, which do not exist in this work.
 
 \paragraph{Synthetic-generator assumptions.}
-The generator exposes density, crossings, gaps and intensity variation under
-exact instance ground truth, which is precisely why it can support a primary
-endpoint at all. Whether its degradation and appearance distributions resemble
+The generator exposes areal density, centreline-length density, crossings,
+gaps and intensity variation under exact instance ground truth, which is
+precisely why it can support a primary endpoint at all. Whether its degradation and appearance distributions resemble
 those of real upstream segmenter output has not been quantified. The reported
 confidence intervals characterize repeatability over generator seeds, not
 transfer to unseen SEM images.
@@ -203,7 +221,8 @@ should be read alongside the object-level recovery summary
 (Section~\ref{sec:mm-instance}). The sensitivity analyses in
 Section~\ref{sec:res-mask} rest on 20 development scenes, with only four
 scenes at some densities, and the factorial study on four seeds per cell; all
-are exploratory and cannot support density-specific conclusions.
+are exploratory and cannot support conclusions specific to either density
+measure.
 
 \paragraph{Missing acquisition and specimen metadata.}
 The SEM instrument and detector, accelerating voltage, working distance,
