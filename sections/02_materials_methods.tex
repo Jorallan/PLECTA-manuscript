@@ -42,7 +42,8 @@ segmentation model.
 
 After training, the U-Net receives a real SEM image and predicts a binary
 CNT bundle-axis mask. This binary mask is then supplied to the FilaSeg
-instance-segmentation pipeline.
+instance-segmentation pipeline. The implementation of this upstream workflow is
+maintained separately~\citep{allan2026cntsem}.
 
 This sequence is shown as Pipeline~A in Figure~\ref{fig:scope}.
 
@@ -179,6 +180,18 @@ The synthetic scenes span five prescribed areal-coverage levels from
 $20\%$ to $60\%$. Areal coverage is calculated from the union of the thick
 filament supports, not from the thin centreline mask.
 
+Two further scene descriptors are reported alongside coverage where the
+difficulty of the grouping problem is at issue. The \emph{centreline-length
+density} is the total visible centreline arc length divided by the image area,
+in px~px$^{-2}$; unlike areal coverage it does not depend on how wide the
+bundles are rendered. The \emph{crossing density} counts pairwise centreline
+crossing events per megapixel of image area: for each pair of filaments, every
+connected region of pixels shared by their one-pixel centrelines counts as one
+event, so a junction where three centrelines meet contributes three pairwise
+events. Both quantities are measured on the clean centreline rasters and are
+therefore independent of the rendered bundle width and of the mask
+degradation.
+
 \paragraph{SEM-like image generation.}
 
 SEM-like synthetic images can be generated in two ways.
@@ -218,9 +231,11 @@ in both uses.
     \caption{%
     Examples of the procedural synthetic data. Each row shows the
     overlap-aware thick-instance reference, an SEM-like grayscale image, the
-    degraded thin-axis mask supplied to FilaSeg, and the undegraded one-pixel
-    axis representation. The geometric instance identity is retained across
-    all representations.
+    a degraded thin-axis mask of the kind supplied to FilaSeg, and the
+    undegraded one-pixel axis representation. The degraded example is shown at
+    a nominal two-pixel axis width to make the degradation visible; the primary
+    evaluation uses the nominal one-pixel variant. The geometric instance
+    identity is retained across all representations.
     }
     \label{fig:synth-examples}
 \end{figure}

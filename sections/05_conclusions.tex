@@ -12,10 +12,13 @@ difference from the fixed minimum-turn comparator was
 [\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
 \FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]).
 
-The evaluator audit changed the scientific interpretation without changing any
-frozen method output. Equivalent Stage-3 centrelines are the defensible primary
-grouping representation; Stage-4 centreline changes and width-rendered masks are
-secondary diagnostics. Automatically selected counterexamples show that the
+Which representation is submitted for scoring changes the result without any
+method output changing (Section~\ref{sec:res-density}). Equivalent Stage-3
+centrelines are the defensible primary grouping representation; Stage-4
+centreline changes and width-rendered masks are secondary diagnostics. A
+secondary comparison on undegraded masks further shows that much of the
+aggregate advantage over the comparator reflects insensitivity to mask
+degradation rather than better grouping of intact topology. Automatically selected counterexamples show that the
 aggregate advantage is not uniform across scenes or densities. The result is
 therefore evidence for this fixed comparison under the tested generator, not a
 claim of superiority over filament tracing methods generally.

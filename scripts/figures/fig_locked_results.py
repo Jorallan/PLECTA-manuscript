@@ -80,7 +80,9 @@ def _plot_panel(ax, rows: list[dict], densities: list[int], title: str,
                     label=label, zorder=4)
     ax.set_xticks(densities)
     ax.set_xticklabels([f"{density}%" for density in densities])
-    ax.set_xlabel("Target areal density")
+    # "coverage", not "density": the manuscript reserves "density" for
+    # centreline-length density, which is a different quantity (Section 3.2).
+    ax.set_xlabel("Prescribed areal coverage")
     ax.set_title(title, loc="left")
     if show_legend:
         ax.legend(frameon=False, loc="lower left", fontsize=8)

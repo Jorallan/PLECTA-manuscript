@@ -203,9 +203,11 @@ def _legend_title(n_by_density: dict[int, int]) -> str:
     counts = set(n_by_density.values())
     if len(counts) == 1:
         n = counts.pop()
-        return f"Areal-coverage density (n = {n} scenes each)"
+        # "coverage", not "coverage density": the manuscript reserves "density"
+        # for centreline-length density, a different quantity (Section 3.2).
+        return f"Prescribed areal coverage (n = {n} scenes each)"
     parts = ", ".join(f"{d}%: n={n}" for d, n in sorted(n_by_density.items()))
-    return f"Areal-coverage density ({parts})"
+    return f"Prescribed areal coverage ({parts})"
 
 
 def _width_panel_spec():
@@ -342,8 +344,11 @@ def main() -> int:
     ap.add_argument("--w3", type=Path, required=True)
     ap.add_argument("--clean", type=Path, required=True)
     ap.add_argument("--out-json", type=Path, required=True)
+    # Default to the consolidated figure only: the two standalone figures are
+    # no longer referenced by the manuscript, and emitting them by default left
+    # orphaned fig_width_sweep/fig_clean_vs_degraded files in figures/.
     ap.add_argument("--figures", choices=("all", "consolidated", "standalone"),
-                     default="all",
+                     default="consolidated",
                      help="Which figure(s) to emit: the consolidated two-panel "
                           "fig_development_sensitivity, the two standalone "
                           "fig_width_sweep/fig_clean_vs_degraded, or both "

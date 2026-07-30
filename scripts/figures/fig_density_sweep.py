@@ -43,15 +43,19 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from _style import GRAY, apply_style, save_fig, thin_spines  # noqa: E402
+from _style import GRAY, GREEN, ORANGE, apply_style, save_fig, thin_spines  # noqa: E402
 
 BOOTSTRAP_SEED = 20260730
 N_BOOTSTRAP = 10000
 
 # (json method key, legend label, colour, linestyle, marker, linewidth)
+# Method colours match Figure 4 (fig_locked_results.py), which plots the same
+# two methods: FilaSeg green, minimum-turn orange. Keeping them identical means
+# a reader flipping between the two head-to-head figures does not have to
+# re-learn the legend.
 METHODS = (
-    ("filaseg", "FilaSeg (Stage 3)", "#2b6cb0", "-", "o", 2.1),
-    ("baseline_skeleton", "Minimum-turn tracer", "#dd6b20", (0, (5, 2)), "s", 1.8),
+    ("filaseg", "FilaSeg (Stage 3)", GREEN, "-", "o", 2.1),
+    ("baseline_skeleton", "Minimum-turn tracer", ORANGE, (0, (5, 2)), "s", 1.8),
 )
 MARKER_SIZE = 7.5
 
