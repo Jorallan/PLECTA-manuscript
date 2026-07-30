@@ -1,5 +1,5 @@
 \reviewnote{This simplified review draft removes six appendices from the
-canonical manuscript (locked configuration and provenance, the
+canonical manuscript (the frozen configuration and provenance record, the
 connected-component sanity check, the curvature/fit-quality development
 study, near-tie qualitative examples, and the development-only hybrid
 grouping factorial), keeping only the independent density-width factorial,
@@ -21,11 +21,15 @@ Stage~4.
 
 \begin{table}[H]
   \centering
-  \caption{Achieved properties of the 9-cell development factorial, with four
-  seeded replicates per cell (36 scenes total). Length
-  density is in px per px$^2$; thick-mask coverage is the union-area fraction.
-  Each entry is the mean of four seeds. Crossing density, gap count and all
-  centreline quantities are invariant across width within a geometry block.}
+  \caption{Achieved properties and Stage-3 grouping outcomes of the 9-cell
+  development factorial, with four seeded replicates per cell (36 scenes
+  total). Length density is in px per px$^2$; thick-mask coverage is the
+  union-area fraction. Each entry is the mean of four seeds. Crossing density,
+  gap count and all centreline quantities are invariant across width within a
+  geometry block, as are the common-fragment \Fone{}, pairwise precision and
+  recall, and object-level recovery, which are therefore pooled over the three
+  width levels. Thick-mask coverage is the only reported quantity that responds
+  to width.}
   \small
   \input{results/development_factorial_table}
 \end{table}
@@ -34,9 +38,17 @@ Increasing centreline density raised crossing density and gap count, while
 increasing physical width at fixed centreline geometry raised thick-mask
 coverage. The report records the full achieved width distribution, one-pixel
 coverage, degraded-mask coverage, filament count, pairwise and unique crossing
-events, and gap-length summaries. Empirical Stage-3 execution was not repeated
-across the redundant width cells; the negative-control result here is exact
-artifact identity, not an estimated performance effect.
+events, and gap-length summaries.
+
+The empirical arm was subsequently executed on all 36 scenes, scoring the
+Stage-3 centreline output with the same common-fragment implementation used for
+the primary evaluation. It reproduces the structural result exactly: the
+maximum within-geometry range of common-fragment \Fone{} across the three width
+levels is $0.000$ in every one of the twelve seed-by-density blocks. The
+negative control is therefore both exact artifact identity and a confirmed
+performance invariance, rather than an estimated effect. Performance falls only
+with centreline-network complexity, as reported in
+Section~\ref{sec:res-factorial}.
 
 \section{Dataset identity}
 \label{app:data}

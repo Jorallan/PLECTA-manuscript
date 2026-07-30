@@ -44,24 +44,7 @@ After training, the U-Net receives a real SEM image and predicts a binary
 CNT bundle-axis mask. This binary mask is then supplied to the FilaSeg
 instance-segmentation pipeline.
 
-The conceptual sequence is
-
-\begin{equation}
-\begin{split}
-    \text{procedural filament masks}
-    +
-    \text{real SEM image domain}
-    &\longrightarrow
-    \text{CycleGAN-generated SEM-like images}
-    \\
-    &\longrightarrow
-    \text{U-Net training}
-    \\
-    &\longrightarrow
-    \text{binary segmentation of real SEM images}.
-\end{split}
-\label{eq:binary-segmentation-workflow}
-\end{equation}
+This sequence is shown as Pipeline~A in Figure~\ref{fig:scope}.
 
 The output is a thin binary mask representing the estimated bundle axes rather
 than the complete bundle silhouettes. Instance identity is not yet available
@@ -119,35 +102,20 @@ known filament geometry.
 
 \begin{figure}[t]
     \centering
-    \fbox{%
-    \begin{minipage}{0.94\linewidth}
-        \raggedright
-        \textbf{Pipeline A: binary segmentation of SEM images}
-
-        Procedural binary filament masks + real SEM image domain
-        $\longrightarrow$ CycleGAN
-        $\longrightarrow$ SEM-like training images
-        $\longrightarrow$ U-Net
-        $\longrightarrow$ binary CNT bundle-axis mask.
-
-        \bigskip
-
-        \textbf{Pipeline B: instance segmentation of dense filament networks}
-
-        Procedural binary filament mask \textbf{or} binary segmented SEM mask
-        $\longrightarrow$ vectorization
-        $\longrightarrow$ fragment cleaning
-        $\longrightarrow$ geometric reconnection
-        $\longrightarrow$ individual centreline instances
-        $\longrightarrow$ SEM-assisted width estimation and rendering.
-    \end{minipage}}
+    \includegraphics[
+        width=\linewidth,
+        height=0.62\textheight,
+        keepaspectratio
+    ]{figures/fig_filaseg_scope.pdf}
     \caption{%
-    Relationship between the two analysis pipelines. The upstream
-    CycleGAN/U-Net pipeline converts real SEM images into binary CNT
-    bundle-axis masks. FilaSeg receives either these SEM-derived masks or
-    procedurally generated masks and separates the dense filament network into
-    individual instances. A paired grayscale image is used only during the
-    final apparent-width and rendering stage.
+    Relationship between the two analysis pipelines. Pipeline~A converts real
+    SEM images into binary CNT bundle-axis masks through CycleGAN image
+    translation and a U-Net segmenter. Pipeline~B separates a dense filament
+    network into individual instances, taking either this SEM-derived mask or a
+    procedurally generated axis mask, the latter being the development and
+    evaluation path. Stages~1--3 operate on the binary axis mask alone;
+    Stage~4 additionally requires the paired grayscale SEM image for
+    apparent-width estimation and rendering.
     }
     \label{fig:scope}
 \end{figure}
@@ -584,6 +552,9 @@ performance.
 \subsubsection[Primary metric: common-fragment pairwise F1]
 {Primary metric: common-fragment pairwise \Fone{}}
 \label{sec:mm-f1}
+% The object-level recovery companion measure is defined at the end of this
+% subsubsection; Section 3 cites it as sec:mm-instance.
+\label{sec:mm-instance}
 
 The primary metric is a fragment-level adaptation of pairwise clustering
 precision, recall, and \Fone{}. Pairwise comparison of partitions originates

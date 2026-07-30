@@ -17,7 +17,6 @@ lower-bound check are treated as secondary analyses.
 \subsection{Validation of FilaSeg instance grouping}
 \label{sec:res-density}
 \label{sec:res-baselines}
-\label{sec:res-representation}
 \label{sec:res-qualitative}
 
 FilaSeg was compared with the minimum-turn skeleton tracer on
@@ -35,7 +34,7 @@ bootstrap confidence interval of
 \LockedFilaSegCommonPrecisionMean{} and
 \LockedFilaSegCommonRecallMean{}, respectively.
 
-Table~\ref{tab:locked} and Figure~\ref{fig:density} summarize the comparison
+Table~\ref{tab:primary} and Figure~\ref{fig:density} summarize the comparison
 with the minimum-turn tracer.
 
 \begin{table}[H]
@@ -48,7 +47,7 @@ with the minimum-turn tracer.
     bootstrap resampling. Fragment recovery is the object-level companion
     measure defined in Section~\ref{sec:mm-instance}.
     }
-    \label{tab:locked}
+    \label{tab:primary}
     \small
     \input{results/filaseg_baseline_table}
 \end{table}
@@ -62,9 +61,14 @@ of
 The aggregate interval excludes zero, supporting an advantage for FilaSeg
 over the selected minimum-turn comparator under the tested generator and
 evaluation conditions. The advantage was not uniform across density. The
-density-specific interval crossed zero at the 30\% coverage level. The result
+density-specific interval crossed zero at the 30\% coverage level
+(\LockedDensityThreeZeroFilaSegMinusBaselineSkeletonCommonFOne{}). The result
 therefore supports a conditional advantage over this comparator rather than a
 general superiority claim.
+
+The connected-component lower bound reached a mean common-fragment \Fone{} of
+only \LockedBaselineCcCommonFOneMean{}, confirming that the grouping problem is
+not solved by treating each connected foreground region as one instance.
 
 \begin{figure}[t]
     \centering
@@ -84,7 +88,36 @@ general superiority claim.
     \label{fig:density}
 \end{figure}
 
-\begin{figure}[p]
+\paragraph{Stage-3 and Stage-4 representation analysis.}
+
+Because the grouping score depends on which representation is submitted for
+scoring, the same FilaSeg output was evaluated at three points in the pipeline.
+Reducing the Stage~4 output back to a centreline representation changed the
+common-fragment \Fone{} by only
+\FilaSegStageFourCenterlineMinusStageThreeCommonFOneMean{} relative to the
+Stage~3 centrelines (95\% CI
+[\FilaSegStageFourCenterlineMinusStageThreeCommonFOneCILow{},
+\FilaSegStageFourCenterlineMinusStageThreeCommonFOneCIHigh{}]). Scoring the
+width-rendered Stage~4 masks instead changed it by
+\FilaSegStageFourRenderedMinusStageThreeCommonFOneMean{} (95\% CI
+[\FilaSegStageFourRenderedMinusStageThreeCommonFOneCILow{},
+\FilaSegStageFourRenderedMinusStageThreeCommonFOneCIHigh{}]).
+
+The larger part of that change therefore arises from width rendering rather
+than from any change of grouping decision
+(\FilaSegStageFourRenderedMinusStageFourCenterlineCommonFOneMean{} between the
+rendered and centreline Stage~4 representations). Equivalent Stage-3
+centrelines are used as the primary grouping representation throughout, and the
+width-rendered output is reported only as a secondary diagnostic.
+
+\paragraph{Qualitative wins and losses.}
+
+Figures~\ref{fig:qual-wins} and~\ref{fig:qual-losses} show the three scenes
+with the largest paired advantage for each method. Scene selection used the
+stored numerical differences alone, not visual inspection, so both directions
+of error are represented.
+
+\begin{figure}[t]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -95,12 +128,16 @@ general superiority claim.
     The three predefined synthetic scenes with the largest paired advantages
     for FilaSeg under the primary common-fragment grouping endpoint. Scene
     selection was based on the stored numerical differences and not on visual
-    inspection.
+    inspection. Columns show the degraded input mask, the overlap-aware
+    reference, the minimum-turn centrelines and the FilaSeg Stage-3
+    centrelines. Predicted and reference centrelines are drawn with a
+    3-pixel display-only dilation for print legibility; the underlying
+    one-pixel skeletons used for matching and scoring are unchanged.
     }
     \label{fig:qual-wins}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[t]
     \centering
     \includegraphics[
         width=\textwidth,
@@ -111,7 +148,10 @@ general superiority claim.
     The three predefined synthetic scenes with the largest paired advantages
     for the minimum-turn tracer. These counterexamples show conditions under
     which local minimum-turn continuation grouped the visible filament
-    fragments more accurately than FilaSeg.
+    fragments more accurately than FilaSeg. Columns are as in
+    Figure~\ref{fig:qual-wins}. Predicted and reference centrelines are drawn
+    with a 3-pixel display-only dilation for print legibility; the underlying
+    one-pixel skeletons used for matching and scoring are unchanged.
     }
     \label{fig:qual-losses}
 \end{figure}
@@ -129,97 +169,140 @@ representation supplied to the algorithm. These experiments use development
 data and are therefore interpreted as sensitivity analyses rather than
 independent validation.
 
-\paragraph{Axis-mask width.}
+\paragraph{Axis-mask width and input degradation.}
 
 The effect of the binary filament-axis width was evaluated on a 20-scene
-development set using masks with nominal widths of one, two, and three pixels.
-
-The one-pixel masks produced the highest mean common-fragment \Fone{}. The
-paired confidence interval for the difference between the one-pixel and
-two-pixel masks included zero, so this comparison did not resolve a difference
-at the 95\% level. The three-pixel masks produced a larger decrease whose
-paired interval excluded zero.
-
-These results indicate that a thin axis representation is preferable under
-the tested configuration, particularly when the foreground becomes several
-pixels wide.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[
-        width=0.82\textwidth,
-        height=0.68\textheight,
-        keepaspectratio
-    ]{figures/fig_width_sweep.pdf}
-    \caption{%
-    Development-only sensitivity to the nominal width of the binary
-    filament-axis mask. Each thin line connects the same scene across mask
-    widths of exactly one, two, and three pixels. Larger symbols show the
-    density-stratified means and 95\% bootstrap confidence intervals.
-    }
-    \label{fig:width}
-\end{figure}
-
-\paragraph{Clean and degraded axis masks.}
+development set using masks with nominal widths of one, two, and three pixels
+(Figure~\ref{fig:sensitivity}a). The one-pixel masks produced the highest mean
+common-fragment \Fone{}. The paired confidence interval for the difference
+between the one-pixel and two-pixel masks included zero, so this comparison did
+not resolve a difference at the 95\% level. The three-pixel masks produced a
+larger decrease whose paired interval excluded zero. A thin axis representation
+is therefore preferable under the tested configuration, particularly once the
+foreground becomes several pixels wide.
 
 The degraded one-pixel masks were also compared with the corresponding clean
-procedural axes. The clean masks omit the modeled segmentation-like
-imperfections, including small gaps and local raster irregularities.
-
+procedural axes, which omit the modeled segmentation-like imperfections such as
+small gaps and local raster irregularities (Figure~\ref{fig:sensitivity}b).
 Replacing the degraded masks with clean procedural axes produced a small
 negative mean change whose paired confidence interval included zero. The
 analysis therefore did not show a resolved aggregate improvement from removing
-the modeled degradation.
-
-At 30\% areal coverage, all four available development scenes showed lower
-scores for the clean representation. However, four scenes are insufficient
-for a reliable density-specific conclusion. This result should therefore be
-treated as a conditional development diagnostic rather than evidence that
-segmentation errors are unimportant.
+the modeled degradation. At 30\% areal coverage all four available development
+scenes scored lower for the clean representation, but four scenes cannot support
+a density-specific conclusion. This is a conditional development diagnostic, not
+evidence that segmentation errors are unimportant.
 
 \begin{figure}[t]
     \centering
     \includegraphics[
         width=\textwidth,
-        height=0.70\textheight,
+        height=0.62\textheight,
         keepaspectratio
-    ]{figures/fig_clean_vs_degraded.pdf}
+    ]{figures/fig_development_sensitivity.pdf}
     \caption{%
-    Development-only comparison of clean and degraded one-pixel filament-axis
-    masks. Each density panel contains the four paired scenes available at
-    that level. The individual paired results are shown because the
-    density-specific sample size is small.
+    Development-only sensitivity of the common-fragment \Fone{} to the input
+    mask representation, resolved by prescribed areal coverage.
+    (a)~nominal binary filament-axis width of exactly one, two and three
+    pixels. (b)~clean versus degraded one-pixel axis masks. Each of the five
+    curves is the mean over the four development scenes belonging to one
+    coverage level ($n=4$ per level, 20 scenes in total). The same scenes recur
+    at every horizontal position, so the shaded 95\% confidence intervals come
+    from a percentile bootstrap that resamples scenes within a coverage level
+    and reuses the resampled scene set across positions, preserving the
+    within-scene pairing (10\,000 replicates, fixed seed). Individual scenes are
+    drawn lightly behind the means. The two panels share the vertical scale and
+    the legend, but their horizontal axes are different conditions and are
+    deliberately not pooled. With four scenes per level these are sensitivity
+    diagnostics, not precise estimates.
     }
-    \label{fig:clean}
+    \label{fig:sensitivity}
 \end{figure}
 
-\paragraph{Separating filament density from bundle width.}
+\paragraph{Separating centreline-network density from bundle width.}
+\label{sec:res-factorial}
 
-The current prescribed areal-coverage levels are calculated from the union of
-the thick rendered filament supports. Areal coverage can therefore increase
-because the network contains more or longer filament centrelines, because the
-rendered bundles are wider, or through a combination of these effects.
+The prescribed areal-coverage levels used above are computed from the union of
+the thick rendered filament supports. Coverage therefore rises both when the
+network contains more or longer centrelines and when the rendered bundles are
+wider, so it cannot by itself attribute difficulty to either cause. A separate
+development generator was used to break that coupling: it stops on summed
+visible centreline arc length rather than on areal coverage, which allows the
+true rendered bundle width to be varied at fixed centreline geometry.
 
-A more informative sensitivity analysis should vary the geometric network
-density and the true rendered bundle width independently. This would separate
-the effects of:
+The resulting development-only factorial spans three centreline length-density
+levels (0.02, 0.04 and 0.06~px~px$^{-2}$) and three true bundle-width levels
+(6, 11 and 16~px), with four independently seeded scenes per cell and 36 scenes
+in total. Seeds are disjoint from the predefined evaluation set.
 
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-    \item total filament-centreline length per image area;
-    \item the number of filaments and crossings;
-    \item the physical or rendered bundle width;
-    \item one-pixel axis coverage;
-    \item thick-bundle areal coverage; and
-    \item the number and length of mask interruptions.
-\end{itemize}
+The design yields an exact structural control. Within each seed and
+length-density block, the degraded one-pixel input mask, the clean centreline
+mask and the overlap-aware centreline reference are byte-identical across all
+three width levels, verified by SHA-256 comparison, while achieved thick-mask
+coverage varies by more than a factor of two across those same cells. Crossing
+density, gap count, filament count and one-pixel axis coverage are likewise
+invariant across width within a block. Because Stages~1--3 consume only the
+binary axis mask, true bundle width is therefore an exact negative control for
+centreline grouping, and thick areal coverage cannot by itself change the
+grouping result. Width acts as an active factor only for the SEM-like rendering
+and the Stage~4 apparent-width measurement.
 
-\reviewnote{%
-A factorial sensitivity study should be added here in which centreline-network
-density and true bundle width are varied independently. The analysis should
-report both one-pixel axis coverage and thick-bundle areal coverage so that
-network complexity is not represented by one combined density measure. The
-results are intentionally not included in this simplified review draft.
-}
+The empirical arm confirms the structural argument. Scoring the Stage-3
+centreline output of all 36 scenes with the same common-fragment metric used
+for the primary evaluation, the maximum within-geometry range of
+common-fragment \Fone{} across the three width levels was exactly zero in all
+twelve seed-by-density blocks, even though achieved thick-mask coverage varied
+by a factor of two to two-and-a-half across those same cells. Rendered bundle
+width, and the areal coverage it produces, therefore have no effect whatsoever
+on centreline grouping.
+
+Grouping performance instead fell monotonically with the geometric complexity
+of the centreline network. Mean common-fragment \Fone{} decreased from 0.859 at
+118 crossings per megapixel to 0.803 at 498 and 0.713 at 1126, with pairwise
+precision falling from 0.875 to 0.693, pairwise recall from 0.846 to 0.736, and
+object-level recovery from 0.745 to 0.531 over the same range
+(Figure~\ref{fig:factorial}). Increasing centreline length density raised
+crossing density and gap count far more steeply than it raised centreline
+length itself, identifying network geometric complexity, rather than areal
+coverage, as the quantity that makes grouping harder.
+
+These values are not comparable with the primary evaluation in
+Section~\ref{sec:res-density}: this development generator stops on centreline
+arc length rather than areal coverage and therefore produces a different scene
+population. With four seeds per cell the analysis is exploratory and
+development-only, and no density-specific claim is made from it. Its purpose is
+the attribution question, which it answers cleanly because the width control is
+exact rather than estimated. Appendix~\ref{app:factorial} reports the achieved
+scene properties and outcomes of all nine cells.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=\linewidth,
+        height=0.70\textheight,
+        keepaspectratio
+    ]{figures/fig_factorial_density_width.pdf}
+    \caption{%
+    Development-only, exploratory factorial separating centreline-network
+    density from true bundle width (three length-density levels $\times$ three
+    width levels $\times$ four seeds, 36 scenes). (a)~FilaSeg Stage-3
+    common-fragment \Fone{} against achieved centreline-length density, with
+    crossing density on the upper axis and one curve per true bundle width.
+    The three width curves are exactly coincident at every density level
+    (maximum within-geometry \Fone{} range $=0.000$), so they are drawn with a
+    small deliberate horizontal offset to keep all three visible; the offset is
+    horizontal only and no score is perturbed. This coincidence is the expected
+    consequence of Stages~1--3 reading only the binary axis mask, which is
+    byte-identical across width levels by construction. (b)~pairwise precision
+    and recall, pooled over width because they are width-invariant. Faint
+    points are individual scenes; error bars and bands are 95\% non-parametric
+    bootstrap confidence intervals of the mean ($n=4$ seeds per cell, 10\,000
+    replicates, fixed seed). Seeds are disjoint from the predefined evaluation
+    set, and these values are not comparable with it.
+    }
+    \label{fig:factorial}
+\end{figure}
+
+\clearpage
 
 % =========================================================================
 \subsection{Real SEM development case study}
@@ -244,7 +327,7 @@ delivered Stage~4 output. It should not be interpreted as an independent
 validation of apparent-width accuracy or as the primary centreline-grouping
 endpoint.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[
         width=\textwidth,
