@@ -138,7 +138,10 @@ def main():
     junc_x, junc_y = 3.10, 5.55
     elbow(ax, [(11.85, yA - hA / 2 - 0.03), (11.85, 6.90), (junc_x, 6.90), (junc_x, junc_y + 0.20)],
           color=DARK, lw=1.6, ls="solid")
-    ax.text(12.60, 7.02, "SEM-derived mask", ha="right", va="bottom",
+    # Sits just BELOW the horizontal run of the elbow and to the right of its
+    # vertical drop, so the connector cannot pass through the text. A
+    # right-aligned label ending past x=11.85 would be crossed by the drop.
+    ax.text(11.78, 6.74, "SEM-derived mask", ha="left", va="top",
              fontsize=7.2, color=DARK, style="italic", zorder=4)
 
     # ------------------------------------------------------------------
