@@ -60,11 +60,15 @@ def main():
             else:
                 ax.imshow(load_gray(p), cmap="gray", vmin=0, vmax=255)
             if ri == 0:
-                ax.set_title(title, fontsize=10.5, fontweight="bold")
+                # 8.5 pt rendered at 0.585 page scale.
+                ax.set_title(title, fontsize=14.5, fontweight="bold")
             if ci == 0:
-                ax.set_ylabel(rlabel, fontsize=11, fontweight="bold")
+                # 8.0 pt rendered at 0.585 page scale; the row label stays the
+                # smaller of the two, as in _style.py (title 11, label 10.5).
+                ax.set_ylabel(rlabel, fontsize=13.7, fontweight="bold")
+    # 9.5 pt rendered at 0.585 page scale (one step above the column titles).
     fig.suptitle("Thick-bundle / thin-axis synthetic scenes with exact ground truth",
-                 fontsize=12, fontweight="bold", y=0.99)
+                 fontsize=16.2, fontweight="bold", y=0.99)
     fig.tight_layout(rect=[0, 0, 1, 0.96])
     save_fig(fig, "fig_synthetic_examples", bbox_inches="tight")
     print("done")

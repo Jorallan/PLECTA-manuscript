@@ -333,7 +333,7 @@ def _build_consolidated(values, expected, density_colors):
     ax_b.tick_params(labelleft=False)
 
     _shared_legend(fig, handles, labels, _legend_title(n_by_density), ncol=5)
-    save_fig(fig, "fig_development_sensitivity", bbox_inches="tight", pad_inches=0.03)
+    save_fig(fig, "fig_development_sensitivity", bbox_inches="tight")
     plt.close(fig)
 
 

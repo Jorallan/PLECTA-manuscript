@@ -41,9 +41,16 @@ def _value(row: dict, method: str | None = None) -> float | None:
     return value if math.isfinite(value) else None
 
 
+# (json method key, legend label, colour, linestyle, marker)
+# Encoding is shared with Figure 8 (fig_density_sweep.py), which plots the same
+# two methods: FilaSeg green/solid/circle, minimum-turn orange/dashed/triangle,
+# hollow markers in both.  Identical colour, line style, marker and legend
+# wording means a reader flipping between the two head-to-head figures does not
+# have to re-learn the legend, and the dashed/solid split keeps them separable
+# in greyscale.
 _METHODS = (
-    ("minimum_turn_centerline", "Minimum-turn centreline", ORANGE, "^"),
-    ("filaseg_stage3_centerline", "FilaSeg Stage-3 centreline", GREEN, "o"),
+    ("minimum_turn_centerline", "Minimum-turn tracer", ORANGE, (0, (5, 2)), "^"),
+    ("filaseg_stage3_centerline", "FilaSeg (Stage 3)", GREEN, "-", "o"),
 )
 
 
@@ -71,21 +78,31 @@ def _plot_panel(ax, rows: list[dict], densities: list[int], title: str,
     `eval/stats/stats_util.py`), same colours/markers, same y-limits.
     """
     summaries = _density_summaries(rows, densities)
-    for method, label, color, marker in _METHODS:
+    for method, label, color, linestyle, marker in _METHODS:
         means = np.asarray([summaries[method][d].mean for d in densities], float)
         lo = np.asarray([summaries[method][d].ci_lo for d in densities], float)
         hi = np.asarray([summaries[method][d].ci_hi for d in densities], float)
         ax.errorbar(densities, means, yerr=np.vstack([means - lo, hi - means]),
-                    color=color, marker=marker, lw=1.8, ms=5.5, capsize=3,
+                    color=color, linestyle=linestyle, marker=marker, lw=1.8, ms=5.5,
+                    mfc="white", mec=color, mew=1.6, capsize=3,
                     label=label, zorder=4)
     ax.set_xticks(densities)
     ax.set_xticklabels([f"{density}%" for density in densities])
     # "areal density", not "coverage": distinguished from centreline-length
     # density, a different quantity (Section 3.2).
     ax.set_xlabel("Target areal density")
-    ax.set_title(title, loc="left")
+    ax.set_title(title, loc="left", fontsize=10.5)
     if show_legend:
-        ax.legend(frameon=False, loc="lower left", fontsize=8)
+        # `_METHODS` lists the minimum-turn tracer first so it is drawn (and
+        # z-ordered) underneath FilaSeg (Stage 3); that draw order must stay
+        # as-is. The legend, however, must read FilaSeg first to match
+        # fig_density_sweep.py's legend order, so reorder only the
+        # handles/labels passed to ax.legend(), not the draw order above.
+        handles, labels = ax.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ordered_labels = [entry_label for _, entry_label, *_ in reversed(_METHODS)]
+        ax.legend([by_label[entry_label] for entry_label in ordered_labels], ordered_labels,
+                  frameon=False, loc="lower left", fontsize=8)
     thin_spines(ax)
 
 
@@ -152,40 +169,27 @@ def locked_comparison(document: dict, clean_document: dict) -> None:
             f"sets differ (degraded-only={sorted(scene_ids - clean_scene_ids)[:5]}, "
             f"clean-only={sorted(clean_scene_ids - scene_ids)[:5]})"
         )
-    n_scenes = len(scene_ids)
     n_per_density = {
         density: sum(1 for row in rows if int(row["density"]) == density)
         for density in densities
     }
     if len(set(n_per_density.values())) != 1:
         raise ValueError(f"unequal scene counts per density: {n_per_density}")
-    n_each = next(iter(n_per_density.values()))
 
     fig, (ax_deg, ax_clean) = plt.subplots(1, 2, figsize=(6.5, 3.3), sharey=True)
     _plot_panel(ax_deg, rows, densities, "(a) Degraded masks", show_legend=True)
     _plot_panel(ax_clean, clean_rows, densities, "(b) Clean masks", show_legend=False)
     ylo, yhi = _shared_ylim(rows, clean_rows, densities)
     ax_deg.set_ylim(ylo, yhi)  # shared via sharey=True; set once is sufficient
-    ax_deg.set_ylabel("Common-fragment pairwise F$_1$")
-    fig.suptitle(
-        "Stage-3 centreline comparison: degraded vs. clean input masks",
-        x=0.02, ha="left", fontsize=10.5, y=0.975,
-    )
-    note = (
-        f"Same {n_scenes} scenes in both panels ({n_each} per density level), paired scene-by-scene. "
-        "Markers show the per-density mean common-fragment F$_1$ (individual scenes not plotted); "
-        "error bars are 95% percentile bootstrap CIs over scenes "
-        f"(seed {stats_util.BOOTSTRAP_SEED}, {stats_util.N_BOOTSTRAP} resamples). "
-        "(a) mask_w1.png -- the primary, predefined input (degraded/UNet-realistic; "
-        "mean foreground width ~1.8 px, area/skeleton-length). "
-        "(b) mask_clean.png -- a secondary, non-predefined analysis on the undegraded, "
-        "exactly-1px axis mask."
-    )
-    fig.text(0.5, 0.005, note, ha="center", va="bottom", fontsize=6.3, color=GRAY,
-              wrap=True)
-    fig.tight_layout(rect=(0.0, 0.155, 1.0, 0.90))
+    ax_deg.set_ylabel("Common-fragment F$_1$")
+    # No suptitle and no in-figure footer note: the scene count, the pairing,
+    # the bootstrap settings and the two input-mask conditions are all stated in
+    # the LaTeX caption, and a figure-level title above bold panel titles only
+    # inverts the type hierarchy.  Repeating the caption under the axes crowds
+    # the figure (same house rule as fig_density_sweep.py).
+    fig.tight_layout()
     # Fixed metadata keeps the PDF byte-stable across repeated locked renders.
-    save_fig(fig, "fig_locked_method_comparison", metadata={
+    save_fig(fig, "fig_locked_method_comparison", bbox_inches="tight", metadata={
         "Creator": "FilaSeg locked evaluation",
         "CreationDate": None,
         "ModDate": None,

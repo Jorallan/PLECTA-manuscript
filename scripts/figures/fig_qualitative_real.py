@@ -28,7 +28,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 import _evalpath  # noqa: F401,E402
 import instance_io as IIO  # noqa: E402
 
-from _style import apply_style, save_fig  # noqa: E402
+from _style import BLUE, apply_style, save_fig  # noqa: E402
 from fig_paired_locked_examples import (  # noqa: E402
     FALSE_COLOR,
     MISSED_COLOR,
@@ -44,7 +44,9 @@ REPORT = ROOT / "output" / "final_real_ablation" / "real_ablation_results.json"
 MANUAL = ROOT / f"{BASE}_manual" / f"{BASE}_manual_multilabel.npz"
 SEM = ROOT / "input" / BASE / "sem.png"
 MASK = ROOT / "input" / BASE / "mask.png"
-AGREEMENT_COLORS = ("#000000", "#3B7EA1", MISSED_COLOR, FALSE_COLOR)
+# Matched predictions use the shared palette blue (_style.BLUE) rather than a
+# one-off accent, so this figure carries no colour the sibling figures lack.
+AGREEMENT_COLORS = ("#000000", BLUE, MISSED_COLOR, FALSE_COLOR)
 
 
 def _locked_prediction() -> Path:
@@ -114,32 +116,42 @@ def main() -> int:
             linewidths=0.7,
         )
 
+    # Five panels across one 6.27 in text column leave ~1.2 in per panel on the
+    # page, so the two long titles are wrapped rather than shrunk: kept on one
+    # line they would have to drop to ~6 pt rendered to stop colliding with
+    # their neighbours, well under the ~8.5 pt used by the other figures.
+    # Wording is unchanged.
     titles = (
         "SEM input",
         "Centreline mask",
         "Manual instances",
-        "FilaSeg final instances",
-        "Instance correspondence map",
+        "FilaSeg final\ninstances",
+        "Instance\ncorrespondence map",
     )
     for ax, title in zip(axes, titles):
-        ax.set_title(title, fontsize=9.5, fontweight="bold")
+        # 8.2 pt rendered at the 0.494 page scale this figure saves at.
+        ax.set_title(title, fontsize=16.5, fontweight="bold")
         ax.set_xticks([])
         ax.set_yticks([])
         for spine in ax.spines.values():
             spine.set_visible(False)
 
     legend = [
-        Line2D([], [], color="#3B7EA1", lw=5, label="Matched prediction"),
+        Line2D([], [], color=BLUE, lw=5, label="Matched prediction"),
         Line2D([], [], color=FALSE_COLOR, lw=5, label="Unmatched prediction"),
         Line2D([], [], color=MISSED_COLOR, lw=5, label="Missed manual pixels"),
         Line2D([], [], color=MISSED_COLOR, lw=1.2, ls="--", label="Missed manual instance"),
     ]
+    # Anchored below the axes area rather than inside the margin reserved by
+    # `tight_layout`: at this size the single legend row is taller than that
+    # margin and would otherwise sit on top of the bottom of the panels.
+    # `bbox_inches="tight"` grows the canvas to include it.
     fig.legend(
         handles=legend,
         ncol=4,
         loc="lower center",
-        bbox_to_anchor=(0.5, -0.01),
-        fontsize=8,
+        bbox_to_anchor=(0.5, -0.06),
+        fontsize=14.6,  # 7.2 pt rendered at the 0.494 page scale
     )
     fig.tight_layout(rect=(0, 0.10, 1, 1))
     save_fig(fig, "fig_qualitative_real", bbox_inches="tight")

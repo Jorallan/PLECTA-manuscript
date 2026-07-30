@@ -49,13 +49,14 @@ BOOTSTRAP_SEED = 20260730
 N_BOOTSTRAP = 10000
 
 # (json method key, legend label, colour, linestyle, marker, linewidth)
-# Method colours match Figure 4 (fig_locked_results.py), which plots the same
-# two methods: FilaSeg green, minimum-turn orange. Keeping them identical means
-# a reader flipping between the two head-to-head figures does not have to
-# re-learn the legend.
+# The whole encoding matches Figure 4 (fig_locked_results.py), which plots the
+# same two methods: FilaSeg green/solid/circle, minimum-turn orange/dashed/
+# triangle, hollow markers, and the same legend wording. Keeping them identical
+# means a reader flipping between the two head-to-head figures does not have to
+# re-learn the legend; solid vs. dashed also separates the methods in greyscale.
 METHODS = (
     ("filaseg", "FilaSeg (Stage 3)", GREEN, "-", "o", 2.1),
-    ("baseline_skeleton", "Minimum-turn tracer", ORANGE, (0, (5, 2)), "s", 1.8),
+    ("baseline_skeleton", "Minimum-turn tracer", ORANGE, (0, (5, 2)), "^", 1.8),
 )
 MARKER_SIZE = 7.5
 
@@ -142,7 +143,8 @@ def build(report_path: Path) -> dict[str, Any]:
         )
 
     ax.set_xlabel("Achieved centreline-length density (px / px$^2$)")
-    ax.set_ylabel("Common-fragment $F_1$")
+    # Upright F, matching \Fone in main.tex (not italic math $F_1$).
+    ax.set_ylabel("Common-fragment F$_1$")
     ax.set_ylim(0.45, 1.0)
     thin_spines(ax)
 
@@ -156,7 +158,7 @@ def build(report_path: Path) -> dict[str, Any]:
             "Same degraded, nominal one-pixel axis mask\n"
             f"for both methods{bundle_txt}"
         ),
-        title_fontsize=7.8,
+        title_fontsize=8.6,
     )
 
     crossings = [
@@ -185,7 +187,7 @@ def build(report_path: Path) -> dict[str, Any]:
     # and repeating them under the axes only crowds the figure.
     summary["n_seeds"] = len({int(r["seed"]) for r in rows})
 
-    save_fig(fig, "fig_density_sweep", bbox_inches="tight", pad_inches=0.06)
+    save_fig(fig, "fig_density_sweep", bbox_inches="tight")
     return summary
 
 

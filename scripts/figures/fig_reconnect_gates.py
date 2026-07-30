@@ -90,7 +90,8 @@ def panel_common(ax, title):
     ax.set_yticks([])
     for s in ax.spines.values():
         s.set_visible(False)
-    ax.set_title(title, fontsize=10.5, fontweight="bold", pad=4)
+    # 8.5 pt rendered at 0.871 page scale; left-aligned like Figures 4 and 7.
+    ax.set_title(title, loc="left", fontsize=9.8, fontweight="bold", pad=4)
 
 
 def tip_marker(ax, pt, color):
@@ -99,7 +100,12 @@ def tip_marker(ax, pt, color):
              markeredgewidth=0.8, zorder=6)
 
 
-def label(ax, pt, text, dx=0, dy=0, fontsize=9.5, ha="center", va="bottom",
+#: In-figure annotation size: 7.0 pt rendered at 0.871 page scale.  One size
+#: for every annotation in the panel (symbols, gap labels, angle label).
+ANNOTATION_FONTSIZE = 8.0
+
+
+def label(ax, pt, text, dx=0, dy=0, fontsize=ANNOTATION_FONTSIZE, ha="center", va="bottom",
           color=DARK, weight="normal"):
     ax.text(pt[0] + dx, pt[1] + dy, text, fontsize=fontsize, ha=ha,
             va=va, color=color, fontweight=weight, zorder=7)
@@ -107,7 +113,7 @@ def label(ax, pt, text, dx=0, dy=0, fontsize=9.5, ha="center", va="bottom",
 
 def panel_a(ax):
     """Short gap, accepted: nearly collinear, tiny gap."""
-    panel_common(ax, "(a) short gap, accepted")
+    panel_common(ax, "(a) Short gap, accepted")
     p_b_far = np.array([5, 11])
     p_b = np.array([44, 13])
     p_t = np.array([56, 13])
@@ -127,19 +133,19 @@ def panel_a(ax):
     end_t = draw_tangent_arrow(ax, p_t, d_t, ORANGE)
 
     draw_gap_arrow(ax, p_b + np.array([0, 8]), p_t + np.array([0, 8]))
-    label(ax, ((p_b + p_t) / 2), "dist", dy=10, fontsize=8.8)
+    label(ax, ((p_b + p_t) / 2), "dist", dy=10)
 
     tip_marker(ax, p_b, BLUE)
     tip_marker(ax, p_t, ORANGE)
-    label(ax, p_b, r"$\mathbf{p}_b$", dx=-4, dy=-2, va="top", fontsize=9.5)
-    label(ax, p_t, r"$\mathbf{p}_t$", dx=4, dy=-2, va="top", fontsize=9.5)
-    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2, fontsize=9.5)
-    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=2, dy=2, fontsize=9.5)
+    label(ax, p_b, r"$\mathbf{p}_b$", dx=-4, dy=-2, va="top")
+    label(ax, p_t, r"$\mathbf{p}_t$", dx=4, dy=-2, va="top")
+    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2)
+    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=2, dy=2)
 
 
 def panel_b(ax):
     """Extended gap, accepted: collinear, longer gap, explicit Hermite bridge."""
-    panel_common(ax, "(b) extended gap, accepted")
+    panel_common(ax, "(b) Extended gap, accepted")
     p_b_far = np.array([4, 9])
     p_b = np.array([32, 12])
     p_t = np.array([66, 16])
@@ -159,19 +165,19 @@ def panel_b(ax):
     end_t = draw_tangent_arrow(ax, p_t, d_t, ORANGE)
 
     draw_gap_arrow(ax, p_b + np.array([0, 10]), p_t + np.array([0, 10]))
-    label(ax, ((p_b + p_t) / 2), "dist", dy=12, fontsize=8.8)
+    label(ax, ((p_b + p_t) / 2), "dist", dy=12)
 
     tip_marker(ax, p_b, BLUE)
     tip_marker(ax, p_t, ORANGE)
-    label(ax, p_b, r"$\mathbf{p}_b$", dx=-3, dy=-2, va="top", fontsize=9.5)
-    label(ax, p_t, r"$\mathbf{p}_t$", dx=3, dy=-2, va="top", fontsize=9.5)
-    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2, fontsize=9.5)
-    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=2, dy=2, fontsize=9.5)
+    label(ax, p_b, r"$\mathbf{p}_b$", dx=-3, dy=-2, va="top")
+    label(ax, p_t, r"$\mathbf{p}_t$", dx=3, dy=-2, va="top")
+    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2)
+    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=2, dy=2)
 
 
 def panel_c(ax):
     """Crossing, rejected: steep angle, tips close, orientations disagree."""
-    panel_common(ax, "(c) crossing, rejected")
+    panel_common(ax, "(c) Crossing, rejected")
     p_b_far = np.array([4, 9])
     p_b = np.array([38, 12])
     p_t = np.array([55, 23])
@@ -212,8 +218,7 @@ def panel_c(ax):
     off = -normal * 9.0
     draw_gap_arrow(ax, p_b + off, p_t + off)
     dist_mid = (p_b + p_t) / 2 + off
-    label(ax, dist_mid, "dist", dx=0, dy=-2, va="top", ha="center",
-          fontsize=8.8)
+    label(ax, dist_mid, "dist", dx=0, dy=-2, va="top", ha="center")
 
     # angle arc showing local-orientation mismatch (draw the minor arc
     # between the two inward tangent directions, not the reflex one),
@@ -236,16 +241,14 @@ def panel_c(ax):
              color=GRAY, linewidth=0.9, zorder=5)
     label_pt = join + (circle_r + 9.5) * dirn
     label(ax, label_pt, r"$\Delta\theta_{\mathrm{loc}}$", dx=0, dy=0,
-          ha="center", va="center", fontsize=9.3)
+          ha="center", va="center")
 
     tip_marker(ax, p_b, BLUE)
     tip_marker(ax, p_t, ORANGE)
-    label(ax, p_b, r"$\mathbf{p}_b$", dx=-3, dy=-8, va="top", ha="right",
-          fontsize=9.5)
-    label(ax, p_t, r"$\mathbf{p}_t$", dx=8, dy=-2, ha="left", va="top",
-          fontsize=9.5)
-    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2, fontsize=9.5)
-    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=3, dy=1, ha="left", fontsize=9.5)
+    label(ax, p_b, r"$\mathbf{p}_b$", dx=-3, dy=-8, va="top", ha="right")
+    label(ax, p_t, r"$\mathbf{p}_t$", dx=8, dy=-2, ha="left", va="top")
+    label(ax, end_b, r"$\hat{\mathbf{d}}_b$", dx=-2, dy=2)
+    label(ax, end_t, r"$\hat{\mathbf{d}}_t$", dx=3, dy=1, ha="left")
 
 
 def main():
@@ -257,15 +260,23 @@ def main():
 
     legend_elems = [
         Line2D([0], [0], color=BLUE, lw=FRAG_LW * 0.5, solid_capstyle="round",
-               label="fragment (base tip)"),
+               label="Fragment (base tip)"),
         Line2D([0], [0], color=ORANGE, lw=FRAG_LW * 0.5, solid_capstyle="round",
-               label="fragment (target tip)"),
-        Line2D([0], [0], color=GREEN, lw=BRIDGE_LW, label="accepted join (solid bridge)"),
+               label="Fragment (target tip)"),
+        Line2D([0], [0], color=GREEN, lw=BRIDGE_LW, label="Accepted join (solid bridge)"),
         Line2D([0], [0], color=GRAY, lw=BRIDGE_LW, linestyle=(0, (2.2, 2.2)),
-               label="rejected join (dashed, crossed out)"),
+               label="Rejected join (dashed, crossed out)"),
     ]
-    fig.legend(handles=legend_elems, loc="lower center", ncol=4,
-               bbox_to_anchor=(0.5, 0.01), frameon=False, fontsize=8.8,
+    # Two columns, not four: with `bbox_inches="tight"` a single-row legend of
+    # these four labels is wider than the three panels, so it -- not the
+    # panels -- sets the saved width, and the figure is then shrunk so hard at
+    # \linewidth that the legend can never render above ~6.5 pt however large
+    # the font is set. Wrapping to two rows puts the panels back in charge of
+    # the width and lets the legend reach the same rendered size as the other
+    # image-grid figures.
+    fig.legend(handles=legend_elems, loc="lower center", ncol=2,
+               bbox_to_anchor=(0.5, 0.01), frameon=False,
+               fontsize=8.6,  # 7.5 pt rendered at 0.871 page scale
                handlelength=2.0, columnspacing=1.4)
 
     fig.subplots_adjust(left=0.02, right=0.98, top=0.90, bottom=0.20, wspace=0.10)

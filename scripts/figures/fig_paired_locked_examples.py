@@ -26,9 +26,11 @@ from skimage.morphology import binary_dilation, disk, footprint_rectangle, skele
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "eval"))
 import _evalpath  # noqa: F401,E402
 import instance_io as IIO  # noqa: E402
+from _style import apply_style  # noqa: E402
 
 
 FALSE_COLOR = "#D81B60"
@@ -187,12 +189,17 @@ def render_panel(
     *,
     centreline_dilation_px: int = DEFAULT_CENTRELINE_DILATION_PX,
 ) -> None:
+    # Same shared rcParams (frameless legends, bold axes titles, 11 pt base)
+    # as every other paper figure; must run before the figure is created.
+    apply_style()
     n_cols = 4
     fig, axes = plt.subplots(
         len(selected), n_cols, figsize=(9.9, 2.35 * len(selected)), squeeze=False
     )
-    headers = ("Degraded input mask", "Overlap-aware GT", "Minimum-turn centreline",
-               "FilaSeg Stage-3 centreline")
+    # Method names are the manuscript's own prose names, identical to the
+    # legends of Figures 4 and 8, so one name per method appears everywhere.
+    headers = ("Degraded input mask", "Overlap-aware GT", "Minimum-turn tracer",
+               "FilaSeg (Stage 3)")
     for row_index, chosen in enumerate(selected):
         row = _row_for_scene(audit, str(chosen["geometry_id"]))
         mask = _load_mask(_path(row, "input_mask"))
@@ -210,19 +217,25 @@ def render_panel(
         _draw_instances(panels[2], minimum_turn_display, mt_match, gt)
         _draw_instances(panels[3], filaseg_display, fs_match, gt)
         delta = float(chosen["filaseg_minus_minimum_turn_f1"])
-        panels[0].set_ylabel(f"{chosen['geometry_id']}\n$\\Delta F_1$={delta:+.3f}", fontsize=8.5)
+        # 8.0 pt rendered at 0.660 page scale.  Upright F, matching \Fone in main.tex.
+        panels[0].set_ylabel(f"{chosen['geometry_id']}\n$\\Delta$F$_1$={delta:+.3f}",
+                             fontsize=12.1)
         for column, ax in enumerate(panels):
             ax.set_xticks([]); ax.set_yticks([])
             for spine in ax.spines.values():
                 spine.set_visible(False)
             if row_index == 0:
-                ax.set_title(headers[column], fontsize=9.2, pad=6)
+                # 8.5 pt rendered at 0.660 page scale.
+                ax.set_title(headers[column], fontsize=12.9, pad=6)
     handles = [
         Line2D([], [], color=FALSE_COLOR, lw=4, label="False instance"),
         Line2D([], [], color=MISSED_COLOR, lw=1.2, ls="--", label="Missed GT instance"),
     ]
-    fig.suptitle(title, x=0.02, ha="left", fontsize=12, fontweight="bold")
-    fig.legend(handles=handles, ncol=2, loc="lower center", bbox_to_anchor=(0.5, -0.01), fontsize=8)
+    # 9.5 pt rendered at 0.660 page scale (one step above the column titles).
+    fig.suptitle(title, x=0.02, ha="left", fontsize=14.4, fontweight="bold")
+    # 7.5 pt rendered at 0.660 page scale.
+    fig.legend(handles=handles, ncol=2, loc="lower center", bbox_to_anchor=(0.5, -0.01),
+               fontsize=11.4)
     fig.tight_layout(rect=(0, 0.045, 1, 0.95), w_pad=0.3, h_pad=0.3)
     output_base.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_base.with_suffix(".pdf"), bbox_inches="tight")
