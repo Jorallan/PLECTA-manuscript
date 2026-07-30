@@ -1,11 +1,6 @@
 \section{Results}
 \label{sec:results}
 
-This section first validates FilaSeg's instance-grouping performance on the
-predefined synthetic evaluation set. It then examines sensitivity to the input
-mask representation and synthetic scene properties, before presenting the
-single real SEM development case study.
-
 The primary quantitative comparison uses the method-independent centreline
 fragments and equivalent one-pixel instance representations defined in
 Section~\ref{sec:mm-f1}. Confidence intervals for overall results use
@@ -185,8 +180,7 @@ FilaSeg.
 \label{sec:res-width}
 \label{sec:res-clean}
 
-The following analyses examine how FilaSeg responds to changes in the
-representation supplied to the algorithm. These experiments use development
+These experiments use development
 data and are therefore interpreted as sensitivity analyses rather than
 independent validation. Because the same scenes recur at every condition, their
 confidence intervals come from a percentile bootstrap that resamples scenes
@@ -198,9 +192,9 @@ preserving the within-scene pairing.
 The effect of the binary filament-axis width was evaluated on a 20-scene
 development set using masks with nominal widths of one, two, and three pixels
 (Figure~\ref{fig:sensitivity}a). The one-pixel masks produced the highest mean
-common-fragment \Fone{}. The paired confidence interval for the difference
-between the one-pixel and two-pixel masks included zero, so this comparison did
-not resolve a difference at the 95\% level. The three-pixel masks produced a
+common-fragment \Fone{}. The paired confidence interval for the
+one-pixel-versus-two-pixel difference included zero (unresolved at the 95\%
+level). The three-pixel masks produced a
 larger decrease whose paired interval excluded zero. A thin axis representation
 is therefore preferable under the tested configuration, particularly once the
 foreground becomes several pixels wide.
@@ -354,14 +348,12 @@ scene properties and outcomes of all nine cells.
 \subsection{Real SEM development case study}
 \label{sec:res-real}
 
-FilaSeg was also applied to one $512\times512$ crop from a real SEM image of a
-dense CNT bundle network. The crop contains a manual reference annotation of
-58 filament instances.
-
-This crop informed method development and is therefore not a held-out test.
-It does not provide an independent estimate of generalization or a population
-confidence interval. All real-data observations in this manuscript are derived
-from this single crop.
+FilaSeg was also applied to the real SEM development crop described in
+Section~\ref{sec:mm-real} (a $512\times512$ crop with 58 manually annotated
+filament instances). As noted there, the crop informed method development; it
+does not provide an independent estimate of generalization or a population
+confidence interval, and all real-data observations in this manuscript derive
+from it.
 
 Figure~\ref{fig:qual-real} shows the final rendered output. Predicted instances
 are assigned the colour of their one-to-one matched manual reference instance.

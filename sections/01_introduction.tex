@@ -67,9 +67,9 @@ stops at bulk descriptors: an areal coverage fraction, a mean width, or a global
 orientation-order parameter. These summarize the network but discard the object
 that quantitative characterization actually needs, the individual bundle as an
 addressable instance with its own centreline, width, endpoints and crossings.
-Image analysis of CNT micrographs has followed the same emphasis, concentrating
-on alignment and orientation, quantifying nematic order or the orientation
-distribution of CNT forests and films \citep{dong2022detecting,imtiaz2023facile}.
+Image analysis of CNT micrographs has followed the same emphasis, quantifying
+nematic order or the orientation distribution of CNT forests and films
+\citep{dong2022detecting,imtiaz2023facile}.
 Recent work has also applied neural networks to identify CNT foreground in
 microscopy images \citep{nguyen2023cntsegnet,trujillo2017segmentation}, while
 broader reviews summarize deep-learning segmentation across nanomaterial
@@ -163,7 +163,7 @@ in design, not a head-to-head performance comparison with \citet{peters2026fibre
 or the other related methods above; the present evidence does not establish
 quantitative superiority over them (Section~\ref{sec:limitations}).
 
-This paper presents FilaSeg, geometry-based postprocessing
+This paper presents FilaSeg, a geometry-based postprocessing
 method that converts a binary filament-centreline mask and its paired SEM image
 into separated filament instances. The
 input is a binary centreline mask together with the grayscale SEM image from
