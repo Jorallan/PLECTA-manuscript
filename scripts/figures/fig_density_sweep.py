@@ -148,16 +148,13 @@ def build(report_path: Path) -> dict[str, Any]:
 
     # Input-mask provenance belongs with the legend: it is the single most
     # load-bearing fact about what these curves actually measure.
-    measured = provenance.get("input_mask", {}).get("measured", {})
-    width_px = measured.get("mask.png_mean_foreground_width_px")
-    width_txt = f", measured mean width {width_px:.1f} px" if width_px else ""
     bundle_px = provenance.get("generator", {}).get("bundle_width_level_px")
     bundle_txt = f"; target bundle width {bundle_px:.0f} px" if bundle_px else ""
     ax.legend(
         loc="lower left", fontsize=8.6,
         title=(
             "Same degraded, nominal one-pixel axis mask\n"
-            f"for both methods{width_txt}{bundle_txt}"
+            f"for both methods{bundle_txt}"
         ),
         title_fontsize=7.8,
     )

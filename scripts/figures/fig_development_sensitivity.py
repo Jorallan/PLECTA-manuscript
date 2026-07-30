@@ -203,11 +203,11 @@ def _legend_title(n_by_density: dict[int, int]) -> str:
     counts = set(n_by_density.values())
     if len(counts) == 1:
         n = counts.pop()
-        # "coverage", not "coverage density": the manuscript reserves "density"
-        # for centreline-length density, a different quantity (Section 3.2).
-        return f"Prescribed areal coverage (n = {n} scenes each)"
+        # "areal density", distinguished from centreline-length density, a
+        # different quantity (Section 3.2).
+        return f"Target areal density (n = {n} scenes each)"
     parts = ", ".join(f"{d}%: n={n}" for d, n in sorted(n_by_density.items()))
-    return f"Prescribed areal coverage ({parts})"
+    return f"Target areal density ({parts})"
 
 
 def _width_panel_spec():

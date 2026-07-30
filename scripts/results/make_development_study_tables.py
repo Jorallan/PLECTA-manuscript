@@ -120,21 +120,21 @@ def _factorial_table(report: Mapping[str, Any]) -> str:
         # default 6pt inter-column padding. Both the type size and the padding
         # are reduced so the table fits; scoped by the surrounding brace group.
         r"{\scriptsize" if n_cols == 11 else r"{\footnotesize",
-        r"\setlength{\tabcolsep}{2.2pt}",
+        r"\setlength{\tabcolsep}{1.9pt}",
         rf"\begin{{tabular}}{{{'r' * n_cols}}}",
         r"\toprule",
     ]
     if has_empirical:
         lines += [
-            r"\shortstack{Target\\density} & "
-            r"\shortstack{Achieved\\density} & "
+            r"\shortstack{Target length\\density} & "
+            r"\shortstack{Achieved length\\density} & "
             r"\shortstack{Crossings\\per Mpx} & "
             r"\shortstack{Mean gap\\count} & "
-            r"\multicolumn{3}{c}{Thick-mask coverage by width} & "
+            r"\multicolumn{3}{c}{\shortstack{Thick-mask areal\\density by width}} & "
             r"\shortstack{Common\\$F_1$} & "
             r"\shortstack{Pairwise\\$P$} & "
             r"\shortstack{Pairwise\\$R$} & "
-            r"\shortstack{Object\\recovery} \\",
+            r"\shortstack{Object-level\\recovery} \\",
             r"\cmidrule(lr){5-7}",
             r" & & & & 6 px & 11 px & 16 px & "
             r"\multicolumn{4}{c}{(pooled over widths; width-invariant, n=4 seeds)} \\",
@@ -178,18 +178,18 @@ def _factorial_table(report: Mapping[str, Any]) -> str:
     if has_empirical:
         lines.append(r"\midrule")
         lines.append(
-            # A left-aligned multicolumn cannot line-break, so this long note
-            # produced a hugely overfull row. A p-column wraps it to the text
-            # block instead.
+            # A left-aligned multicolumn cannot line-break, so a long note
+            # here would overrun the text block. A p-column wraps it instead.
+            # Development-only/exploratory scope, seed-disjointness and
+            # non-comparability with the predefined evaluation are stated
+            # once, in prose, at Section~\ref{sec:res-factorial} (see the
+            # manuscript's Task I edit spec) rather than repeated here.
             rf"\multicolumn{{{n_cols}}}{{@{{}}p{{0.97\linewidth}}@{{}}}}"
-            r"{\itshape Development-only, "
-            r"exploratory evidence (36 synthetic scenes: 3 length-density "
-            r"levels $\times$ 3 true bundle-width levels $\times$ 4 seeds). "
-            r"Common-fragment $F_1$/$P$/$R$/object recovery: FilaSeg "
-            r"Stage-3 (pre-render) centreline output vs.\ overlap-aware "
-            r"centreline ground truth; exactly width-invariant within every "
-            r"(seed, density) block (max.\ range across widths $=0.0$); "
-            r"pooled over widths, averaged over 4 seeds.} \\"
+            r"{\itshape Common-fragment $F_1$/$P$/$R$/object recovery: "
+            r"FilaSeg Stage-3 (pre-render) centreline output vs.\ "
+            r"overlap-aware centreline ground truth; exactly width-invariant "
+            r"within every (seed, density) block (max.\ range across widths "
+            r"$=0.0$); pooled over widths, averaged over 4 seeds.} \\"
         )
     lines.append(r"\bottomrule")
     lines.append(r"\end{tabular}")

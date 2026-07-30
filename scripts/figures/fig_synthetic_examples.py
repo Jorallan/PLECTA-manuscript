@@ -36,8 +36,8 @@ def colorize(tif_path):
 
 def main():
     apply_style()
-    rows = [("20% coverage", "input/synthetic_thick/cov20/synth_0000"),
-            ("60% coverage", "input/synthetic_thick/cov60/synth_0000")]
+    rows = [("20% areal density", "input/synthetic_thick/cov20/synth_0000"),
+            ("60% areal density", "input/synthetic_thick/cov60/synth_0000")]
     cols = [("Bundle ground truth", "gt_labels.tif", "label"),
             ("Synthetic SEM", "sem.png", "gray"),
             ("Thin-axis mask (w=2)", "mask_w2.png", "gray"),
