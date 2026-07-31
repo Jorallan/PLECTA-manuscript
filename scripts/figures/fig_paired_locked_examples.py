@@ -1,5 +1,10 @@
 """Render audit-selected, correspondence-coloured locked-evaluation panels.
 
+A single merged figure is produced, stacked as two bands: the top band holds
+the scenes with FilaSeg's largest paired advantage, the bottom band the scenes
+with the minimum-turn tracer's largest paired advantage.  Each band shows
+`--rows-per-band` scenes, taken in stored order from the audit's
+`qualitative_selection`, and the two bands are separated by a horizontal rule.
 The input audit is the sole source of scene selection.  Within a scene, each
 prediction is matched independently to overlap-aware ground truth by a maximum
 sum one-to-one assignment of binary-mask IoU.  Matches with zero IoU are
@@ -30,16 +35,25 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "eval"))
 import _evalpath  # noqa: F401,E402
 import instance_io as IIO  # noqa: E402
-from _style import apply_style  # noqa: E402
+from _style import GRAY, apply_style  # noqa: E402
 
 
 FALSE_COLOR = "#D81B60"
 MISSED_COLOR = "#FDE725"
+#: The two bands of the merged figure, top to bottom: the `qualitative_selection`
+#: key holding that band's scenes, and the title printed above the band.  The
+#: keys are stored data field names, not free labels.  The audit's `two_near_ties`
+#: category is deliberately absent -- the manuscript uses only the two extremes,
+#: so the ties are never rendered and no ties file is written.
 SELECTIONS = (
-    ("three_largest_filaseg_wins", "wins", "Largest FilaSeg wins"),
-    ("three_largest_minimum_turn_wins", "losses", "Largest minimum-turn wins"),
-    ("two_near_ties", "ties", "Near ties"),
+    ("three_largest_filaseg_wins", "Largest FilaSeg wins"),
+    ("three_largest_minimum_turn_wins", "Largest minimum-turn wins"),
 )
+
+#: Scenes drawn per band, i.e. how many of each category's stored rows are
+#: taken (in stored order, never re-sorted).  Two per band keeps the merged
+#: figure to four rows, which is what the manuscript shows.
+DEFAULT_ROWS_PER_BAND = 2
 
 #: Display-only centreline thickening (see `_thicken_for_display`).  This
 #: never touches results/ data, matching, or scoring -- it only changes the
@@ -55,18 +69,54 @@ SELECTIONS = (
 #: that decides legibility in print.
 DEFAULT_CENTRELINE_DILATION_PX = 3
 
+# Method names are the manuscript's own prose names, identical to the legends
+# of Figures 4 and 8, so one name per method appears everywhere.
+COLUMN_HEADERS = ("Degraded input mask", "Overlap-aware GT", "Minimum-turn tracer",
+                  "FilaSeg (Stage 3)")
 
-def read_selection(audit: Mapping[str, Any]) -> dict[str, list[dict[str, Any]]]:
-    """Return the report's stored selection, without recomputing or hand-picking."""
+# Layout, in inches on the unscaled canvas, laid out explicitly rather than by
+# `tight_layout` so the band titles and the separating rule can be given
+# guaranteed clearance.  The panel grid is inset from the left edge to leave
+# room for the three-line row labels.
+FIG_WIDTH_IN = 9.9
+GRID_LEFT = 0.078          # figure fraction; ~0.77 in for the rotated row label
+GRID_RIGHT = 0.985
+COL_WSPACE = 0.05          # gridspec spacing, as a fraction of a panel
+ROW_HSPACE = 0.05
+PAD_TOP_IN = 0.06
+BAND_TITLE_IN = 0.30       # band title text plus its trailing gap
+COLUMN_HEADER_IN = 0.30    # reserved above the top band for the column titles
+BAND_GAP_IN = 0.88         # between the bands: rule, band-2 title, clearance
+RULE_OFFSET_IN = 0.30      # rule position below the last row of the top band
+BAND_TITLE_CLEAR_IN = 0.14  # clear space under a band title before its panels
+PAD_BOTTOM_IN = 0.42       # clears the legend, which straddles the figure edge
+RULE_X = (0.010, 0.990)
+
+
+def read_selection(
+    audit: Mapping[str, Any], *, rows_per_band: int = DEFAULT_ROWS_PER_BAND
+) -> dict[str, list[dict[str, Any]]]:
+    """Return the report's stored selection, without recomputing or hand-picking.
+
+    Only the two categories actually rendered are read, and each keeps its
+    stored order: the first `rows_per_band` rows are taken as they stand.
+    """
+    if rows_per_band < 1:
+        raise ValueError("rows_per_band must be at least 1")
     selection = audit.get("qualitative_selection")
     if not isinstance(selection, Mapping):
         raise ValueError("audit has no qualitative_selection")
     result: dict[str, list[dict[str, Any]]] = {}
-    for key, _suffix, _title in SELECTIONS:
+    for key, _title in SELECTIONS:
         rows = selection.get(key)
         if not isinstance(rows, list) or not rows:
             raise ValueError(f"audit qualitative_selection lacks {key}")
-        result[key] = [dict(row) for row in rows]
+        if len(rows) < rows_per_band:
+            raise ValueError(
+                f"audit qualitative_selection {key} holds {len(rows)} rows, "
+                f"fewer than the {rows_per_band} requested per band"
+            )
+        result[key] = [dict(row) for row in rows[:rows_per_band]]
     return result
 
 
@@ -181,62 +231,116 @@ def _row_for_scene(audit: Mapping[str, Any], scene_id: str) -> Mapping[str, Any]
     raise ValueError(f"selected scene is absent from audit per_scene: {scene_id}")
 
 
-def render_panel(
+def _row_label(chosen: Mapping[str, Any]) -> str:
+    """Return the three-line row label: manifest key, areal density, difference.
+
+    Line 1 is the stored `geometry_id` verbatim: it is the key this scene is
+    looked up by in the evaluation manifest, so it is never renamed, split or
+    prettified.  Line 2 spells that key's `covNN` prefix out in words, read
+    from the row's own stored `density` field rather than by slicing the id;
+    this axis is called areal density throughout the manuscript.  Line 3 is
+    the paired difference, upright F with subscript 1 to match \\Fone in
+    main.tex.
+    """
+    delta = float(chosen["filaseg_minus_minimum_turn_f1"])
+    return "\n".join((
+        str(chosen["geometry_id"]),
+        f"{int(chosen['density'])}% areal density",
+        f"$\\Delta$F$_1$ = {delta:+.3f}",
+    ))
+
+
+def _draw_scene(
     audit: Mapping[str, Any],
-    selected: Sequence[Mapping[str, Any]],
-    title: str,
+    chosen: Mapping[str, Any],
+    panels: Sequence[Any],
+    *,
+    centreline_dilation_px: int,
+    with_headers: bool,
+) -> None:
+    """Draw one scene's four panels into an already-created row of axes."""
+    row = _row_for_scene(audit, str(chosen["geometry_id"]))
+    mask = _load_mask(_path(row, "input_mask"))
+    gt, _ = IIO.load_gt(_path(row, "ground_truth_selected"), shape=mask.shape)
+    minimum_turn = _centreline(IIO.load_pred_instances(_path(row, "minimum_turn")))
+    filaseg = _centreline(IIO.load_pred_instances(_path(row, "filaseg_stage3")))
+    # Matching/scoring runs on the true 1 px skeletons above; only the
+    # arrays handed to imshow below are thickened, and only for display.
+    mt_match, fs_match = one_to_one_matches(gt, minimum_turn), one_to_one_matches(gt, filaseg)
+    minimum_turn_display = _thicken_for_display(minimum_turn, centreline_dilation_px)
+    filaseg_display = _thicken_for_display(filaseg, centreline_dilation_px)
+    panels[0].imshow(mask, cmap="gray", vmin=0, vmax=1)
+    panels[1].imshow(_rgb_instances(gt, {}, gt=True))
+    _draw_instances(panels[2], minimum_turn_display, mt_match, gt)
+    _draw_instances(panels[3], filaseg_display, fs_match, gt)
+    # 10.6 pt, ~7 pt rendered at the ~0.66 page scale: one step down from the
+    # two-line label it replaces, so three rotated lines clear the row height.
+    panels[0].set_ylabel(_row_label(chosen), fontsize=10.6, linespacing=1.4)
+    for column, ax in enumerate(panels):
+        ax.set_xticks([]); ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        if with_headers:
+            # 8.5 pt rendered at 0.660 page scale.
+            ax.set_title(COLUMN_HEADERS[column], fontsize=12.9, pad=6)
+
+
+def render_figure(
+    audit: Mapping[str, Any],
+    bands: Sequence[tuple[str, Sequence[Mapping[str, Any]]]],
     output_base: Path,
     *,
     centreline_dilation_px: int = DEFAULT_CENTRELINE_DILATION_PX,
 ) -> None:
+    """Render every band into one figure and save it as PDF and PNG."""
     # Same shared rcParams (frameless legends, bold axes titles, 11 pt base)
     # as every other paper figure; must run before the figure is created.
     apply_style()
-    n_cols = 4
-    fig, axes = plt.subplots(
-        len(selected), n_cols, figsize=(9.9, 2.35 * len(selected)), squeeze=False
-    )
-    # Method names are the manuscript's own prose names, identical to the
-    # legends of Figures 4 and 8, so one name per method appears everywhere.
-    headers = ("Degraded input mask", "Overlap-aware GT", "Minimum-turn tracer",
-               "FilaSeg (Stage 3)")
-    for row_index, chosen in enumerate(selected):
-        row = _row_for_scene(audit, str(chosen["geometry_id"]))
-        mask = _load_mask(_path(row, "input_mask"))
-        gt, _ = IIO.load_gt(_path(row, "ground_truth_selected"), shape=mask.shape)
-        minimum_turn = _centreline(IIO.load_pred_instances(_path(row, "minimum_turn")))
-        filaseg = _centreline(IIO.load_pred_instances(_path(row, "filaseg_stage3")))
-        # Matching/scoring runs on the true 1 px skeletons above; only the
-        # arrays handed to imshow below are thickened, and only for display.
-        mt_match, fs_match = one_to_one_matches(gt, minimum_turn), one_to_one_matches(gt, filaseg)
-        minimum_turn_display = _thicken_for_display(minimum_turn, centreline_dilation_px)
-        filaseg_display = _thicken_for_display(filaseg, centreline_dilation_px)
-        panels = axes[row_index]
-        panels[0].imshow(mask, cmap="gray", vmin=0, vmax=1)
-        panels[1].imshow(_rgb_instances(gt, {}, gt=True))
-        _draw_instances(panels[2], minimum_turn_display, mt_match, gt)
-        _draw_instances(panels[3], filaseg_display, fs_match, gt)
-        delta = float(chosen["filaseg_minus_minimum_turn_f1"])
-        # 8.0 pt rendered at 0.660 page scale.  Upright F, matching \Fone in main.tex.
-        panels[0].set_ylabel(f"{chosen['geometry_id']}\n$\\Delta$F$_1$={delta:+.3f}",
-                             fontsize=12.1)
-        for column, ax in enumerate(panels):
-            ax.set_xticks([]); ax.set_yticks([])
-            for spine in ax.spines.values():
-                spine.set_visible(False)
-            if row_index == 0:
-                # 8.5 pt rendered at 0.660 page scale.
-                ax.set_title(headers[column], fontsize=12.9, pad=6)
+    n_cols = len(COLUMN_HEADERS)
+    rows_per_band = max(len(rows) for _title, rows in bands)
+    # Panels are square (the scenes are), so a row is as tall as a column is
+    # wide; deriving the height this way leaves no dead space inside a band.
+    panel_in = ((GRID_RIGHT - GRID_LEFT) * FIG_WIDTH_IN
+                / (n_cols + COL_WSPACE * (n_cols - 1)))
+    band_in = panel_in * (rows_per_band + ROW_HSPACE * (rows_per_band - 1))
+    header_in = PAD_TOP_IN + BAND_TITLE_IN + COLUMN_HEADER_IN
+    fig_height_in = (header_in + band_in + BAND_GAP_IN + band_in + PAD_BOTTOM_IN)
+    fig = plt.figure(figsize=(FIG_WIDTH_IN, fig_height_in))
+
+    def _y(inches_from_top: float) -> float:
+        return 1.0 - inches_from_top / fig_height_in
+
+    for band_index, (title, selected) in enumerate(bands):
+        top_in = header_in + band_index * (band_in + BAND_GAP_IN)
+        grid = fig.add_gridspec(
+            len(selected), n_cols, left=GRID_LEFT, right=GRID_RIGHT,
+            top=_y(top_in), bottom=_y(top_in + band_in),
+            wspace=COL_WSPACE, hspace=ROW_HSPACE,
+        )
+        # Band title, left-aligned on the panel grid.  9.5 pt rendered at
+        # 0.660 page scale (one step above the column titles).
+        title_top_in = (PAD_TOP_IN if band_index == 0
+                        else top_in - BAND_TITLE_IN - BAND_TITLE_CLEAR_IN)
+        fig.text(GRID_LEFT, _y(title_top_in), title, ha="left", va="top",
+                 fontsize=14.4, fontweight="bold")
+        if band_index:
+            # Thin neutral rule in the gap above this band, so the two bands
+            # read as separate blocks rather than one six-deep grid.
+            rule_y = _y(top_in - BAND_GAP_IN + RULE_OFFSET_IN)
+            fig.add_artist(Line2D(RULE_X, (rule_y, rule_y), transform=fig.transFigure,
+                                  color=GRAY, lw=0.8, solid_capstyle="butt"))
+        for row_index, chosen in enumerate(selected):
+            panels = [fig.add_subplot(grid[row_index, column]) for column in range(n_cols)]
+            _draw_scene(audit, chosen, panels,
+                        centreline_dilation_px=centreline_dilation_px,
+                        with_headers=band_index == 0 and row_index == 0)
     handles = [
         Line2D([], [], color=FALSE_COLOR, lw=4, label="False instance"),
         Line2D([], [], color=MISSED_COLOR, lw=1.2, ls="--", label="Missed GT instance"),
     ]
-    # 9.5 pt rendered at 0.660 page scale (one step above the column titles).
-    fig.suptitle(title, x=0.02, ha="left", fontsize=14.4, fontweight="bold")
     # 7.5 pt rendered at 0.660 page scale.
     fig.legend(handles=handles, ncol=2, loc="lower center", bbox_to_anchor=(0.5, -0.01),
                fontsize=11.4)
-    fig.tight_layout(rect=(0, 0.045, 1, 0.95), w_pad=0.3, h_pad=0.3)
     output_base.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_base.with_suffix(".pdf"), bbox_inches="tight")
     fig.savefig(output_base.with_suffix(".png"), dpi=300, bbox_inches="tight")
@@ -247,6 +351,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--audit-json", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--rows-per-band",
+        type=int,
+        default=DEFAULT_ROWS_PER_BAND,
+        help=(
+            "Scenes shown per band, taken in stored order from the head of "
+            "each audit category (default: "
+            f"{DEFAULT_ROWS_PER_BAND})."
+        ),
+    )
     parser.add_argument(
         "--centreline-dilation-px",
         type=int,
@@ -259,13 +373,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         ),
     )
     args = parser.parse_args(argv)
+    if args.rows_per_band < 1:
+        parser.error("--rows-per-band must be at least 1")
     audit = json.loads(args.audit_json.read_text(encoding="utf-8"))
-    selected = read_selection(audit)
-    for key, suffix, title in SELECTIONS:
-        render_panel(
-            audit, selected[key], title, args.output_dir / f"fig_paired_locked_{suffix}",
-            centreline_dilation_px=args.centreline_dilation_px,
-        )
+    selected = read_selection(audit, rows_per_band=args.rows_per_band)
+    bands = [(title, selected[key]) for key, title in SELECTIONS]
+    render_figure(
+        audit, bands, args.output_dir / "fig_paired_locked_examples",
+        centreline_dilation_px=args.centreline_dilation_px,
+    )
     return 0
 
 

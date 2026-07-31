@@ -168,9 +168,7 @@ check.
 - `results/development_factorial_table.tex`
 - `reproducibility/evaluation_manifest.csv`
 - `figures/fig_locked_method_comparison.pdf` and `.png`
-- `figures/fig_paired_locked_wins.pdf` and `.png`
-- `figures/fig_paired_locked_losses.pdf` and `.png`
-- `figures/fig_paired_locked_ties.pdf` and `.png`
+- `figures/fig_paired_locked_examples.pdf` and `.png`
 - `figures/fig_width_sweep.pdf` and `.png`
 - `figures/fig_clean_vs_degraded.pdf` and `.png`
 - `figures/fig_qualitative_real.pdf` and `.png`

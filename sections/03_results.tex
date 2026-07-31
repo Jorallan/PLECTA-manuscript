@@ -131,15 +131,22 @@ width-rendered output is reported only as a secondary diagnostic.
 
 \paragraph{Qualitative wins and losses.}
 
-Figures~\ref{fig:qual-wins} and~\ref{fig:qual-losses} show the three scenes
-with the largest paired advantage for each method. Scene selection used the
-stored numerical differences alone, not visual inspection, so both directions
-of error are represented; predicted and reference centrelines in both figures
-use a 3-pixel display-only dilation for print legibility, and the underlying
-one-pixel skeletons used for matching and scoring are unchanged. The loss cases
-in Figure~\ref{fig:qual-losses} are genuine counterexamples: they show
-conditions under which local minimum-turn continuation grouped the visible
-filament fragments more accurately than FilaSeg.
+Figure~\ref{fig:qual-examples} shows the two scenes with the largest paired
+advantage for each method: FilaSeg's in the upper band, the minimum-turn
+tracer's in the lower band. Scene selection used the stored numerical
+differences alone, not visual inspection, so both directions of error are
+represented; predicted and reference centrelines throughout the figure use a
+3-pixel display-only dilation for print legibility, and the underlying one-pixel
+skeletons used for matching and scoring are unchanged. The first line of each
+row label is the scene's identifier in the evaluation manifest, whose
+\texttt{covNN} prefix gives the target areal-density level;
+\texttt{cov20/synth\_0002}, for example, is scene \texttt{synth\_0002} at the
+20\% level. The $\Delta$\Fone{} on the label's last line is the paired
+FilaSeg-minus-minimum-turn difference in common-fragment \Fone{} for that scene
+alone, positive in the upper band and negative in the lower. Those two
+lower-band scenes are genuine counterexamples: they show conditions under which
+local minimum-turn continuation grouped the visible filament fragments more
+accurately than FilaSeg.
 
 \begin{figure}[t]
     \centering
@@ -147,28 +154,14 @@ filament fragments more accurately than FilaSeg.
         width=\textwidth,
         height=0.78\textheight,
         keepaspectratio
-    ]{figures/fig_paired_locked_wins.pdf}
+    ]{figures/fig_paired_locked_examples.pdf}
     \caption{%
-    The three predefined scenes with FilaSeg's largest paired advantage under the
-    primary common-fragment endpoint, selected from stored numerical differences
-    rather than visual inspection (Section~\ref{sec:res-qualitative}).
+    Paired examples from the predefined evaluation, selected from stored numerical
+    differences rather than visual inspection. Upper band: FilaSeg's largest paired
+    advantage. Lower band: the minimum-turn tracer's, and genuine counterexamples
+    (Section~\ref{sec:res-qualitative}).
     }
-    \label{fig:qual-wins}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[
-        width=\textwidth,
-        height=0.78\textheight,
-        keepaspectratio
-    ]{figures/fig_paired_locked_losses.pdf}
-    \caption{%
-    The three predefined scenes with the minimum-turn tracer's largest paired
-    advantage, selected the same way as Figure~\ref{fig:qual-wins}; these are
-    genuine counterexamples (Section~\ref{sec:res-qualitative}).
-    }
-    \label{fig:qual-losses}
+    \label{fig:qual-examples}
 \end{figure}
 
 \clearpage
