@@ -513,18 +513,28 @@ def _baseline_table(summary: Mapping[str, Any]) -> str:
         r"Method & $P$ & $R$ & $F_1$ & \shortstack{Object-level\\recovery} \\",
         r"\midrule",
     ]
+    method_rows: List[str] = []
     for method, label in display:
         data = locked["methods"].get(method)
         if not isinstance(data, Mapping):
             continue
         common = data["common"]
-        lines.append("{} & {} & {} & {} & {} \\\\".format(
+        method_rows.append("{} & {} & {} & {} & {} \\\\".format(
             _label_cell(_latex_escape(label)),
             _ci_cell(common["precision"]),
             _ci_cell(common["recall"]),
             _ci_cell(common["f1"]),
             _ci_cell(common["fragment_recovery_rate"]),
         ))
+    # Every method row is a two-line ``\shortstack`` (point estimate above its
+    # interval), so the default inter-row leading is *smaller* than the leading
+    # inside a row and consecutive methods read as one run-together block.
+    # ``\addlinespace`` is emitted only *between* rows, never after the last
+    # one, where a rule already follows.
+    for index, row in enumerate(method_rows):
+        if index:
+            lines.append(r"\addlinespace[4pt]")
+        lines.append(row)
     paired = locked.get("paired_filaseg_minus_baseline", {}).get("baseline_skeleton", {})
     if isinstance(paired, Mapping) and paired:
         lines.append(r"\midrule")
