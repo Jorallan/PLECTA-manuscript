@@ -8,9 +8,10 @@ Two development-only sensitivity studies share one presentation grammar:
 Both are plotted as exactly five mean common-fragment F1 curves -- one per
 prescribed areal-coverage density (20/30/40/50/60%) -- each with a paired
 percentile-bootstrap 95% confidence band computed *within* that density.
-Individual-scene traces are kept in the background at low alpha; there is no
-pooled "all scenes" curve. See ``_density_curve`` for the bootstrap and
-``main``/``--figures`` for how the three output figures are selected.
+Per-scene traces are not drawn -- dispersion is carried by the bootstrap
+confidence band; there is no pooled "all scenes" curve. See ``_density_curve``
+for the bootstrap and ``main``/``--figures`` for how the three output figures
+are selected.
 
 This script deliberately does not import ``eval/stats_util`` (the canonical
 monorepo's shared stats module): this repository is a standalone mirror of
@@ -123,9 +124,12 @@ DENSITIES = (20, 30, 40, 50, 60)
 CURVE_BOOTSTRAP_SEED = 20260729
 CURVE_N_BOOTSTRAP = 10000
 
-# Shared y-limits across every panel of every figure this script emits
-# (development F1 spans ~0.44-0.96 across the raw per-scene data).
-Y_LIM = (0.30, 1.02)
+# Shared y-limits across every panel of every figure this script emits.
+# Per-scene traces are not drawn, so the range no longer has to span the raw
+# per-scene data: it is set to contain the whole plotted CI envelope
+# (0.448-0.934 across both panels) with margin at each end, and to match the
+# sibling line-plot figure fig_density_sweep.py (which uses 0.45-1.0).
+Y_LIM = (0.40, 1.00)
 
 
 def _density_colors() -> dict[int, tuple]:
@@ -169,8 +173,9 @@ def _density_curve(values_by_name: dict[str, dict], names: tuple[str, ...],
 
 def _plot_panel(ax, values, names, x, expected, density_colors, xticklabels,
                  xlabel: str):
-    """Draw one panel: light per-scene background traces plus five heavy
-    density mean curves with shaded 95% paired-bootstrap CI bands.
+    """Draw one panel: five density mean curves with shaded 95%
+    paired-bootstrap CI bands. Per-scene traces are not drawn -- dispersion is
+    carried by the CI band.
 
     Returns (handles, labels, n_by_density) for building a shared legend.
     """
@@ -178,9 +183,6 @@ def _plot_panel(ax, values, names, x, expected, density_colors, xticklabels,
     for density in DENSITIES:
         scene_ids = _scene_ids_for_density(expected, density)
         color = density_colors[density]
-        for sid in scene_ids:
-            ax.plot(x, [values[name][sid] for name in names], "-",
-                     color=color, alpha=0.22, lw=0.9, zorder=1)
         mean, lo, hi = _density_curve(values, names, scene_ids, density)
         ax.fill_between(x, lo, hi, color=color, alpha=0.20, zorder=2, lw=0)
         (line,) = ax.plot(x, mean, "-o", color=color, lw=2.4, ms=6.2,
