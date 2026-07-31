@@ -278,12 +278,9 @@ mask for every scene, so the two are paired scene by scene
 (Figure~\ref{fig:density-sweep}).
 
 The two methods respond to centreline-length density very differently. At the
-sparsest level the minimum-turn tracer was the better of the two, reaching a
-mean common-fragment \Fone{} of 0.921 against 0.853 for FilaSeg. The ordering
-reverses as the network fills in: 0.859 against 0.812 at 0.02~px~px$^{-2}$,
-0.833 against 0.799 at 0.03, 0.803 against 0.714 at 0.04, and 0.713 against
-0.560 at 0.06. FilaSeg loses roughly 0.14 \Fone{} across the whole range while
-the tracer loses roughly 0.36.
+sparsest level the minimum-turn tracer was the better of the two, but the
+ordering reverses as the network fills in: FilaSeg loses roughly 0.14 \Fone{}
+across the whole range while the tracer loses roughly 0.36.
 
 This is the mechanism behind the conditional advantage reported in
 Section~\ref{sec:res-density}. When filaments are sparse and crossings are
@@ -296,7 +293,7 @@ crossing of the two curves is consistent with the density-specific behaviour of
 the predefined evaluation, where the interval also failed to resolve at the
 lowest areal-density levels.
 
-These values are not comparable with the primary evaluation in
+These development-set values are not comparable with the primary evaluation in
 Section~\ref{sec:res-density}: this development generator stops on centreline
 arc length rather than areal density and therefore produces a different scene
 population. With four seeds per cell, no claim specific to centreline-length
