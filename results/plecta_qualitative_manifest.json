@@ -1,0 +1,68 @@
+{
+  "figure": "fig_plecta_qualitative",
+  "selection_rule": "Lexicographically first scene ID in the fixed held-out per-scene record at each requested coverage; no metric or visual-quality selection.",
+  "heldout_record": ".local/evaluation/results/heldout.json (PLECTA repository)",
+  "input_root": ".local/evaluation/data (PLECTA repository)",
+  "plecta_params_file": "plecta/params.json (PLECTA repository)",
+  "plecta_params_sha256": "8a45f2729700c5ea3c2c948cc7e17634dd04e71ac1d01e9c8f4d95086c8aff05",
+  "scenes": [
+    {
+      "scene_id": "val/cov20/synth_0000",
+      "coverage_percent": 20,
+      "seed": 20282101,
+      "input_filename": "mask_w1.png",
+      "measured_coverage": 0.2064,
+      "n_gt_instances": 23,
+      "n_pred_instances": 27,
+      "n_common_fragments": 90,
+      "fragment_display_counts": {
+        "matched": 85,
+        "regrouped": 2,
+        "gt_unassigned": 3
+      },
+      "overlap_pixels": {
+        "ground_truth_full_layers": 8417,
+        "ground_truth_display_axes": 51,
+        "prediction_axes": 289
+      },
+      "metrics": {
+        "precision": 0.9876543209876543,
+        "recall": 0.9580838323353293,
+        "f1": 0.972644376899696,
+        "adjusted_rand_index": 0.9714729366848774,
+        "vi_split_bits": 0.07394468924503993,
+        "vi_merge_bits": 0.03060986113514965,
+        "fragment_recovery_recovery_rate": 0.9130434782608695
+      }
+    },
+    {
+      "scene_id": "val/cov60/synth_0000",
+      "coverage_percent": 60,
+      "seed": 20286101,
+      "input_filename": "mask_w1.png",
+      "measured_coverage": 0.6038,
+      "n_gt_instances": 93,
+      "n_pred_instances": 95,
+      "n_common_fragments": 582,
+      "fragment_display_counts": {
+        "matched": 487,
+        "regrouped": 94,
+        "gt_unassigned": 1
+      },
+      "overlap_pixels": {
+        "ground_truth_full_layers": 64697,
+        "ground_truth_display_axes": 674,
+        "prediction_axes": 3502
+      },
+      "metrics": {
+        "precision": 0.7107111501316945,
+        "recall": 0.6945516945516945,
+        "f1": 0.702538511607724,
+        "adjusted_rand_index": 0.6984285248768057,
+        "vi_split_bits": 0.5277688578981455,
+        "vi_merge_bits": 0.49877375207839003,
+        "fragment_recovery_recovery_rate": 0.6222222222222222
+      }
+    }
+  ]
+}

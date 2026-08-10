@@ -39,9 +39,9 @@ def main() -> None:
 
     base = next(r for r in ablation["rows"] if r["ablation"] == "frozen")
     variants = [
-        ("Tangent only", "tangent term only"),
+        ("No junction\nchord-turn", "tangent term only"),
         ("No gap\nmatching", "no gap bridging"),
-        ("No crossing\nmatching", "no crossing merging at all"),
+        ("No junction-cluster\nconsolidation", "no crossing merging at all"),
         ("No chain\nframes", "no chain-extended frames"),
         ("Single round", "single round"),
         ("No curvature", "no curvature term"),

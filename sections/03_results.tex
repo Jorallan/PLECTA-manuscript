@@ -15,6 +15,15 @@ recall, reference-instance recovery, and adjusted Rand index were
 the same procedural generator as development data, so the result measures
 same-generator generalisation rather than distribution transfer.}
 
+\rev{As a diagnostic floor, assigning one instance label to every connected
+component of the same held-out masks produced $F_1=
+\PlectaCCFloorFOne{}$ (precision \PlectaCCFloorPrecision{}, recall
+\PlectaCCFloorRecall{}, ARI \PlectaCCFloorARI{}). Its high recall but very low
+precision and VI-merge of \PlectaCCFloorVIMerge{} show the expected failure:
+crossings collapse many distinct filaments into a single component. This is not
+a competitive tracer, but it verifies that connectivity alone cannot solve the
+evaluated grouping task.}
+
 \begin{table}[t]
     \centering
     \caption{\rev{Held-out reconstruction scores overall and by target areal
@@ -36,6 +45,28 @@ the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_qualitative.pdf}
+    \caption{\rev{Rule-selected held-out examples at 20\% (top) and 60\%
+    (bottom) target coverage. For each stratum, the lexicographically first
+    scene identifier was used; neither score nor appearance entered selection.
+    From left to right: degraded input mask, overlap-aware reference layers,
+    PLECTA layers, and common-fragment grouping. Green fragments belong to a
+    one-to-one matched group; red marks a split, merge, or missing prediction;
+    purple marks a fragment unassigned in the reference. Dark pixels with a
+    yellow halo belong to more than one instance. The manifest records scene
+    identifiers, seeds, scores, and the parameter-file hash.}}
+    \label{fig:plecta-qualitative}
+\end{figure}
+
+\rev{Figure~\ref{fig:plecta-qualitative} shows the corresponding grouping
+behaviour rather than only aggregate scores. Most fragments are assigned
+consistently in the sparse scene. In the dense scene, the longer red runs and
+reduced recovery expose both erroneous unions and interrupted identities around
+crowded junctions; the prediction nevertheless retains explicit overlap at
+crossings instead of forcing a single flat label.}
+
 \subsection{\rev{Input-mask robustness}}
 \label{sec:res-mask}
 
@@ -55,15 +86,16 @@ testing robustness to a different image distribution.}
 \rev{One-at-a-time ablations were evaluated only on the
 \PlectaDevelopmentSceneCount{} development scenes
 (Table~\ref{tab:plecta-ablation}; Figure~\ref{fig:plecta-performance}b).
-Relative to the evaluated configuration, using tangent evidence alone changed
-\Fone{} by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap matching by
-\PlectaAblationNoGapBridgingDeltaFOne{}, and removing crossing matching by
+Relative to the evaluated configuration, removing the junction chord-turn term
+changed \Fone{} by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap
+matching by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling connector-
+based junction-cluster consolidation by
 \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Removing chain-extended
 frames and using a single round produced smaller changes of
 \PlectaAblationNoChainExtendedFramesDeltaFOne{} and
 \PlectaAblationSingleRoundDeltaFOne{}. These development results identify
-chord-aware continuation, gap matching, and crossing matching as the largest
-tested contributors; they are not held-out effect estimates.}
+chord-aware continuation, gap matching, and junction-topology preconditioning
+as the largest tested contributors; they are not held-out effect estimates.}
 
 \begin{table}[t]
     \centering
@@ -95,6 +127,17 @@ Enabling the separate 0.6 silhouette-absorption rule reduced \Fone{} further
 to \PlectaStageFourAbsorbFOne{}. Because absorption can merge identities, it
 remained disabled and neither rendering condition contributed to the held-out
 grouping result. These topology measurements do not validate apparent width.}
+
+\rev{The optional image-characterisation stage was separately checked against
+the known synthetic renderer on \PlectaWidthValidationSceneCount{} development
+scenes. Among \PlectaWidthValidationInstanceCount{} instances matched to one
+reference filament with purity at least 0.9, fitted apparent width had Pearson
+$r=\PlectaWidthValidationPearson{}$, mean absolute error
+\PlectaWidthValidationMAE{} px, and median absolute error
+\PlectaWidthValidationMedianAE{} px. A quality-stratified 90\% interval,
+calibrated by leaving scenes out, covered \PlectaWidthValidationCoverage{} of
+instances. This validates recovery of the synthetic renderer's width under the
+development model; it is not a validation of physical CNT diameter.}
 
 \subsection{\rev{Two-field CNT SEM mask-source case}}
 \label{sec:res-real}

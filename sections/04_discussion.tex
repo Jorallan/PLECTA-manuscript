@@ -13,17 +13,18 @@ estimates from the chains assembled so far. Shared crossing pixels remain in
 each applicable instance rather than being forced into one label.}
 
 \rev{The ablations support this interpretation but do not prove that every
-term is independently necessary. On the development set, using only tangent
-evidence reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing
-gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and removing crossing
-matching by \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing
-chain-extended frames produced a smaller decrease of
+term is independently necessary. On the development set, removing the junction
+chord-turn term reduced $F_1$ by
+\PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap bridging by
+\PlectaAblationNoGapBridgingDeltaFOne{}, and disabling connector-based
+junction-cluster consolidation by
+\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing chain-extended
+frames produced a smaller decrease of
 \PlectaAblationNoChainExtendedFramesDeltaFOne{}. Thus the largest gains arise
-from solving both kinds of discontinuity---junctions and missing mask
-segments---with complementary geometric evidence; iterative context provides
-an additional, more modest benefit. Because these tests reused development
-scenes, their values describe mechanism and configuration sensitivity, not
-independent effect estimates.}
+from chord-aware continuation, gap repair, and junction-topology
+preconditioning; iterative context provides an additional, more modest
+benefit. Because these tests reused development scenes, their values describe
+mechanism and configuration sensitivity, not independent effect estimates.}
 
 \subsection{\rev{Density, masks, and optional rendering}}
 
@@ -45,9 +46,10 @@ disconnected instances and branch pixels in \PlectaStageFourBranched{} of
 instances. This is a useful shape tradeoff rather than an improvement in
 identity. Silhouette absorption changes the instance partition and scored
 \PlectaStageFourAbsorbFOne{}; it is therefore optional and should not be
-conflated with the fixed mask-only grouping result. Width and brightness can
-be reported for characterized instances, but their physical accuracy requires
-separate references.}
+conflated with the fixed mask-only grouping result. Synthetic renderer widths
+were recovered accurately on purity-qualified development instances, but that
+validation concerns a known image model. Physical CNT diameter still requires
+independent, scale-matched references.}
 
 \subsection{\rev{Evidence boundary}}
 \label{sec:limitations}
