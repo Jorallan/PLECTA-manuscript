@@ -35,6 +35,22 @@ and the exact overlap-aware instance reference (Figure~\ref{fig:synth-examples})
 Areal coverage is the union area of the thick supports divided by image area;
 it is not the occupancy of the thin input mask.}
 
+\rev{All evaluated scenes were $512\times512$ px. The recorded generator uses
+2-px centreline steps and Gaussian turn increments with standard deviation
+0.035 rad, smoothed over 20 px. Path length is sampled uniformly from
+0.25--0.85 of the image diagonal; the anchor and initial direction are uniform,
+and the longest contiguous in-frame part is retained. Apparent bundle width
+and brightness are sampled uniformly from 7--16 px and 0.55--0.98. Filaments
+are added until the union of their thick supports reaches the requested
+coverage. The degraded axis is obtained by thresholding a longitudinally
+modulated thin ridge at 0.27 after correlated edge noise (amplitude 0.06), then
+applying recorded hard-cut probability 0.12, crossing-occlusion probability
+0.15, a Poisson mean of 2.5 spurious marks, and light morphological
+roughening. The primary reconstruction input is the one-pixel version; clean
+and 2- and 3-px variants are retained as controlled derivatives of the same
+geometry and degradation draw. These are generator settings, not fitted
+physical distributions of CNT morphology.}
+
 \rev{Development used 84 scenes: 20 initial scenes across 20--60\% coverage,
 48 additional scenes at 20, 30, and 60\%, and 16 scenes at 40\%. The held-out
 set comprised 128 different seeds: 32 scenes at each of 20, 30, 40, and 60\%
@@ -102,33 +118,131 @@ to 5 px are absorbed into one node; connectors up to 14 px merge nearby nodes
 but remain real arms; free debris up to 2 px is absorbed. Each remaining
 connected path is stored as an ordered arm with one stub at each end.}
 
-\rev{A stub frame contains its tip, outward tangent, and signed curvature.
-These are estimated by an arclength polynomial fit and are considered reliable
-only with at least three samples spanning at least 3 px. Local frames use 24 px
-of support; after links form chains, the support expands to 55 px. Link cost
-combines direct tangent reversal, the turn from each tangent to the joining
-chord, and curvature continuity. Gap cost additionally penalises length. Short
-chords fade the chord-turn term rather than allowing an unstable angle to
-dominate.}
+\rev{For ordered points $\mathbf{x}(s)=(r(s),c(s))$ running from a stub tip
+into its arm, PLECTA fits each coordinate by least squares in arclength
+$0\leq s\leq w$. The fit is quadratic when the observed span is at least
+18 px and linear otherwise. With $\det(\mathbf a,\mathbf b)=a_r b_c-a_c b_r$,
+the outward frame is}
+
+{\color{revisioncyan}
+\begin{equation}
+ \mathbf p=\mathbf{x}(0),\qquad
+ \mathbf t=-\frac{\mathbf{x}'(0)}{\|\mathbf{x}'(0)\|},\qquad
+ \kappa=\frac{\det[-\mathbf{x}'(0),\mathbf{x}''(0)]}
+ {\|\mathbf{x}'(0)\|^3}.
+ \label{eq:plecta-frame}
+\end{equation}}
+
+\rev{A frame is reliable only when at least three samples span at least 3 px.
+The initial fit uses $w=24$ px. Subsequent fits may walk through the preceding
+round's links and use $w=55$ px, allowing several short arms to provide one
+longer directional estimate.}
+
+\rev{For stubs $a,b$, let $d=\|\mathbf p_b-\mathbf p_a\|$ and, when $d>0$,
+$\mathbf u=(\mathbf p_b-\mathbf p_a)/d$. The direct reversal, two chord turns,
+and chord-confidence factor are}
+
+{\color{revisioncyan}
+\begin{equation}
+ \theta=\cos^{-1}(\mathbf t_a\!\cdot\!-\mathbf t_b),\quad
+ \phi_a=\cos^{-1}(\mathbf t_a\!\cdot\!\mathbf u),\quad
+ \phi_b=\cos^{-1}(\mathbf t_b\!\cdot\!-\mathbf u),\quad
+ q(d)=\min(1,d/d_0).
+ \label{eq:plecta-angles}
+\end{equation}
+\begin{equation}
+ C_{ab}=w_d\theta+w_t q(d)(\phi_a+\phi_b)
+       +w_\ell d/\ell_0+30w_\kappa|\kappa_a+\kappa_b|.
+ \label{eq:plecta-cost}
+\end{equation}}
+
+\rev{For coincident tips the two chord angles are set to zero. Junction costs
+set $w_\ell=0$; gap costs retain the length term. Thus the tangent-reversal
+term remains usable at a rasterised crossing, while $q(d)$ suppresses the
+poorly determined chord direction until its length reaches $d_0$.}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.94\linewidth]{figures/fig_plecta_geometry.pdf}
+    \caption{\rev{Geometric evidence and exact pairing. (a) An arclength fit
+    over a fixed support window gives the outward tangent and signed curvature
+    at each stub. (b) Candidate cost combines direct tangent reversal $\theta$,
+    the two turns $\phi_a,\phi_b$ onto the tip-to-tip chord, distance for gap
+    candidates, and curvature continuity; the chord contribution fades at
+    short separation. (c) All feasible pairs at one junction are scored
+    jointly. Exact partial matching selects disjoint continuations of minimum
+    total cost while allowing a stub to remain unmatched at a fixed price.}}
+    \label{fig:plecta-geometry}
+\end{figure}
 
 \subsubsection{\rev{Candidate gates and exact matching}}
 
-\rev{Each of eight rounds first resolves junctions and then gaps
-(Figure~\ref{fig:gates}). At a junction, candidates must share the node, use
-different arms, and have finite frames and cost. Exact maximum-weight partial
-matching selects disjoint pairs while allowing unmatched stubs. With the fixed
-unmatched price, a full-strictness junction edge is eligible only when its cost
-is below 1.24.}
+\rev{Let $S$ be the stubs considered at one junction, or all free stubs in the
+gap stage; let $E$ contain the geometrically admissible pairs; and let $p_i$ be
+the price for leaving stub $i$ unmatched. PLECTA solves the exact partial
+matching problem}
+
+{\color{revisioncyan}
+\begin{equation}
+ M^*=\underset{M\subseteq E\,:\,M\ \mathrm{is\ a\ matching}}{\arg\min}
+ \left[\sum_{(i,j)\in M}C_{ij}
+ +\sum_{i\in S\setminus V(M)}p_i\right].
+ \label{eq:plecta-matching}
+\end{equation}}
+
+\rev{It is implemented as unconstrained-cardinality maximum-weight matching
+with edge weight $p_i+p_j-C_{ij}$; edges with $C_{ij}\geq p_i+p_j$ are omitted.
+Every junction is solved independently, with candidates restricted to
+different arms sharing that node. At full strictness $p_i=0.62$, so a junction
+edge requires $C_{ij}<1.24$. The configured gap-relief term is zero, hence all
+junction stubs have the same unmatched price.}
 
 \rev{Gap candidates are constructed only from still-unmatched, reliable stubs.
 They must belong to different arms and different junctions, lie within 85 px,
 have direct tangent mismatch at most 0.40 rad, and have chord-turn mismatch at
 each end at most 0.28 rad. Global exact matching then accepts only edges whose
-cost is below 0.60 at full strictness. Cycles are broken after junction matching
-and again after gap matching. The unmatched prices and angular gap limits are
-annealed linearly from 85\% to full strictness. Because only the eighth round is
-fully strict in the fixed schedule, that round is returned; there is no
-effective competition among several full-strictness rounds.}
+cost is below 0.60 at full strictness.}
+
+\rev{For rounds $r=0,\ldots,7$, the strictness factor is
+$\alpha_r=0.85+0.15r/7$. Only the junction and gap unmatched prices and the two
+gap-angle limits are multiplied by $\alpha_r$; distance and all cost weights
+remain fixed. Each round estimates frames from the preceding matching, remakes
+all junction links, removes cycles, remakes all gap links, and removes cycles
+again. In the arm-link graph, a component with $n$ arms closes a cycle when it
+contains at least $n$ accepted links; PLECTA repeatedly deletes that component's
+matched pair with the greatest tip-to-tip distance until it is open. No cycle
+was encountered in the 84 development scenes. Only $r=7$ has
+$\alpha_r=1$, so its full-strictness matching is returned; the objective does
+not select an earlier, deliberately under-linked annealing round.}
+
+\begin{table}[t]
+    \centering
+    \caption{\rev{Complete materialised PLECTA parameter configuration used for
+    the reported reconstruction. Angles are in radians and lengths in pixels;
+    fixed implementation rules are stated in the surrounding text.}}
+    \label{tab:plecta-parameters}
+    \footnotesize
+    {\color{revisioncyan}
+    \begin{tabular}{@{}p{0.16\linewidth}p{0.52\linewidth}p{0.22\linewidth}@{}}
+        \toprule
+        Group & Parameters & Values \\
+        \midrule
+        Graph & spur; absorbed bridge; free debris; node join
+          & 3; 5; 2; 14 \\
+        Frame & local window; chain window; quadratic span
+          & 24; 55; 18 \\
+        Junction & $w_d$; $w_t$; chord floor $d_0$; $w_\kappa$;
+          unmatched price; gap relief
+          & 0.6; 1.2; 4; 1.0; 0.62; 0 \\
+        Gap & maximum length; $w_d$; $w_t$; $w_\ell$; length scale
+          $\ell_0$; chord floor $d_0$; $w_\kappa$; unmatched price;
+          maximum $\theta$; maximum $\phi_a,\phi_b$
+          & 85; 0.2; 1.0; 0.15; 60; 3; 0.5; 0.3; 0.40; 0.28 \\
+        Rounds & number; initial strictness
+          & 8; 0.85 \\
+        \bottomrule
+    \end{tabular}}
+\end{table}
 
 \begin{figure}[t]
     \centering
@@ -170,13 +284,47 @@ union rendered instances, but its threshold is zero by default. No absorption
 or later post-hoc continuation merge contributed to the 128-scene held-out
 result; neither is presented as part of the evaluated algorithm.}
 
+\rev{Synthetic width recovery was assessed only on the 84-scene development
+set. A measured chain was associated with a rendered reference filament when
+at least 90\% of its sampled centreline belonged to that filament. Apparent
+width was then compared with the generator value for the associated filament;
+interval calibration used scene-level cross-validation so that cuts from one
+scene could not occur in both calibration and assessment folds. This validates
+measurement of the synthetic renderer, not physical CNT diameter.}
+
 \subsection{\rev{Metrics and statistical analysis}}
 \label{sec:mm-metrics}
 
-\rev{The primary endpoint is common-fragment pairwise \Fone{}. For each scene,
-the visible input skeleton is partitioned once into method-independent elementary
-fragments. Each fragment receives a procedural reference identity and a PLECTA
-instance identity. A true-positive pair shares both identities; a false-positive
+\rev{The primary endpoint is common-fragment pairwise \Fone{}. For each input
+mask, the scorer skeletonises once, iteratively prunes junction-touching
+free-end spurs of at most 3 px, removes pixels with at least three
+8-neighbours, labels the remaining 8-connected pieces, and discards pieces
+shorter than 6 px. This partition is independent of PLECTA and of the reference
+instances.}
+
+\rev{Each retained fragment is assigned separately to the overlap-aware
+reference layers and prediction layers. The instance with the largest direct
+pixel overlap is selected if it covers at least 30\% of the fragment. Otherwise,
+instance masks are flattened deterministically in decreasing area and then
+increasing identifier order; the fragment is assigned to the most frequent
+nearest flattened label among its pixels lying within 6 px of an instance.
+Ties resolve to the smaller identifier. If neither rule finds a candidate, the
+fragment is unassigned.}
+
+\rev{Let $n_{ij}$ be the number of fragments assigned to reference group $i$
+and predicted group $j$, with $a_i=\sum_jn_{ij}$ and $b_j=\sum_i n_{ij}$.
+Every unassigned fragment is treated as its own singleton rather than placing
+all missing evidence in one artificial group. The pair counts are}
+
+{\color{revisioncyan}
+\begin{equation}
+ \mathrm{TP}=\sum_{ij}\binom{n_{ij}}{2},\qquad
+ \mathrm{FP}=\sum_j\binom{b_j}{2}-\mathrm{TP},\qquad
+ \mathrm{FN}=\sum_i\binom{a_i}{2}-\mathrm{TP}.
+ \label{eq:pair-counts}
+\end{equation}}
+
+\rev{A true-positive pair therefore shares both identities; a false-positive
 pair joins different reference filaments; and a false-negative pair separates
 fragments of one reference filament. Thus}
 
@@ -195,6 +343,20 @@ index \citep{hubert1985comparing}, variation of information split and merge
 components \citep{meila2007comparing}, and the fraction of reference filaments
 recovered by one dominant predicted instance using 0.8 purity and coverage
 thresholds.}
+
+\rev{Scores are computed per scene and reported summaries are arithmetic means
+over successfully scored scenes, rather than one pooled contingency table.
+A scene with fewer than two fragments, or with no positive reference or
+predicted pairs, has no pair evidence and its undefined precision or recall is
+retained as missing rather than replaced by a favourable value. The evaluation
+harness writes an explicit error row for any failed scene; such rows are counted
+as failures and excluded from metric means. The reported 128-scene held-out run
+had no failures.}
+
+\rev{A diagnostic connectivity floor assigns one label to each 8-connected
+component of the same held-out input mask and is scored without tuning by the
+same common-fragment procedure. It tests whether the benchmark can be solved by
+connectivity alone; it is not treated as a competitive filament tracer.}
 
 \rev{Held-out means and density strata are accompanied by 95\% nonparametric
 bootstrap intervals (20,000 replicates; seed 20,260,810). Aggregate resampling
