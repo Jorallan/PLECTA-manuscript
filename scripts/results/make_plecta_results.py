@@ -34,6 +34,11 @@ METRICS = {
     "vi_merge_bits": "VIMerge",
 }
 
+DIGIT_WORDS = {
+    "0": "Zero", "1": "One", "2": "Two", "3": "Three", "4": "Four",
+    "5": "Five", "6": "Six", "7": "Seven", "8": "Eight", "9": "Nine",
+}
+
 
 def boot_mean(values: np.ndarray, rng: np.random.Generator) -> tuple[float, float]:
     values = np.asarray(values, dtype=float)
@@ -60,7 +65,12 @@ def stratified_boot_mean(rows: list[dict], key: str, rng: np.random.Generator) -
 
 
 def macro(name: str, value: str) -> str:
-    return f"\\newcommand{{\\{name}}}{{{value}}}"
+    # TeX control-word names may contain letters only.
+    command = "".join(DIGIT_WORDS.get(char, char)
+                      for char in name if char.isalnum())
+    if not command or not command.isalpha():
+        raise ValueError(f"invalid generated macro name: {name!r} -> {command!r}")
+    return f"\\newcommand{{\\{command}}}{{{value}}}"
 
 
 def fmt(value: float, digits: int = 3) -> str:
@@ -223,8 +233,10 @@ def ablation_table(payload: dict) -> str:
         if row["ablation"] not in selected:
             continue
         delta = float(row["f1"]) - float(base["f1"])
+        label = ("Fixed configuration" if row["ablation"] == "frozen"
+                 else row["ablation"].title())
         lines.append(
-            f"{tex_escape(row['ablation'].title())} & {fmt(row['f1'])} & "
+            f"{tex_escape(label)} & {fmt(row['f1'])} & "
             f"{delta:+.3f} & {fmt(row['adjusted_rand_index'])} \\\\"
         )
     lines.extend([r"\bottomrule", r"\end{tabular}"])

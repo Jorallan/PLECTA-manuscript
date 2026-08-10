@@ -26,12 +26,12 @@ same-generator generalisation rather than distribution transfer.}
 \end{table}
 
 \rev{Performance decreased with scene density (Figure~\ref{fig:plecta-performance}a).
-Mean \Fone{} fell from \PlectaDensity20FOneMean{}
-[\PlectaDensity20FOneCILow{}, \PlectaDensity20FOneCIHigh{}] at 20\% coverage
-to \PlectaDensity60FOneMean{}
-[\PlectaDensity60FOneCILow{}, \PlectaDensity60FOneCIHigh{}] at 60\% coverage;
-the intermediate 30\% and 40\% means were \PlectaDensity30FOneMean{} and
-\PlectaDensity40FOneMean{}. Recorded per-scene runtime had mean
+Mean \Fone{} fell from \PlectaDensityTwoZeroFOneMean{}
+[\PlectaDensityTwoZeroFOneCILow{}, \PlectaDensityTwoZeroFOneCIHigh{}] at 20\% coverage
+to \PlectaDensitySixZeroFOneMean{}
+[\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\% coverage;
+the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
+\PlectaDensityFourZeroFOneMean{}. Recorded per-scene runtime had mean
 \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s,
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.}
@@ -102,13 +102,13 @@ grouping result. These topology measurements do not validate apparent width.}
 
 \rev{The two real SEM fields were exploratory development cases
 (Table~\ref{tab:plecta-real-masks}). From the manual-derived axis, PLECTA
-reached \Fone{}=\PlectaB58100ManualFOne{} on B58\_100 and
-\PlectaB58110ManualFOne{} on B58\_110. These are oracle-input conditions
+reached \Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{} on B58\_100 and
+\PlectaBFiveEightOneOneZeroManualFOne{} on B58\_110. These are oracle-input conditions
 because the axes were obtained from the manual instance annotations. With the
 upstream U-Net axes, the corresponding values were
-\PlectaB58100UNetFOne{} and \PlectaB58110UNetFOne{}. The U-Net axis had
-recall/precision \PlectaB58100AxisRecall{}/\PlectaB58100AxisPrecision{} on
-B58\_100 and \PlectaB58110AxisRecall{}/\PlectaB58110AxisPrecision{} on
+\PlectaBFiveEightOneZeroZeroUNetFOne{} and \PlectaBFiveEightOneOneZeroUNetFOne{}. The U-Net axis had
+recall/precision \PlectaBFiveEightOneZeroZeroAxisRecall{}/\PlectaBFiveEightOneZeroZeroAxisPrecision{} on
+B58\_100 and \PlectaBFiveEightOneOneZeroAxisRecall{}/\PlectaBFiveEightOneOneZeroAxisPrecision{} on
 B58\_110.}
 
 \begin{table}[t]
