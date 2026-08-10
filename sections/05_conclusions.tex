@@ -1,31 +1,17 @@
-\section{Conclusions}
+\section{\rev{Conclusions}}
 \label{sec:conclusions}
 
-FilaSeg reconstructs overlapping filament instances from degraded centreline
-masks through deterministic Hough vectorization, orientation-aware cleaning and
-geometric reconnection. On \LockedSceneCount{} predefined procedural scenes, its
-Stage-3 centreline output achieved common-fragment \Fone{} of
-\LockedFilaSegCommonFOneMean{} (density-stratified 95\% CI
-[\LockedFilaSegCommonFOneCILow{}, \LockedFilaSegCommonFOneCIHigh{}]). The paired
-difference from the fixed minimum-turn comparator was
-\FilaSegMinusBaselineSkeletonCommonFOneMean{} (95\% CI
-[\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
-\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]).
-
-Which representation is submitted for scoring changes the result without any
-method output changing (Section~\ref{sec:res-density}). Equivalent Stage-3
-centrelines are the defensible primary grouping representation; Stage-4
-centreline changes and width-rendered masks are secondary diagnostics. A
-secondary comparison on undegraded masks further shows that much of the
-aggregate advantage over the comparator reflects insensitivity to mask
-degradation rather than better grouping of intact topology. Automatically
-selected counterexamples show that the aggregate advantage is not uniform
-across scenes or densities. The result is therefore evidence for this fixed
-comparison under the tested generator, not a claim of superiority over filament
-tracing methods generally.
-
-The single real crop remains a development illustration. Independent real
-annotations from multiple parent images, complete acquisition and annotation
-metadata, separate validation of apparent width and other exported
-measurements, and a citable clean-checkout release are required before broader
-SEM or quantitative microstructure claims are justified.
+\rev{PLECTA reconstructs overlapping filament instances from a binary axis
+mask by alternating exact junction matching with gated gap matching as local
+arm geometry expands into chain-level evidence. The fixed method achieved
+common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on 128 independently seeded
+held-out scenes from the same procedural generator, with performance declining
+as network density increased. Development ablations identify crossing
+matching, gap bridging, and tangent evidence as the principal contributors.
+Optional image-informed rendering improves geometric presentation but remains
+separate from the grouping claim. Two real SEM fields demonstrate the workflow
+under manual-derived and U-Net masks, not population generalization or width
+accuracy. The method therefore provides an inspectable, deterministic approach
+for projected filament identity; broader claims require independent real
+fields, validated physical widths, and an external-generator benchmark with a
+fixed calibration and sealed seeds.}

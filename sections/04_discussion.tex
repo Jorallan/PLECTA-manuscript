@@ -1,237 +1,92 @@
-\section{Discussion}
+\section{\rev{Discussion}}
 \label{sec:discussion}
 
-Dense filament networks defeat the usual instance-segmentation assumption that
-each pixel belongs to one object. In a projected SEM image of a carbon-nanotube
-bundle sheet, filaments cross, merge visually, and are interrupted by
-segmentation failures, so the binary axis mask that an upstream segmenter
-produces contains no instance identity at all. The question addressed here is
-narrow and deliberately so: given that mask, which visible pieces of the
-network belong to the same physical filament?
+\rev{PLECTA addresses a narrow problem: assigning fragments in a binary
+filament-axis mask to overlapping projected instances. Its held-out
+common-fragment $F_1$ of \PlectaHeldoutFOneMean{} shows that explicit geometry
+can recover substantial identity without instance-labelled training data or
+SEM intensity. The mechanism is the combination of local and accumulated
+evidence. Exact matching at each junction selects mutually compatible
+continuations, gated gap matching reconnects separated arms, and repeated
+rounds replace short-arm direction estimates with tangent and curvature
+estimates from the chains assembled so far. Shared crossing pixels remain in
+each applicable instance rather than being forced into one label.}
 
-On \LockedSceneCount{} independently seeded scenes of the primary synthetic
-evaluation, FilaSeg Stage~3 reached a mean common-fragment
-\Fone{}~=~\LockedFilaSegCommonFOneMean{} against
-\LockedBaselineSkeletonCommonFOneMean{} for the minimum-turn skeleton tracer
-receiving the identical mask, a paired difference of
-\FilaSegMinusBaselineSkeletonCommonFOneMean{} with a 95\% confidence interval
-of [\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
-\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}] that excludes zero. The
-interval is an aggregate statement, not a uniform one: at 30\% areal density
-the density-specific interval crosses zero, and the qualitative
-counterexamples in Section~\ref{sec:res-qualitative} contain scenes the
-minimum-turn tracer groups better.
+\rev{The ablations support this interpretation but do not prove that every
+term is independently necessary. On the development set, using only tangent
+evidence reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing
+gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and removing crossing
+matching by \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing
+chain-extended frames produced a smaller decrease of
+\PlectaAblationNoChainExtendedFramesDeltaFOne{}. Thus the largest gains arise
+from solving both kinds of discontinuity---junctions and missing mask
+segments---with complementary geometric evidence; iterative context provides
+an additional, more modest benefit. Because these tests reused development
+scenes, their values describe mechanism and configuration sensitivity, not
+independent effect estimates.}
 
-Two scope conditions bound what that result can support. First, the primary
-endpoint is Stage~3 centreline grouping, scored on one-pixel
-representations after every method output is reduced to an equivalent form
-(Section~\ref{sec:mm-f1}); Stage~4 apparent-width estimation and rendering are
-downstream of the endpoint and are not validated by it. Second, the evidence
-comes from one procedural generator and one fixed comparator. What follows
-therefore interprets a conditional advantage over a specific same-input
-alternative under specific synthetic conditions, and identifies what would be
-needed to say more.
+\subsection{\rev{Density, masks, and optional rendering}}
 
-% =========================================================================
-\subsection{General interpretation and scope}
-\label{sec:disc-main}
+\rev{Performance depends on the geometry preserved by the input mask. Mean
+held-out $F_1$ declined from \PlectaDensity20FOneMean{} at 20\% coverage to
+\PlectaDensity60FOneMean{} at 60\%, where crossings and locally plausible
+alternatives are more frequent. On 50 paired development scenes, the clean
+axis masks scored \PlectaCleanMinusDegradedFOneMean{} higher than degraded
+masks (95\% CI \PlectaCleanMinusDegradedFOneCILow{}--
+\PlectaCleanMinusDegradedFOneCIHigh{}). PLECTA can bridge short omissions, but
+it cannot infer a filament absent from the mask or reliably reject a false
+axis introduced upstream. Supplying identical masks isolates grouping in an
+algorithmic comparison; it does not establish end-to-end SEM performance.}
 
-\paragraph{Why a geometric, non-learning method is useful here.}
-Supervised instance segmentation of these images is limited by the reference
-data rather than by model capacity. Exact instance identity in a dense crossing
-network is not reliably annotatable by hand: the single real crop used here is
-one human interpretation of an ambiguous image, not ground truth. A method
-built from explicit geometric criteria needs no instance-labelled training set
-and exposes every decision as an inspectable rule with a physical meaning. It
-also transfers across acquisition scales by construction, because its
-pixel-valued parameters are rescaled to hold their physical interpretation
-(Equations~\ref{eq:spx}--\ref{eq:scaling}). The cost is
-that the rules are hand-specified, so the method cannot learn a regularity the
-designer did not anticipate.
+\rev{Image-informed ribbon rendering is downstream of grouping. On the
+development set it produced $F_1=\PlectaStageFourFOne{}$, a change of
+\PlectaStageFourDeltaFOne{} relative to the core output, while yielding no
+disconnected instances and branch pixels in \PlectaStageFourBranched{} of
+instances. This is a useful shape tradeoff rather than an improvement in
+identity. Silhouette absorption changes the instance partition and scored
+\PlectaStageFourAbsorbFOne{}; it is therefore optional and should not be
+conflated with the fixed mask-only grouping result. Width and brightness can
+be reported for characterized instances, but their physical accuracy requires
+separate references.}
 
-\paragraph{Why FilaSeg improves on minimum-turn continuation on average.}
-The minimum-turn tracer resolves each junction locally, choosing the smallest
-turning angle available at that point. This is exactly the decision that is
-least determined by the data in a dense network, because near a crossing
-several continuations have similar turning angles while belonging to different
-filaments. FilaSeg's gain comes from deferring and constraining that decision:
-candidate joins must satisfy endpoint separation, orientation consistency,
-collinearity and bridged-path smoothness together rather than turning angle
-alone, and they are considered in ordered passes so that short high-confidence
-gaps are resolved before geometrically ambiguous ones. The improvement is
-larger in pairwise recall than in precision, which is consistent with the
-mechanism: an evidence-ordered procedure with an explicit crossing-prevention
-criterion can accept long continuations that a purely local rule refuses,
-without accepting proportionally more wrong ones.
-
-\paragraph{How much of the advantage is robustness to degradation, versus
-better grouping.}
-Re-scoring the same 125 scenes on the undegraded, exactly one-pixel axis mask
-(Section~\ref{sec:res-density}) separates two contributions the paired
-degraded-input comparison mixes together: recovering structure that mask
-degradation interrupted, and grouping structure that was already fully
-visible. The minimum-turn tracer improved on clean input while FilaSeg did not,
-so much of FilaSeg's aggregate advantage over this comparator is attributable
-to insensitivity to mask degradation rather than to better grouping of intact
-topology. The advantage nevertheless does not vanish on clean input, where it
-remains largest at the highest tested crossing density.
-
-\paragraph{Why the advantage is conditional rather than universal.}
-The same ordering that recovers long filaments becomes a liability where the
-geometry genuinely under-determines the answer. At 30\% areal density the paired
-interval includes zero, and the losses in Section~\ref{sec:res-qualitative}
-show the mechanism: where two filaments cross at a shallow angle and both are
-locally smooth, the multi-criterion test and the minimum-turn rule are
-choosing between hypotheses that the image does not distinguish. In that regime
-a global geometric argument has no advantage over a local one, and either can
-win by chance on a given scene. The aggregate interval should therefore be read
-as evidence that the multi-criterion approach helps across the tested density
-range on average, not that it dominates at every density.
-
-\paragraph{What the sensitivity analyses do and do not show.}
-The input-representation analyses in Section~\ref{sec:res-mask} are
-development-only diagnostics on small samples. Their preference for a thin axis
-representation is consistent with the vectorization stage estimating local
-orientation from a foreground whose thickness begins to compete with the
-geometry it is meant to measure. Removing the modeled degradation did not
-produce a resolved aggregate improvement -- a limit of this generator's
-degradation model and its small per-density samples, not evidence that
-segmentation errors are unimportant in practice.
-
-\paragraph{Separating network complexity from bundle width.}
-The factorial study (Section~\ref{sec:res-factorial},
-Table~\ref{tab:factorial}) separates the two contributions that target areal
-density conflates: bundle width is an exact structural negative control for
-Stage~3, and the common-fragment \Fone{} range across width levels was exactly
-zero in every geometry block, so thick-mask areal density cannot by itself
-drive grouping performance. The difficulty that rises with centreline-length
-density is instead the geometric complexity of the network, crossing density
-and gap count outpacing centreline length, not areal density; width remains an
-active factor only for SEM rendering and Stage~4, where it is the quantity being
-measured. This is an attribution result that the exact control settles cleanly;
-the four-seed cells remain too small to support
-centreline-length-density-specific effect sizes.
-
-\paragraph{Relationship to the upstream segmentation pipeline.}
-FilaSeg consumes a binary bundle-axis mask, which in the real case study was
-produced by the CycleGAN/U-Net workflow summarized in
-Section~\ref{sec:mm-workflow} and Figure~\ref{fig:scope}. The two
-pipelines are evaluated separately here, and deliberately so: supplying every
-method the identical mask isolates grouping from segmentation quality, which is
-the only way the comparison reported in Section~\ref{sec:res-density} can be
-attributed to grouping at all. The corollary is that no end-to-end
-SEM-to-instance performance figure is established by these results. An
-end-to-end number would require propagating upstream segmentation error into
-the grouping stage on images the upstream model has demonstrably never seen.
-
-\paragraph{Applicability beyond CNT bundles.}
-FilaSeg's criteria refer to filament geometry rather than to nanotube physics,
-so the approach is in principle applicable to other dense curvilinear networks
-imaged in projection, such as nanowire mats, fibre assemblies or cytoskeletal
-filaments. That is a direction for future work rather than a result: no data
-outside the CNT bundle setting were examined here, and each new domain changes
-the crossing statistics, the degradation model, and the scale metadata on which
-the parameter rescaling depends.
-
-% =========================================================================
-\subsection{Failure modes and limitations}
+\subsection{\rev{Evidence boundary}}
 \label{sec:limitations}
 
-\paragraph{Residual grouping errors have two opposite directions.}
-Errors are either incorrect joins, which lower pairwise precision by merging
-fragments of different filaments, or refused continuations, which lower
-pairwise recall by splitting one filament across several instances. Both
-concentrate at crossings, where endpoint geometry alone can be insufficient to
-determine ownership. The orientation-based crossing-prevention criterion
-reduces incorrect joins but cannot eliminate them, since a shallow-angle
-crossing of two smooth filaments presents locally consistent orientations for
-the wrong pairing as well as the right one. Bundles that are missing or heavily
-fragmented in the input mask are a third mode, and no downstream geometry can
-repair them.
+\rev{The principal limitation is distributional. The 128 held-out scenes use
+independent seeds but the same procedural generator family used for
+development. Their confidence intervals quantify sampling variation within
+that family, not transfer to another simulator, specimen, microscope, or
+segmentation pipeline. The ablation and rendering studies are development-only
+and must remain secondary to the fixed held-out result.}
 
-\paragraph{The comparator is one implementation, not the literature.}
-The minimum-turn tracer is a transparent same-mask reference point chosen so
-that the comparison isolates grouping. It is not a survey of curvilinear
-tracing methods. The connected-component method serves only as a lower-bound
-sanity check. These results therefore support a comparison with the specific
-minimum-turn implementation and settings used here, and the counterexamples in
-Section~\ref{sec:res-qualitative} should be read as evidence that the two
-approaches have genuinely different failure regimes.
+\rev{The real SEM study is deliberately a case study with two fields, not a
+population validation. Manual-derived masks are an oracle-like input
+condition: they test grouping when the axis evidence is curated, not automatic
+SEM-to-instance performance. B58\_100 is training-contaminated for the U-Net
+condition, whereas B58\_110 is documented as training-clean; only the latter can
+illustrate an unseen upstream mask, and one field cannot estimate
+generalization. Moreover, manual-derived and U-Net masks generate different
+fragment universes. Their $F_1$ values therefore describe performance under
+each input condition but are not a paired comparison of identical objects.
+More independent fields, sealed before configuration, and annotations from
+multiple readers are required.}
 
-\paragraph{Dependence on input mask quality and scale metadata.}
-FilaSeg cannot recover a filament that is absent from its input, and it may
-retain or join false axes that the segmenter introduced. Supplying every method
-the identical mask controls this dependency inside the comparison but does not
-remove it from practical use. Separately, the parameter rescaling in
-Section~\ref{sec:mm-filaseg} requires a physical pixel size. Where acquisition
-metadata are missing the documented reference scale is used as a fallback, and
-a wrong scale silently changes the effective meaning of every length-, area-
-and curvature-valued threshold.
+\rev{Two further scope limits concern the output itself. First, PLECTA recovers
+projected two-dimensional identity. Shared pixels encode overlap but not which
+filament passes above another, so no three-dimensional topology follows.
+Second, the grouping metric evaluates ownership of centreline fragments and is
+not a validation of rendered width. Quantitative diameter claims require
+matched physical measurements across the relevant scale, contrast, and
+specimen ranges. Pairwise fragment scores also emphasize instances containing
+many fragments; object recovery and ARI are retained as complementary views.}
 
-\paragraph{One real development crop, of uncertain independence.}
-All real-data observations derive from a single $512\times512$ crop from one
-parent image, annotated once, and that crop informed method development. It is
-a case study and provides neither a held-out estimate nor a population
-confidence interval. As noted in Section~\ref{sec:mm-real}, the available
-project records do not establish whether the crop was excluded from the
-upstream segmenter's training data. Independence
-between the upstream segmenter and the real evaluation crop is therefore
-unestablished, and the real result should not be treated as a generalization
-estimate.
-
-\paragraph{No independent width-accuracy validation.}
-Stage~4 apparent widths are reported as delivered output only. The
-common-fragment metric is designed for instance identity and is deliberately
-insensitive to width, so nothing in the primary evaluation constrains
-width accuracy. A width claim requires matched per-instance reference
-measurements, which do not exist in this work.
-
-\paragraph{Synthetic-generator assumptions.}
-The generator exposes areal density, centreline-length density, crossings,
-gaps and intensity variation under exact instance ground truth, which is why it
-can support a primary endpoint. Whether its degradation and appearance
-distributions resemble those of real upstream segmenter output has not been
-quantified. The reported confidence intervals characterize repeatability over
-generator seeds, not transfer to unseen SEM images.
-
-\paragraph{Metric weighting and small development samples.}
-Pairwise fragment statistics weight each instance by roughly the square of the
-number of fragments it contains, so long filaments split into many fragments
-influence the score more than short ones. This is defensible for a grouping
-endpoint but means the metric is not an unweighted per-object average, and it
-should be read alongside the object-level recovery summary
-(Section~\ref{sec:mm-instance}). The sensitivity analyses in
-Section~\ref{sec:res-mask} rest on 20 development scenes, with only four
-scenes at some densities, and the factorial study on four seeds per cell; all
-are exploratory and cannot support conclusions specific to either density
-measure.
-
-\paragraph{Missing acquisition and specimen metadata.}
-The SEM instrument and detector, accelerating voltage, working distance,
-specimen preparation and CNT material identity are not established by the
-available record, and the relation between the 1536-pixel calibration width and
-the stored 1534-pixel image width is unconfirmed. These are marked as required
-actions rather than inferred, and they must be supplied before submission.
-
-\paragraph{Two-dimensional geometry.}
-All inputs are two-dimensional projections. The output is a set of projected
-centrelines with overlapping instance layers and does not recover
-three-dimensional over-and-under topology at crossings.
-
-\paragraph{Next validation steps.}
-The results here justify a specific programme rather than a broad claim, in
-approximate order of value. Multiple independent real crops from several parent
-images, instruments and specimens should be annotated by more than one
-annotator and sealed before the configuration is fixed, so that inter-annotator
-agreement bounds the achievable score. An upstream segmenter should then be
-retrained, or otherwise established, with a documented split that provably
-excludes those crops, so that end-to-end SEM-to-instance performance can be
-reported with upstream error included. Stage~4 apparent widths need validation
-against matched per-instance reference measurements, independently of the
-grouping endpoint. The generator's degradation statistics need to be quantified
-against real segmenter output and the generator recalibrated where they differ.
-Finally, the comparison should be extended to additional published tracing
-methods on the identical input masks. Until then, an explicit geometric
-grouping procedure outperforms local minimum-turn continuation on average under
-the tested synthetic conditions, with the mechanism, failure regimes and
-representation dependence documented well enough to be checked.
+\rev{An independent procedural benchmark is a practical next test. The
+\texttt{merged\_lines} mask generator in the CNT\_SEM pipeline can export
+overlap-aware whole-bundle references and would add a different implementation
+and morphology model. It should supplement, not replace, the current generator:
+its field-of-view preset is presently calibrated to a narrow coverage regime,
+whereas the primary benchmark spans density. A multi-scene run should be made
+only after pooled calibration is fixed and its seeds are separated from any
+configuration work. No result from that generator is included in the present
+evidence. Broader validation should then extend to independent real masks and
+other filament domains while keeping input fragments and scoring rules fixed.}
