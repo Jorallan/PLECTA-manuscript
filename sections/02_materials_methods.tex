@@ -1,641 +1,204 @@
-\section{Materials and methods}
+\section{\rev{Materials and methods}}
 \label{sec:methods}
 
-This section describes the two connected image-analysis pipelines used in this
-work, the synthetic and real input data, the four stages of FilaSeg, and the
-procedure used to evaluate its instance-segmentation performance.
-
-FilaSeg is implemented in Python using NumPy, SciPy, scikit-image, OpenCV,
-Matplotlib, tifffile, and PyYAML. Its four processing stages are implemented
-as separate modules and coordinated by one end-to-end runner. The upstream
-CycleGAN/U-Net segmentation workflow is maintained separately from the
-FilaSeg implementation.
-
-% =========================================================================
-\subsection{Workflow overview}
+\subsection{\rev{Scope and workflow}}
 \label{sec:mm-workflow}
 
-The complete workflow contains two connected pipelines
-(Figure~\ref{fig:scope}). The first pipeline converts a real SEM image into a
-binary mask representing the apparent axes of the CNT bundles, and its
-segmentation model is trained on synthetic image--mask pairs. Procedurally
-generated binary filament masks provide the structural mask
-domain, while real SEM images provide the microscopy-image domain. CycleGAN
-image translation is used to generate SEM-like images from the procedural
-masks. Because each generated SEM-like image originates from a known binary
-mask, the image and its source mask form a training pair for a U-Net
-segmentation model.
-
-After training, the U-Net receives a real SEM image and predicts a binary
-CNT bundle-axis mask. This binary mask is then supplied to the FilaSeg
-instance-segmentation pipeline. This sequence is shown as Pipeline~A in
-Figure~\ref{fig:scope}, and the implementation of this upstream workflow is
-maintained separately~\citep{allan2026cntsem}.
-
-The output is a thin binary mask representing the estimated bundle axes rather
-than the complete bundle silhouettes. Instance identity is not yet available
-at this stage: crossings appear as shared foreground regions, and several
-physical bundles may belong to one connected binary structure.
-
-Recovering that identity is the task of the second pipeline, which receives a
-binary image of a dense filament network and separates it into individual
-filament instances. Its input can originate from either of two sources:
-
-\begin{itemize}[
-    leftmargin=2em,
-    labelsep=0.6em,
-    topsep=3pt,
-    itemsep=4pt,
-    parsep=0pt,
-    partopsep=0pt
-]
-    \item a procedurally generated binary filament-axis mask used for
-    development, validation, and comparison; or
-
-    \item a binary CNT bundle-axis mask predicted from a real SEM image by the
-    upstream CycleGAN/U-Net pipeline.
-\end{itemize}
-
-FilaSeg processes the binary mask through four consecutive stages:
-
-\begin{enumerate}[
-    leftmargin=2em,
-    labelsep=0.6em,
-    topsep=3pt,
-    itemsep=3pt,
-    parsep=0pt,
-    partopsep=0pt
-]
-    \item tiled residual Hough vectorization;
-    \item orientation-aware fragment cleaning;
-    \item geometry-based instance reconnection; and
-    \item SEM-assisted apparent-width estimation and rendering.
-\end{enumerate}
-
-Stages~1--3 use the binary filament-axis mask to recover individual centreline
-instances; Stage~4 uses a paired grayscale image to estimate their apparent
-width and render the final output (Section~\ref{sec:mm-filaseg}).
-For a real CNT image, the paired grayscale image is the original SEM
-micrograph. For the present synthetic instance-segmentation experiments, the
-paired image is a fully procedural SEM-like rendering generated from the same
-known filament geometry.
+\rev{The formal input is a binary filament-axis mask
+$M\in\{0,1\}^{H\times W}$. PLECTA reconstructs an overlap-aware collection
+$\{I_1,\ldots,I_N\}$, where $I_n\subseteq M$ and a crossing pixel may belong
+to several instances. The evaluated grouping stage uses only $M$. A grayscale
+SEM image is optional downstream input for width and brightness measurement;
+it cannot revise the frozen grouping. Figure~\ref{fig:scope} separates this
+core task from upstream mask extraction and downstream rendering.}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[
-        width=\linewidth,
-        height=0.62\textheight,
-        keepaspectratio
-    ]{figures/fig_filaseg_scope.pdf}
-    \caption{%
-    Relationship between the two pipelines. Pipeline~A converts real SEM images
-    into binary CNT bundle-axis masks. Pipeline~B separates a
-    dense filament network into instances from either this mask or a procedurally
-    generated one. Stages~1--3 use the binary axis mask alone; Stage~4 also
-    requires the paired grayscale SEM image.
-    }
+    \includegraphics[width=\linewidth]{figures/fig_plecta_scope.pdf}
+    \caption{\rev{Workflow and evidence boundary. A micrograph is converted to
+    a binary axis mask manually or by an upstream segmenter. PLECTA groups the
+    mask into overlap-aware 2-D instances. SEM characterisation and ribbon
+    rendering are optional downstream operations and were absent from the
+    held-out grouping result.}}
     \label{fig:scope}
 \end{figure}
 
-\note{%
-We currently evaluate the FilaSeg instance-segmentation pipeline separately
-from the upstream CycleGAN/U-Net pipeline. To discuss: should the final paper
-keep this separation, or present the two pipelines as one complete
-SEM-to-instance workflow?
-}
-
-% =========================================================================
-\subsection{Input images, masks, and reference annotations}
-\label{sec:mm-masks}
-
-For the simplified description in this manuscript, the procedural filament
-generator is treated as the common source of masks for both CycleGAN/U-Net
-development and FilaSeg evaluation. It preserves the identity and geometry of
-every synthetic filament and can therefore provide both binary foreground
-representations and exact instance-level references.
-
-\subsubsection{Procedural synthetic masks and SEM-like images}
+\subsection{\rev{Synthetic data and evaluation split}}
 \label{sec:mm-synth}
 
-Each synthetic scene contains a set of filament instances
+\rev{Procedural scenes preserve the ordered centreline $\mathcal C_k$ and
+rendered support $\Omega_k$ of every filament $k$. Individual supports remain
+separate, so several filaments may own the same crossing pixel. The generator
+provides an undegraded one-pixel axis mask, a degraded thin mask containing
+small gaps and irregularities, a combined thick foreground, an SEM-like image,
+and the exact overlap-aware instance reference (Figure~\ref{fig:synth-examples}).
+Areal coverage is the union area of the thick supports divided by image area;
+it is not the occupancy of the thin input mask.}
 
-\begin{equation}
-    \mathcal{B}
-    =
-    \{B_1,\ldots,B_K\},
-\end{equation}
+\rev{Development used 84 scenes: 20 initial scenes across 20--60\% coverage,
+48 additional scenes at 20, 30, and 60\%, and 16 scenes at 40\%. The held-out
+set comprised 128 different seeds: 32 scenes at each of 20, 30, 40, and 60\%
+coverage. It is an independent sample from the same generator, not an
+independent distribution. A separate 125-scene locked set remains unevaluated.
+The compact seed manifest records every seed block and an executable verifier
+checks counts, disjointness, and available scene metadata.}
 
-where $K$ is the number of generated filaments and $B_k$ denotes the
-$k$th instance. Each filament is defined by an ordered centreline
-$\mathcal{C}_k$ and a thick rendered support $\Omega_k$.
-
-The individual supports are retained separately, so multiple filaments may own
-the same image location at a crossing. This produces an overlap-aware instance
-reference rather than a conventional label image in which each pixel can belong
-to only one object.
-
-The following representations are derived from the same procedural geometry, as
-shown in Figure~\ref{fig:synth-examples}:
-
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-    \item an overlap-aware thick-instance reference;
-    \item a combined binary foreground mask;
-    \item an undegraded one-pixel filament-axis mask;
-    \item a degraded thin-axis mask representing the expected output of an
-    upstream binary segmenter; and
-    \item one or more SEM-like grayscale representations.
-\end{itemize}
-
-The degraded axis masks may contain finite axis thickness, small gaps,
-irregularities, and other segmentation-like imperfections. These degraded
-masks are the direct inputs to the primary FilaSeg evaluation.
-
-The nominal axis width names the generator's \emph{stamping} width, not the
-width of the realized binary mask. Each filament axis is first rendered as a
-continuous-valued ridge of nominal width~1~px with an anti-aliased shoulder
-(soft-edge extent 0.6~px), then binarized at a low threshold (0.27) chosen to
-resemble a U-Net-like segmenter. Because a low threshold on a soft-shouldered
-ridge retains most of that shoulder, the realized degraded one-pixel mask
-measures approximately 1.7--1.8~px in mean foreground width. The undegraded
-one-pixel mask is instead drawn as a raw polyline with no ridge and no
-thresholding, so it measures almost exactly one pixel.
-
-The synthetic scenes span five target areal-density levels from
-$20\%$ to $60\%$. Areal density is calculated from the union of the thick
-filament supports, not from the thin centreline mask.
-
-Two further scene descriptors are reported alongside areal density where the
-difficulty of the grouping problem is at issue. The \emph{centreline-length
-density} is the total visible centreline arc length divided by the image area,
-in px~px$^{-2}$; unlike areal density it does not depend on how wide the
-bundles are rendered. The \emph{crossing density} counts pairwise centreline
-crossing events per megapixel of image area: for each pair of filaments, every
-connected region of pixels shared by their one-pixel centrelines counts as one
-event, so a junction where three centrelines meet contributes three pairwise
-events. Both quantities are measured on the clean centreline rasters and are
-therefore independent of the rendered bundle width and of the mask
-degradation.
-
-\paragraph{SEM-like image generation.}
-
-SEM-like synthetic images can be generated in two ways.
-
-First, CycleGAN can translate procedural binary masks into images whose
-appearance resembles the real SEM domain. The source procedural masks remain
-available as paired labels for U-Net training.
-
-Second, a fully procedural renderer can generate an SEM-like grayscale image
-directly from the known synthetic filament geometry. This approach does not
-require image translation and provides exact correspondence between the
-grayscale image, centreline mask, and instance reference.
-
-The current FilaSeg synthetic experiments use the fully procedural SEM-like
-image as the paired grayscale input for the Stage~4 width and rendering
-analysis. The grouping evaluation itself is performed on the binary axis mask
-before Stage~4.
-
-\note{%
-The synthetic FilaSeg experiments currently use fully procedural SEM-like
-images during Stage~4. We intend to replace these with CycleGAN-generated
-SEM-like images so the synthetic Stage-4 input more closely matches the
-upstream segmentation workflow -- evaluate the effect of that change before
-folding it into the primary results.
-}
-
-The same procedural mask generator is currently assumed to support both the
-CycleGAN/U-Net workflow and the FilaSeg evaluation. The final manuscript
-should document whether the generator settings, image dimensions, filament
-density settings (both areal and centreline-length), width distributions, and
-degradation settings are exactly the same
-in both uses.
+\rev{A separate controlled robustness set contained 50 scenes, ten at each of
+20, 30, 40, 50, and 60\% coverage. Each geometry was scored once from its clean
+axis and once from its degraded mask. This set was used only to quantify
+input-degradation sensitivity after the configuration was fixed.}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]
-    {figures/fig_synthetic_examples.pdf}
-    \caption{%
-    Examples of the procedural synthetic data (columns as labelled). The degraded
-    thin-axis mask is shown at a nominal two-pixel width to make the degradation
-    visible; the primary evaluation uses the nominal one-pixel variant. Instance
-    identity is retained across all representations.
-    }
+    \includegraphics[width=\linewidth]{figures/fig_synthetic_examples.pdf}
+    \caption{\rev{Procedural representations derived from the same filament
+    geometry. Instance identity is retained through crossings; the degraded
+    thin-axis mask is the primary algorithm input.}}
     \label{fig:synth-examples}
 \end{figure}
 
-\subsubsection{Real SEM images and manual reference annotation}
+\subsection{\rev{CNT SEM data and mask sources}}
 \label{sec:mm-real}
 
-The real images used in this study are 8-bit grayscale secondary-electron SEM
-micrographs of dense CNT bundle sheets. The grayscale image is denoted by
+\rev{Two manually annotated CNT-sheet SEM fields were available for exploratory
+analysis: B58\_100 ($1024\times1536$ px, 280 filaments) and B58\_110
+($1024\times1536$ px, 430 filaments). The nominal horizontal field width is
+$1.66~\um$; project metadata associate it with 1536 px, or approximately
+$1.08~\mathrm{nm\,px^{-1}}$. The annotation is one human interpretation of
+projected, locally ambiguous crossings. Both fields informed development and
+neither is a population-level test.}
 
-\begin{equation}
-    S\in[0,255]^{H\times W},
-\end{equation}
+\rev{Two inputs were derived per field. The first was the skeleton of the manual
+instance annotation and is therefore an oracle-input condition, not an
+independent segmentation. The second was predicted by an upstream nnU-Net
+trained on paired synthetic images and masks; CycleGAN translation is one route
+from procedural masks to SEM-like training images
+\citep{ruehle2021workflow,allan2026cntsem}. B58\_100 appeared in that model's
+training data, whereas B58\_110 was verified absent from the relevant training
+set. Consequently, only B58\_110 provides a training-clean observation of mask
+transfer, and $n=2$ precludes inference.}
 
-where $H$ and $W$ are the image height and width in pixels.
+\rev{Mask quality was compared after skeletonisation with a symmetric 3-px
+tolerance, avoiding a reward for mask thickness. Reconstruction scores were
+computed separately within each mask's visible common-fragment population;
+because those populations differ, cross-mask \Fone{} values are descriptive
+rather than paired estimates.}
 
-The reference acquisition has a horizontal field width of
-$1.66~\um$. The available metadata associates this field width with
-$1536$~px, giving the reference physical pixel size
+\rev{\textbf{Author metadata required before submission:} SEM instrument and
+detector, accelerating voltage, working distance, specimen preparation, CNT
+material identity, annotation protocol, and confirmation of the 1536-pixel
+calibration against the stored image dimensions. The upstream model archive
+must also supply its architecture, training split, and optimisation settings.}
 
-\begin{equation}
-    u_{\mathrm{ref}}
-    =
-    \frac{1.66~\um}{1536~\mathrm{px}}
-    \approx
-    1.081\times10^{-3}~\um\,\mathrm{px}^{-1}
-    \approx
-    1.08~\mathrm{nm\,px}^{-1},
-    \label{eq:reference-pixel-size}
-\end{equation}
+\subsection{\rev{PLECTA reconstruction}}
+\label{sec:mm-plecta}
 
-where $u_{\mathrm{ref}}$ is the physical size represented by one pixel in the
-reference image.
+\subsubsection{\rev{Skeleton graph and local frames}}
 
-After removal of the instrument data bar, the stored micrographs measure
-$1534\times1026$~px. Intensity-dependent Stage~4 measurements are evaluated
-on the original 8-bit grayscale values without additional intensity
-normalization.
+\rev{PLECTA binarises $M$ at $>0$, skeletonises it, and iteratively removes
+spurs no longer than 3 px. Skeleton pixels with degree at least three form
+junction clusters, and adjacent clusters are merged into nodes. Connectors up
+to 5 px are absorbed into one node; connectors up to 14 px merge nearby nodes
+but remain real arms; free debris up to 2 px is absorbed. Each remaining
+connected path is stored as an ordered arm with one stub at each end.}
 
-One $512\times512$ crop contains a manual reference annotation of
-58 filament instances. This crop was used during method development and is
-therefore not a held-out test. It is included as a qualitative and
-development-stage example of application to a real CNT bundle network.
+\rev{A stub frame contains its tip, outward tangent, and signed curvature.
+These are estimated by an arclength polynomial fit and are considered reliable
+only with at least three samples spanning at least 3 px. Local frames use 24 px
+of support; after links form chains, the support expands to 55 px. Link cost
+combines direct tangent reversal, the turn from each tangent to the joining
+chord, and curvature continuity. Gap cost additionally penalises length. Short
+chords fade the chord-turn term rather than allowing an unstable angle to
+dominate.}
 
-The corresponding binary bundle-axis mask was predicted by the upstream
-CycleGAN/U-Net workflow. The available project records do not contain a
-complete training-image list, data-split record, or training log for that
-upstream model. It cannot therefore be confirmed whether the crop, its parent
-image, or closely related images contributed to development of the binary
-segmenter.
+\subsubsection{\rev{Candidate gates and exact matching}}
 
-The real annotation is treated as one human interpretation of an ambiguous
-dense image rather than as exact ground truth. Exact instance references are
-available only for the procedurally generated scenes.
+\rev{Each of eight rounds first resolves junctions and then gaps
+(Figure~\ref{fig:gates}). At a junction, candidates must share the node, use
+different arms, and have finite frames and cost. Exact maximum-weight partial
+matching selects disjoint pairs while allowing unmatched stubs. With the frozen
+unmatched price, a full-strictness junction edge is eligible only when its cost
+is below 1.24.}
 
-\needed{%
-Add the SEM instrument model, detector type, accelerating voltage, working
-distance, specimen preparation and CNT material identity before submission,
-and confirm the relation between the reported 1536-pixel calibration width and
-the stored 1534-pixel image width.
-}
-
-% =========================================================================
-\subsection{FilaSeg instance-segmentation pipeline}
-\label{sec:mm-filaseg}
-
-The core FilaSeg input is a binary filament-axis mask
-
-\begin{equation}
-    M \in \{0,1\}^{H\times W},
-\end{equation}
-
-where $H$ and $W$ are the image height and width. Each pixel of $M$ is either
-zero for background or one for the detected filament axis. The mask therefore
-shows where filament axes are present, but it does not yet identify the
-individual filament instances.
-
-At crossings, the mask contains one shared foreground region and does not
-identify which branch belongs to which physical filament. Small gaps may also
-interrupt otherwise continuous trajectories. FilaSeg must therefore infer how
-the visible fragments should be grouped into individual instances.
-
-Stages~1--3 return a set of reconstructed centreline instances
-
-\begin{equation}
-    \mathcal{I}
-    =
-    \{I_1,\ldots,I_{\widehat{K}}\},
-\end{equation}
-
-where $\widehat{K}$ is the number of predicted instances. Each instance
-contains an ordered centreline, endpoints, and derived geometric
-measurements. Stage~4 additionally uses a paired grayscale image to estimate
-apparent projected widths and render the reconstructed instances.
-
-\subsubsection{Stage 1: tiled residual Hough vectorization}
-\label{sec:mm-vector}
-
-Stage~1 converts the binary axis mask into a set of short, oriented line
-primitives. It uses a tiled, orientation-binned residual decomposition based
-on the progressive probabilistic Hough transform~\citep{matas2000ppht}.
-
-Within each tile and orientation bin, line segments are selected to explain
-currently unassigned foreground pixels. This produces local orientation
-estimates and may bridge small raster interruptions along an otherwise
-continuous filament trajectory.
-
-The tiled design allows large images to be processed locally, while overlap
-between neighbouring tiles reduces boundary artefacts. Selected vectorization
-parameters also adapt to the observed foreground width.
-
-\todo{Add the tile dimensions, orientation bins, overlap rules, residual-update
-logic and stopping criteria.}
-
-\subsubsection{Stage 2: orientation-aware fragment cleaning}
-\label{sec:mm-clean}
-
-Stage~2 cleans the orientation-associated fragments produced by Stage~1.
-Small artefacts are removed, short along-filament gaps are closed using
-orientation-matched morphology, and each retained fragment is reduced to a
-smooth curve with two well-defined tips.
-
-This stage supplies the reconnection stage with physically plausible fragments
-whose endpoint positions and local directions are not dominated by raster
-noise, isolated pixels, or small branches.
-
-\todo{Add the morphology settings, skeleton-cleaning operations, smoothing
-rules and branch-removal criteria.}
-
-\subsubsection{Stage 3: geometry-based instance reconnection}
-\label{sec:mm-reconnect}
-
-Stage~3 merges compatible fragments into individual filament instances. Each
-fragment is represented by its centreline, endpoints, local endpoint
-directions, and associated geometric descriptors.
-
-Candidate endpoint pairs must satisfy a sequence of geometric criteria
-involving endpoint separation, orientation consistency, collinearity,
-bridged-path smoothness, and local topology. An orientation-based
-crossing-prevention criterion reduces the risk of joining fragments that
-belong to different filaments but meet near a crossing.
-
-Because filament axes are unoriented, the difference between two axis angles
-$\theta_1$ and $\theta_2$ is defined as
-
-\begin{equation}
-    \Delta\theta
-    =
-    \min\!\left(
-        |\theta_1-\theta_2|,
-        180^\circ-|\theta_1-\theta_2|
-    \right)
-    \in[0^\circ,90^\circ],
-    \label{eq:angdiff}
-\end{equation}
-
-where $\Delta\theta$ is the smallest angular difference between the two
-unoriented axes.
-
-Candidate merges are evaluated in ordered passes. The earliest pass handles
-short, high-confidence gaps. Later passes consider geometrically more
-difficult cases. A topology-checked repair procedure addresses configurations
-that cannot be recovered through direct endpoint-to-endpoint continuation.
-Figure~\ref{fig:gates} shows representative examples of accepted and rejected
-candidate merges.
+\rev{Gap candidates are constructed only from still-unmatched, reliable stubs.
+They must belong to different arms and different junctions, lie within 85 px,
+have direct tangent mismatch at most 0.40 rad, and have chord-turn mismatch at
+each end at most 0.28 rad. Global exact matching then accepts only edges whose
+cost is below 0.60 at full strictness. Cycles are broken after junction matching
+and again after gap matching. The unmatched prices and angular gap limits are
+annealed linearly from 85\% to full strictness. Because only the eighth round is
+fully strict in the frozen schedule, that round is returned; there is no
+effective competition among several full-strictness rounds.}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]
-    {figures/fig_reconnect_gates.pdf}
-    \caption{%
-    Representative reconnection decisions (see panel titles and legend for the
-    accepted/rejected criteria in each case). Numerical thresholds are to be
-    added.
-    }
+    \includegraphics[width=\linewidth]{figures/fig_plecta_gates.pdf}
+    \caption{\rev{PLECTA stage and gate sequence. Topology preconditioning
+    produces arms, stubs, and junction nodes. Every round applies exact
+    per-junction matching, a cycle guard, global gated gap matching, a second
+    cycle guard, and chain-supported frame re-estimation. The final chains are
+    painted as overlap-aware instance layers.}}
     \label{fig:gates}
 \end{figure}
 
-\todo{Add the candidate scoring, pass-specific thresholds, merge ordering,
-crossing-prevention rules, topology tests and repair logic.}
+\subsubsection{\rev{Instance output}}
 
-\subsubsection{Stage 4: SEM-assisted apparent-width estimation and rendering}
-\label{sec:mm-width}
+\rev{Connected components of accepted arm links define instances. PLECTA
+paints every arm pixel and every junction cluster touched by a chain into that
+instance, so intersecting instances share crossing pixels. An isolated one-arm
+component shorter than 6 px is omitted. Accepted gap links determine identity
+but are not painted into the frozen centreline output. All effective parameters,
+including values previously inherited as code defaults, are materialised in the
+frozen JSON configuration.}
 
-Stage~4 combines the reconstructed centreline instances with a paired
-grayscale image. For each instance, transverse intensity profiles are sampled
-at positions along its centreline. Opposite-polarity intensity changes on
-either side of the centreline are used to estimate one apparent projected
-width for the instance.
+\subsection{\rev{Optional SEM characterisation and ribbon rendering}}
+\label{sec:mm-stage4}
 
-The measured quantity is described as an \emph{apparent projected width}
-rather than a diameter. The SEM image provides a two-dimensional projected
-intensity profile, and the method does not assume that the physical bundle
-cross-section is circular.
+\rev{After grouping, perpendicular SEM profiles are sampled every 2 px along
+each ordered chain and at least 6 px from a junction. Profiles are recentred by
+at most 3 px and accepted only when contrast exceeds both four background-noise
+standard deviations and 0.05 normalised intensity; fitted widths must lie
+between 1.5 and 36 px. At least three valid cuts are required. These
+measurements attach apparent width, brightness, uncertainty, and a quality flag
+to an existing instance; they cannot alter its arm membership.}
 
-Each centreline is rendered at its estimated width. Conflicts introduced by
-width rendering are handled while retaining multi-label ownership at genuine
-crossings, where more than one physical bundle may occupy the same projected
-image location.
+\rev{Optional ribbon rendering interpolates accepted gaps, resamples the
+centreline at 1 px, smooths it over 9 px with fixed endpoints, and draws the
+chain at its fitted width clipped to 3--40 px. It excludes junction blobs and
+does not clip the ribbon back to the input mask. Silhouette absorption would
+union rendered instances, but its threshold is zero by default. No absorption
+or later post-hoc continuation merge contributed to the 128-scene held-out
+result; neither is presented as part of the evaluated algorithm.}
 
-Stage~4 is not part of the primary centreline-grouping endpoint. Its apparent
-widths and rendered outputs require validation separately from the Stage~3
-instance-grouping result.
-
-\note{%
-To discuss: should Stage~4 stay part of the main FilaSeg pipeline, or be
-presented as a separate SEM-assisted measurement and postprocessing module?
-}
-
-\paragraph{Physical-scale adaptation.}
-
-The pixel-valued parameters of Stages~1--4, such as maximum gap lengths,
-minimum fragment areas, morphological kernel sizes, and curvature thresholds,
-were tuned using images represented at the reference physical pixel size
-$u_{\mathrm{ref}}$. If an image is acquired at a different magnification or
-pixel size, applying the same numerical pixel values would correspond to
-different physical distances and areas. The parameters are therefore rescaled
-so that they retain approximately the same physical meaning across images.
-
-For a current image with physical pixel size $u$, the pixel-scale conversion
-factor is defined as
-
-\begin{equation}
-    s_{\mathrm{px}}
-    =
-    \frac{u_{\mathrm{ref}}}{u},
-    \label{eq:spx}
-\end{equation}
-
-where $u_{\mathrm{ref}}$ is the physical size represented by one pixel in the
-reference image and $u$ is the physical size represented by one pixel in the
-current image.
-
-Parameters are scaled according to their physical dimension:
-
-\begin{equation}
-\begin{split}
-    d_{\mathrm{px}}(u)
-    &=
-    s_{\mathrm{px}}\,d_{\mathrm{px,ref}},
-    \\
-    A_{\mathrm{px}}(u)
-    &=
-    s_{\mathrm{px}}^{2}\,A_{\mathrm{px,ref}},
-    \\
-    \kappa_{\mathrm{px}}(u)
-    &=
-    \frac{\kappa_{\mathrm{px,ref}}}{s_{\mathrm{px}}},
-\end{split}
-\label{eq:scaling}
-\end{equation}
-
-where $d_{\mathrm{px,ref}}$ is a reference distance or length measured in
-pixels, $A_{\mathrm{px,ref}}$ is a reference area measured in pixels squared,
-and $\kappa_{\mathrm{px,ref}}$ is a reference curvature threshold measured in
-inverse pixels. The corresponding quantities
-$d_{\mathrm{px}}(u)$, $A_{\mathrm{px}}(u)$, and
-$\kappa_{\mathrm{px}}(u)$ are the values used for the current image.
-
-Because $s_{\mathrm{px}}$ converts a single physical length into pixels,
-lengths scale linearly with it, areas with its square, and curvatures, being
-inverse lengths, with its reciprocal.
-
-For example, consider an image whose pixel size is twice as large as the
-reference pixel size, so that $u=2u_{\mathrm{ref}}$ and
-$s_{\mathrm{px}}=0.5$. A reference maximum gap of $20$~px is then reduced to
-$10$~px, while a reference minimum area of $100$~px$^{2}$ is reduced to
-$25$~px$^{2}$. Both adjusted values represent approximately the same physical
-distance and area as in the reference image.
-
-Dimensionless parameters, such as fractions, angular thresholds expressed as
-cosines, and iteration counts, are not rescaled. The physical pixel size of
-the current image is supplied explicitly or obtained from available SEM
-acquisition metadata. The reference scale is used only as a documented
-fallback when image-specific scale information is unavailable.
-
-% =========================================================================
-\subsection{Evaluation metrics, comparison protocol, and statistical analysis}
+\subsection{\rev{Metrics and statistical analysis}}
 \label{sec:mm-metrics}
 
-FilaSeg is evaluated primarily as a binary-mask-to-instance method. The
-procedural evaluation scenes provide exact instance references, while the
-single real SEM crop is treated only as a development case study.
-
-Synthetic development scenes and the manually annotated real crop were used
-to develop the method and select comparison-method settings. The FilaSeg
-configuration, comparison settings, and metric implementation were then fixed
-before evaluating a disjoint set of previously unevaluated synthetic scenes.
-
-The predefined synthetic evaluation contains \LockedSceneCount{}
-independently seeded scenes distributed across five target areal-density
-levels.
-Each comparison method receives the same degraded binary mask for a given
-scene.
-
-The development set contains 20 procedural geometries together with the single
-real crop. The disjoint predefined set was generated from base seed 20260801
-with 25 scenes at each target areal density: for areal density
-$d\in\{20,30,40,50,60\}$ and zero-based index $i$, the scene seed is
-$20260801+100d+i$. Exact scene paths, seeds, input and ground-truth hashes,
-method outputs and failure states are recorded per scene in the evaluation
-manifest distributed with the manuscript.
-
-\subsubsection{Comparison methods}
-\label{sec:mm-baselines}
-
-The principal same-input comparator is a minimum-turn skeleton tracer. It
-skeletonizes the binary mask and continues branches through junctions or gaps
-by selecting the continuation with the smallest turning angle, subject to a
-maximum allowed gap and turning angle selected during development.
-
-A connected-component method is retained only as an additional lower-bound
-sanity check. It assigns one label to each connected foreground component and
-does not attempt to resolve crossings or reconnect gaps.
-
-Component-ablation experiments remove selected FilaSeg criteria while
-retaining the remainder of the pipeline. These experiments are exploratory
-and are used to investigate which processing stages contribute to the observed
-performance.
-
-\subsubsection[Primary metric: common-fragment pairwise F1]
-{Primary metric: common-fragment pairwise \Fone{}}
-\label{sec:mm-f1}
-% The object-level recovery companion measure is defined at the end of this
-% subsubsection; Section 3 cites it as sec:mm-instance.
-\label{sec:mm-instance}
-
-The primary metric is a fragment-level adaptation of pairwise clustering
-precision, recall, and \Fone{}. Pairwise comparison of partitions originates
-from the Rand family of clustering measures~\citep{rand1971objective} and was
-later adapted to quantify split and merge errors in image and volume
-segmentation~\citep{argandacarreras2015crowdsourcing}.
-
-For each synthetic scene, FilaSeg and the minimum-turn tracer receive the same
-degraded binary filament-axis mask. Each method independently separates and
-groups the visible filament structure into predicted instances.
-
-For scoring, the visible input structure is partitioned into a common,
-method-independent set of elementary centreline fragments. These fragments are
-not additional inputs to the algorithms. They serve only as shared scoring
-units. Each fragment is assigned a reference filament identity from the
-procedural ground truth and a predicted instance identity from each method's
-output.
-
-This fragment-level adaptation is appropriate because the main objective is to
-determine which visible parts of the network belong to the same physical
-filament, and because it makes the score invariant to arbitrary instance
-numbering.
-
-For all valid pairs of common fragments:
-
-\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-    \item a true-positive pair contains two fragments from the same reference
-    filament that are assigned to the same predicted instance;
-
-    \item a false-positive pair contains fragments from different reference
-    filaments that are incorrectly assigned to the same predicted instance;
-    and
-
-    \item a false-negative pair contains fragments from the same reference
-    filament that remain assigned to different predicted instances.
-\end{itemize}
-
-Pairwise precision, recall, and \Fone{} are calculated as
+\rev{The primary endpoint is common-fragment pairwise \Fone{}. For each scene,
+the visible input skeleton is partitioned once into method-independent elementary
+fragments. Each fragment receives a procedural reference identity and a PLECTA
+instance identity. A true-positive pair shares both identities; a false-positive
+pair joins different reference filaments; and a false-negative pair separates
+fragments of one reference filament. Thus}
 
 \begin{equation}
-    P
-    =
-    \frac{\mathrm{TP}}
-         {\mathrm{TP}+\mathrm{FP}},
-    \qquad
-    R
-    =
-    \frac{\mathrm{TP}}
-         {\mathrm{TP}+\mathrm{FN}},
-    \qquad
-    \Fone{}
-    =
-    \frac{2PR}{P+R}.
+    \rev{P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
+    R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\qquad
+    \Fone{}=\frac{2PR}{P+R}.}
     \label{eq:pairwise-f1}
 \end{equation}
 
-Pairwise precision decreases when fragments from different filaments are
-over-merged into one predicted instance. Pairwise recall decreases when
-fragments from one filament remain split across several predicted instances.
+\rev{This is a clustering metric related to the Rand family
+\citep{rand1971objective,argandacarreras2015crowdsourcing}. It scores grouping,
+not rendered width, and weights filaments with many fragments more strongly
+because their pair count is quadratic. We therefore also report adjusted Rand
+index \citep{hubert1985comparing}, variation of information split and merge
+components \citep{meila2007comparing}, and the fraction of reference filaments
+recovered by one dominant predicted instance using 0.8 purity and coverage
+thresholds.}
 
-Before fragment identities are assigned for scoring, every method output is
-reduced to an equivalent one-pixel centreline representation. The metric
-therefore evaluates instance grouping independently of Stage~4 apparent-width
-estimation and rendering.
-
-Fragments that cannot be assigned to a valid reference filament are retained
-as singleton false evidence rather than being silently excluded from the
-evaluation.
-
-In addition to the pairwise grouping score, an object-level recovery summary
-is reported. Each reference filament is classified according to whether it is
-recovered as one dominant predicted instance, fragmented across several
-predicted instances, or absorbed into another instance. Predicted instances
-without a dominant reference association are counted as false instances. This
-companion analysis helps interpret whether a reduction in pairwise precision
-or recall arises mainly from over-merging, fragmentation, or loss of complete
-filament instances.
-
-\subsubsection{Statistical analysis}
-\label{sec:mm-statistics}
-
-Uncertainty is estimated using paired, density-stratified bootstrap resampling
-of the synthetic evaluation scenes. Pairing preserves the comparison between
-methods within each scene, while density stratification preserves the number
-of scenes contributed by each target areal-density level.
-
-The primary reported contrast is the within-scene difference between FilaSeg
-and the minimum-turn comparator. Confidence intervals are calculated from the
-bootstrap distribution of the corresponding aggregate statistic.
-
-Density-specific results are reported separately because the difficulty of
-the grouping problem changes as the synthetic filament network becomes denser.
-
-\todo{Add the metric edge cases, object-recovery thresholds, bootstrap
-replicate counts, random seeds and complete ablation configurations.}
+\rev{Held-out means and density strata are accompanied by 95\% nonparametric
+bootstrap intervals (20,000 replicates; seed 20,260,810). Aggregate resampling
+is stratified by density. The clean-minus-degraded analysis resamples paired
+scene differences within density. Active-component ablations are one-at-a-time
+development experiments on all 84 development scenes and are labelled as such;
+they do not reuse the held-out set.}
