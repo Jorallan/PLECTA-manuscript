@@ -31,14 +31,24 @@ in collagen, biopolymer, and fibrous materials
 \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
 flormann2021finta,hotaling2015diameterj}; methods such as that of
 Depriester et al. address fibre separation directly
-\citep{depriester2022fibre}. Learned filament-instance approaches include
-FibeR-CNN and recurrent pick-and-trace models
-\citep{frei2020fiber,liu2023picktrace}. Orientation-aware branch separation
-followed by terminus pairing has also been used for microscopy filaments
-\citep{liu2019intersection}. These approaches establish the importance of
-centreline and continuation evidence, but dense binary masks still require an
-explicit answer to which arms share an instance and which crossing pixels may
-belong to several instances.}
+\citep{depriester2022fibre}.}
+
+\rev{The reconstruction of individual filaments from networks is itself
+established prior art. Basu et al. combine centreline fragments by integer
+programming, DeFiNe optimizes filament covers of weighted graphs, and De et al.
+partition directed graphs to resolve crossovers
+\citep{basu2015extraction,breuer2015define,de2016graph}. SIFNE removes
+junctions and reconnects termini using propagation direction, angular
+continuity, and gap distance \citep{zhang2017sifne}; DNAi evaluates weighted
+local endpoint pairings after erasing fibre junctions
+\citep{playout2026dnai}. Learned alternatives
+include orientation-aware terminus pairing, deep pixel embeddings for tangled
+microplastic fibres, FibeR-CNN, and recurrent pick-and-trace models
+\citep{liu2019intersection,wegmayr2020microplastic,frei2020fiber,%
+liu2023picktrace}. GraFT additionally traces and tracks actin structures as a
+graph over time \citep{osterlund2026graft}. Thus skeleton graphs, continuation
+angles, distance gates, optimization, and filament-level outputs are not
+claimed here as new in isolation.}
 
 \rev{CNT-specific workflows increasingly combine semantic segmentation with
 algorithmic tracing and transverse intensity profiles
@@ -52,12 +62,13 @@ contribution.}
 
 \rev{We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents
 and Assignment), a deterministic graph-matching method for dense filament
-networks. PLECTA decomposes a skeleton into arms, endpoint stubs, and merged
-junction nodes. It then alternates exact per-node continuation matching with
-globally gated gap matching while tangent and curvature estimates expand from
-local arms to assembled chains. Its output is a set of projected 2-D instance
-layers in which crossing pixels may be shared. The name evokes the Latin
-\emph{plectere}, to weave or interlace, without implying recovery of depth.}
+networks. Its contribution is the specific binary-mask-only reconstruction
+design evaluated here: graph preconditioning; exact partial matching within
+each merged junction, including the option to leave an arm unmatched; global
+gated matching across disconnected gaps; iterative replacement of local
+tangents by chain-supported frames; and overlap-aware output layers in which
+crossing pixels may be shared. The name evokes the Latin \emph{plectere}, to
+weave or interlace, without implying recovery of depth.}
 
 \rev{The study asks three questions. First, how accurately does the fixed
 method group method-independent skeleton fragments on unseen procedural scenes,
