@@ -1,181 +1,71 @@
-\par
-\medskip
-\begingroup
-\color{red}
-
-\noindent\textbf{Review note:}
-A central framing question for this manuscript is how the Introduction should
-be organized. Should the paper begin with the general problem of instance
-segmentation and disentanglement in dense filamentary-network images, with CNT
-bundle sheets presented as the main application and validation case?
-Alternatively, should the Introduction begin with the need to characterize CNT
-sheets from SEM images, with FilaSeg presented primarily as a CNT-specific
-analysis method?
-
-A possible general-to-specific structure is:
-
-\begin{enumerate}
-    \item Introduce the general difficulty of separating individual filaments
-    in dense, crossing, and fragmented networks.
-
-    \item Explain why conventional connected-component methods and
-    compact-object instance-segmentation approaches are poorly suited to long,
-    thin, intersecting structures.
-
-    \item Introduce CNT bundle sheets as an important application for which
-    individual bundle geometry must be recovered from SEM images.
-
-    \item Describe how the upstream CycleGAN/U-Net workflow produces the binary
-    CNT bundle-axis mask supplied to FilaSeg.
-
-    \item Review relevant filament-tracing, learned instance-segmentation, and
-    CNT-image-analysis methods.
-
-    \item Identify the methodological gap addressed by FilaSeg.
-
-    \item State the contribution, evaluation strategy, and principal
-    limitations.
-\end{enumerate}
-
-The alternative CNT-first structure would begin with the scientific need to
-measure individual bundles in CNT sheets and would then introduce dense
-filament disentanglement as the image-analysis problem preventing this.
-
-Which framing is more appropriate: a general filament-instance-segmentation
-paper demonstrated on CNT SEM images, or a CNT-sheet characterization paper
-centred on the complete SEM-to-instance workflow?
-
-\endgroup
-\medskip
-\par
-
-\section{Introduction}
+\section{\rev{Introduction}}
 \label{sec:intro}
 
-The macroscopic properties of carbon nanotube (CNT) films, yarns and composites
-are governed by the geometry of the bundle network rather than by the properties
-of individual nanotubes alone: the length distribution of the bundles, their
-width, their local orientation and alignment, their curvature, and the density
-and topology of the crossings between them all enter the mechanical and
-electrical response \citep{devolder2013cnt,coleman2006small}. Mesoscopic and
-network models of CNT assemblies take exactly this description, slender mutually
-contacting elements with measurable geometry, as their input
-\citep{volkov2010structural,ostanin2013distinct,wittmaack2018mesoscopic}.
-Scanning electron microscopy (SEM) is the routine imaging modality for such
-materials, yet the quantitative analysis that follows an acquisition usually
-stops at bulk descriptors: an areal coverage fraction, a mean width, or a global
-orientation-order parameter. These summarize the network but discard the object
-that quantitative characterization actually needs, the individual bundle as an
-addressable instance with its own centreline, width, endpoints and crossings.
-Image analysis of CNT micrographs has followed the same emphasis, quantifying
-nematic order or the orientation distribution of CNT forests and films
-\citep{dong2022detecting,imtiaz2023facile}.
-Recent work has also applied neural networks to identify CNT foreground in
-microscopy images \citep{nguyen2023cntsegnet,trujillo2017segmentation}, while
-broader reviews summarize deep-learning segmentation across nanomaterial
-imaging \citep{dedonato2025deep}.
+\rev{The properties of carbon-nanotube (CNT) sheets, yarns, and composites
+depend on the geometry of their bundle networks: length, width, orientation,
+curvature, and contact topology influence mechanical and electrical response
+\citep{devolder2013cnt,coleman2006small,volkov2010structural,%
+ostanin2013distinct,wittmaack2018mesoscopic}. Scanning electron microscopy
+(SEM) resolves this projected network, but routine image analysis often stops
+at coverage or orientation distributions
+\citep{dong2022detecting,imtiaz2023facile}. Instance-resolved analysis instead
+requires each visible bundle to remain addressable across gaps, touches, and
+crossings.}
 
-The obstacle is not semantic segmentation. Convolutional segmentation networks
-such as U-Net \citep{ronneberger2015unet} and its self-configuring successors
-\citep{isensee2021nnunet} produce good foreground masks of CNT structures.
-Instance-level extraction, partitioning that foreground into the correct set of
-individual bundles, remains challenging in dense, overlapping filament networks,
-for four coupled reasons. First, bundles are effectively one-dimensional objects
-embedded in a two-dimensional image, so a single faint patch a few pixels long
-splits one bundle into two mask fragments. Second, bundles cross and touch, so
-foreground connectivity does not correspond to bundle identity: two crossing
-bundles form one connected component that must be split, while one faded bundle
-forms two components that must be joined. Third, the bundles are densely packed,
-so at a crossing a locally correct continuation and a locally plausible wrong
-continuation are often geometrically indistinguishable. Fourth, the objects are
-only a few pixels wide, so pixel-overlap instance metrics and one-pixel skeleton
-artefacts dominate naive approaches. Standard instance-segmentation priors
-assume a compact object with a clear interior and boundary: a bounded blob, a
-flow field pointing toward a centre, or a star-convex shape
-\citep{stringer2021cellpose,schmidt2018stardist,kirillov2023sam}. CNT bundles
-do not fit that assumption: they are long, thin, crossing curves with no
-meaningful centre, and they may overlap.
+\rev{This requirement is distinct from semantic segmentation. U-Net and its
+self-configuring variants can identify filament foreground
+\citep{ronneberger2015unet,isensee2021nnunet}, but a binary foreground mask does
+not encode object identity. A faded segment splits one filament into several
+connected components; a crossing joins different filaments into one component.
+The ambiguity is greatest in dense networks, where several local continuations
+can be geometrically plausible. Compact-object instance priors---bounded blobs,
+centre-directed flows, or star-convex shapes---are poorly matched to long open
+curves that may overlap \citep{stringer2021cellpose,schmidt2018stardist,%
+kirillov2023sam}.}
 
-Four classes of existing method address parts of this problem. \emph{Ridge and
-tubular-structure detectors} \citep{steger1998unbiased,frangi1998vesselness,%
-sato1998linefilter} recover sub-pixel line positions and enhance line-like
-structure from grayscale intensity, but they do not assign pixels to individual
-objects across a junction. \emph{Fibre-network tracing tools} developed for
-collagen and biopolymer networks, including FIRE and CT-FIRE
-\citep{stein2008fire,bredfeldt2014ctfire}, SOAX \citep{xu2015soax} and the FiNTA
-tracing algorithm \citep{flormann2021finta}, return per-fibre length, width and
-orientation, but they target sparser, often micron-scale fibres and yield a fibre
-graph rather than a set of separately rendered, individually addressable
-instances. \emph{Aggregate measurement tools} such as DiameterJ
-\citep{hotaling2015diameterj} deliver well-validated width and pore-size
-distributions over a whole micrograph, but as image-level distributions rather
-than per-instance geometry, and they do not resolve crossing ownership.
-\citet{depriester2022fibre} address that separation step directly, recovering
-individual fibres in fibrous materials. \emph{Learned instance methods} for
-filaments are emerging: FibeR-CNN \citep{frei2020fiber} extends Mask R-CNN to
-image-based fibre analysis, including CNT-like fibres, as an
-independent raw-image detector rather than a centreline-mask grouping method,
-and Pick and Trace \citep{liu2023picktrace} segments filamentous instances
-with a recurrent network. The closest published methodological relative of the
-present reconnection stage is the terminus-pairing approach of
-\citet{liu2019intersection}, which separates a raw microscopy image into
-orientation-specific branches with a learned network and then pairs terminus
-points across branches to regroup fragments into individual filaments,
-validated on microtubule micrographs rather than on a precomputed centreline
-mask. FilaSeg applies the same decomposition of orientation separation followed
-by endpoint pairing, but realises both steps as explicit geometric criteria on
-a binary axis mask rather than as a trained network on the grayscale image, and
-does not build on that work as a component. Instance tracing of crossing
-curvilinear objects is also mature in other domains, in neuron reconstruction
-\citep{brown2011diadem,gillette2011diademmetric,xiao2013app2}, plant-root
-architecture \citep{pound2013rootnav} and crack segmentation
-\citep{yang2018crack}, but each
-embeds a domain-specific prior that dense CNT bundle films or networks
-(referred to here as \emph{CNT mats}) do not satisfy: bundles are open curves
-that cross freely and carry neither a root nor a hierarchy.
+\rev{Existing methods address complementary parts of the problem. Ridge and
+vesselness filters enhance curvilinear signal but do not assign identity across
+junctions \citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}.
+FIRE, CT-FIRE, SOAX, FiNTA, and DiameterJ extract fibres or network statistics
+in collagen, biopolymer, and fibrous materials
+\citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
+flormann2021finta,hotaling2015diameterj}; methods such as that of
+Depriester et al. address fibre separation directly
+\citep{depriester2022fibre}. Learned filament-instance approaches include
+FibeR-CNN and recurrent pick-and-trace models
+\citep{frei2020fiber,liu2023picktrace}. Orientation-aware branch separation
+followed by terminus pairing has also been used for microscopy filaments
+\citep{liu2019intersection}. These approaches establish the importance of
+centreline and continuation evidence, but dense binary masks still require an
+explicit answer to which arms share an instance and which crossing pixels may
+belong to several instances.}
 
-Closest at the level of the complete workflow is that of
-\citet{peters2026fibre}, who combine U-Net-like semantic segmentation with
-algorithmic fibre tracing, crossing separation and width refinement from
-transverse grayscale profiles, and validate on SEM images of CNT materials for
-aerosol characterization and exposure assessment. Two-stage
-semantic-segmentation-plus-tracing designs therefore already exist for CNT SEM,
-and the contribution claimed here is not the two-stage idea itself. What
-distinguishes the present work is the operating regime and the representation.
-\citet{peters2026fibre} target low-occupancy aerosol-filter
-images, in which fibres are comparatively isolated; the target here is a dense
-CNT mat in which the crossing density, not the detectability of a single fibre,
-sets the difficulty. The input representation differs accordingly: FilaSeg
-consumes a thin-axis centreline mask rather than a full bundle silhouette, and
-emits a multi-label representation in which overlapping instances retain their
-shared pixels at a crossing instead of one instance claiming them. The method
-differs in using tiled Hough-based residual vectorization followed by staged,
-topology-checked reconnection, and the evaluation differs in reporting a
-pair-weighted grouping diagnostic that separates over-merging from under-merging,
-in stress-testing across a controlled range of crossing density, and in adapting
-every pixel-scale parameter to the physical pixel size. These are differences
-in design, not a head-to-head performance comparison with \citet{peters2026fibre}
-or the other related methods above; the present evidence does not establish
-quantitative superiority over them (Section~\ref{sec:limitations}).
+\rev{CNT-specific workflows increasingly combine semantic segmentation with
+algorithmic tracing and transverse intensity profiles
+\citep{peters2026fibre}. The present work focuses on the difficult middle step
+of that workflow: binary mask to overlap-aware instances. This separation is
+deliberate. It allows grouping to be evaluated independently of the upstream
+segmenter and prevents width rendering from changing an identity metric. An
+optional CycleGAN/U-Net route supplies masks for the SEM application
+\citep{ruehle2021workflow,allan2026cntsem}, but it is not the principal
+contribution.}
 
-This paper presents FilaSeg, a geometry-based postprocessing method that takes
-a binary filament-centreline mask together with the grayscale SEM image from
-which it was derived and returns a set of possibly overlapping instances, each
-carrying a pixel support, an ordered centreline, a width, a length and
-endpoints, stored as a multi-label stack so that crossings are preserved. These
-geometric fields are exported for downstream use but are not claimed as
-validated measurements in the present study. The method proceeds in four
-stages: tiled Hough-based residual vectorization, orientation-aware fragment
-cleaning, geometry-based instance reconnection, and SEM-gradient-based width
-estimation with final rendering. It is evaluated on one manually annotated real
-SEM crop and on a procedural synthetic benchmark that renders thick bundles for
-the SEM channel while feeding the method the thin axis that an upstream
-segmenter actually reconstructs. Three questions are addressed: how grouping
-accuracy depends on the generator's target areal density; whether the
-conclusion changes when methods are scored on equivalent centreline
-representations; and which scenes favour FilaSeg or a minimum-turn comparator.
-The semantic segmentation that produces the input mask is treated
-throughout as an external upstream process and is not evaluated here. The
-real-data evidence rests on a
-single annotated development crop, so it is presented qualitatively rather than
-as a population estimate.
+\rev{We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents
+and Assignment), a deterministic graph-matching method for dense filament
+networks. PLECTA decomposes a skeleton into arms, endpoint stubs, and merged
+junction nodes. It then alternates exact per-node continuation matching with
+globally gated gap matching while tangent and curvature estimates expand from
+local arms to assembled chains. Its output is a set of projected 2-D instance
+layers in which crossing pixels may be shared. The name evokes the Latin
+\emph{plectere}, to weave or interlace, without implying recovery of depth.}
+
+\rev{The study asks three questions. First, how accurately does the frozen
+method group method-independent skeleton fragments on unseen procedural scenes,
+including high-density cases? Second, which active geometric and topological
+components account for that performance, and how sensitive is it to mask
+degradation? Third, what does the method deliver in a CNT SEM workflow when the
+mask is derived manually or by a learned segmenter? Synthetic scenes provide
+exact overlap-aware identity; real SEM remains a development case. The intended
+claim is therefore a reproducible instance-reconstruction result under the
+tested generator, with explicit limits on distribution transfer, width
+validation, and 3-D interpretation.}

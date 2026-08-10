@@ -1,42 +1,28 @@
-Disentangling dense filamentary networks into individual instances is
-challenging because gaps interrupt true trajectories, while crossings create
-several locally plausible continuations. We present FilaSeg, a non-learning,
-geometry-based method that takes a binary filament-axis mask and separates it
-into individual filament instances through residual vectorization, fragment
-cleaning, and staged, topology-checked geometric reconnection. Its instance
-grouping performance is evaluated on procedurally generated filament networks
-with exact ground truth and compared with a minimum-turn skeleton tracer.
-Methods are assessed using a common, method-independent partition of the input
-skeleton into fragments, with pairwise grouping \Fone{} calculated on
-equivalent per-instance centreline representations before width rendering.
+\rev{Dense filament networks are difficult to partition into instances because
+crossings join distinct objects while segmentation gaps divide single objects.
+We present PLECTA, a deterministic method that converts a binary filament-axis
+mask into overlap-aware two-dimensional instances. PLECTA skeletonizes and
+decomposes the mask into arms and junctions, alternates exact per-junction
+continuation matching with globally gated gap matching, and re-estimates
+tangent, chord, and curvature evidence from the assembled chains. Crossing
+pixels may therefore belong to more than one output instance.}
 
-After the method settings and evaluation protocol were fixed, FilaSeg and the
-minimum-turn tracer were evaluated on \LockedSceneCount{} independently seeded
-procedural scenes. FilaSeg achieved a mean common-fragment
-\Fone{}=\LockedFilaSegCommonFOneMean{} (density-stratified 95\% bootstrap CI
-[\LockedFilaSegCommonFOneCILow{}, \LockedFilaSegCommonFOneCIHigh{}]), with a
-paired FilaSeg-minus-minimum-turn difference of
-\FilaSegMinusBaselineSkeletonCommonFOneMean{} (95\% CI
-[\FilaSegMinusBaselineSkeletonCommonFOneCILow{},
-\FilaSegMinusBaselineSkeletonCommonFOneCIHigh{}]). The advantage was not
-uniform across density: it was resolved at four of the five tested densities,
-while the interval crossed zero at the fifth. Re-scoring the same scenes on
-undegraded masks narrowed the paired difference to 0.042 [0.031, 0.053],
-indicating that much of the aggregate advantage reflects insensitivity to mask
-degradation rather than crossing disambiguation alone.
+\rev{Evaluation used a method-independent partition of each input skeleton into
+common fragments. On \PlectaHeldoutSceneCount{} independently seeded held-out
+scenes from the same procedural generator, PLECTA achieved mean pairwise
+\Fone{}=\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
+[\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]), precision
+\PlectaHeldoutPrecisionMean{}, recall \PlectaHeldoutRecallMean{}, recovery
+\PlectaHeldoutRecoveryMean{}, and adjusted Rand index
+\PlectaHeldoutARIMean{}, with no failed scenes. Mean \Fone{} decreased from
+\PlectaDensity20FOneMean{} at 20\% coverage to
+\PlectaDensity60FOneMean{} at 60\%, identifying dense crossings as the main
+remaining regime of error. Development-only ablations showed that chord-turn
+evidence, gap bridging, and crossing matching made the largest contributions.}
 
-FilaSeg was subsequently applied to scanning electron microscopy (SEM) images
-of carbon-nanotube (CNT) sheets. There, a separate upstream CycleGAN/U-Net
-workflow converts the SEM data into binary masks representing the axes of the
-CNT bundles. These masks are supplied to FilaSeg, while the paired SEM image is
-used again in Stage~4 to estimate apparent bundle widths, handle overlapping
-rendered instances, and produce the final output.
-Evaluating the rendered Stage~4 output instead of the Stage~3 centreline
-representation produced a lower grouping score, indicating that centreline
-grouping should be assessed separately from width rendering and final-output
-postprocessing.
-
-A single manually annotated SEM crop was used during development and is not a
-held-out test. The predefined synthetic evaluation therefore supports a
-conditional advantage over the fixed minimum-turn comparator for the tested
-generator.
+\rev{CNT-sheet scanning electron microscopy provides the application case. An
+optional upstream synthetic-data-driven U-Net supplies the binary mask; SEM
+width measurement and ribbon rendering are downstream characterisation stages
+and did not affect the held-out grouping result. The evidence supports
+same-generator synthetic generalisation and a development illustration on real
+SEM data, not general real-image or three-dimensional reconstruction claims.}

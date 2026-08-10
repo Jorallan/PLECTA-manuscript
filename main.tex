@@ -1,6 +1,5 @@
 %==============================================================================
-%  FilaSeg: Geometry-based instance reconstruction of carbon nanotube bundles
-%  from degraded centreline masks
+%  PLECTA: overlap-aware instance reconstruction of dense filament networks
 %
 %  Working format: Materials Characterization research article
 %  (Introduction / Materials and methods / Results / Discussion / Conclusions).
@@ -8,10 +7,7 @@
 %  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf main.tex).
 %  Uses only standard CTAN packages.
 %
-%  WORKING DRAFT - NOT THE SUBMISSION VERSION.
-%  Several Materials-and-methods and Discussion subsections are still condensed
-%  to short summaries. Open points are flagged inline with \note{}, \todo{} and
-%  \needed{} so they stay visible while we finish the draft.
+%  Open author-supplied metadata are flagged with \todo{} or \needed{}.
 %==============================================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -80,17 +76,13 @@
 %------------------------------------------------------------------------------
 %  Generated numerical results.
 %
-%  paper/results/filaseg_results.tex is written by
-%  paper/scripts/results/make_result_macros.py from the machine-readable evaluation
-%  records under paper/results/. It is the single numerical source of truth:
-%  every headline value in the Abstract, Results, Discussion, Conclusions and
-%  the tables is a macro defined there, so no number is typed by hand in more
-%  than one place. Do not edit the generated file.
+%  results/plecta_results.tex is generated from the machine-readable PLECTA
+%  records by scripts/results/make_plecta_results.py. Do not edit it directly.
 %------------------------------------------------------------------------------
-\input{results/filaseg_results}
+\input{results/plecta_results}
 
-\title{\vspace{-1.2cm}\bfseries FilaSeg: Geometry-based instance reconstruction
-of carbon nanotube bundles from degraded centreline masks}
+\title{\vspace{-1.2cm}\bfseries \rev{PLECTA: Overlap-aware instance
+reconstruction of dense filament networks from binary masks}}
 
 \author{%
   \begin{minipage}{0.94\textwidth}
@@ -115,27 +107,9 @@ of carbon nanotube bundles from degraded centreline masks}
 \input{sections/00_abstract}
 \end{abstract}
 
-\note{A broader upstream pipeline also exists around the method described in
-this manuscript: real SEM images and procedurally generated masks $\to$
-CycleGAN image translation $\to$ U-Net semantic segmentation $\to$ binary CNT
-bundle-axis mask $\to$ FilaSeg instance extraction $\to$ SEM-assisted Stage-4
-width estimation, overlap handling, and rendering. This manuscript currently
-treats the binary axis mask as the formal input and evaluates only the
-instance-extraction stages. To discuss:
-\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
-  \item Should the complete upstream CycleGAN/U-Net pipeline be integrated
-  into this paper?
-  \item Should it instead remain a separate paper or companion workflow?
-  \item Should the current manuscript continue to treat the binary axis mask
-  as the formal input?
-  \item Give Stage 4 (SEM-assisted measurement/postprocessing) its own
-  discussion.
-\end{itemize}
-}
-
-\noindent\textbf{Keywords:} carbon nanotubes; scanning electron microscopy;
-instance segmentation; curvilinear structure extraction; Hough transform;
-filament tracing; image-based microstructural characterization.
+\noindent\textbf{Keywords:} \rev{filament networks; instance segmentation;
+graph matching; geometric reconstruction; carbon nanotubes; scanning electron
+microscopy.}
 
 \input{sections/01_introduction}
 \input{sections/02_materials_methods}
@@ -154,25 +128,19 @@ personal relationships that could have appeared to influence the work reported
 in this paper.
 
 \section*{Data and code availability}
-The FilaSeg source code, the procedural synthetic benchmark generator, the
-evaluation subsystem, and the manually annotated real test crop are contained in
-the accompanying repository. Every numerical result reported here is reproducible
-from that repository using the commands, environment versions, configuration
-hashes and seeds recorded in \texttt{docs/REPRODUCIBILITY.md}, together with the
-per-scene evaluation manifest distributed with the manuscript.
-\todo{Replace the repository link with a citable archived release (a Zenodo DOI
-or a tagged GitHub release) before submission, and confirm a clean checkout
-reproduces the reported numbers first -- see Section~\ref{sec:limitations}.}
+\rev{The frozen implementation, configuration, seed manifest, evaluation
+scripts, and machine-readable results are available at
+\url{https://github.com/Jorallan/PLECTA}. Generated scene images remain local
+because they are procedurally reproducible from the recorded seeds.}
+\todo{Create a tagged archival release and add its DOI before submission; do
+not infer or preassign a DOI.}
 
 \section*{Acknowledgements}
-The authors thank the maintainers of the open-source scientific-Python stack
-(NumPy, SciPy, scikit-image, OpenCV, Matplotlib) on which this work is built.
-The binary centreline masks used in the real case study were produced by a
-separate synthetic-data-driven segmentation workflow (Section~\ref{sec:mm-masks})
-that adapts the open CycleGAN/U-Net particle-segmentation workflow of Rühle and
-colleagues at BAM (Bundesanstalt für Materialforschung und
--prüfung)~\citep{ruehle2021workflow}; that workflow is not evaluated here and we
-gratefully acknowledge its authors.
+\rev{The authors thank the maintainers of NumPy, SciPy, scikit-image, NetworkX,
+and Matplotlib. The upstream synthetic-data-driven mask workflow adapts the
+open CycleGAN/U-Net particle-segmentation workflow of Rühle et
+al.~\citep{ruehle2021workflow}; it is not evaluated as the contribution of this
+paper.}
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}
