@@ -9,7 +9,7 @@ $M\in\{0,1\}^{H\times W}$. PLECTA reconstructs an overlap-aware collection
 $\{I_1,\ldots,I_N\}$, where $I_n\subseteq M$ and a crossing pixel may belong
 to several instances. The evaluated grouping stage uses only $M$. A grayscale
 SEM image is optional downstream input for width and brightness measurement;
-it cannot revise the frozen grouping. Figure~\ref{fig:scope} separates this
+it cannot revise the fixed grouping. Figure~\ref{fig:scope} separates this
 core task from upstream mask extraction and downstream rendering.}
 
 \begin{figure}[t]
@@ -116,7 +116,7 @@ dominate.}
 \rev{Each of eight rounds first resolves junctions and then gaps
 (Figure~\ref{fig:gates}). At a junction, candidates must share the node, use
 different arms, and have finite frames and cost. Exact maximum-weight partial
-matching selects disjoint pairs while allowing unmatched stubs. With the frozen
+matching selects disjoint pairs while allowing unmatched stubs. With the fixed
 unmatched price, a full-strictness junction edge is eligible only when its cost
 is below 1.24.}
 
@@ -127,7 +127,7 @@ each end at most 0.28 rad. Global exact matching then accepts only edges whose
 cost is below 0.60 at full strictness. Cycles are broken after junction matching
 and again after gap matching. The unmatched prices and angular gap limits are
 annealed linearly from 85\% to full strictness. Because only the eighth round is
-fully strict in the frozen schedule, that round is returned; there is no
+fully strict in the fixed schedule, that round is returned; there is no
 effective competition among several full-strictness rounds.}
 
 \begin{figure}[t]
@@ -147,9 +147,9 @@ effective competition among several full-strictness rounds.}
 paints every arm pixel and every junction cluster touched by a chain into that
 instance, so intersecting instances share crossing pixels. An isolated one-arm
 component shorter than 6 px is omitted. Accepted gap links determine identity
-but are not painted into the frozen centreline output. All effective parameters,
+but are not painted into the fixed centreline output. All effective parameters,
 including values previously inherited as code defaults, are materialised in the
-frozen JSON configuration.}
+fixed JSON configuration.}
 
 \subsection{\rev{Optional SEM characterisation and ribbon rendering}}
 \label{sec:mm-stage4}
