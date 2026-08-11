@@ -199,6 +199,12 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             macro("PlectaStageFourDisconnected", fmt(ribbon["fraction_disconnected"], 3)),
             macro("PlectaStageFourBranched", fmt(ribbon["fraction_branched"], 3)),
             macro("PlectaStageFourAbsorbFOne", fmt(absorb["f1"], 3)),
+            # The core centreline output before any rendering. Reported so the
+            # rendered 0.000 is not read as a property of the grouping itself:
+            # accepted gap links carry identity but are not painted, so a core
+            # instance is often delivered as several disjoint pixel runs.
+            macro("PlectaCoreDisconnected", fmt(frozen["fraction_disconnected"], 3)),
+            macro("PlectaCoreBranched", fmt(frozen["fraction_branched"], 3)),
         ]
     )
 

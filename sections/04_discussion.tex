@@ -31,7 +31,8 @@ independent effect estimates.}
 \rev{Performance depends on the geometry preserved by the input mask. Mean
 held-out $F_1$ declined from \PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
 \PlectaDensitySixZeroFOneMean{} at 60\%, where crossings and locally plausible
-alternatives are more frequent. On 50 paired development scenes, the clean
+alternatives are more frequent. On the 50 paired scenes of the controlled
+robustness set, generated after the configuration was fixed, the clean
 axis masks scored \PlectaCleanMinusDegradedFOneMean{} higher than degraded
 masks (95\% CI \PlectaCleanMinusDegradedFOneCILow{}--
 \PlectaCleanMinusDegradedFOneCIHigh{}). PLECTA can bridge short omissions, but
@@ -41,13 +42,15 @@ algorithmic comparison; it does not establish end-to-end SEM performance.}
 
 \rev{Image-informed ribbon rendering is downstream of grouping. On the
 development set it produced $F_1=\PlectaStageFourFOne{}$, a change of
-\PlectaStageFourDeltaFOne{} relative to the core output, while yielding no
-disconnected instances and branch pixels in \PlectaStageFourBranched{} of
-instances. This is a useful shape tradeoff rather than an improvement in
-identity. Silhouette absorption changes the instance partition and scored
+\PlectaStageFourDeltaFOne{} relative to the core output. Its value is
+connectivity rather than identity: the fraction of instances delivered as more
+than one disjoint pixel run falls from \PlectaCoreDisconnected{} to
+\PlectaStageFourDisconnected{}, because the core paints arms and junction
+clusters but not the accepted gap links that carry identity across a break.
+Silhouette absorption changes the instance partition and scored
 \PlectaStageFourAbsorbFOne{}; it is therefore optional and should not be
 conflated with the fixed mask-only grouping result. Width and brightness can
-be reported for characterized instances, but their physical accuracy requires
+be reported for characterised instances, but their physical accuracy requires
 separate references.}
 
 \subsection{\rev{Evidence boundary}}
@@ -66,7 +69,7 @@ condition: they test grouping when the axis evidence is curated, not automatic
 SEM-to-instance performance. B58\_100 is training-contaminated for the U-Net
 condition, whereas B58\_110 is documented as training-clean; only the latter can
 illustrate an unseen upstream mask, and one field cannot estimate
-generalization. Moreover, manual-derived and U-Net masks generate different
+generalisation. Moreover, manual-derived and U-Net masks generate different
 fragment universes. Their $F_1$ values therefore describe performance under
 each input condition but are not a paired comparison of identical objects.
 More independent fields, sealed before configuration, and annotations from
@@ -78,7 +81,7 @@ filament passes above another, so no three-dimensional topology follows.
 Second, the grouping metric evaluates ownership of centreline fragments and is
 not a validation of rendered width. Quantitative diameter claims require
 matched physical measurements across the relevant scale, contrast, and
-specimen ranges. Pairwise fragment scores also emphasize instances containing
+specimen ranges. Pairwise fragment scores also emphasise instances containing
 many fragments; object recovery and ARI are retained as complementary views.}
 
 \rev{An independent procedural benchmark is a practical next test. The

@@ -86,12 +86,19 @@ as the largest tested contributors; they are not held-out effect estimates.}
     \label{fig:plecta-performance}
 \end{figure}
 
+\rev{The core output is a grouping, not a set of connected curves. Accepted gap
+links establish identity but are not painted, so on the development set
+\PlectaCoreDisconnected{} of core instances are delivered as more than one
+disjoint pixel run and \PlectaCoreBranched{} contain a branch point. Readers
+combining PLECTA with a downstream step that assumes one connected curve per
+instance should account for this.}
+
 \rev{Default Stage~4 ribbon rendering achieved development \Fone{}=
 \PlectaStageFourFOne{}, a change of \PlectaStageFourDeltaFOne{} from the core
-centreline output. The rendered instances had disconnected-component fraction
-\PlectaStageFourDisconnected{} and branched fraction
-\PlectaStageFourBranched{}. Rendering therefore improved mask continuity while
-slightly changing the representation score, without changing chain membership.
+centreline output, and reduced those fractions to
+\PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}. Rendering
+therefore buys connectivity at a small cost in the identity score, without
+changing chain membership.
 Enabling the separate 0.6 silhouette-absorption rule reduced \Fone{} further
 to \PlectaStageFourAbsorbFOne{}. Because absorption can merge identities, it
 remained disabled and neither rendering condition contributed to the held-out
