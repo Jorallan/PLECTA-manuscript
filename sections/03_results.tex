@@ -25,7 +25,7 @@ same-generator generalisation rather than distribution transfer.
     \input{results/plecta_heldout_table}
 \end{table}
 
-Performance decreased with scene density (Figure~\ref{fig:plecta-performance}a).
+Performance decreased with scene density (Figure~\ref{fig:density}).
 Mean \Fone{} fell from \PlectaDensityTwoZeroFOneMean{}
 [\PlectaDensityTwoZeroFOneCILow{}, \PlectaDensityTwoZeroFOneCIHigh{}] at 20\% coverage
 to \PlectaDensitySixZeroFOneMean{}
@@ -35,6 +35,25 @@ the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
 \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s,
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_density.pdf}
+    \caption{PLECTA against target areal coverage on 50 paired development
+    scenes, ten per coverage level, with each scene scored twice: once from the
+    degraded 1\,px axis mask that the paper evaluates and once from the
+    generator's undegraded axis. Lines are means of per-scene common-fragment
+    $F_1$; the band is a 95\,\% percentile bootstrap confidence interval for
+    the mean, resampled within each coverage stratum (20\,000 replicates, seed
+    20260811). Degradation costs about 0.045 in $F_1$ at 20\,\% coverage and
+    nothing measurable at 50--60\,\%, where the tangles rather than the gaps
+    dominate. Target areal coverage is the generator setting used to dial in
+    centreline density; it is a proxy for difficulty and not a cause of it,
+    since holding the geometry fixed and varying only bundle width moves
+    realised areal coverage by a factor of 2.49 while $F_1$ moves by 0.000
+    (Figure~\ref{fig:performance}b).}
+    \label{fig:density}
+\end{figure}
 
 \subsection{Which density axis matters}
 \label{sec:res-factorial}
@@ -115,7 +134,8 @@ straightest continuation and cannot revise it when that choice leaves a better
 partner stranded, so single filaments are left divided. On clean axes the
 difference was \PlectaGreedyCleanDeltaFOne{}
 [\PlectaGreedyCleanDeltaCILow{}, \PlectaGreedyCleanDeltaCIHigh{}], so it is not
-an artefact of mask degradation.
+an artefact of mask degradation. Figure~\ref{fig:examples} shows the best,
+median and worst scenes for PLECTA under that contrast.
 
 \begin{table}[t]
     \centering
@@ -133,6 +153,24 @@ published methods that use it, and it is limited to this generator. Section
 \ref{sec:limitations} states what a matched comparison against a released
 implementation would still require.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
+    \caption{Paired examples against a greedy minimum-turn continuation
+    baseline, on the 50-scene comparison set. Rows are chosen by a stated rule
+    rather than by inspection: the largest PLECTA advantage
+    (\texttt{synth\_0003}, 60\,\% coverage, $\Delta F_1=+0.369$), the scene
+    whose $\Delta F_1$ is closest to the median over all 50
+    (\texttt{synth\_0006}, 30\,\% coverage, $+0.157$), and the largest
+    comparator advantage (\texttt{synth\_0000}, 20\,\% coverage, $-0.036$).
+    Columns are the degraded input mask, the overlap-aware reference, the
+    comparator and PLECTA. Instance colours are arbitrary and carry identity
+    only within a panel; they are not matched between columns. The reference
+    column shows the generator's rendered ribbons while the two method columns
+    show centreline instances, hence the difference in stroke width.}
+    \label{fig:examples}
+\end{figure}
+
 \subsection{Input-mask robustness}
 \label{sec:res-mask}
 
@@ -143,7 +181,27 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Thus the modelled gaps and raster
 irregularities caused a small resolved loss under this generator, without
-testing robustness to a different image distribution.
+testing robustness to a different image distribution. Widening the axis mask
+costs more than degrading it (Figure~\ref{fig:sensitivity}): a thicker mask
+skeletonises into a messier graph, which matters because an upstream segmenter
+controls that thickness.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_sensitivity.pdf}
+    \caption{How PLECTA responds to the input mask it is handed, on the
+    development scenes. (a)~Nominal binary axis-mask width. (b)~The degraded
+    1\,px axis that the paper evaluates against the generator's undegraded
+    axis. Lines are means over the four development scenes at each coverage
+    level and the band is the min--max range across those same four scenes ---
+    a description of the spread, not an interval estimate. Exploratory, $n=4$
+    scenes per point, no inference. Each variant is scored against common
+    fragments rebuilt from its own input mask, so (a) asks how well the method
+    groups the skeleton it is given rather than how many pixels it was given;
+    the decline with width is the skeletonisation of a thicker mask producing
+    a messier graph, not a change in the grouping problem.}
+    \label{fig:sensitivity}
+\end{figure}
 
 \subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
@@ -151,7 +209,7 @@ testing robustness to a different image distribution.
 
 One-at-a-time ablations were evaluated only on the
 \PlectaDevelopmentSceneCount{} development scenes
-(Table~\ref{tab:plecta-ablation}; Figure~\ref{fig:plecta-performance}b).
+(Table~\ref{tab:plecta-ablation}).
 Relative to the evaluated configuration, removing the junction chord-turn term
 changed \Fone{} by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap
 matching by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
@@ -173,14 +231,23 @@ as the largest tested contributors; they are not held-out effect estimates.
     \input{results/plecta_ablation_table}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_performance.pdf}
-    \caption{PLECTA performance across target areal coverage and component
-    ablations. (a) Held-out mean common-fragment \Fone{} with 95\% bootstrap
-    intervals (32 scenes per level). (b) Development-only changes from selected
-    one-at-a-time ablations; more negative values indicate larger losses.}
-    \label{fig:plecta-performance}
+    \caption{Three properties of the held-out result that a table of means
+    cannot carry. (a)~All 128 held-out scenes, 32 per coverage stratum, with
+    the stratum means printed above. The bands describe the spread across
+    scenes and are not an interval for the mean; they overlap heavily, so one
+    scene's score says little about its coverage. (b)~Twelve geometries from
+    the development factorial, one line each. Along a line the centreline
+    geometry is fixed and only bundle width changes: realised areal coverage
+    moves by up to a factor of 2.49 while $F_1$ moves by 0.000. Difficulty
+    follows centreline density, not the amount of ink on the page. (c)~The same
+    128 scenes, one point each. PLECTA sits on the precision--recall diagonal;
+    the one-instance-per-connected-component floor does not, recovering 0.85 of
+    same-filament pairs at a precision of 0.047 because it merges every
+    filament in a connected network into a single instance.}
+    \label{fig:performance}
 \end{figure}
 
 The core output is a grouping, not a set of connected curves. Accepted gap
@@ -226,16 +293,6 @@ B58\_110.
     \input{results/plecta_real_masks_table}
 \end{table}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_real_mask_source.png}
-    \caption{Training-clean B58\_110 mask-source case. Left: the
-    manual-instance-derived axis. Centre: the upstream U-Net axis. Right:
-    tolerance-matched manual axis (green), missed manual axis (red), and U-Net
-    axis without a matched manual axis (blue). The comparison illustrates
-    upstream omissions and fragmentation; it is not a PLECTA output panel.}
-    \label{fig:plecta-real-mask-source}
-\end{figure}
 
 B58\_100 was present in the segmenter's training data; only B58\_110 was
 verified training-clean. Moreover, each input mask defines a different visible

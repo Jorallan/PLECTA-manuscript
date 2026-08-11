@@ -12,15 +12,40 @@ SEM image is optional downstream input for width and brightness measurement;
 it cannot revise the fixed grouping. Figure~\ref{fig:scope} separates this
 core task from upstream mask extraction and downstream rendering.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_scope.pdf}
-    \caption{Workflow and evidence boundary. A micrograph is converted to
-    a binary axis mask manually or by an upstream segmenter. PLECTA groups the
-    mask into overlap-aware 2-D instances. SEM characterisation and ribbon
-    rendering are optional downstream operations and were absent from the
-    held-out grouping result.}
+    \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
+    \caption{Where PLECTA sits. Pipeline~A is the upstream binary segmentation
+    of SEM micrographs; it is not evaluated here. Pipeline~B is PLECTA. Its
+    only input is one binary filament-axis mask, which may come either from
+    Pipeline~A or, as in every experiment in this paper, directly from the
+    procedural generator. Steps~1--5 operate on mask geometry alone; steps~3
+    and~4 are re-made over eight rounds against frames re-fitted along the
+    chains assembled so far, and the fixed annealing schedule reaches full
+    strictness only in round~8, which is the round returned. Width measurement
+    and ribbon rendering are downstream, default-off, and require the
+    grayscale image; they contributed nothing to the held-out grouping result,
+    which measures the dashed green box and nothing to the right of it.
+    Colours: blue, a learned component; green, a PLECTA geometric step;
+    orange, a dependency on the grayscale image; dark, a data artefact.}
     \label{fig:scope}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_task.pdf}
+    \caption{The task, and what the output is. (a)~A crossing is one connected
+    blob of mask: four arms leave a junction cluster (red) and nothing local
+    says which continues into which. (b)~The whole input actually evaluated ---
+    one degraded 1\,px binary axis mask, no grey levels and no reference.
+    (c)~The overlap-aware reference for the same scene, 40 instances, colours
+    arbitrary and meaningful only within the panel. (d)~The crossing of (a)
+    after PLECTA. (e,~f)~The two instances separately: both contain the
+    junction cluster. (g)~Inside this $52\times52$ crop each instance holds 54
+    pixels and 7 of them belong to both, drawn as split squares in (d). The
+    output is a set of layers, not a partition, so a crossing pixel may
+    legitimately have two owners.}
+    \label{fig:task}
 \end{figure}
 
 \subsection{Synthetic data and evaluation split}
@@ -31,9 +56,12 @@ rendered support $\Omega_k$ of every filament $k$. Individual supports remain
 separate, so several filaments may own the same crossing pixel. The generator
 provides an undegraded one-pixel axis mask, a degraded thin mask containing
 small gaps and irregularities, a combined thick foreground, an SEM-like image,
-and the exact overlap-aware instance reference (Figure~\ref{fig:synth-examples}).
-Areal coverage is the union area of the thick supports divided by image area;
-it is not the occupancy of the thin input mask.
+and the exact overlap-aware instance reference. The degraded one-pixel axis is
+the input evaluated throughout; it and the reference are shown in
+Figure~\ref{fig:task}b,c. Areal coverage is the union area of the thick
+supports divided by image area; it is not the occupancy of the thin input mask,
+and Section~\ref{sec:res-factorial} shows it is a proxy for difficulty rather
+than a cause of it.
 
 Development used 84 scenes: 20 initial scenes across 20--60\% coverage,
 48 additional scenes at 20, 30, and 60\%, and 16 scenes at 40\%. The held-out
@@ -48,14 +76,6 @@ A separate controlled robustness set contained 50 scenes, ten at each of
 axis and once from its degraded mask. This set was used only to quantify
 input-degradation sensitivity after the configuration was fixed.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_synthetic_examples.pdf}
-    \caption{Procedural representations derived from the same filament
-    geometry. Instance identity is retained through crossings; the degraded
-    thin-axis mask is the primary algorithm input.}
-    \label{fig:synth-examples}
-\end{figure}
 
 \subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
@@ -130,15 +150,73 @@ annealed linearly from 85\% to full strictness. Because only the eighth round is
 fully strict in the fixed schedule, that round is returned; there is no
 effective competition among several full-strictness rounds.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_frame_cost.pdf}
+    \caption{The stub frame and the four terms of the pairing cost. (a)~Each
+    coordinate is fitted by least squares in arclength over the window $w$ with
+    the tip at $s=0$ and then read outward, giving the outward tangent
+    $\mathbf{t}$ and the signed curvature $\kappa$; the fit is quadratic when
+    the span is at least 18\,px and linear otherwise, and $w$ is 24\,px locally
+    and 55\,px once the stub can be measured along an assembled chain.
+    (b)~$\theta=\arccos(\mathbf{t}_a\cdot-\mathbf{t}_b)$ compares two
+    directions and never uses the chord, so it still means something when the
+    tips are three pixels apart; the reversed tangent is drawn both where it
+    lives and again from a common origin, which is where the angle is read.
+    (c)~$\varphi_a$ and $\varphi_b$ are the two turns onto the chord
+    $\mathbf{u}$ joining the tips, measured at their own vertices; unlike
+    $\theta$ they see lateral offset, so two parallel arms that never meet
+    score well on $\theta$ and badly here. (d)~Inside a crossing the chord
+    spans a few badly quantised pixels, so $q(d)$ fades the $\varphi$ term out;
+    triangles mark the six real tip separations at the crossing of
+    Figure~\ref{fig:matching}. The angles drawn in (b) and (c) are stated
+    numerically in the panel titles so the arcs can be checked against them.}
+    \label{fig:cost}
+\end{figure}
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_gates.pdf}
-    \caption{PLECTA stage and gate sequence. Topology preconditioning
-    produces arms, stubs, and junction nodes. Every round applies exact
-    per-junction matching, a cycle guard, global gated gap matching, a second
-    cycle guard, and chain-supported frame re-estimation. The final chains are
-    painted as overlap-aware instance layers.}
+    \caption{Every decision the linker can make. (a)~Two stubs at a junction
+    are paired because their cost falls below the admissibility limit
+    $2p_i$. (b)~A competing pairing at the same node is refused: its cost
+    exceeds $2p_i=1.24$, so the edge is never offered. (c)~A stub is left
+    unmatched because paying the price $p_i=0.62$ scores better than any edge
+    it has; this is what lets a filament genuinely end and stops a T-junction
+    inventing a continuation. (d)~Two stubs left free by the junction stage
+    are joined across a mask gap, subject to four gates at once. Every stub is
+    either paired or pays $p_i$; there is no third outcome. At a junction these
+    decisions are made together rather than one at a time
+    (Figure~\ref{fig:matching}), and a gap is only offered to stubs the junction
+    stage left free. Idealised drawing; the measured values are in
+    Figures~\ref{fig:cost} and~\ref{fig:matching}.}
     \label{fig:gates}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
+    \caption{The pairing at a crossing is solved jointly and exactly; every
+    number shown is measured. (a)~A real four-arm crossing (development scene
+    \texttt{cov20/synth\_0001}, node~9). Junction pixels are red; the four arms
+    are still unrelated pieces of skeleton, named $a$ to $d$ anticlockwise by
+    outward tangent. (b)~All six pairwise costs. An edge is offered only when
+    $C_{ab}<2p_i=1.24$, so four of the six are refused outright (open bars).
+    (c)~Every admissible configuration, scored jointly: a configuration scores
+    $\sum C_{ab}$ over its links plus $p_i=0.62$ for each stub left free, and a
+    maximum-weight matching with edge weight $p_i+p_j-C_{ij}$ minimises that
+    exactly. The boxed configuration is the one returned. (d)~The result: two
+    instances sharing the seven junction pixels, drawn as split squares.
+    (e)~A real three-arm node (\texttt{cov40/synth\_0001}). The edge scoring
+    1.01 is admissible, yet taking it (1.63) scores worse overall than pairing
+    the other two and paying $p_i$ to leave the third free (0.77). (f)~Over 20
+    development scenes the joint solution never disagrees with a sequential
+    cheapest-edge-first rule at a plain crossing ($n=542$ nodes of degree 2--4),
+    disagrees at 22\,\% of nodes with 5--8 stubs ($n=187$) and at 69\,\% of
+    nodes with 9 or more ($n=233$), where it is better by a median of 0.90 in
+    total cost. Solving jointly therefore earns its keep in dense tangles, not
+    at clean crossings.}
+    \label{fig:matching}
 \end{figure}
 
 \subsubsection{Instance output}

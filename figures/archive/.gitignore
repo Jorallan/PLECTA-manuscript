@@ -1,0 +1,8 @@
+# Superseded figures. Kept on disk so their look and their generators stay
+# available for reference, but deliberately untracked: nothing here is a build
+# input, and none of it is referenced by main.tex.
+#
+# Ignore everything in this folder except this file, so the rule survives a
+# fresh clone while the figures themselves never re-enter the repository.
+*
+!.gitignore
