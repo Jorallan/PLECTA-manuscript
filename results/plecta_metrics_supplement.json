@@ -1,0 +1,83 @@
+{
+ "description": "Two quantities derived from the metrics study's own artefacts and not present in results/plecta_metrics_audit.json: the shared-pixel counts behind its shared-ownership precision and recall, and the provenance of GraFT's bundled synthetic frame.",
+ "provenance": {
+  "study": "C:\\Repos\\comparisons\\metrics_study",
+  "per_scene_methods": "C:\\Repos\\comparisons\\metrics_study\\results\\per_scene_methods.csv",
+  "frame_provenance": "C:\\Repos\\comparisons\\metrics_study\\data\\graft_native\\provenance.json",
+  "generator": "scripts/results/make_metrics_supplement.py"
+ },
+ "shared_ownership_pixels": {
+  "clean": {
+   "dnai": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 69.58,
+    "predicted_over_reference": 0.2611665790856542
+   },
+   "graft": {
+    "n_scenes": 49,
+    "reference_shared_px_mean": 260.2244897959184,
+    "predicted_shared_px_mean": 268.2448979591837,
+    "predicted_over_reference": 1.0308211120696416
+   },
+   "greedy": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 0.0,
+    "predicted_over_reference": 0.0
+   },
+   "greedy_swept": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 0.0,
+    "predicted_over_reference": 0.0
+   },
+   "plecta": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 1068.76,
+    "predicted_over_reference": 4.011560693641618
+   }
+  },
+  "degraded": {
+   "dnai": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 50.08,
+    "predicted_over_reference": 0.1879738758351475
+   },
+   "graft": {
+    "n_scenes": 47,
+    "reference_shared_px_mean": 241.0212765957447,
+    "predicted_shared_px_mean": 176.48936170212767,
+    "predicted_over_reference": 0.7322563559322034
+   },
+   "greedy": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 0.0,
+    "predicted_over_reference": 0.0
+   },
+   "greedy_swept": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 0.0,
+    "predicted_over_reference": 0.0
+   },
+   "plecta": {
+    "n_scenes": 50,
+    "reference_shared_px_mean": 266.42,
+    "predicted_shared_px_mean": 956.18,
+    "predicted_over_reference": 3.5889948202086925
+   }
+  }
+ },
+ "graft_native_frame": {
+  "n_instances": 10,
+  "side_px": 500,
+  "reference_matches_vendor_nonoise_image": 1.0,
+  "licence": "MIT, (c) 2023 Isabella Osterlund (GraFT repository)",
+  "source": "C:\\Repos\\comparisons\\graft_comparison\\vendor\\GraFT\\Article\\code\\synthetic_data\\frangi_sato\\noise10",
+  "note": "mask_w1.png is a copy of mask_clean.png: GraFT's generator applies no mask-degradation model, so there is no degraded condition on this data."
+ }
+}

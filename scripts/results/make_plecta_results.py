@@ -29,6 +29,8 @@ DNAI = RESULTS / "plecta_dnai_comparison.json"
 COMPARATOR_ANALYSIS = RESULTS / "plecta_comparator_analysis.json"
 GREEDY_SWEPT = RESULTS / "plecta_greedy_swept_paired.json"
 GRAFT = RESULTS / "plecta_graft_comparison.json"
+METRICS_AUDIT = RESULTS / "plecta_metrics_audit.json"
+METRICS_SUPPLEMENT = RESULTS / "plecta_metrics_supplement.json"
 N_BOOT = 20_000
 SEED = 20_260_810
 
@@ -268,6 +270,169 @@ def graft_macros(graft: dict) -> list[str]:
     return lines
 
 
+def matcher_ablation_macros(audit: dict) -> list[str]:
+    """Macros for the matcher-only ablation.
+
+    PLECTA's own pipeline with the per-junction maximum-weight matching replaced
+    by greedy cheapest-first acceptance and nothing else altered: same graph,
+    same cost, same admissibility gate, same round schedule. Development scenes
+    only, and the greedy arm runs at parameters selected with the exact matcher
+    in the loop, so the comparison is biased in the exact matcher's favour.
+    """
+    parity = audit["provenance"]["ablation_control_parity"]["degraded"]
+    lines = [
+        macro("PlectaMatcherParitySceneCount", str(parity["n_scenes"])),
+        macro("PlectaMatcherParityIdentical", str(parity["n_identical"])),
+    ]
+    for variant, tag in (("degraded", ""), ("clean", "Clean")):
+        block = audit["matcher_ablation"][variant]
+        exact = block["arms"]["exact"]
+        greedy = block["arms"]["greedy_junction"]
+        both = block["arms"]["greedy_both"]
+        paired = block["paired_vs_exact"]["exact_minus_greedy_junction"]["f1"]
+        lines.extend([
+            macro(f"PlectaMatcher{tag}SceneCount", str(exact["n_scenes"])),
+            macro(f"PlectaMatcher{tag}ExactFOne", fmt(exact["f1"])),
+            macro(f"PlectaMatcher{tag}GreedyFOne", fmt(greedy["f1"])),
+            macro(f"PlectaMatcher{tag}DeltaFOne", f"{paired['mean']:+.3f}"),
+            macro(f"PlectaMatcher{tag}DeltaCILow", f"{paired['ci_lo']:+.3f}"),
+            macro(f"PlectaMatcher{tag}DeltaCIHigh", f"{paired['ci_hi']:+.3f}"),
+            macro(f"PlectaMatcher{tag}WinCount", str(paired["n_wins_a"])),
+            macro(f"PlectaMatcher{tag}ExactVISplit", fmt(exact["vi_split_bits"])),
+            macro(f"PlectaMatcher{tag}GreedyVISplit", fmt(greedy["vi_split_bits"])),
+            macro(f"PlectaMatcher{tag}ExactVIMerge", fmt(exact["vi_merge_bits"])),
+            macro(f"PlectaMatcher{tag}GreedyVIMerge", fmt(greedy["vi_merge_bits"])),
+            macro(f"PlectaMatcher{tag}ExactJunctionRate", fmt(exact["jr_exact_rate"])),
+            macro(f"PlectaMatcher{tag}GreedyJunctionRate", fmt(greedy["jr_exact_rate"])),
+            macro(f"PlectaMatcher{tag}InstanceExcess",
+                  f"{(greedy['n_pred_instances'] / exact['n_pred_instances'] - 1) * 100:.0f}"),
+            # Making the global gap matching greedy as well, on top of the
+            # junction matcher: the further cost is what locates the effect at
+            # the junction rather than in matching generally.
+            macro(f"PlectaMatcher{tag}GapAlsoGreedyCost",
+                  f"{both['f1'] - greedy['f1']:+.3f}"),
+        ])
+
+    by_degree = audit["matcher_ablation"]["degraded"]["by_degree"]
+    for degree in ("3", "4", "5", "6"):
+        exact_rate = by_degree["exact"][degree]["exact_rate"]
+        greedy_rate = by_degree["greedy_junction"][degree]["exact_rate"]
+        stem = DIGIT_WORDS[degree]
+        lines.extend([
+            macro(f"PlectaMatcherDegree{stem}Count",
+                  str(by_degree["exact"][degree]["n_junctions"])),
+            macro(f"PlectaMatcherDegree{stem}Exact", fmt(exact_rate)),
+            macro(f"PlectaMatcherDegree{stem}Greedy", fmt(greedy_rate)),
+            macro(f"PlectaMatcherDegree{stem}Absolute",
+                  f"{greedy_rate - exact_rate:+.3f}"),
+            macro(f"PlectaMatcherDegree{stem}Relative",
+                  f"{(greedy_rate - exact_rate) / exact_rate * 100:+.0f}"),
+        ])
+    return lines
+
+
+def junction_resolution_macros(audit: dict) -> list[str]:
+    """Macros for the direct junction-resolution measurement.
+
+    At every reference crossing the partition of incident arms induced by the
+    prediction is compared with the reference's. The exact rate is the fraction
+    of crossings resolved identically; the resolution index is the pair accuracy
+    corrected for the do-nothing prediction that keeps every arm apart, whose
+    accuracy is far from zero and is emitted alongside. Pooled over crossings,
+    never averaged over per-scene ratios, because a dense scene carries several
+    times as many crossing decisions as a sparse one.
+    """
+    names = {"plecta": "Plecta", "greedy_swept": "Greedy",
+             "dnai": "DNAi", "graft": "GraFT"}
+    lines = []
+    for variant, tag in (("degraded", ""), ("clean", "Clean")):
+        block = audit["junction_resolution"][variant]
+        degrees = block["reference_degree_distribution"]
+        total = sum(int(v) for v in degrees.values())
+        lines.extend([
+            macro(f"PlectaJunction{tag}Count", str(total)),
+            macro(f"PlectaJunction{tag}Chance",
+                  fmt(block["plecta"]["overall"]["null_pair_accuracy"])),
+            macro(f"PlectaJunction{tag}DegreeFourShare",
+                  f"{int(degrees['4']) / total * 100:.0f}"),
+        ])
+        for key, stem in names.items():
+            overall = block[key]["overall"]
+            lines.extend([
+                macro(f"PlectaJunction{tag}{stem}Rate", fmt(overall["exact_rate"])),
+                macro(f"PlectaJunction{tag}{stem}Index",
+                      fmt(overall["resolution_index"])),
+                macro(f"PlectaJunction{tag}{stem}DegreeFour",
+                      fmt(block[key]["by_degree"]["4"]["exact_rate"])),
+                macro(f"PlectaJunction{tag}{stem}DegreeFivePlus",
+                      fmt(block[key]["by_degree"]["5plus"]["exact_rate"])),
+            ])
+        for key, stem in (("greedy_swept", "Greedy"), ("dnai", "DNAi"),
+                          ("graft", "GraFT")):
+            paired = audit["paired_differences"][variant][
+                f"plecta_minus_{key}"]["jr_exact_rate"]
+            lines.extend([
+                macro(f"PlectaJunction{tag}{stem}Delta", f"{paired['mean']:+.3f}"),
+                macro(f"PlectaJunction{tag}{stem}DeltaCILow",
+                      f"{paired['ci_lo']:+.3f}"),
+                macro(f"PlectaJunction{tag}{stem}DeltaCIHigh",
+                      f"{paired['ci_hi']:+.3f}"),
+            ])
+    return lines
+
+
+def graft_frame_macros(audit: dict, supplement: dict) -> list[str]:
+    """Macros for GraFT's own bundled synthetic frame.
+
+    One 500x500 frame with per-filament ground truth, MIT licensed, scored
+    through the identical pipeline. n = 1: no interval exists and none is
+    emitted. Its only claim is that the comparison does not depend on our
+    generator.
+    """
+    frame = audit["graft_own_data_feasibility"]
+    methods = frame["methods"]
+    provenance = supplement["graft_native_frame"]
+    crossings = methods["plecta"]["jr_n_junctions"]
+    lines = [
+        macro("PlectaGraFTFrameSide", str(provenance["side_px"])),
+        macro("PlectaGraFTFrameInstanceCount", str(frame["n_gt_instances"])),
+        macro("PlectaGraFTFrameCrossingCount", str(crossings)),
+        macro("PlectaGraFTFrameReferenceAgreement",
+              fmt(provenance["reference_matches_vendor_nonoise_image"])),
+    ]
+    for key, stem in (("plecta", "Plecta"), ("greedy_swept", "Greedy"),
+                      ("graft_frontend", "GraFTNative"),
+                      ("graft_a160", "GraFTInjected"), ("cc_floor", "Floor")):
+        block = methods[key]
+        lines.extend([
+            macro(f"PlectaGraFTFrame{stem}FOne", fmt(block["f1"])),
+            macro(f"PlectaGraFTFrame{stem}Solved",
+                  f"{block['jr_exact_rate'] * crossings:.0f}"),
+        ])
+    return lines
+
+
+def shared_ownership_macros(audit: dict, supplement: dict) -> list[str]:
+    """Macros for how the shared-pixel representation is drawn.
+
+    Reported because the paper presents overlap-aware output as a property of
+    the method: PLECTA recovers most of the reference's jointly-owned pixels and
+    marks several times more of them than the reference contains, the latter
+    being a rendering choice rather than a grouping error.
+    """
+    lines = []
+    for variant, tag in (("degraded", ""), ("clean", "Clean")):
+        overall = audit["methods"][variant]["plecta"]["overall"]
+        pixels = supplement["shared_ownership_pixels"][variant]["plecta"]
+        lines.extend([
+            macro(f"PlectaShared{tag}Precision", fmt(overall["shared_precision"])),
+            macro(f"PlectaShared{tag}Recall", fmt(overall["shared_recall"])),
+            macro(f"PlectaShared{tag}Excess",
+                  f"{pixels['predicted_over_reference']:.1f}"),
+        ])
+    return lines
+
+
 def factorial_macros(factorial: dict) -> list[str]:
     """Macros for the bundle-width negative control.
 
@@ -350,7 +515,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 width_validation: dict, greedy: dict,
                 factorial: dict, dnai: dict,
                 analysis: dict, swept: dict,
-                graft: dict) -> str:
+                graft: dict, audit: dict, supplement: dict) -> str:
     rows = [r for r in held["per_scene"] if r.get("status") == "ok"]
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
@@ -475,6 +640,10 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *dnai_macros(dnai),
             *comparator_analysis_macros(analysis, swept),
             *graft_macros(graft),
+            *matcher_ablation_macros(audit),
+            *junction_resolution_macros(audit),
+            *graft_frame_macros(audit, supplement),
+            *shared_ownership_macros(audit, supplement),
         ]
     )
 
@@ -585,13 +754,15 @@ def main() -> None:
     analysis = json.loads(COMPARATOR_ANALYSIS.read_text(encoding="utf-8"))
     swept = json.loads(GREEDY_SWEPT.read_text(encoding="utf-8"))
     graft = json.loads(GRAFT.read_text(encoding="utf-8"))
+    audit = json.loads(METRICS_AUDIT.read_text(encoding="utf-8"))
+    supplement = json.loads(METRICS_SUPPLEMENT.read_text(encoding="utf-8"))
     with ROBUSTNESS.open(newline="", encoding="utf-8-sig") as handle:
         robustness = list(csv.DictReader(handle))
     (RESULTS / "plecta_results.tex").write_text(
         make_macros(
             held, robustness, ablation, stage4, real_masks, cc_baseline,
             width_validation, greedy, factorial, dnai, analysis, swept,
-            graft,
+            graft, audit, supplement,
         ),
         encoding="utf-8",
     )

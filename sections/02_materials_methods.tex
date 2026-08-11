@@ -217,7 +217,11 @@ coincide at plain crossings and diverge only as nodes grow dense: over 20
 development scenes they
 never disagreed at nodes of degree 2--4 ($n=542$), disagreed at 22\,\% of nodes
 with 5--8 stubs ($n=187$) and at 69\,\% of nodes with 9 or more ($n=233$), where
-the joint solution was better by a median of 0.90 in total cost.
+the joint solution was better by a median of 0.90 in total cost. That comparison
+holds one node's costs fixed. Run inside the rounds, where each matching sets
+the frames the next is scored against, a cheap early choice propagates and the
+difference is no longer confined to dense nodes
+(Section~\ref{sec:res-comparators}).
 
 \begin{figure}[htbp]
     \centering

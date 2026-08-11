@@ -51,15 +51,15 @@ illustrates an unseen upstream mask, and one field cannot estimate
 generalisation. The two mask sources also generate different fragment universes,
 so their $F_1$ values describe performance under each input condition rather
 than comparing identical objects. More independent fields, sealed before
-configuration, and annotations from multiple readers are required.
+configuration, and multi-reader annotations are required.
 
 One caveat from the comparisons must be separated from the claim it seems to
 threaten. The comparators lose on how a crossing is \emph{resolved}, which the
 metric scores and which is the difficult decision, not on how it is
 \emph{represented}, which the metric cannot see: GraFT's near-hard partition is
-a real limitation that costs it nothing here (Section~\ref{sec:res-overlap}).
-Both properties are worth having, and a metric scoring pixel-level ownership
-would let them be tested apart.
+a real limitation that costs it nothing here. Both properties are worth having,
+and Section~\ref{sec:res-overlap} measures the representation directly,
+including where PLECTA over-marks it.
 
 Two further limits concern the output itself. PLECTA recovers projected
 two-dimensional identity: shared pixels encode overlap but not which filament
@@ -84,7 +84,7 @@ An independent procedural benchmark is the practical next test. The
 overlap-aware whole-bundle references from a different implementation and
 morphology model, but its field-of-view preset is calibrated to a narrow
 coverage regime, so it must supplement rather than replace the current
-generator, and only once that calibration is fixed and its seeds separated from
-any configuration work. No result from it is included here. Broader validation
-should then extend to independent real masks and other filament domains, with
-input fragments and scoring rules held fixed.
+generator, once that calibration is fixed and its seeds separated from any
+configuration work. No result from it is included here. Broader validation
+should extend to independent real masks and other filament domains, with input
+fragments and scoring rules held fixed.

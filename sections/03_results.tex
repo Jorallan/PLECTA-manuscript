@@ -19,8 +19,8 @@ generalisation and not distribution transfer
 \begin{table}[htbp]
     \centering
     \caption{Held-out reconstruction scores overall and by target areal
-    coverage. VI denotes variation of information; lower VI is better, whereas
-    higher values are better for the other metrics.}
+    coverage. VI denotes variation of information, for which lower is better;
+    higher is better for the other metrics.}
     \label{tab:plecta-heldout}
     \small
     \input{results/plecta_heldout_table}
@@ -77,12 +77,11 @@ Centreline length density does move it: mean \Fone{} fell from
 \PlectaFactorialLowFOne{} to \PlectaFactorialHighFOne{} as centreline coverage
 rose from \PlectaFactorialLowLengthDensity{} to
 \PlectaFactorialHighLengthDensity{}. The coverage bands of the three length
-densities also overlap, an areal coverage near 0.31 occurring at all three, so
-coverage does not identify a difficulty level on its own. Density strata
-reported by target areal coverage should therefore be read as a proxy for the
-length density that accompanies them under this generator, and a mask drawn at a
-different thickness, as an upstream segmenter may well produce, does not by
-itself move the grouping score.
+densities also overlap, so coverage does not identify a difficulty level on its
+own. Density strata reported by target areal coverage should therefore be read
+as a proxy for the length density accompanying them under this generator; a
+mask drawn at a different thickness does not by itself move the grouping
+score.
 
 \begin{table}[htbp]
     \centering
@@ -108,9 +107,8 @@ gated on parity: before any comparator number was believed it had to reproduce
 PLECTA's stored \Fone{}, adjusted Rand index and both variation-of-information
 components, because a faulty conversion yields plausible rather than obviously
 wrong scores. Each comparator received a parameter translation selected on the
-same \PlectaDevelopmentSceneCount{} development scenes PLECTA was configured on,
-so none is disadvantaged by tuning effort, and every adaptation described below
-was checked rather than assumed and found to favour the comparator.
+same \PlectaDevelopmentSceneCount{} development scenes PLECTA was configured
+on, and every adaptation below was checked and found to favour the comparator.
 
 \textbf{Greedy continuation.} The contribution claimed in
 Section~\ref{sec:intro} is that a junction is better solved as one exact
@@ -130,10 +128,8 @@ PLECTA scored \PlectaGreedyPlectaFOne{} against
 \PlectaGreedySweptWinCount{} of \PlectaGreedySceneCount{} scenes
 (Table~\ref{tab:plecta-greedy}). Adjusted Rand index and variation of
 information rank the two the same way, so the result does not depend on the
-in-house measure. The gap is widest in recall and in reference-instance
-recovery, the expected signature: a greedy pass commits to the locally
-straightest continuation and cannot revise it when that choice strands a better
-partner, so single filaments are left divided. On clean axes the difference was
+in-house measure, and the gap is widest in recall and in reference-instance
+recovery. On clean axes the difference was
 \PlectaGreedySweptCleanDeltaFOne{}
 [\PlectaGreedySweptCleanDeltaCILow{}, \PlectaGreedySweptCleanDeltaCIHigh{}], so
 it is not an artefact of mask degradation.
@@ -148,6 +144,27 @@ it is not an artefact of mask degradation.
     \small
     \input{results/plecta_greedy_table}
 \end{table}
+
+\textbf{Exact against greedy matching, matcher only.} That baseline replaces
+the whole linker; a second arm isolates the claim, keeping the graph, cost,
+admissibility gate and round schedule and replacing only the per-junction
+maximum-weight matching by greedy cheapest-first acceptance. Exactness was
+worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
+\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
+scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
+\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
+\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
+merging, with variation-of-information split rising
+\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
+merge, \PlectaMatcherInstanceExcess{}\,\% more instances emitted and crossings
+resolved exactly falling \PlectaMatcherExactJunctionRate{} to
+\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
+degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
+\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
+peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
+lie; and the greedy arm runs at parameters selected with the exact matcher in
+the loop, a bias in that matcher's favour.
+
 
 \textbf{DNAi.} DNAi post-processes a binary segmentation by the sequence
 described in Section~\ref{sec:intro}; its segmentation network was bypassed and
@@ -181,15 +198,14 @@ a pooled value would flatter any method at 60\% coverage.
     common-fragment \Fone{} per coverage stratum, $n=10$ scenes per point
     except where labelled otherwise; plain means, no interval is drawn and none
     is claimed. GraFT exceeded its per-scene wall-clock budget on 3 of the 50
-    degraded scenes and 1 of the clean ones; those are excluded from its means
-    and are the hardest of the densest stratum, so the GraFT curve is
-    optimistic. DNAi is shown at the best configuration found for it on
-    development scenes. The greedy baseline uses the gates selected by a sweep
-    over the development scenes. \textbf{(c)}~aggregate paired difference with
+    degraded scenes and 1 of the clean ones, the hardest of the densest
+    stratum, so its curve is optimistic. DNAi and the greedy baseline are shown
+    at the configurations selected for them on development scenes.
+    \textbf{(c)}~aggregate paired difference with
     its density-stratified bootstrap 95\,\% interval (20\,000 replicates),
     filled markers degraded and open markers clean; the fraction beside each
-    interval is the number of scenes on which PLECTA scored higher, out of
-    those both methods completed.}
+    interval is the number of scenes on which PLECTA scored higher, of those
+    both completed.}
   \label{fig:comparators}
 \end{figure}
 
@@ -201,12 +217,10 @@ and where the network is sparse and the axis clean it recovers
 explain the rest. It commits to a pairing at every junction of degree two to
 four with no cost threshold, so it cannot decline a continuation the way a
 priced unmatched option can; and it resolves only junctions of degree at most
-four. That cap is easy to underrate by counting junctions, since junctions of
-degree five or more are only about a tenth of the clusters here, but weighted by
-the evidence the metric actually counts they carry
-\PlectaEvidenceHighDegree{}\,\% of same-filament fragment pairs on the degraded
-masks and \PlectaEvidenceCleanHighDegree{}\,\% on the clean ones, because a
-single such junction severs every pair that spans it.
+four. Those are about a tenth of the clusters here but carry
+\PlectaEvidenceHighDegree{}\,\% of same-filament fragment pairs on the
+degraded masks and \PlectaEvidenceCleanHighDegree{}\,\% on the clean ones,
+because one such junction severs every pair that spans it.
 
 Restricting the score to the evidence a degree-limited, gap-blind method can
 reach separates capability from judgement. On clean axes the difference falls
@@ -219,17 +233,15 @@ does, which is what shows the restriction genuinely removes its handicap. So
 roughly \PlectaDNAiCoverageShareClean{}\,\% of the margin is coverage of cases
 the comparator cannot attempt and \PlectaDNAiDecisionShareClean{}\,\% is the
 outcome of decisions both methods make. Consistent with that, after its
-clustering is repaired DNAi's remaining errors are dominated by division rather
-than merging, and a third of those divisions occur at junctions of degree four,
-which it does attempt: its matcher commits to a pairing there with no rejection
-threshold.
+clustering is repaired DNAi's remaining errors are dominated by division, a
+third of them at junctions of degree four, which it does attempt.
 
 \textbf{GraFT.} GraFT builds a graph on a skeleton, derives an angle threshold
 per component, and traces filaments by constrained depth-first search followed
 by a greedy longest-first path cover. Its published entry point begins with a
-Frangi and Otsu front end that enhances and binarises grayscale ridge images,
-which has nothing to do on a two-valued axis, so the mask was injected at its
-skeleton-to-graph stage and everything downstream is its own code unchanged.
+Frangi and Otsu front end for grayscale ridge images, which has nothing to do
+on a two-valued axis, so the mask was injected at its skeleton-to-graph stage,
+everything downstream being its own code unchanged.
 That substitution favours GraFT: run end to end on the grayscale images it
 scores \PlectaGraFTNativeFOne{}, near the connectivity floor, because its
 segmentation stage recovers only a third to a half of the reference skeleton.
@@ -257,17 +269,15 @@ them differently. The first is whether a crossing is \emph{resolved} correctly: 
 meeting at a junction, which continues into which. This is what the
 common-fragment metric measures, and it is the difficult decision. At a
 four-arm crossing the junction pixels are removed and the four arms become four
-fragments; pairing the correct two arms puts both pairs in agreement with the
-reference and counts them as true positives, while pairing the wrong two
-produces a false positive and a false negative. Every score in this paper
-therefore rewards resolving crossings correctly, and the comparators lose
-precisely because they resolve them worse.
+fragments; pairing the correct two arms agrees with the reference on both
+pairs, while pairing the wrong two produces a false positive and a false
+negative. Every score in this paper therefore rewards resolving crossings
+correctly, and the comparators lose precisely because they resolve them worse.
 
 The second is whether the emitted raster \emph{represents} a crossing pixel as
-belonging to both filaments. That is a property of the output format rather
-than of the grouping decision, and the metric does not see it: the junction
-pixels it would have to inspect are the ones it discards when building
-fragments. Flattening either method's layers to a single label image accordingly
+belonging to both filaments. That is a property of the output format, not of
+the grouping decision, and the metric cannot see it: the junction pixels it
+would inspect are the ones it discards when building fragments. Flattening either method's layers to a single label image accordingly
 changes \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002
 for GraFT.
 
@@ -277,25 +287,28 @@ their pixels with another instance at 20\% coverage, rising to
 \PlectaOverlapReferenceHigh{}\,\% at 60\%. PLECTA emits
 \PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\% shared pixels;
 GraFT, whose output is close to a hard partition, about
-\PlectaOverlapGraFTHigh{}\,\%.
+\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering:
+PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
+than one instance, the only method here that recovers most of them, at a
+precision of \PlectaSharedPrecision{}, marking
+\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
+the reference contains, because a chain is painted with every pixel of every
+junction cluster it touches --- a property of the rendering, not of the
+grouping.
+
 
 One consequence matters for the comparison above. GraFT's near-hard partition
-is a real structural limitation, but it costs GraFT nothing under this metric,
-so its deficit is not an artefact of that limitation: it loses on how it
-resolves crossings, not on how it draws them. The converse also holds, and is
-the honest limit of what is claimed here. PLECTA's shared-pixel output is
-reported as a measured property of the representation, not as something the
-\Fone{} rewards, and a metric scoring pixel-level crossing ownership directly
-would test the two claims separately.
+is a real structural limitation, but it costs GraFT nothing under this metric:
+it loses on how it resolves crossings, not on how it draws them. Neither is
+PLECTA's shared-pixel output something the \Fone{} rewards.
 
 Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
 taking at three coverage levels the scene whose \Fone{} is closest to the
 median, so the rows are typical rather than selected. The grouping is scored on
-the centrelines in the third column; the fourth adds the fitted widths and is
-what the full pipeline delivers, included because that is what a downstream user
-sees and because the comparison with the reference is only legible once the
-instances are drawn at width. Errors survive rendering unchanged: it redraws the
-instances the grouping produced and cannot merge or divide them.
+the centrelines in the third column; the fourth adds the fitted widths the full
+pipeline delivers, included because the comparison with the reference is only
+legible once instances are drawn at width. Rendering redraws the instances the
+grouping produced and cannot merge or divide them.
 
 \begin{figure}[htb]
     \centering
@@ -304,8 +317,7 @@ instances the grouping produced and cannot merge or divide them.
     the median \Fone{} of its stratum. Columns: the degraded input mask, the
     overlap-aware reference, the evaluated centreline instances, and the same
     instances after optional width rendering. Only the third column is scored.
-    Instance colours are arbitrary, carry identity only within a panel, and are
-    not matched between columns.}
+    Instance colours are arbitrary and not matched between columns.}
     \label{fig:examples}
 \end{figure}
 
@@ -322,10 +334,9 @@ irregularities therefore caused a small resolved loss under this generator.
 Mask thickness costs more (Figure~\ref{fig:sensitivity}), which matters because
 it is the upstream segmenter, not the method, that fixes that thickness. Each
 width variant is scored against common fragments rebuilt from its own input
-mask, so the question asked is how well the method groups the skeleton it is
-handed rather than how many pixels it was handed; the decline with width is a
-thicker mask skeletonising into a messier graph, not a change in the grouping
-problem.
+mask, so the question is how well the method groups the skeleton it is handed;
+the decline with width is a thicker mask skeletonising into a messier graph,
+not a change in the grouping problem.
 
 \begin{figure}[htbp]
     \centering
@@ -333,9 +344,9 @@ problem.
     \caption{How PLECTA responds to the input mask it is handed, on
     development scenes. (a)~Nominal binary axis-mask width. (b)~The degraded
     1\,px axis against the generator's undegraded axis. Lines are means over the
-    four development scenes at each coverage level; bands are the min--max range
-    across those scenes, a description of spread and not an interval estimate.
-    Exploratory, $n=4$ scenes per point, no inference.}
+    four development scenes at each coverage level; bands are the min--max
+    range, a description of spread and not an interval. Exploratory, $n=4$
+    scenes per point, no inference.}
     \label{fig:sensitivity}
 \end{figure}
 
@@ -380,13 +391,11 @@ merge identities it remained disabled. None of these topology measurements
 validates apparent width.
 
 The negative control of Section~\ref{sec:res-factorial} is worth seeing scene
-by scene (Figure~\ref{fig:performance}), because a mean can hide a null. It is
-also worth recording that PLECTA's errors are two-sided: a fragment \Fone{} can
-be reached one-sidedly, by merging everything or by dividing everything, and
-PLECTA sits on the precision--recall diagonal where the connected-component
-floor recovers \PlectaCCFloorRecall{} of same-filament pairs at a precision of
-only \PlectaCCFloorPrecision{}, merging every filament of a connected network
-into one instance.
+by scene (Figure~\ref{fig:performance}), because a mean can hide a null.
+PLECTA's errors are also two-sided, where a fragment \Fone{} can be reached
+one-sidedly: it sits on the precision--recall diagonal, whereas the
+connected-component floor recovers \PlectaCCFloorRecall{} of same-filament
+pairs at a precision of only \PlectaCCFloorPrecision{}.
 
 \begin{figure}[htbp]
     \centering
@@ -397,8 +406,7 @@ into one instance.
     are fixed and only the bundle width changes, so realised areal coverage
     moves by up to a factor of \PlectaFactorialMaxCoverageRatio{} while $F_1$
     moves by \PlectaFactorialMaxFOneRange{}. The bracket marks the spread
-    between geometries, which is the scale against which that null should be
-    read.}
+    between geometries, the scale against which that null should be read.}
     \label{fig:performance}
 \end{figure}
 
@@ -411,10 +419,10 @@ exploratory development cases (Table~\ref{tab:plecta-real-masks}). From the
 manual-derived axis, an oracle-input condition, PLECTA reached
 \Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{} on B58\_100 and
 \PlectaBFiveEightOneOneZeroManualFOne{} on B58\_110; with Pipeline~A's U-Net
-axes, whose recall and precision against the manual skeleton are given in the
-table, the values were \PlectaBFiveEightOneZeroZeroUNetFOne{} and
-\PlectaBFiveEightOneOneZeroUNetFOne{}. The distance between the two conditions
-is the practical dependence of the result on upstream mask quality. These values
+axes, whose agreement with the manual skeleton is given in the table, the
+values were \PlectaBFiveEightOneZeroZeroUNetFOne{} and
+\PlectaBFiveEightOneOneZeroUNetFOne{}. The distance between the conditions is
+the practical dependence on upstream mask quality. These values
 are descriptive and do not estimate real-image generalisation, for the reasons
 set out in Section~\ref{sec:limitations}.
 
