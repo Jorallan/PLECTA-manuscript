@@ -105,15 +105,14 @@ crossing pixels may be shared.
 
 Reaching real micrographs takes one more component. A complete CNT workflow
 combines semantic segmentation with algorithmic tracing and transverse intensity
-profiles \citep{peters2026fibre}, and we divide that workflow in two.
+profiles \citep{peters2026fibre}, and we divide that workflow in two:
 Pipeline~A turns a raw SEM micrograph into a binary filament-axis mask by a
 synthetic-data-driven CycleGAN/U-Net route
-\citep{ruehle2021workflow,allan2026cntsem}; Pipeline~B is PLECTA. Pipeline~A is
-what makes the proof of concept on real data possible at all, since without it
-the method could only ever be exercised on masks drawn by hand or emitted by a
-generator. The division also lets grouping be measured on its own, against
-references whose identities are known exactly, and keeps width rendering from
-moving an identity score. Pipeline~A carries its own evaluation
+\citep{ruehle2021workflow,allan2026cntsem}, and Pipeline~B is PLECTA. Without
+Pipeline~A the method could only ever be exercised on masks drawn by hand or
+emitted by a generator; with the division, grouping can be measured on its own
+against references whose identities are known exactly, and width rendering
+cannot move an identity score. Pipeline~A carries its own evaluation
 \citep{allan2026cntsem} and is not re-evaluated here. We evaluate PLECTA on
 \PlectaHeldoutSceneCount{} unseen scenes from the development generator and on
 \PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate

@@ -2,27 +2,22 @@
 \label{sec:discussion}
 
 PLECTA addresses a narrow problem: assigning fragments of a binary
-filament-axis mask to overlapping projected instances. A held-out
-common-fragment $F_1$ of \PlectaHeldoutFOneMean{} shows that explicit geometry
-recovers substantial identity with no instance-labelled training data and no
-SEM intensity. What recovers it is the combination of local and accumulated
-evidence, neither of which suffices alone: a junction is resolved by mutual
-compatibility rather than by the cheapest available continuation, and the
-evidence for that judgement is re-read along the chains as they assemble.
-
-The ablations locate that effect without proving each term independently
-necessary: the two large losses correspond to the two kinds of discontinuity,
-the junction and the missing mask segment, while accumulated context is worth
-distinctly less than either.
+filament-axis mask to overlapping projected instances. Explicit geometry
+recovers substantial identity there with no instance-labelled training data and
+no SEM intensity, and what recovers it is the combination of local and
+accumulated evidence, neither of which suffices alone: a junction is resolved by
+mutual compatibility rather than by the cheapest available continuation, and the
+evidence for that judgement is re-read along the chains as they assemble. The
+ablations locate that effect without proving each term independently necessary:
+the two large losses correspond to the two kinds of discontinuity, the junction
+and the missing mask segment, while accumulated context is worth distinctly less
+than either.
 
 \subsection{Density, masks, and optional rendering}
 
 Difficulty follows the density of centrelines rather than the amount of ink, so
 what costs the score is the number of locally plausible alternatives at a
-crossing, and the decline with coverage is a decline with the length density
-that accompanies it under this generator.
-
-The rest of the sensitivity belongs to the upstream segmenter, which fixes the
+crossing. The rest of the sensitivity belongs to the upstream segmenter, which fixes the
 thickness of the mask and therefore how clean a skeleton PLECTA is given. PLECTA
 can bridge a short omission, but it cannot infer a filament absent from the
 mask, nor reliably reject a false axis introduced upstream. Supplying identical
@@ -31,13 +26,11 @@ end-to-end SEM performance, which is why the two-field case is a demonstration
 of the joined pipelines rather than a measurement of them.
 
 Ribbon rendering, being downstream of grouping, buys connectivity rather than
-identity: it delivers as single connected curves nearly all of the instances the
-core emits in several pieces, at a small cost in $F_1$, because the core paints
-arms and junction clusters but not the gap links that carry identity across a
-break. Silhouette absorption differs in kind, since it changes the partition
-itself, and so stays optional. Width and brightness can be reported for
-characterised instances, but their physical accuracy requires separate
-references.
+identity, because the core paints arms and junction clusters but not the gap
+links that carry identity across a break. Silhouette absorption differs in kind,
+since it changes the partition itself, and so stays optional; width and
+brightness can be reported for characterised instances, but their physical
+accuracy requires separate references.
 
 \subsection{Evidence boundary}
 \label{sec:limitations}
@@ -60,14 +53,13 @@ so their $F_1$ values describe performance under each input condition rather
 than comparing identical objects. More independent fields, sealed before
 configuration, and annotations from multiple readers are required.
 
-A caveat from the comparisons is worth separating from the claim it seems to
-threaten. GraFT lost by \PlectaGraFTDeltaFOne{} despite its near-hard
-partition costing it nothing under this metric, because the metric scores how a
-crossing is resolved rather than how it is drawn. Resolution is the difficult
-decision and is what the comparators lose on. Whether the emitted raster marks
-a crossing pixel as owned by both filaments is a property of the output format,
-measured directly here rather than through \Fone{}. Both are worth having,
-and a metric that scored pixel-level ownership would let them be tested apart.
+One caveat from the comparisons must be separated from the claim it seems to
+threaten. The comparators lose on how a crossing is \emph{resolved}, which the
+metric scores and which is the difficult decision, not on how it is
+\emph{represented}, which the metric cannot see: GraFT's near-hard partition is
+a real limitation that costs it nothing here (Section~\ref{sec:res-overlap}).
+Both properties are worth having, and a metric scoring pixel-level ownership
+would let them be tested apart.
 
 Two further limits concern the output itself. PLECTA recovers projected
 two-dimensional identity: shared pixels encode overlap but not which filament
@@ -75,26 +67,24 @@ passes above another, so no three-dimensional topology follows. And the grouping
 metric evaluates ownership of centreline fragments, which is not a validation of
 rendered width; quantitative diameter claims require matched physical
 measurements across the relevant scale, contrast, and specimen ranges. Pairwise
-fragment scores also emphasise instances containing many fragments, which is why
-object recovery and ARI are kept alongside them.
+fragment scores also emphasise instances with many fragments, which is why
+recovery and ARI are reported alongside.
 
-Both comparisons are bounded. The greedy rule is our reimplementation of a
-principle rather than of any particular paper, and DNAi was run outside the
-domain it was built for: its own bundled test image holds five junction clusters
-against 23 to 183 in ours, and part of its cost function reads a colour channel
-our masks do not have. What the two results support is narrow and mechanical,
-that pairing endpoints greedily, or committing to a pairing with no option to
-decline, loses identity in dense crossings. They do not support a claim that
-PLECTA is generally superior; that would need several released implementations
-run in their own regimes by their own authors.
+The comparisons themselves are bounded. The greedy rule is our reimplementation
+of a principle rather than of any particular paper, and DNAi was run outside the
+domain it was built for, part of its cost function reading a colour channel our
+masks do not have. What the results support is narrow and mechanical: pairing
+endpoints greedily, or committing to a pairing with no option to decline, loses
+identity in dense crossings. They do not support a claim that PLECTA is
+generally superior; that would need several released implementations run in
+their own regimes by their own authors.
 
 An independent procedural benchmark is the practical next test. The
-\texttt{merged\_lines} mask generator in the CNT\_SEM pipeline can export
-overlap-aware whole-bundle references and would add a different implementation
-and morphology model, but it should supplement rather than replace the current
-generator: its field-of-view preset is calibrated to a narrow coverage regime
-where the primary benchmark spans density. A multi-scene run should follow only
-once that calibration is fixed and its seeds separated from any configuration
-work, and no result from it is included here. Broader validation should then
-extend to independent real masks and other filament domains while keeping input
-fragments and scoring rules fixed.
+\texttt{merged\_lines} generator in the CNT\_SEM pipeline can export
+overlap-aware whole-bundle references from a different implementation and
+morphology model, but its field-of-view preset is calibrated to a narrow
+coverage regime, so it must supplement rather than replace the current
+generator, and only once that calibration is fixed and its seeds separated from
+any configuration work. No result from it is included here. Broader validation
+should then extend to independent real masks and other filament domains, with
+input fragments and scoring rules held fixed.

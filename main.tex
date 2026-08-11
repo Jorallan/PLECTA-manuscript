@@ -68,6 +68,17 @@
   \end{minipage}\par\smallskip}
 \newcommand{\igorreply}[1]{\par\noindent{\small\textcolor{green!30!black}{%
   \textbf{[Response]}}~#1}\par\smallskip}
+%  Float packing. The twelve figures are each a third to a half of a text
+%  column high, and the stock fractions push them onto pages of their own,
+%  leaving wide bands of white space. These relaxed values change layout only.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+
 \captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
@@ -179,6 +190,11 @@ that supplies the masks for the SEM demonstration, adapts the open CycleGAN/U-Ne
 particle-segmentation workflow of Rühle et al.~\citep{ruehle2021workflow} and
 carries its own evaluation elsewhere.
 
+%  The reference list is set compactly: no glue between entries, and two sizes
+%  down, as Elsevier's own styles do. This is typographic only; no reference is
+%  removed, shortened, or merged. Reverting to \small costs about one page.
+\setlength{\bibsep}{0pt plus 0.3ex}
+\renewcommand{\bibfont}{\footnotesize}
 \bibliographystyle{unsrtnat}
 \bibliography{references}
 

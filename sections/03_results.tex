@@ -16,7 +16,7 @@ procedural generator as development data, so this is same-generator
 generalisation and not distribution transfer
 (Section~\ref{sec:limitations}).
 
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
     \caption{Held-out reconstruction scores overall and by target areal
     coverage. VI denotes variation of information; lower VI is better, whereas
@@ -33,11 +33,10 @@ coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
 the 30\% and 40\% means being \PlectaDensityThreeZeroFOneMean{} and
 \PlectaDensityFourZeroFOneMean{}. The same decline appears on the paired
-robustness set, where each geometry is scored from both input conditions
-(Figure~\ref{fig:density}): the two curves separate at low coverage and meet at
-50--60\%, degradation costing least exactly where the score is lowest, because
-there the tangles rather than the gaps set the difficulty. Per-scene runtime had
-mean \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s, 90th
+robustness set (Figure~\ref{fig:density}): the two curves separate at low
+coverage and meet at 50--60\%, degradation costing least exactly where the score
+is lowest, because there the tangles rather than the gaps set the difficulty.
+Per-scene runtime had mean \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s, 90th
 percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.
 
@@ -60,9 +59,8 @@ percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 Coverage is the fraction of the frame filled by the rendered bundles, so it
 rises both when filaments are added and when the same filaments are drawn
 thicker, and only the first changes the grouping problem. A factorial separates
-the two. Twelve geometries, three centreline length
-densities crossed with four seeds, were each rendered at bundle widths of 6,
-11 and 16 px. Within one geometry the input axis mask and the overlap-aware
+them: twelve geometries, three centreline length densities crossed with four
+seeds, were each rendered at bundle widths of 6, 11 and 16 px. Within one geometry the input axis mask and the overlap-aware
 centreline reference are byte-identical across the three widths, verified by
 SHA-256, while the union of the thick supports changes: areal coverage varies by
 up to a factor of \PlectaFactorialMaxCoverageRatio{}. Any movement in the score
@@ -80,9 +78,13 @@ Centreline length density does move it: mean \Fone{} fell from
 rose from \PlectaFactorialLowLengthDensity{} to
 \PlectaFactorialHighLengthDensity{}. The coverage bands of the three length
 densities also overlap, an areal coverage near 0.31 occurring at all three, so
-coverage does not identify a difficulty level on its own.
+coverage does not identify a difficulty level on its own. Density strata
+reported by target areal coverage should therefore be read as a proxy for the
+length density that accompanies them under this generator, and a mask drawn at a
+different thickness, as an upstream segmenter may well produce, does not by
+itself move the grouping score.
 
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
     \caption{Bundle width against centreline length density,
     \PlectaFactorialSceneCount{} development scenes. Within each row the three
@@ -94,28 +96,33 @@ coverage does not identify a difficulty level on its own.
     \input{results/plecta_factorial_table}
 \end{table}
 
-Density strata reported by target areal coverage should therefore be read as a
-proxy for the length density that accompanies them under this generator, and a
-mask drawn at a different thickness, as an upstream segmenter may well produce,
-does not by itself move the grouping score.
+\subsection{Comparison with prior linkers}
+\label{sec:res-comparators}
 
-\subsection{Comparison with greedy continuation}
-\label{sec:res-greedy}
+Three comparators were run on identical input masks with one scorer: a greedy
+minimum-turning-angle continuation rule, which tests the paper's central claim
+directly, and two published methods, DNAi \citep{playout2026dnai} and GraFT
+\citep{osterlund2026graft}, each executed from its own released source. All were
+scored through the same conversion and metric code as PLECTA, and that path was
+gated on parity: before any comparator number was believed it had to reproduce
+PLECTA's stored \Fone{}, adjusted Rand index and both variation-of-information
+components, because a faulty conversion yields plausible rather than obviously
+wrong scores. Each comparator received a parameter translation selected on the
+same \PlectaDevelopmentSceneCount{} development scenes PLECTA was configured on,
+so none is disadvantaged by tuning effort, and every adaptation described below
+was checked rather than assumed and found to favour the comparator.
 
-The contribution claimed in Section~\ref{sec:intro} is that a junction is
-better solved as one exact matching, with an explicit priced option to leave an
-arm unmatched, than by pairing endpoints greedily in priority order, the rule
-used by SIFNE, by GraFT's path cover, and by the continuity baseline of Wegmayr
-et al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. The
+\textbf{Greedy continuation.} The contribution claimed in
+Section~\ref{sec:intro} is that a junction is better solved as one exact
+matching, with an explicit priced option to leave an arm unmatched, than by
+pairing endpoints greedily in priority order, the rule used by SIFNE, by GraFT's
+path cover, and by the continuity baseline of Wegmayr et al.\
+\citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. The
 comparator therefore skeletonises the same mask, prunes spurs, splits the
 skeleton into branches, and greedily accepts the lowest-turning-angle pairing
-between branch ends within a distance and a turning-angle gate. Both gates
-were selected on the same \PlectaDevelopmentSceneCount{} development scenes
-PLECTA was configured on, by sweeping a grid and taking the best mean
-\Fone{}, so neither method is advantaged by tuning effort. Both received
-identical masks and one scorer, on \PlectaGreedySceneCount{} scenes generated
-after both configurations were fixed.
-
+between branch ends within a distance and a turning-angle gate, both gates fixed
+by a grid sweep for best mean development \Fone{}. On
+\PlectaGreedySceneCount{} scenes generated after both configurations were fixed,
 PLECTA scored \PlectaGreedyPlectaFOne{} against
 \PlectaGreedySweptBaselineFOne{}, a paired difference of
 \PlectaGreedySweptDeltaFOne{} (95\% CI [\PlectaGreedySweptDeltaCILow{},
@@ -128,10 +135,10 @@ recovery, the expected signature: a greedy pass commits to the locally
 straightest continuation and cannot revise it when that choice strands a better
 partner, so single filaments are left divided. On clean axes the difference was
 \PlectaGreedySweptCleanDeltaFOne{}
-[\PlectaGreedySweptCleanDeltaCILow{}, \PlectaGreedySweptCleanDeltaCIHigh{}], so it is not
-an artefact of mask degradation.
+[\PlectaGreedySweptCleanDeltaCILow{}, \PlectaGreedySweptCleanDeltaCIHigh{}], so
+it is not an artefact of mask degradation.
 
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
     \caption{PLECTA against a greedy minimum-turning-angle continuation
     baseline on \PlectaGreedySceneCount{} scenes with identical input masks and
@@ -142,38 +149,28 @@ an artefact of mask degradation.
     \input{results/plecta_greedy_table}
 \end{table}
 
-\subsection{Comparison with a released implementation}
-\label{sec:res-dnai}
-
-The greedy rule above is a reimplementation, so we also ran a published method
-from its own source. DNAi \citep{playout2026dnai} post-processes a binary
-segmentation by the sequence described in Section~\ref{sec:intro}. Its
-segmentation network was bypassed and only that stage was used, so grouping is
-not confounded with segmentation quality, and both methods received the same
-masks and the same scorer.
-
-At its released defaults DNAi scored \Fone{}=\PlectaDNAiShippedFOne{} on the
-degraded masks, which is not a fair measure of it. The cause is its
-single-linkage clustering of junction pixels at 10~px: our crossings are closer
-together than that, so the clustering chains, and at 60\% coverage the largest
-cluster spans 89~px and is replaced by one small erasure disk, leaving the
-crossings along it unseparated and the whole tangle a single instance. Reducing
-the clustering distance to 2~px on development scenes raised development
-\Fone{} from 0.211 to 0.378 and cut variation-of-information merge from 2.07 to
-0.66, confirming the mechanism. Dilating the input to a thicker mask was also
-tested across 41 development configurations and made DNAi worse at every
-setting, so it was not used.
-
-At its best development-selected configuration DNAi scored
-\PlectaDNAiFOne{} against PLECTA's \PlectaDNAiPlectaFOne{}, a paired difference
-of \PlectaDNAiDeltaFOne{} (95\% CI [\PlectaDNAiDeltaCILow{},
-\PlectaDNAiDeltaCIHigh{}]) over \PlectaDNAiSceneCount{} scenes; on clean axes
-the difference was \PlectaDNAiCleanDeltaFOne{}
-[\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}]. The gap widens
-monotonically with density (Figure~\ref{fig:comparators}). Both methods must be
-read against the one-instance-per-connected-component floor at their own
-density, since that floor is itself strongly density-dependent and a pooled
-value would flatter any method at 60\% coverage.
+\textbf{DNAi.} DNAi post-processes a binary segmentation by the sequence
+described in Section~\ref{sec:intro}; its segmentation network was bypassed and
+only that stage used, so grouping is not confounded with segmentation quality.
+At its released defaults it scored \Fone{}=\PlectaDNAiShippedFOne{} on the
+degraded masks, which is not a fair measure of it: its single-linkage clustering
+of junction pixels at 10~px chains together crossings that lie closer than that,
+and at 60\% coverage the largest cluster spans 89~px and is replaced by one
+small erasure disk, leaving the crossings along it unseparated and the whole
+tangle a single instance. Reducing that distance to 2~px on development scenes
+raised development \Fone{} from 0.211 to 0.378 and cut variation-of-information
+merge from 2.07 to 0.66, confirming the mechanism; dilating the input to a
+thicker mask was also tested across 41 development configurations and made DNAi
+worse at every setting, so it was not used. At its best development-selected
+configuration DNAi scored \PlectaDNAiFOne{} against PLECTA's
+\PlectaDNAiPlectaFOne{}, a paired difference of \PlectaDNAiDeltaFOne{} (95\% CI
+[\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}]) over
+\PlectaDNAiSceneCount{} scenes, and \PlectaDNAiCleanDeltaFOne{}
+[\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}] on clean axes,
+the gap widening monotonically with density (Figure~\ref{fig:comparators}).
+Both methods must be read against the one-instance-per-connected-component floor
+at their own density, since that floor is itself strongly density-dependent and
+a pooled value would flatter any method at 60\% coverage.
 
 \begin{figure}[htbp]
     \centering
@@ -188,8 +185,8 @@ value would flatter any method at 60\% coverage.
     \label{fig:comparators}
 \end{figure}
 
-This is a limitation of domain and density, not a general ranking. DNAi is
-built for DNA-fibre micrographs, which are sparse: its own bundled test image
+That margin is a limitation of domain and density, not a general ranking. DNAi
+is built for DNA-fibre micrographs, which are sparse: its own bundled test image
 contains five junction clusters, whereas our scenes contain between 23 and 183,
 and where the network is sparse and the axis clean it recovers
 \PlectaDNAiCleanSparseFOne{} at 20\% coverage. Two structural differences
@@ -197,16 +194,15 @@ explain the rest. It commits to a pairing at every junction of degree two to
 four with no cost threshold, so it cannot decline a continuation the way a
 priced unmatched option can; and it resolves only junctions of degree at most
 four. That cap is easy to underrate by counting junctions, since junctions of
-degree five or more are only about a tenth of the clusters here. Weighted by the
-evidence the metric actually counts, they carry
+degree five or more are only about a tenth of the clusters here, but weighted by
+the evidence the metric actually counts they carry
 \PlectaEvidenceHighDegree{}\,\% of same-filament fragment pairs on the degraded
 masks and \PlectaEvidenceCleanHighDegree{}\,\% on the clean ones, because a
 single such junction severs every pair that spans it.
 
-That raises the question of how much of the margin is capability rather than
-judgement. Restricting the score to the evidence a degree-limited, gap-blind
-method can reach answers it. On clean axes the difference falls from
-\PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
+Restricting the score to the evidence a degree-limited, gap-blind method can
+reach separates capability from judgement. On clean axes the difference falls
+from \PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
 [\PlectaDNAiRestrictedCleanDeltaCILow{},
 \PlectaDNAiRestrictedCleanDeltaCIHigh{}], still favouring PLECTA in
 \PlectaDNAiRestrictedCleanWinCount{} of \PlectaDNAiCleanSceneCount{} scenes and
@@ -220,20 +216,17 @@ than merging, and a third of those divisions occur at junctions of degree four,
 which it does attempt: its matcher commits to a pairing there with no rejection
 threshold.
 
-A second released method was run the same way. GraFT \citep{osterlund2026graft}
-builds a graph on a skeleton, derives an angle threshold per component, and
-traces filaments by constrained depth-first search followed by a greedy
-longest-first path cover. Its published entry point begins with a Frangi and
-Otsu front end that enhances and binarises grayscale ridge images, which has
-nothing to do on a two-valued axis, so the mask was injected at its
+\textbf{GraFT.} GraFT builds a graph on a skeleton, derives an angle threshold
+per component, and traces filaments by constrained depth-first search followed
+by a greedy longest-first path cover. Its published entry point begins with a
+Frangi and Otsu front end that enhances and binarises grayscale ridge images,
+which has nothing to do on a two-valued axis, so the mask was injected at its
 skeleton-to-graph stage and everything downstream is its own code unchanged.
-That decision was checked rather than assumed, and it favours GraFT: run end to
-end on the grayscale images it scores \PlectaGraFTNativeFOne{}, near the
-connectivity floor, because its segmentation stage recovers only a third to a
-half of the reference skeleton. Its minimum continuation angle was re-tuned on
-development scenes, gaining it a further 0.04.
-
-GraFT scored \PlectaGraFTFOne{}, a paired difference of
+That substitution favours GraFT: run end to end on the grayscale images it
+scores \PlectaGraFTNativeFOne{}, near the connectivity floor, because its
+segmentation stage recovers only a third to a half of the reference skeleton.
+Its minimum continuation angle was re-tuned on development scenes, gaining it a
+further 0.04. GraFT scored \PlectaGraFTFOne{}, a paired difference of
 \PlectaGraFTDeltaFOne{} [\PlectaGraFTDeltaCILow{}, \PlectaGraFTDeltaCIHigh{}]
 favouring PLECTA in every one of the \PlectaGraFTSceneCount{} scenes both
 methods completed, and \PlectaGraFTCleanDeltaFOne{}
@@ -244,16 +237,15 @@ greedy cover that cannot revise an early commitment once the scene collapses
 into one connected graph, as it does above 30\% coverage.
 \PlectaGraFTFailed{} of the densest degraded scenes did not finish inside a
 45-minute budget and are excluded from its means; they are the hardest scenes of
-the set, so that exclusion flatters GraFT.
-Section~\ref{sec:limitations} states what these comparisons leave untested.
+the set, so that exclusion flatters GraFT. Neither released method establishes a
+general ranking, and Section~\ref{sec:limitations} states what these comparisons
+leave untested.
 
 \subsection{Crossing resolution and crossing representation}
 \label{sec:res-overlap}
 
-Two distinct things are meant by an overlap-aware result, and they are worth
-separating because the metric treats them differently.
-
-The first is whether a crossing is \emph{resolved} correctly: of the arms
+Two distinct things are meant by an overlap-aware result, and the metric treats
+them differently. The first is whether a crossing is \emph{resolved} correctly: of the arms
 meeting at a junction, which continues into which. This is what the
 common-fragment metric measures, and it is the difficult decision. At a
 four-arm crossing the junction pixels are removed and the four arms become four
@@ -271,7 +263,7 @@ fragments. Flattening either method's layers to a single label image accordingly
 changes \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002
 for GraFT.
 
-The representation is instead verifiable by direct measurement. On the
+The representation is instead verifiable directly: on the
 comparison set, reference instances share \PlectaOverlapReferenceLow{}\,\% of
 their pixels with another instance at 20\% coverage, rising to
 \PlectaOverlapReferenceHigh{}\,\% at 60\%. PLECTA emits
@@ -288,16 +280,14 @@ reported as a measured property of the representation, not as something the
 \Fone{} rewards, and a metric scoring pixel-level crossing ownership directly
 would test the two claims separately.
 
-Individual scenes show what the score corresponds to.
-Figure~\ref{fig:examples} takes the scene whose \Fone{} is closest to the
-median at three coverage levels, so the rows are typical rather than selected,
-and shows the evaluated output beside the same instances after the optional
-rendering stage. The grouping is scored on the centrelines in the third column;
-the fourth adds the fitted widths and is what the full pipeline delivers. It is
-included because the rendered form is what a downstream user sees, and because
-the comparison with the reference is only legible once the instances are drawn
-at width. Errors survive rendering unchanged: it redraws the instances the
-grouping produced and cannot merge or divide them.
+Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
+taking at three coverage levels the scene whose \Fone{} is closest to the
+median, so the rows are typical rather than selected. The grouping is scored on
+the centrelines in the third column; the fourth adds the fitted widths and is
+what the full pipeline delivers, included because that is what a downstream user
+sees and because the comparison with the reference is only legible once the
+instances are drawn at width. Errors survive rendering unchanged: it redraws the
+instances the grouping produced and cannot merge or divide them.
 
 \begin{figure}[htb]
     \centering
@@ -321,14 +311,13 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
-
-Mask thickness costs more than degradation does (Figure~\ref{fig:sensitivity}),
-which matters because it is the upstream segmenter, not the method, that fixes
-that thickness. Each width variant is scored against common fragments rebuilt
-from its own input mask, so the question asked is how well the method groups the
-skeleton it is handed rather than how many pixels it was handed; the decline
-with width is a thicker mask skeletonising into a messier graph, not a change in
-the grouping problem.
+Mask thickness costs more (Figure~\ref{fig:sensitivity}), which matters because
+it is the upstream segmenter, not the method, that fixes that thickness. Each
+width variant is scored against common fragments rebuilt from its own input
+mask, so the question asked is how well the method groups the skeleton it is
+handed rather than how many pixels it was handed; the decline with width is a
+thicker mask skeletonising into a messier graph, not a change in the grouping
+problem.
 
 \begin{figure}[htbp]
     \centering
@@ -354,12 +343,10 @@ matching by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
 connector-based junction-cluster consolidation by
 \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Every other component,
 chain-extended frames and the round schedule included, mattered less, the
-largest such change being \PlectaAblationNoJoinPxDeltaFOne{}. Chord-aware
-continuation, gap matching, and junction-topology preconditioning are thus the
-largest tested contributors, but these are development values and not held-out
-effect estimates.
+largest such change being \PlectaAblationNoJoinPxDeltaFOne{}. These are
+development values, not held-out effect estimates.
 
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
     \caption{One-at-a-time component ablations on the
     \PlectaDevelopmentSceneCount{}-scene development set. Negative $\Delta F_1$
@@ -387,15 +374,13 @@ validates apparent width.
 Two properties of the held-out result are invisible in a table of means
 (Figure~\ref{fig:performance}). The first is the negative control of
 Section~\ref{sec:res-factorial} seen scene by scene: within a fixed geometry the
-twelve lines are flat, so the coverage axis of Figures~\ref{fig:density}
-and~\ref{fig:comparators} stands in for centreline density rather than causing
-the difficulty itself. The second is that PLECTA's errors are two-sided. A
-fragment \Fone{} can be reached one-sidedly, by a method that merges everything
-or one that divides everything, so it matters that PLECTA sits on the
-precision--recall diagonal. The connected-component floor does not: it recovers
+twelve lines are flat. The second is that PLECTA's errors are two-sided. A
+fragment \Fone{} can be reached one-sidedly, by merging everything or by
+dividing everything, so it matters that PLECTA sits on the precision--recall
+diagonal, whereas the connected-component floor recovers
 \PlectaCCFloorRecall{} of same-filament pairs at a precision of
-\PlectaCCFloorPrecision{}, because it merges every filament of a connected
-network into one instance. That placement is what makes it legible as a
+\PlectaCCFloorPrecision{} because it merges every filament of a connected
+network into one instance. That placement is what makes the floor legible as a
 diagnostic rather than a competitor.
 
 \begin{figure}[htbp]
@@ -425,13 +410,11 @@ manual-derived axis, an oracle-input condition, PLECTA reached
 axes, whose recall and precision against the manual skeleton are given in the
 table, the values were \PlectaBFiveEightOneZeroZeroUNetFOne{} and
 \PlectaBFiveEightOneOneZeroUNetFOne{}. The distance between the two conditions
-is the practical dependence of the result on upstream mask quality. With two
-development fields, one of them training-contaminated for the U-Net condition,
-and a fragment universe that differs between the two mask sources, these values
-are descriptive and do not estimate real-image generalisation
-(Section~\ref{sec:limitations}).
+is the practical dependence of the result on upstream mask quality. These values
+are descriptive and do not estimate real-image generalisation, for the reasons
+set out in Section~\ref{sec:limitations}.
 
-\begin{table}[t]
+\begin{table}[htbp]
     \centering
     \caption{Exploratory reconstruction from manual-derived and U-Net
     axes in two CNT SEM fields. Axis recall and precision compare the U-Net

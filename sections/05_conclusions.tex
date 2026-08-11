@@ -9,18 +9,19 @@ common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on
 procedural generator, with performance declining as network density increased.
 On identical masks it gained \PlectaGreedySweptDeltaFOne{} \Fone{} over a greedy
 minimum-turning-angle continuation rule, the rule shared by several published
-linkers, and \PlectaDNAiDeltaFOne{} over a released implementation run from its
-own source; both support solving each junction exactly rather than pairing
-endpoints in priority order, though the second is a limitation of domain and
-density rather than a general ranking. Development ablations identify junction
+linkers, and \PlectaDNAiDeltaFOne{} and \PlectaGraFTDeltaFOne{} over two
+released implementations run from their own source; these support solving each
+junction exactly rather than pairing endpoints in priority order, but the
+released comparisons are limitations of domain and density rather than a general
+ranking. Development ablations identify junction
 chord-turn evidence, gap bridging, and junction-topology consolidation as the
 principal contributors, and optional image-informed rendering improves
 geometric presentation while remaining separate from the grouping claim.
 
 The proof of concept on carbon-nanotube sheets joins the two pipelines: an
 upstream synthetic-data-driven segmenter prepares the mask, and PLECTA resolves
-it into instances. Two SEM fields demonstrate that route under manual-derived
-and U-Net masks without establishing population generalisation or width
+it into instances, demonstrated on two SEM fields under manual-derived and U-Net
+masks without establishing population generalisation or width
 accuracy. The method therefore offers an inspectable, deterministic route to
 projected filament identity; broader claims require independent real fields,
 validated physical widths, further released implementations run in a matched
