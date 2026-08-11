@@ -172,17 +172,25 @@ Both methods must be read against the one-instance-per-connected-component floor
 at their own density, since that floor is itself strongly density-dependent and
 a pooled value would flatter any method at 60\% coverage.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_comparators_density.pdf}
-    \caption{PLECTA, the greedy continuation rule and DNAi across coverage, on
-    the same \PlectaGreedySceneCount{} scenes with identical masks and one
-    scorer, for the degraded and clean axis conditions. Plain means, ten scenes
-    per point, no interval and no inference. The connected-component floor is
-    drawn per density and falls from 0.146 to 0.041 across this range. DNAi is
-    shown at its released defaults and at the best configuration selected on
-    development scenes.}
-    \label{fig:comparators}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_comparators.pdf}
+  \caption{PLECTA against two published methods and a greedy baseline, on the
+    same 50 scenes, the same input masks and one scorer.
+    \textbf{(a)}~degraded and \textbf{(b)}~clean input mask: mean
+    common-fragment \Fone{} per coverage stratum, $n=10$ scenes per point
+    except where labelled otherwise; plain means, no interval is drawn and none
+    is claimed. GraFT exceeded its per-scene wall-clock budget on 3 of the 50
+    degraded scenes and 1 of the clean ones; those are excluded from its means
+    and are the hardest of the densest stratum, so the GraFT curve is
+    optimistic. DNAi is shown at the best configuration found for it on
+    development scenes. The greedy baseline uses the gates selected by a sweep
+    over the development scenes. \textbf{(c)}~aggregate paired difference with
+    its density-stratified bootstrap 95\,\% interval (20\,000 replicates),
+    filled markers degraded and open markers clean; the fraction beside each
+    interval is the number of scenes on which PLECTA scored higher, out of
+    those both methods completed.}
+  \label{fig:comparators}
 \end{figure}
 
 That margin is a limitation of domain and density, not a general ranking. DNAi
@@ -371,30 +379,26 @@ membership. Enabling the separate 0.6 silhouette-absorption rule reduced
 merge identities it remained disabled. None of these topology measurements
 validates apparent width.
 
-Two properties of the held-out result are invisible in a table of means
-(Figure~\ref{fig:performance}). The first is the negative control of
-Section~\ref{sec:res-factorial} seen scene by scene: within a fixed geometry the
-twelve lines are flat. The second is that PLECTA's errors are two-sided. A
-fragment \Fone{} can be reached one-sidedly, by merging everything or by
-dividing everything, so it matters that PLECTA sits on the precision--recall
-diagonal, whereas the connected-component floor recovers
-\PlectaCCFloorRecall{} of same-filament pairs at a precision of
-\PlectaCCFloorPrecision{} because it merges every filament of a connected
-network into one instance. That placement is what makes the floor legible as a
-diagnostic rather than a competitor.
+The negative control of Section~\ref{sec:res-factorial} is worth seeing scene
+by scene (Figure~\ref{fig:performance}), because a mean can hide a null. It is
+also worth recording that PLECTA's errors are two-sided: a fragment \Fone{} can
+be reached one-sidedly, by merging everything or by dividing everything, and
+PLECTA sits on the precision--recall diagonal where the connected-component
+floor recovers \PlectaCCFloorRecall{} of same-filament pairs at a precision of
+only \PlectaCCFloorPrecision{}, merging every filament of a connected network
+into one instance.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_performance.pdf}
-    \caption{Held-out spread, the width factorial, and the precision--recall
-    plane. (a)~All \PlectaHeldoutSceneCount{} held-out scenes, 32 per coverage
-    stratum, stratum means printed above; bands describe spread across scenes
-    and are not intervals for the mean. (b)~Twelve development geometries, one
-    line each; along a line the geometry is fixed and only bundle width changes,
-    so realised areal coverage moves by up to a factor of
-    \PlectaFactorialMaxCoverageRatio{} while $F_1$ moves by
-    \PlectaFactorialMaxFOneRange{}. (c)~The same scenes, one point each, against
-    the one-instance-per-connected-component floor.}
+    \includegraphics[width=\linewidth]{figures/fig_plecta_control.pdf}
+    \caption{The width factorial, scene by scene. Each arrow is one of the
+    \PlectaFactorialGeometryCount{} geometries, drawn from its narrowest to its
+    widest rendering. Along an arrow the centreline geometry and the input mask
+    are fixed and only the bundle width changes, so realised areal coverage
+    moves by up to a factor of \PlectaFactorialMaxCoverageRatio{} while $F_1$
+    moves by \PlectaFactorialMaxFOneRange{}. The bracket marks the spread
+    between geometries, which is the scale against which that null should be
+    read.}
     \label{fig:performance}
 \end{figure}
 

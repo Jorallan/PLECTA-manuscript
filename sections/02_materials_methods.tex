@@ -30,25 +30,11 @@ against frames re-fitted along the chains assembled so far.
     \label{fig:scope}
 \end{figure}
 
-What makes the task hard is visible in a single crossing (Figure~\ref{fig:task}):
-the mask holds one connected blob from which several arms leave, and nothing
-local states which arm continues into which. The output is a set of layers
-rather than a partition, so a pixel inside that blob is counted in both
-instances that claim it.
+What makes the task hard is a single crossing: the mask holds one connected
+blob from which several arms leave, and nothing local states which arm
+continues into which. The output is a set of layers rather than a partition, so
+a pixel inside that blob is counted in both instances that claim it.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_task.pdf}
-    \caption{The task, and what the output is. (a)~A four-arm crossing,
-    junction cluster in red. (b)~The evaluated input: one degraded 1\,px binary
-    axis mask. (c)~The overlap-aware reference for that scene, 40 instances.
-    (d)~The crossing after PLECTA; split squares mark shared pixels.
-    (e,~f)~The two instances separately, both holding the junction cluster.
-    (g)~Within this $52\times52$ crop each instance has 54 pixels, 7 of them
-    shared. Instance colours are arbitrary and carry identity only within a
-    panel.}
-    \label{fig:task}
-\end{figure}
 
 \subsection{Synthetic data and evaluation split}
 \label{sec:mm-synth}
@@ -59,7 +45,7 @@ several filaments may own the same crossing pixel. Besides the exact
 overlap-aware reference, the generator provides an undegraded one-pixel axis
 mask, a degraded thin mask containing small gaps and irregularities, a combined
 thick foreground, and an SEM-like image. The degraded one-pixel axis is the
-input evaluated throughout (Figure~\ref{fig:task}b,c). Areal coverage is the
+input evaluated throughout. Areal coverage is the
 union area of the thick supports divided by image area, not the occupancy of the
 thin input mask, and Section~\ref{sec:res-factorial} shows it is a proxy for
 difficulty rather than a cause of it.
@@ -276,10 +262,12 @@ part of the evaluated algorithm or contributed to the held-out result.
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 
-The primary endpoint is common-fragment pairwise \Fone{}. For each scene the
-visible input skeleton is partitioned once into method-independent elementary
-fragments, and each fragment receives a procedural reference identity and a
-PLECTA instance identity. A pair of fragments is a true positive when it shares
+The primary endpoint is common-fragment pairwise \Fone{}
+(Figure~\ref{fig:scorer}). For each scene the visible input skeleton is
+partitioned once into method-independent elementary fragments, and each
+fragment receives a procedural reference identity and a PLECTA instance
+identity. Because the partition is built from the input mask alone, every
+method compared is cut into the same fragments. A pair of fragments is a true positive when it shares
 both identities, a false positive when it joins different reference filaments,
 and a false negative when it separates fragments of one. Thus
 
@@ -289,6 +277,24 @@ and a false negative when it separates fragments of one. Thus
     \Fone{}=\frac{2PR}{P+R}.
     \label{eq:pairwise-f1}
 \end{equation}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_common_fragment_metric.pdf}
+  \caption{The common-fragment metric, on a real crossing.
+    \textbf{(a)--(e)}~fragments are built from the input mask alone: the mask is
+    skeletonised, spurs of at most 3\,px are pruned, skeleton pixels with three
+    or more 8-neighbours are deleted, the remaining 8-connected pieces are
+    labelled, and pieces shorter than 6\,px are discarded. Each is then assigned
+    to one reference and one predicted instance by majority overlap, and the
+    score is counted over fragment \emph{pairs}. \textbf{(f), (g)}~the
+    consequence: no fragment contains a junction pixel, so redrawing the
+    crossing, giving its pixels one owner instead of two, leaves all six
+    fragment pairs untouched, while resolving it differently changes four of the
+    six. The metric therefore scores how a crossing is resolved and not how it
+    is drawn.}
+  \label{fig:scorer}
+\end{figure}
 
 This is a clustering metric related to the Rand family
 \citep{rand1971objective,argandacarreras2015crowdsourcing}. It scores grouping

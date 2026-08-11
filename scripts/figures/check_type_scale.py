@@ -56,6 +56,15 @@ MODULES = [
     ("fig_plecta_examples", 8),
     ("fig_plecta_sensitivity", 9),
     ("fig_plecta_performance", 10),
+    # Round 3.  fig_comparators merges the DNAi, GraFT and greedy-baseline
+    # stories that fig_comparators_density carried only a third of;
+    # fig_common_fragment_metric is the scorer figure the primary endpoint
+    # never had; fig_plecta_control is the proposed replacement for
+    # fig_plecta_performance.  The superseded generators stay in the list so a
+    # regression in either version is still caught.
+    ("fig_comparators", 11),
+    ("fig_common_fragment_metric", 12),
+    ("fig_plecta_control", 13),
 ]
 
 TF = re.compile(rb"/[A-Za-z0-9]+\s+([0-9]*\.?[0-9]+)\s+Tf")
