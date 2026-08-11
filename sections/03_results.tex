@@ -247,33 +247,46 @@ into one connected graph, as it does above 30\% coverage.
 the set, so that exclusion flatters GraFT.
 Section~\ref{sec:limitations} states what these comparisons leave untested.
 
-\subsection{What the metric does not see}
+\subsection{Crossing resolution and crossing representation}
 \label{sec:res-overlap}
 
-Every score in this paper uses the common-fragment metric, and one of its
-properties has to be stated plainly. It splits the skeleton at junctions,
-discards the junction pixels, and assigns each surviving fragment to exactly one
-instance on both the reference and the prediction side. It is therefore blind to
-whether an instance shares a crossing pixel.
+Two distinct things are meant by an overlap-aware result, and they are worth
+separating because the metric treats them differently.
 
-Measured on the comparison set, reference instances share
-\PlectaOverlapReferenceLow{}\,\% of their pixels with another instance at 20\%
-coverage, rising to \PlectaOverlapReferenceHigh{}\,\% at 60\%. PLECTA expresses
-\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\% of its pixels as
-shared, and GraFT, whose output is close to a hard partition, about
-\PlectaOverlapGraFTHigh{}\,\%. Yet flattening either output to a single label
-image changes \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and
-0.002 for GraFT.
+The first is whether a crossing is \emph{resolved} correctly: of the arms
+meeting at a junction, which continues into which. This is what the
+common-fragment metric measures, and it is the difficult decision. At a
+four-arm crossing the junction pixels are removed and the four arms become four
+fragments; pairing the correct two arms puts both pairs in agreement with the
+reference and counts them as true positives, while pairing the wrong two
+produces a false positive and a false negative. Every score in this paper
+therefore rewards resolving crossings correctly, and the comparators lose
+precisely because they resolve them worse.
 
-Two things follow. GraFT's near-hard partition is a real structural limitation
-that costs it nothing here, so its scores are not depressed by it and the
-comparison above should be read accordingly. And the overlap-aware output this
-paper describes is not what the headline number rewards: a method emitting a
-flat partition of the same fragments would score the same. Shared crossing
-pixels are a property of the representation PLECTA produces, evidenced by the
-fractions above, rather than something the primary endpoint measures.
-Establishing that crossing ownership is recovered \emph{correctly} requires a
-metric that scores it directly, and that is left to future work.
+The second is whether the emitted raster \emph{represents} a crossing pixel as
+belonging to both filaments. That is a property of the output format rather
+than of the grouping decision, and the metric does not see it: the junction
+pixels it would have to inspect are the ones it discards when building
+fragments. Flattening either method's layers to a single label image accordingly
+changes \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002
+for GraFT.
+
+The representation is instead verifiable by direct measurement. On the
+comparison set, reference instances share \PlectaOverlapReferenceLow{}\,\% of
+their pixels with another instance at 20\% coverage, rising to
+\PlectaOverlapReferenceHigh{}\,\% at 60\%. PLECTA emits
+\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\% shared pixels;
+GraFT, whose output is close to a hard partition, about
+\PlectaOverlapGraFTHigh{}\,\%.
+
+One consequence matters for the comparison above. GraFT's near-hard partition
+is a real structural limitation, but it costs GraFT nothing under this metric,
+so its deficit is not an artefact of that limitation: it loses on how it
+resolves crossings, not on how it draws them. The converse also holds, and is
+the honest limit of what is claimed here. PLECTA's shared-pixel output is
+reported as a measured property of the representation, not as something the
+\Fone{} rewards, and a metric scoring pixel-level crossing ownership directly
+would test the two claims separately.
 
 Individual scenes show what the score corresponds to.
 Figure~\ref{fig:examples} takes the scene whose \Fone{} is closest to the

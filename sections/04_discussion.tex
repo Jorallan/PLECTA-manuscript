@@ -60,16 +60,14 @@ so their $F_1$ values describe performance under each input condition rather
 than comparing identical objects. More independent fields, sealed before
 configuration, and annotations from multiple readers are required.
 
-A caveat from the comparisons cuts against us. GraFT was run from its own
-source and lost by \PlectaGraFTDeltaFOne{}, but its near-hard partition,
-which should have been its main disadvantage against an overlap-aware
-reference, costs it nothing here. The reason is that the metric cannot see
-crossing ownership at all: flattening our own output changes its score by
-\PlectaOverlapFlattenCost{}. The overlap-aware representation is therefore
-something the method produces, and which the shared-pixel fractions evidence
-directly, rather than something the reported scores reward. A metric that
-scores crossing ownership is the obvious next step, and until there is one the
-claim to overlap-awareness rests on the representation and not on \Fone{}.
+A caveat from the comparisons is worth separating from the claim it seems to
+threaten. GraFT lost by \PlectaGraFTDeltaFOne{} despite its near-hard
+partition costing it nothing under this metric, because the metric scores how a
+crossing is resolved rather than how it is drawn. Resolution is the difficult
+decision and is what the comparators lose on. Whether the emitted raster marks
+a crossing pixel as owned by both filaments is a property of the output format,
+measured directly here rather than through \Fone{}. Both are worth having,
+and a metric that scored pixel-level ownership would let them be tested apart.
 
 Two further limits concern the output itself. PLECTA recovers projected
 two-dimensional identity: shared pixels encode overlap but not which filament
