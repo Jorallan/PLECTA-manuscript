@@ -42,8 +42,13 @@
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
+%  \rev{...} marked revised passages in cyan. Nearly the whole manuscript ended
+%  up inside it, so the colour stopped carrying information and the draft is now
+%  restructured as plain text. The macro is kept as a no-op so any stray call
+%  still typesets normally; set the body to \textcolor{revisioncyan}{#1} to turn
+%  marking back on.
 \definecolor{revisioncyan}{HTML}{00A6C8}
-\newcommand{\rev}[1]{\textcolor{revisioncyan}{#1}}
+\newcommand{\rev}[1]{#1}
 \newcommand{\supervisorcomment}[1]{\par\smallskip\noindent%
   \textcolor{purple!75!black}{\textbf{Supervisor comment:} #1}\par\smallskip}
 
@@ -62,7 +67,7 @@
     \textcolor{green!30!black}{\textbf{[Igor~\theigorcomment]}}~#1}}%
   \end{minipage}\par\smallskip}
 \newcommand{\igorreply}[1]{\par\noindent{\small\textcolor{green!30!black}{%
-  \textbf{[Response]}}~\rev{#1}}\par\smallskip}
+  \textbf{[Response]}}~#1}\par\smallskip}
 \captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
@@ -103,8 +108,8 @@
 %------------------------------------------------------------------------------
 \input{results/plecta_results}
 
-\title{\vspace{-1.2cm}\bfseries \rev{PLECTA: Overlap-aware instance
-reconstruction of dense filament networks from binary masks}}
+\title{\vspace{-1.2cm}\bfseries PLECTA: Overlap-aware instance
+reconstruction of dense filament networks from binary masks}
 
 \author{%
   \begin{minipage}{0.94\textwidth}
@@ -129,9 +134,9 @@ reconstruction of dense filament networks from binary masks}}
 \input{sections/00_abstract}
 \end{abstract}
 
-\noindent\textbf{Keywords:} \rev{filament networks; instance segmentation;
+\noindent\textbf{Keywords:} filament networks; instance segmentation;
 graph matching; geometric reconstruction; carbon nanotubes; scanning electron
-microscopy.}
+microscopy.
 
 \Igor{I must say I'm not quite happy with FilaSeg - we need to come up with a
 better name of the software. I think we do more than just "Seg", I'd avoid that
@@ -160,19 +165,19 @@ personal relationships that could have appeared to influence the work reported
 in this paper.
 
 \section*{Data and code availability}
-\rev{The PLECTA source, complete fixed configuration, compact seed manifest,
+The PLECTA source, complete fixed configuration, compact seed manifest,
 and aggregate machine-readable evidence are available at
 \url{https://github.com/Jorallan/PLECTA}. Generated scenes, detailed per-scene
-records, and development diagnostics are retained locally.}
+records, and development diagnostics are retained locally.
 \todo{Create a tagged archival release and add its DOI before submission; do
 not infer or preassign a DOI.}
 
 \section*{Acknowledgements}
-\rev{The authors thank the maintainers of NumPy, SciPy, scikit-image, NetworkX,
+The authors thank the maintainers of NumPy, SciPy, scikit-image, NetworkX,
 and Matplotlib. The upstream synthetic-data-driven mask workflow adapts the
 open CycleGAN/U-Net particle-segmentation workflow of Rühle et
 al.~\citep{ruehle2021workflow}; it is not evaluated as the contribution of this
-paper.}
+paper.
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}

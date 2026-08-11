@@ -49,7 +49,7 @@ network statistics rather than resolved instances
 \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,flormann2021finta,%
 hotaling2015diameterj}.
 
-\rev{Recovering individual filaments through crossings is itself established
+Recovering individual filaments through crossings is itself established
 prior art, and the design space is well explored. Basu et al.\ localise
 centreline particles, build a minimum spanning tree, delete every bifurcation
 node, and recombine the resulting segments with a binary integer program over
@@ -76,9 +76,9 @@ derives an angle threshold per component, and traces filaments by constrained
 depth-first search and a greedy longest-first path cover, additionally tracking
 them over time \citep{osterlund2026graft}. Learned alternatives include
 orientation-aware terminus pairing \citep{liu2019intersection}, FibeR-CNN, and
-recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.}
+recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.
 
-\rev{Skeleton graphs, junction excision, continuation angles, distance gates,
+Skeleton graphs, junction excision, continuation angles, distance gates,
 combinatorial optimisation, iterative refitting and overlapping filament output
 are therefore all prior art, and none is claimed here. Two distinctions are
 narrower and survive checking against the sources. First, the methods above
@@ -93,7 +93,7 @@ optimise globally require intensity evidence or a pre-extracted weighted graph
 alone. The closest single prior method is that of Liu et al., which likewise
 works from a mask, reconnects across gaps and permits overlapping output, but
 pairs termini greedily and depends on a trained orientation network
-\citep{liu2019intersection}.}
+\citep{liu2019intersection}.
 
 CNT-specific workflows increasingly combine semantic segmentation with
 algorithmic tracing and transverse intensity profiles

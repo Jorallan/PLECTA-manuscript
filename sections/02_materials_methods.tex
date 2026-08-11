@@ -1,74 +1,74 @@
-\section{\rev{Materials and methods}}
+\section{Materials and methods}
 \label{sec:methods}
 
-\subsection{\rev{Scope and workflow}}
+\subsection{Scope and workflow}
 \label{sec:mm-workflow}
 
-\rev{The formal input is a binary filament-axis mask
+The formal input is a binary filament-axis mask
 $M\in\{0,1\}^{H\times W}$. PLECTA reconstructs an overlap-aware collection
 $\{I_1,\ldots,I_N\}$, where $I_n\subseteq M$ and a crossing pixel may belong
 to several instances. The evaluated grouping stage uses only $M$. A grayscale
 SEM image is optional downstream input for width and brightness measurement;
 it cannot revise the fixed grouping. Figure~\ref{fig:scope} separates this
-core task from upstream mask extraction and downstream rendering.}
+core task from upstream mask extraction and downstream rendering.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_scope.pdf}
-    \caption{\rev{Workflow and evidence boundary. A micrograph is converted to
+    \caption{Workflow and evidence boundary. A micrograph is converted to
     a binary axis mask manually or by an upstream segmenter. PLECTA groups the
     mask into overlap-aware 2-D instances. SEM characterisation and ribbon
     rendering are optional downstream operations and were absent from the
-    held-out grouping result.}}
+    held-out grouping result.}
     \label{fig:scope}
 \end{figure}
 
-\subsection{\rev{Synthetic data and evaluation split}}
+\subsection{Synthetic data and evaluation split}
 \label{sec:mm-synth}
 
-\rev{Procedural scenes preserve the ordered centreline $\mathcal C_k$ and
+Procedural scenes preserve the ordered centreline $\mathcal C_k$ and
 rendered support $\Omega_k$ of every filament $k$. Individual supports remain
 separate, so several filaments may own the same crossing pixel. The generator
 provides an undegraded one-pixel axis mask, a degraded thin mask containing
 small gaps and irregularities, a combined thick foreground, an SEM-like image,
 and the exact overlap-aware instance reference (Figure~\ref{fig:synth-examples}).
 Areal coverage is the union area of the thick supports divided by image area;
-it is not the occupancy of the thin input mask.}
+it is not the occupancy of the thin input mask.
 
-\rev{Development used 84 scenes: 20 initial scenes across 20--60\% coverage,
+Development used 84 scenes: 20 initial scenes across 20--60\% coverage,
 48 additional scenes at 20, 30, and 60\%, and 16 scenes at 40\%. The held-out
 set comprised 128 different seeds: 32 scenes at each of 20, 30, 40, and 60\%
 coverage. It is an independent sample from the same generator, not an
 independent distribution. A separate 125-scene locked set remains unevaluated.
 The compact seed manifest records every seed block and an executable verifier
-checks counts, disjointness, and available scene metadata.}
+checks counts, disjointness, and available scene metadata.
 
-\rev{A separate controlled robustness set contained 50 scenes, ten at each of
+A separate controlled robustness set contained 50 scenes, ten at each of
 20, 30, 40, 50, and 60\% coverage. Each geometry was scored once from its clean
 axis and once from its degraded mask. This set was used only to quantify
-input-degradation sensitivity after the configuration was fixed.}
+input-degradation sensitivity after the configuration was fixed.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_synthetic_examples.pdf}
-    \caption{\rev{Procedural representations derived from the same filament
+    \caption{Procedural representations derived from the same filament
     geometry. Instance identity is retained through crossings; the degraded
-    thin-axis mask is the primary algorithm input.}}
+    thin-axis mask is the primary algorithm input.}
     \label{fig:synth-examples}
 \end{figure}
 
-\subsection{\rev{CNT SEM data and mask sources}}
+\subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
 
-\rev{Two manually annotated CNT-sheet SEM fields were available for exploratory
+Two manually annotated CNT-sheet SEM fields were available for exploratory
 analysis: B58\_100 ($1024\times1536$ px, 280 filaments) and B58\_110
 ($1024\times1536$ px, 430 filaments). The nominal horizontal field width is
 $1.66~\um$; project metadata associate it with 1536 px, or approximately
 $1.08~\mathrm{nm\,px^{-1}}$. The annotation is one human interpretation of
 projected, locally ambiguous crossings. Both fields informed development and
-neither is a population-level test.}
+neither is a population-level test.
 
-\rev{Two inputs were derived per field. The first was the skeleton of the manual
+Two inputs were derived per field. The first was the skeleton of the manual
 instance annotation and is therefore an oracle-input condition, not an
 independent segmentation. The second was predicted by an upstream nnU-Net
 trained on paired synthetic images and masks; CycleGAN translation is one route
@@ -76,51 +76,51 @@ from procedural masks to SEM-like training images
 \citep{ruehle2021workflow,allan2026cntsem}. B58\_100 appeared in that model's
 training data, whereas B58\_110 was verified absent from the relevant training
 set. Consequently, only B58\_110 provides a training-clean observation of mask
-transfer, and $n=2$ precludes inference.}
+transfer, and $n=2$ precludes inference.
 
-\rev{Mask quality was compared after skeletonisation with a symmetric 3-px
+Mask quality was compared after skeletonisation with a symmetric 3-px
 tolerance, avoiding a reward for mask thickness. Reconstruction scores were
 computed separately within each mask's visible common-fragment population;
 because those populations differ, cross-mask \Fone{} values are descriptive
-rather than paired estimates.}
+rather than paired estimates.
 
-\rev{\textbf{Author metadata required before submission:} SEM instrument and
+\textbf{Author metadata required before submission:} SEM instrument and
 detector, accelerating voltage, working distance, specimen preparation, CNT
 material identity, annotation protocol, and confirmation of the 1536-pixel
 calibration against the stored image dimensions. The upstream model archive
-must also supply its architecture, training split, and optimisation settings.}
+must also supply its architecture, training split, and optimisation settings.
 
-\subsection{\rev{PLECTA reconstruction}}
+\subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
 
-\subsubsection{\rev{Skeleton graph and local frames}}
+\subsubsection{Skeleton graph and local frames}
 
-\rev{PLECTA binarises $M$ at $>0$, skeletonises it, and iteratively removes
+PLECTA binarises $M$ at $>0$, skeletonises it, and iteratively removes
 spurs no longer than 3 px. Skeleton pixels with degree at least three form
 junction clusters, and adjacent clusters are merged into nodes. Connectors up
 to 5 px are absorbed into one node; connectors up to 14 px merge nearby nodes
 but remain real arms; free debris up to 2 px is absorbed. Each remaining
-connected path is stored as an ordered arm with one stub at each end.}
+connected path is stored as an ordered arm with one stub at each end.
 
-\rev{A stub frame contains its tip, outward tangent, and signed curvature.
+A stub frame contains its tip, outward tangent, and signed curvature.
 These are estimated by an arclength polynomial fit and are considered reliable
 only with at least three samples spanning at least 3 px. Local frames use 24 px
 of support; after links form chains, the support expands to 55 px. Link cost
 combines direct tangent reversal, the turn from each tangent to the joining
 chord, and curvature continuity. Gap cost additionally penalises length. Short
 chords fade the chord-turn term rather than allowing an unstable angle to
-dominate.}
+dominate.
 
-\subsubsection{\rev{Candidate gates and exact matching}}
+\subsubsection{Candidate gates and exact matching}
 
-\rev{Each of eight rounds first resolves junctions and then gaps
+Each of eight rounds first resolves junctions and then gaps
 (Figure~\ref{fig:gates}). At a junction, candidates must share the node, use
 different arms, and have finite frames and cost. Exact maximum-weight partial
 matching selects disjoint pairs while allowing unmatched stubs. With the fixed
 unmatched price, a full-strictness junction edge is eligible only when its cost
-is below 1.24.}
+is below 1.24.
 
-\rev{Gap candidates are constructed only from still-unmatched, reliable stubs.
+Gap candidates are constructed only from still-unmatched, reliable stubs.
 They must belong to different arms and different junctions, lie within 85 px,
 have direct tangent mismatch at most 0.40 rad, and have chord-turn mismatch at
 each end at most 0.28 rad. Global exact matching then accepts only edges whose
@@ -128,77 +128,77 @@ cost is below 0.60 at full strictness. Cycles are broken after junction matching
 and again after gap matching. The unmatched prices and angular gap limits are
 annealed linearly from 85\% to full strictness. Because only the eighth round is
 fully strict in the fixed schedule, that round is returned; there is no
-effective competition among several full-strictness rounds.}
+effective competition among several full-strictness rounds.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_gates.pdf}
-    \caption{\rev{PLECTA stage and gate sequence. Topology preconditioning
+    \caption{PLECTA stage and gate sequence. Topology preconditioning
     produces arms, stubs, and junction nodes. Every round applies exact
     per-junction matching, a cycle guard, global gated gap matching, a second
     cycle guard, and chain-supported frame re-estimation. The final chains are
-    painted as overlap-aware instance layers.}}
+    painted as overlap-aware instance layers.}
     \label{fig:gates}
 \end{figure}
 
-\subsubsection{\rev{Instance output}}
+\subsubsection{Instance output}
 
-\rev{Connected components of accepted arm links define instances. PLECTA
+Connected components of accepted arm links define instances. PLECTA
 paints every arm pixel and every junction cluster touched by a chain into that
 instance, so intersecting instances share crossing pixels. An isolated one-arm
 component shorter than 6 px is omitted. Accepted gap links determine identity
 but are not painted into the fixed centreline output. All effective parameters,
 including values previously inherited as code defaults, are materialised in the
-fixed JSON configuration.}
+fixed JSON configuration.
 
-\subsection{\rev{Optional SEM characterisation and ribbon rendering}}
+\subsection{Optional SEM characterisation and ribbon rendering}
 \label{sec:mm-stage4}
 
-\rev{After grouping, perpendicular SEM profiles are sampled every 2 px along
+After grouping, perpendicular SEM profiles are sampled every 2 px along
 each ordered chain and at least 6 px from a junction. Profiles are recentred by
 at most 3 px and accepted only when contrast exceeds both four background-noise
 standard deviations and 0.05 normalised intensity; fitted widths must lie
 between 1.5 and 36 px. At least three valid cuts are required. These
 measurements attach apparent width, brightness, uncertainty, and a quality flag
-to an existing instance; they cannot alter its arm membership.}
+to an existing instance; they cannot alter its arm membership.
 
-\rev{Optional ribbon rendering interpolates accepted gaps, resamples the
+Optional ribbon rendering interpolates accepted gaps, resamples the
 centreline at 1 px, smooths it over 9 px with fixed endpoints, and draws the
 chain at its fitted width clipped to 3--40 px. It excludes junction blobs and
 does not clip the ribbon back to the input mask. Silhouette absorption would
 union rendered instances, but its threshold is zero by default. No absorption
 or later post-hoc continuation merge contributed to the 128-scene held-out
-result; neither is presented as part of the evaluated algorithm.}
+result; neither is presented as part of the evaluated algorithm.
 
-\subsection{\rev{Metrics and statistical analysis}}
+\subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 
-\rev{The primary endpoint is common-fragment pairwise \Fone{}. For each scene,
+The primary endpoint is common-fragment pairwise \Fone{}. For each scene,
 the visible input skeleton is partitioned once into method-independent elementary
 fragments. Each fragment receives a procedural reference identity and a PLECTA
 instance identity. A true-positive pair shares both identities; a false-positive
 pair joins different reference filaments; and a false-negative pair separates
-fragments of one reference filament. Thus}
+fragments of one reference filament. Thus
 
 \begin{equation}
-    \rev{P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
+    P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
     R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\qquad
-    \Fone{}=\frac{2PR}{P+R}.}
+    \Fone{}=\frac{2PR}{P+R}.
     \label{eq:pairwise-f1}
 \end{equation}
 
-\rev{This is a clustering metric related to the Rand family
+This is a clustering metric related to the Rand family
 \citep{rand1971objective,argandacarreras2015crowdsourcing}. It scores grouping,
 not rendered width, and weights filaments with many fragments more strongly
 because their pair count is quadratic. We therefore also report adjusted Rand
 index \citep{hubert1985comparing}, variation of information split and merge
 components \citep{meila2007comparing}, and the fraction of reference filaments
 recovered by one dominant predicted instance using 0.8 purity and coverage
-thresholds.}
+thresholds.
 
-\rev{Held-out means and density strata are accompanied by 95\% nonparametric
+Held-out means and density strata are accompanied by 95\% nonparametric
 bootstrap intervals (20,000 replicates; seed 20,260,810). Aggregate resampling
 is stratified by density. The clean-minus-degraded analysis resamples paired
 scene differences within density. Active-component ablations are one-at-a-time
 development experiments on all 84 development scenes and are labelled as such;
-they do not reuse the held-out set.}
+they do not reuse the held-out set.

@@ -1,10 +1,10 @@
-\section{\rev{Results}}
+\section{Results}
 \label{sec:results}
 
-\subsection{\rev{Held-out synthetic reconstruction}}
+\subsection{Held-out synthetic reconstruction}
 \label{sec:res-density}
 
-\rev{PLECTA completed all \PlectaHeldoutSceneCount{} held-out scenes with
+PLECTA completed all \PlectaHeldoutSceneCount{} held-out scenes with
 \PlectaHeldoutFailureCount{} failures. Mean common-fragment pairwise
 \Fone{} was \PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]); mean precision,
@@ -13,19 +13,19 @@ recall, reference-instance recovery, and adjusted Rand index were
 \PlectaHeldoutRecoveryMean{}, and \PlectaHeldoutARIMean{}, respectively
 (Table~\ref{tab:plecta-heldout}). These scenes used unseen seeds but came from
 the same procedural generator as development data, so the result measures
-same-generator generalisation rather than distribution transfer.}
+same-generator generalisation rather than distribution transfer.
 
 \begin{table}[t]
     \centering
-    \caption{\rev{Held-out reconstruction scores overall and by target areal
+    \caption{Held-out reconstruction scores overall and by target areal
     coverage. VI denotes variation of information; lower VI is better, whereas
-    higher values are better for the other metrics.}}
+    higher values are better for the other metrics.}
     \label{tab:plecta-heldout}
     \small
     \input{results/plecta_heldout_table}
 \end{table}
 
-\rev{Performance decreased with scene density (Figure~\ref{fig:plecta-performance}a).
+Performance decreased with scene density (Figure~\ref{fig:plecta-performance}a).
 Mean \Fone{} fell from \PlectaDensityTwoZeroFOneMean{}
 [\PlectaDensityTwoZeroFOneCILow{}, \PlectaDensityTwoZeroFOneCIHigh{}] at 20\% coverage
 to \PlectaDensitySixZeroFOneMean{}
@@ -34,12 +34,12 @@ the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
 \PlectaDensityFourZeroFOneMean{}. Recorded per-scene runtime had mean
 \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s,
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
-\PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.}
+\PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.
 
-\subsection{\rev{Comparison with greedy continuation}}
+\subsection{Comparison with greedy continuation}
 \label{sec:res-greedy}
 
-\rev{The contribution claimed in Section~\ref{sec:intro} is that a junction is
+The contribution claimed in Section~\ref{sec:intro} is that a junction is
 better solved as one exact matching, with an explicit priced option to leave an
 arm unmatched, than by pairing endpoints greedily. Greedy priority-ranked
 pairing is the rule used by SIFNE, by GraFT's path cover, and by the continuity
@@ -51,9 +51,9 @@ branch ends within a distance gate of 28~px and a turning-angle gate of
 $20^\circ$. Both methods received identical masks and were scored through the
 same common-fragment procedure on
 \PlectaGreedySceneCount{} scenes generated after both configurations were
-fixed.}
+fixed.
 
-\rev{PLECTA scored \PlectaGreedyPlectaFOne{} against
+PLECTA scored \PlectaGreedyPlectaFOne{} against
 \PlectaGreedyBaselineFOne{}, a paired difference of
 \PlectaGreedyDeltaFOne{} (95\% CI [\PlectaGreedyDeltaCILow{},
 \PlectaGreedyDeltaCIHigh{}]), and was better in
@@ -66,41 +66,41 @@ straightest continuation and cannot revise it when that choice leaves a better
 partner stranded, so single filaments are left divided. On clean axes the
 difference was \PlectaGreedyCleanDeltaFOne{}
 [\PlectaGreedyCleanDeltaCILow{}, \PlectaGreedyCleanDeltaCIHigh{}], so it is not
-an artefact of mask degradation.}
+an artefact of mask degradation.
 
 \begin{table}[t]
     \centering
-    \caption{\rev{PLECTA against a greedy minimum-turning-angle continuation
+    \caption{PLECTA against a greedy minimum-turning-angle continuation
     baseline on \PlectaGreedySceneCount{} scenes with identical input masks and
     one scorer. Differences are paired, with density-stratified 95\% bootstrap
-    intervals.}}
+    intervals.}
     \label{tab:plecta-greedy}
     \small
     \input{results/plecta_greedy_table}
 \end{table}
 
-\rev{This is a comparison against one transparent rule, not against the
+This is a comparison against one transparent rule, not against the
 published methods that use it, and it is limited to this generator. Section
 \ref{sec:limitations} states what a matched comparison against a released
-implementation would still require.}
+implementation would still require.
 
-\subsection{\rev{Input-mask robustness}}
+\subsection{Input-mask robustness}
 \label{sec:res-mask}
 
-\rev{On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
+On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
 mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
 \PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
 clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Thus the modelled gaps and raster
 irregularities caused a small resolved loss under this generator, without
-testing robustness to a different image distribution.}
+testing robustness to a different image distribution.
 
-\subsection{\rev{Development ablations and downstream rendering}}
+\subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
 \label{sec:res-factorial}
 
-\rev{One-at-a-time ablations were evaluated only on the
+One-at-a-time ablations were evaluated only on the
 \PlectaDevelopmentSceneCount{} development scenes
 (Table~\ref{tab:plecta-ablation}; Figure~\ref{fig:plecta-performance}b).
 Relative to the evaluated configuration, removing the junction chord-turn term
@@ -112,13 +112,13 @@ frames and using a single round produced smaller changes of
 \PlectaAblationNoChainExtendedFramesDeltaFOne{} and
 \PlectaAblationSingleRoundDeltaFOne{}. These development results identify
 chord-aware continuation, gap matching, and junction-topology preconditioning
-as the largest tested contributors; they are not held-out effect estimates.}
+as the largest tested contributors; they are not held-out effect estimates.
 
 \begin{table}[t]
     \centering
-    \caption{\rev{One-at-a-time component ablations on the 84-scene
+    \caption{One-at-a-time component ablations on the 84-scene
     development set. Negative $\Delta F_1$ values denote losses relative to
-    the evaluated configuration.}}
+    the evaluated configuration.}
     \label{tab:plecta-ablation}
     \small
     \input{results/plecta_ablation_table}
@@ -127,21 +127,21 @@ as the largest tested contributors; they are not held-out effect estimates.}
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_performance.pdf}
-    \caption{\rev{PLECTA performance across target areal coverage and component
+    \caption{PLECTA performance across target areal coverage and component
     ablations. (a) Held-out mean common-fragment \Fone{} with 95\% bootstrap
     intervals (32 scenes per level). (b) Development-only changes from selected
-    one-at-a-time ablations; more negative values indicate larger losses.}}
+    one-at-a-time ablations; more negative values indicate larger losses.}
     \label{fig:plecta-performance}
 \end{figure}
 
-\rev{The core output is a grouping, not a set of connected curves. Accepted gap
+The core output is a grouping, not a set of connected curves. Accepted gap
 links establish identity but are not painted, so on the development set
 \PlectaCoreDisconnected{} of core instances are delivered as more than one
 disjoint pixel run and \PlectaCoreBranched{} contain a branch point. Readers
 combining PLECTA with a downstream step that assumes one connected curve per
-instance should account for this.}
+instance should account for this.
 
-\rev{Default Stage~4 ribbon rendering achieved development \Fone{}=
+Default Stage~4 ribbon rendering achieved development \Fone{}=
 \PlectaStageFourFOne{}, a change of \PlectaStageFourDeltaFOne{} from the core
 centreline output, and reduced those fractions to
 \PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}. Rendering
@@ -150,13 +150,13 @@ changing chain membership.
 Enabling the separate 0.6 silhouette-absorption rule reduced \Fone{} further
 to \PlectaStageFourAbsorbFOne{}. Because absorption can merge identities, it
 remained disabled and neither rendering condition contributed to the held-out
-grouping result. These topology measurements do not validate apparent width.}
+grouping result. These topology measurements do not validate apparent width.
 
-\subsection{\rev{Two-field CNT SEM mask-source case}}
+\subsection{Two-field CNT SEM mask-source case}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
-\rev{The two real SEM fields were exploratory development cases
+The two real SEM fields were exploratory development cases
 (Table~\ref{tab:plecta-real-masks}). From the manual-derived axis, PLECTA
 reached \Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{} on B58\_100 and
 \PlectaBFiveEightOneOneZeroManualFOne{} on B58\_110. These are oracle-input conditions
@@ -165,13 +165,13 @@ upstream U-Net axes, the corresponding values were
 \PlectaBFiveEightOneZeroZeroUNetFOne{} and \PlectaBFiveEightOneOneZeroUNetFOne{}. The U-Net axis had
 recall/precision \PlectaBFiveEightOneZeroZeroAxisRecall{}/\PlectaBFiveEightOneZeroZeroAxisPrecision{} on
 B58\_100 and \PlectaBFiveEightOneOneZeroAxisRecall{}/\PlectaBFiveEightOneOneZeroAxisPrecision{} on
-B58\_110.}
+B58\_110.
 
 \begin{table}[t]
     \centering
-    \caption{\rev{Exploratory reconstruction from manual-derived and U-Net
+    \caption{Exploratory reconstruction from manual-derived and U-Net
     axes in two CNT SEM fields. Axis recall and precision compare the U-Net
-    skeleton with the manual-derived skeleton using a symmetric 3-px tolerance.}}
+    skeleton with the manual-derived skeleton using a symmetric 3-px tolerance.}
     \label{tab:plecta-real-masks}
     \small
     \input{results/plecta_real_masks_table}
@@ -180,17 +180,17 @@ B58\_110.}
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_real_mask_source.png}
-    \caption{\rev{Training-clean B58\_110 mask-source case. Left: the
+    \caption{Training-clean B58\_110 mask-source case. Left: the
     manual-instance-derived axis. Centre: the upstream U-Net axis. Right:
     tolerance-matched manual axis (green), missed manual axis (red), and U-Net
     axis without a matched manual axis (blue). The comparison illustrates
-    upstream omissions and fragmentation; it is not a PLECTA output panel.}}
+    upstream omissions and fragmentation; it is not a PLECTA output panel.}
     \label{fig:plecta-real-mask-source}
 \end{figure}
 
-\rev{B58\_100 was present in the segmenter's training data; only B58\_110 was
+B58\_100 was present in the segmenter's training data; only B58\_110 was
 verified training-clean. Moreover, each input mask defines a different visible
 common-fragment population, so the manual-derived and U-Net \Fone{} values are
 descriptive rather than paired. With two development fields, these observations
 show the practical dependence on upstream mask quality but do not estimate
-real-image generalisation.}
+real-image generalisation.

@@ -1,13 +1,13 @@
-\rev{Dense filament networks are difficult to partition into instances because
+Dense filament networks are difficult to partition into instances because
 crossings join distinct objects while segmentation gaps divide single objects.
 We present PLECTA, a deterministic method that converts a binary filament-axis
 mask into overlap-aware two-dimensional instances. PLECTA skeletonises and
 decomposes the mask into arms and junctions, alternates exact per-junction
 continuation matching with globally gated gap matching, and re-estimates
 tangent, chord, and curvature evidence from the assembled chains. Crossing
-pixels may therefore belong to more than one output instance.}
+pixels may therefore belong to more than one output instance.
 
-\rev{Evaluation used a method-independent partition of each input skeleton into
+Evaluation used a method-independent partition of each input skeleton into
 common fragments. On \PlectaHeldoutSceneCount{} independently seeded held-out
 scenes from the same procedural generator, PLECTA achieved mean pairwise
 \Fone{}=\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
@@ -22,11 +22,11 @@ rule on identical masks, PLECTA gained \PlectaGreedyDeltaFOne{} \Fone{}
 [\PlectaGreedyDeltaCILow{}, \PlectaGreedyDeltaCIHigh{}] over
 \PlectaGreedySceneCount{} scenes. Development-only ablations showed that
 chord-turn evidence, gap bridging, and junction-topology consolidation made the
-largest contributions.}
+largest contributions.
 
-\rev{CNT-sheet scanning electron microscopy provides the application case. An
+CNT-sheet scanning electron microscopy provides the application case. An
 optional upstream synthetic-data-driven U-Net supplies the binary mask; SEM
 width measurement and ribbon rendering are downstream characterisation stages
 and did not affect the held-out grouping result. The evidence supports
 same-generator synthetic generalisation and a development illustration on real
-SEM data, not general real-image or three-dimensional reconstruction claims.}
+SEM data, not general real-image or three-dimensional reconstruction claims.

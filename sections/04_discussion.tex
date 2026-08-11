@@ -1,7 +1,7 @@
-\section{\rev{Discussion}}
+\section{Discussion}
 \label{sec:discussion}
 
-\rev{PLECTA addresses a narrow problem: assigning fragments in a binary
+PLECTA addresses a narrow problem: assigning fragments in a binary
 filament-axis mask to overlapping projected instances. Its held-out
 common-fragment $F_1$ of \PlectaHeldoutFOneMean{} shows that explicit geometry
 can recover substantial identity without instance-labelled training data or
@@ -10,9 +10,9 @@ evidence. Exact matching at each junction selects mutually compatible
 continuations, gated gap matching reconnects separated arms, and repeated
 rounds replace short-arm direction estimates with tangent and curvature
 estimates from the chains assembled so far. Shared crossing pixels remain in
-each applicable instance rather than being forced into one label.}
+each applicable instance rather than being forced into one label.
 
-\rev{The ablations support this interpretation but do not prove that every
+The ablations support this interpretation but do not prove that every
 term is independently necessary. On the development set, removing the junction
 chord-turn term reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{},
 removing gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
@@ -24,11 +24,11 @@ from solving both kinds of discontinuity---junctions and missing mask
 segments---with complementary geometric evidence; iterative context provides
 an additional, more modest benefit. Because these tests reused development
 scenes, their values describe mechanism and configuration sensitivity, not
-independent effect estimates.}
+independent effect estimates.
 
-\subsection{\rev{Density, masks, and optional rendering}}
+\subsection{Density, masks, and optional rendering}
 
-\rev{Performance depends on the geometry preserved by the input mask. Mean
+Performance depends on the geometry preserved by the input mask. Mean
 held-out $F_1$ declined from \PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
 \PlectaDensitySixZeroFOneMean{} at 60\%, where crossings and locally plausible
 alternatives are more frequent. On the 50 paired scenes of the controlled
@@ -38,9 +38,9 @@ masks (95\% CI \PlectaCleanMinusDegradedFOneCILow{}--
 \PlectaCleanMinusDegradedFOneCIHigh{}). PLECTA can bridge short omissions, but
 it cannot infer a filament absent from the mask or reliably reject a false
 axis introduced upstream. Supplying identical masks isolates grouping in an
-algorithmic comparison; it does not establish end-to-end SEM performance.}
+algorithmic comparison; it does not establish end-to-end SEM performance.
 
-\rev{Image-informed ribbon rendering is downstream of grouping. On the
+Image-informed ribbon rendering is downstream of grouping. On the
 development set it produced $F_1=\PlectaStageFourFOne{}$, a change of
 \PlectaStageFourDeltaFOne{} relative to the core output. Its value is
 connectivity rather than identity: the fraction of instances delivered as more
@@ -51,19 +51,19 @@ Silhouette absorption changes the instance partition and scored
 \PlectaStageFourAbsorbFOne{}; it is therefore optional and should not be
 conflated with the fixed mask-only grouping result. Width and brightness can
 be reported for characterised instances, but their physical accuracy requires
-separate references.}
+separate references.
 
-\subsection{\rev{Evidence boundary}}
+\subsection{Evidence boundary}
 \label{sec:limitations}
 
-\rev{The principal limitation is distributional. The 128 held-out scenes use
+The principal limitation is distributional. The 128 held-out scenes use
 independent seeds but the same procedural generator family used for
 development. Their confidence intervals quantify sampling variation within
 that family, not transfer to another simulator, specimen, microscope, or
 segmentation pipeline. The ablation and rendering studies are development-only
-and must remain secondary to the fixed held-out result.}
+and must remain secondary to the fixed held-out result.
 
-\rev{The real SEM study is deliberately a case study with two fields, not a
+The real SEM study is deliberately a case study with two fields, not a
 population validation. Manual-derived masks are an oracle-like input
 condition: they test grouping when the axis evidence is curated, not automatic
 SEM-to-instance performance. B58\_100 is training-contaminated for the U-Net
@@ -73,18 +73,18 @@ generalisation. Moreover, manual-derived and U-Net masks generate different
 fragment universes. Their $F_1$ values therefore describe performance under
 each input condition but are not a paired comparison of identical objects.
 More independent fields, sealed before configuration, and annotations from
-multiple readers are required.}
+multiple readers are required.
 
-\rev{Two further scope limits concern the output itself. First, PLECTA recovers
+Two further scope limits concern the output itself. First, PLECTA recovers
 projected two-dimensional identity. Shared pixels encode overlap but not which
 filament passes above another, so no three-dimensional topology follows.
 Second, the grouping metric evaluates ownership of centreline fragments and is
 not a validation of rendered width. Quantitative diameter claims require
 matched physical measurements across the relevant scale, contrast, and
 specimen ranges. Pairwise fragment scores also emphasise instances containing
-many fragments; object recovery and ARI are retained as complementary views.}
+many fragments; object recovery and ARI are retained as complementary views.
 
-\rev{An independent procedural benchmark is a practical next test. The
+An independent procedural benchmark is a practical next test. The
 \texttt{merged\_lines} mask generator in the CNT\_SEM pipeline can export
 overlap-aware whole-bundle references and would add a different implementation
 and morphology model. It should supplement, not replace, the current generator:
@@ -93,4 +93,4 @@ whereas the primary benchmark spans density. A multi-scene run should be made
 only after pooled calibration is fixed and its seeds are separated from any
 configuration work. No result from that generator is included in the present
 evidence. Broader validation should then extend to independent real masks and
-other filament domains while keeping input fragments and scoring rules fixed.}
+other filament domains while keeping input fragments and scoring rules fixed.
