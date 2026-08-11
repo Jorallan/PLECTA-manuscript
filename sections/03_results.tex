@@ -36,6 +36,55 @@ the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.
 
+\subsection{Which density axis matters}
+\label{sec:res-factorial}
+
+Areal coverage is the axis the scenes above are generated and stratified by,
+but it is not obviously the axis that makes grouping hard. Coverage is the
+fraction of the frame filled by the rendered bundles, so it rises both when
+filaments are added and when the same filaments are simply drawn thicker. Only
+the first changes the grouping problem.
+
+A factorial separates the two. Twelve geometries---three centreline length
+densities crossed with four seeds---were each rendered at bundle widths of 6,
+11 and 16 px. Within one geometry the input axis mask and the overlap-aware
+centreline reference are byte-identical across the three widths, verified by
+SHA-256, while the union of the thick supports changes: areal coverage varies by
+up to a factor of \PlectaFactorialMaxCoverageRatio{} within a single geometry.
+Any movement in the score across those three renderings would mean something in
+the method or the metric reads the silhouette.
+
+Across all \PlectaFactorialGeometryCount{} geometries the within-geometry
+\Fone{} range was \PlectaFactorialMaxFOneRange{}, that is, exactly zero in
+\PlectaFactorialZeroRangeCount{} of \PlectaFactorialGeometryCount{}
+(Table~\ref{tab:plecta-factorial}). Areal coverage therefore cannot causally
+affect the grouping score; PLECTA reads the axis mask, and the metric scores
+centreline fragments, so neither sees the width the bundles were drawn at.
+Centreline length density does move the score: mean \Fone{} fell from
+\PlectaFactorialLowFOne{} to \PlectaFactorialHighFOne{} as centreline coverage
+rose from \PlectaFactorialLowLengthDensity{} to
+\PlectaFactorialHighLengthDensity{}. The coverage bands of the three length
+densities overlap---an areal coverage near 0.31 occurs at all three---so
+coverage does not identify a difficulty level on its own.
+
+\begin{table}[t]
+    \centering
+    \caption{Bundle width against centreline length density,
+    \PlectaFactorialSceneCount{} development scenes. Within each row the three
+    bundle widths share one byte-identical axis mask and one reference, so the
+    spread in areal coverage carries no score difference. Length density is
+    centreline pixels per image pixel.}
+    \label{tab:plecta-factorial}
+    \small
+    \input{results/plecta_factorial_table}
+\end{table}
+
+Two consequences follow for the rest of this paper. Density strata reported by
+target areal coverage should be read as a proxy for the length density that
+accompanies them under this generator, not as a claim about coverage itself.
+And a mask drawn at a different thickness, as an upstream segmenter may well
+produce, does not by itself move the grouping score.
+
 \subsection{Comparison with greedy continuation}
 \label{sec:res-greedy}
 
