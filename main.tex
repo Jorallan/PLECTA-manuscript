@@ -34,6 +34,7 @@
 \usepackage{enumitem}
 \usepackage{parskip}
 \usepackage{url}
+\usepackage[colorinlistoftodos,textwidth=4cm,shadow]{todonotes}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
 
@@ -49,6 +50,8 @@
 \newcommand{\undermerge}{\textit{under-merge}}
 \newcommand{\Overmerge}{\textit{Over-merge}}
 \newcommand{\Undermerge}{\textit{Under-merge}}
+
+
 
 %------------------------------------------------------------------------------
 %  \todo{...} - a short reminder to ourselves about something still to be
@@ -72,6 +75,14 @@
 %------------------------------------------------------------------------------
 \newcommand{\note}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Note:} #1}\par\smallskip}
 \newcommand{\reviewnote}[1]{\note{#1}}      % older name, kept so both still work
+
+\newcounter{Igor}
+\newcommand{\Igor}[1]{
+	\refstepcounter{Igor}{
+		\todo[inline,color={green!11!green!22},size=\small]{\textbf{[Igor\theIgor]:}~#1}
+	}
+}
+
 
 %------------------------------------------------------------------------------
 %  Generated numerical results.
@@ -110,6 +121,8 @@ of carbon nanotube bundles from degraded centreline masks}
 \begin{abstract}
 \input{sections/00_abstract}
 \end{abstract}
+
+\Igor{I must say I'm not quite happy with FilaSeg - we need to come up with a better name of the software. I think we do more than just "Seg", I'd avoid that in the name anyways. I would not go towards something trivial like FIBER or STRING either - not enough distinctive. I find attractive something like REUSS, OCCAM or COSSERAT - with reference to physics/mechanics besides the meaning in abbreviation. But that's your baby of course, your word will be the last.}
 
 \note{A broader upstream pipeline also exists around the method described in
 this manuscript: real SEM images and procedurally generated masks $\to$
