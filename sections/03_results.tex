@@ -34,9 +34,10 @@ monotonically through the intermediate strata. The same decline appears on the p
 robustness set (Figure~\ref{fig:density}): the two curves separate at low
 coverage and meet at 50--60\%, degradation costing least exactly where the score
 is lowest, because there the tangles rather than the gaps set the difficulty.
-Per-scene runtime had mean \PlectaHeldoutRuntimeMean{}~s, median \PlectaHeldoutRuntimeMedian{}~s, 90th
-percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
-\PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.
+Per-scene runtime had mean \PlectaHeldoutRuntimeMean{}~s, median
+\PlectaHeldoutRuntimeMedian{}~s, 90th percentile
+\PlectaHeldoutRuntimePNinety{}~s, and maximum \PlectaHeldoutRuntimeMaximum{}~s;
+these timings are hardware-specific.
 
 \begin{figure}[htbp]
     \centering
@@ -252,6 +253,16 @@ into one connected graph, as it does above 30\% coverage.
 the set, so that exclusion flatters GraFT. Neither released method establishes a
 general ranking, and Section~\ref{sec:limitations} states what these comparisons
 leave untested.
+
+Per-scene cost was measured warm, single-threaded and pinned to one core, timing
+each method\'s own computation only (Table~\ref{tab:plecta-comparators};
+\RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded \RuntimeBudgetSeconds{}~s
+and are censored). These are independently optimised codebases, so absolute
+times measure implementation as much as algorithm; the transferable quantity is
+scaling, and the log--log exponents against foreground pixels are
+\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
+\RuntimeGraftScalingExponent{}. PLECTA grows fastest, but only GraFT is
+heavy-tailed.
 
 \subsection{Crossing resolution and crossing representation}
 \label{sec:res-overlap}

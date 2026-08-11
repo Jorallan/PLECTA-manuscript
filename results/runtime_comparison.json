@@ -1,0 +1,653 @@
+{
+ "what_this_is": "Per-scene wall-clock time for three filament-instance methods on the 50-scene testcmp10 set (10 scenes at each of 20/30/40/50/60 percent coverage, 512x512, degraded mask mask_w1.png), measured under comparisons/runtime_study/PROTOCOL.md.",
+ "what_it_does_not_establish": "This is not a benchmark of algorithmic efficiency. The three are independently written research codebases at different levels of optimisation, on different Python and library versions, with different amounts of work in compiled extensions (DNAi: numba JIT plus OpenCV; GraFT: a compiled polyline simplifier over CPython and networkx; PLECTA: CPython over numpy/scipy/networkx). A wall-clock ratio between them is a ratio between implementations.",
+ "timed_region": "method's own computation only, from its native input already in memory. Excluded: interpreter start, imports, numba JIT, parameter loading, image read and decode, conversion into each method's input convention, conversion to the common CSR instance representation, disk writes and scoring.",
+ "statistics": "per scene: minimum over repeats of a deterministic computation (5 repeats under 10 s, 3 up to 60 s, 1 above). Per density: plain median of the 10 scenes, n always 10. Exploratory, 10 scenes per density, no inference.",
+ "budget_s": 600.0,
+ "censoring_rule": "A scene exceeding the 600 s budget is recorded as censored, stays in n=10, and is ranked above every finishing scene when the median is taken. No mean is reported for any density containing a censored scene, because a mean over the finishing scenes only would discard the hardest scenes of the hardest tier.",
+ "hardware_statement": "Intel(R) Core(TM) Ultra 7 265 (20 physical cores, 8 performance and 12 efficiency, no SMT; base 2400 MHz), 31 GB RAM, Microsoft Windows 11 Enterprise build 26200; every method single-threaded and pinned to one performance core, no GPU",
+ "gpu": "No stage of any of the three methods uses a GPU in this study. DNAi's segmentation network -- the only GPU-capable component in any of the three -- is bypassed; torch is not installed in venv_dnai and is replaced by a runner-side stub, so no CUDA context can be created. PLECTA and GraFT have no GPU code path.",
+ "environment": {
+  "interpreters": {
+   "plecta (venv_cnt)": {
+    "python": "3.12.9",
+    "packages": {
+     "numpy": "2.4.4",
+     "scipy": "1.16.3",
+     "networkx": "3.5",
+     "scikit-image": "0.25.2",
+     "opencv-python": "4.13.0.92",
+     "pandas": "2.3.3",
+     "matplotlib": "3.10.8",
+     "tifffile": "2025.10.16",
+     "torch": "2.5.1+cu121"
+    }
+   },
+   "dnai (venv_dnai)": {
+    "python": "3.12.9",
+    "packages": {
+     "numpy": "2.2.6",
+     "scipy": "1.18.0",
+     "networkx": "3.6.1",
+     "scikit-image": "0.26.0",
+     "opencv-python": "5.0.0.93",
+     "numba": "0.66.0",
+     "matplotlib": "3.11.1",
+     "tifffile": "2026.7.31",
+     "llvmlite": "0.48.0"
+    }
+   },
+   "graft (graft39)": {
+    "python": "3.9.13",
+    "packages": {
+     "numpy": "1.23.5",
+     "scipy": "1.9.3",
+     "networkx": "2.8.4",
+     "scikit-image": "0.19.3",
+     "simplification": "0.6.2",
+     "pandas": "1.4.4",
+     "matplotlib": "3.5.1",
+     "tifffile": "2024.8.30"
+    }
+   }
+  },
+  "vendored": {
+   "PLECTA": {
+    "repo": "C:\\Repos\\stubmatch",
+    "commit": "3cf673f878fa7cbb3bf98b6cbfa38579da9e4b82"
+   },
+   "DNAi": {
+    "upstream": "https://github.com/ClementPla/DNAi",
+    "commit": "fcf20c7d6eb385675ff7d07da4fdf471589ce0cf",
+    "entry_point": "dnafiber.postprocess.core.extract_fibers",
+    "reference": "Playout et al., Nucleic Acids Research 54(7):gkag335 (2026)"
+   },
+   "GraFT": {
+    "upstream": "https://github.com/Oesterlund/GraFT",
+    "commit": "15cd6ad5504c1b4d81dbd67ab46f70f0b98d1b1f",
+    "entry_point": "graft.utilsF.creategraph -> dfs_constrained",
+    "reference": "Oesterlund et al., Science Advances 12:eadz4132 (2026)"
+   }
+  },
+  "threading": {
+   "single_threaded": true,
+   "how": "process pinned to one logical processor (verified by reading the affinity mask back) AND OMP/MKL/OpenBLAS/NUMEXPR/NUMBA thread counts and cv2.setNumThreads all set to 1 before the methods' first call"
+  },
+  "pinned_logical_processor": 8,
+  "calibration_spread_over_session": 0.0654,
+  "calibration_stable_within_5pct": false
+ },
+ "integrity": {
+  "plecta": {
+   "n_rows": 50,
+   "n_ok": 50,
+   "n_censored": 0,
+   "n_other_status": 0,
+   "fingerprint_matches": 50,
+   "fingerprint_mismatches": [],
+   "fingerprint_unavailable": 0
+  },
+  "dnai": {
+   "n_rows": 50,
+   "n_ok": 50,
+   "n_censored": 0,
+   "n_other_status": 0,
+   "fingerprint_matches": 50,
+   "fingerprint_mismatches": [],
+   "fingerprint_unavailable": 0
+  },
+  "graft": {
+   "n_rows": 50,
+   "n_ok": 47,
+   "n_censored": 3,
+   "n_other_status": 0,
+   "fingerprint_matches": 47,
+   "fingerprint_mismatches": [],
+   "fingerprint_unavailable": 0
+  }
+ },
+ "isolation": {
+  "plecta": {
+   "n_with_repeats": 50,
+   "dispersion_median": 0.02803935109802205,
+   "dispersion_max": 0.10474633521695775,
+   "dispersion_gt_10pct": 1,
+   "cpu_wall_checked_n": 27,
+   "cpu_wall_min": 0.9857091037071541,
+   "cpu_wall_median": 0.9998502624252228,
+   "cpu_wall_below_0p95_n": 0,
+   "note": "the CPU/wall check is applied only to calls of at least 0.5s; below that the ~15.6 ms Windows scheduler tick makes process_time() quantisation noise"
+  },
+  "dnai": {
+   "n_with_repeats": 50,
+   "dispersion_median": 0.01596835552955455,
+   "dispersion_max": 0.17772662259367342,
+   "dispersion_gt_10pct": 1,
+   "cpu_wall_checked_n": 7,
+   "cpu_wall_min": 0.9908339143490192,
+   "cpu_wall_median": 1.0056600154606874,
+   "cpu_wall_below_0p95_n": 0,
+   "note": "the CPU/wall check is applied only to calls of at least 0.5s; below that the ~15.6 ms Windows scheduler tick makes process_time() quantisation noise"
+  },
+  "graft": {
+   "n_with_repeats": 46,
+   "dispersion_median": 0.012373679483091446,
+   "dispersion_max": 0.05578693587413956,
+   "dispersion_gt_10pct": 0,
+   "cpu_wall_checked_n": 47,
+   "cpu_wall_min": 0.9851684681754288,
+   "cpu_wall_median": 0.9982984580886823,
+   "cpu_wall_below_0p95_n": 0,
+   "note": "the CPU/wall check is applied only to calls of at least 0.5s; below that the ~15.6 ms Windows scheduler tick makes process_time() quantisation noise"
+  }
+ },
+ "per_density_median_seconds": {
+  "plecta": {
+   "cov20": 0.1363,
+   "cov30": 0.3171,
+   "cov40": 0.6212,
+   "cov50": 1.2357,
+   "cov60": 4.0915
+  },
+  "dnai": {
+   "cov20": 0.0394,
+   "cov30": 0.0643,
+   "cov40": 0.1124,
+   "cov50": 0.288,
+   "cov60": 0.5633
+  },
+  "graft": {
+   "cov20": 2.4381,
+   "cov30": 3.8259,
+   "cov40": 6.3592,
+   "cov50": 11.4625,
+   "cov60": 29.7432
+  }
+ },
+ "per_density_full": {
+  "plecta": {
+   "cov20": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.1348,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0891,
+     "max": 0.1657,
+     "max_is_censored": false,
+     "mean": 0.1347,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.1363,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0906,
+     "max": 0.1678,
+     "max_is_censored": false,
+     "mean": 0.1365,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 7922
+   },
+   "cov30": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.3132,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.2295,
+     "max": 0.3767,
+     "max_is_censored": false,
+     "mean": 0.3072,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.3171,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.2335,
+     "max": 0.3803,
+     "max_is_censored": false,
+     "mean": 0.3107,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 11787
+   },
+   "cov40": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.616,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.4267,
+     "max": 0.7278,
+     "max_is_censored": false,
+     "mean": 0.5881,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.6212,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.4293,
+     "max": 0.7336,
+     "max_is_censored": false,
+     "mean": 0.5929,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 16014
+   },
+   "cov50": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 1.2298,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.9708,
+     "max": 2.5947,
+     "max_is_censored": false,
+     "mean": 1.3987,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 1.2357,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.9774,
+     "max": 2.6042,
+     "max_is_censored": false,
+     "mean": 1.4055,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 21508
+   },
+   "cov60": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 4.0803,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 1.0071,
+     "max": 9.8756,
+     "max_is_censored": false,
+     "mean": 4.503,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 4.0915,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 1.0115,
+     "max": 9.8912,
+     "max_is_censored": false,
+     "mean": 4.5163,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 28000
+   }
+  },
+  "dnai": {
+   "cov20": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.0375,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.033,
+     "max": 0.0454,
+     "max_is_censored": false,
+     "mean": 0.0385,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.0394,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0342,
+     "max": 0.0482,
+     "max_is_censored": false,
+     "mean": 0.0403,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 7922
+   },
+   "cov30": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.061,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0546,
+     "max": 0.0651,
+     "max_is_censored": false,
+     "mean": 0.0608,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.0643,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0582,
+     "max": 0.0692,
+     "max_is_censored": false,
+     "mean": 0.0646,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 11787
+   },
+   "cov40": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.1067,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0854,
+     "max": 0.1236,
+     "max_is_censored": false,
+     "mean": 0.1059,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.1124,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.0913,
+     "max": 0.1296,
+     "max_is_censored": false,
+     "mean": 0.1121,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 16014
+   },
+   "cov50": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.2788,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.2108,
+     "max": 0.3441,
+     "max_is_censored": false,
+     "mean": 0.2763,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.288,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.2216,
+     "max": 0.3531,
+     "max_is_censored": false,
+     "mean": 0.2859,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 21508
+   },
+   "cov60": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 0.5498,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.1463,
+     "max": 0.7487,
+     "max_is_censored": false,
+     "mean": 0.515,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 0.5633,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 0.1623,
+     "max": 0.763,
+     "max_is_censored": false,
+     "mean": 0.529,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 28000
+   }
+  },
+  "graft": {
+   "cov20": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 2.4305,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 1.8162,
+     "max": 2.8682,
+     "max_is_censored": false,
+     "mean": 2.4176,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 2.4381,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 1.8232,
+     "max": 2.8768,
+     "max_is_censored": false,
+     "mean": 2.4252,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 7922
+   },
+   "cov30": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 3.8162,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 3.2407,
+     "max": 5.7772,
+     "max_is_censored": false,
+     "mean": 4.0274,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 3.8259,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 3.2502,
+     "max": 5.7877,
+     "max_is_censored": false,
+     "mean": 4.0376,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 11787
+   },
+   "cov40": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 6.3446,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 4.9668,
+     "max": 33.227,
+     "max_is_censored": false,
+     "mean": 9.0431,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 6.3592,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 4.9801,
+     "max": 33.2403,
+     "max_is_censored": false,
+     "mean": 9.057,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 16014
+   },
+   "cov50": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 10,
+    "n_censored": 0,
+    "censored_scenes": [],
+    "other_status": [],
+    "core_s": {
+     "median": 11.4423,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 9.5579,
+     "max": 453.5454,
+     "max_is_censored": false,
+     "mean": 56.6852,
+     "mean_withheld_because_censored": false
+    },
+    "total_s": {
+     "median": 11.4625,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 9.5772,
+     "max": 453.5679,
+     "max_is_censored": false,
+     "mean": 56.7064,
+     "mean_withheld_because_censored": false
+    },
+    "median_foreground_px": 21508
+   },
+   "cov60": {
+    "n": 10,
+    "n_in_median": 10,
+    "n_finished": 7,
+    "n_censored": 3,
+    "censored_scenes": [
+     "cov60/synth_0004",
+     "cov60/synth_0005",
+     "cov60/synth_0009"
+    ],
+    "other_status": [],
+    "core_s": {
+     "median": 29.708,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 4.8093,
+     "max": 44.8363,
+     "max_is_censored": true,
+     "mean": null,
+     "mean_withheld_because_censored": true
+    },
+    "total_s": {
+     "median": 29.7432,
+     "median_is_lower_bounded_by_budget": false,
+     "min": 4.8241,
+     "max": 44.8709,
+     "max_is_censored": true,
+     "mean": null,
+     "mean_withheld_because_censored": true
+    },
+    "median_foreground_px": 28000
+   }
+  }
+ },
+ "scaling_loglog": {
+  "plecta": {
+   "foreground_px": {
+    "slope": 2.652094725026483,
+    "intercept": -11.26142609320515,
+    "slope_stderr": 0.10701198540980023,
+    "r2": 0.9275148737009256,
+    "n": 50,
+    "x": "foreground_px",
+    "censored_scenes_excluded": 0,
+    "exponent_is_lower_bound": false
+   },
+   "nominal_coverage_pct": {
+    "slope": 2.9019692802164645,
+    "intercept": -4.743324162834157,
+    "slope_stderr": 0.15898989709617353,
+    "r2": 0.874067038778632,
+    "n": 50,
+    "x": "nominal_coverage_pct",
+    "censored_scenes_excluded": 0,
+    "exponent_is_lower_bound": false
+   }
+  },
+  "dnai": {
+   "foreground_px": {
+    "slope": 2.1127847468808727,
+    "intercept": -9.705689638744733,
+    "slope_stderr": 0.07053032593160116,
+    "r2": 0.9492248058983903,
+    "n": 50,
+    "x": "foreground_px",
+    "censored_scenes_excluded": 0,
+    "exponent_is_lower_bound": false
+   },
+   "nominal_coverage_pct": {
+    "slope": 2.3002558113689875,
+    "intercept": -4.4948450609005635,
+    "slope_stderr": 0.11934258320454348,
+    "r2": 0.8855786727227496,
+    "n": 50,
+    "x": "nominal_coverage_pct",
+    "censored_scenes_excluded": 0,
+    "exponent_is_lower_bound": false
+   }
+  },
+  "graft": {
+   "foreground_px": {
+    "slope": 2.0139684264504316,
+    "intercept": -7.527947013674658,
+    "slope_stderr": 0.20050428273912482,
+    "r2": 0.6915532826876298,
+    "n": 47,
+    "x": "foreground_px",
+    "censored_scenes_excluded": 3,
+    "exponent_is_lower_bound": true
+   },
+   "nominal_coverage_pct": {
+    "slope": 2.0529058888715124,
+    "intercept": -2.349156630323794,
+    "slope_stderr": 0.2556642209398851,
+    "r2": 0.5889510503313088,
+    "n": 47,
+    "x": "nominal_coverage_pct",
+    "censored_scenes_excluded": 3,
+    "exponent_is_lower_bound": true
+   }
+  }
+ },
+ "source": "comparisons/runtime_study (PROTOCOL.md, results/summary.json)"
+}
