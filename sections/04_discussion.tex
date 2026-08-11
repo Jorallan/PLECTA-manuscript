@@ -84,6 +84,16 @@ matched physical measurements across the relevant scale, contrast, and
 specimen ranges. Pairwise fragment scores also emphasise instances containing
 many fragments; object recovery and ARI are retained as complementary views.
 
+Both comparisons are bounded. The greedy rule is our reimplementation of a
+principle, not of any particular paper, and DNAi was run outside the domain it
+was built for: its own bundled test image holds five junction clusters against
+23 to 183 in ours, and part of its cost function reads a colour channel our
+masks do not have. What the two results support is narrow and mechanical --
+that pairing endpoints greedily, or committing to a pairing with no option to
+decline, loses identity in dense crossings -- not that PLECTA is generally
+superior. A ranking would need several released implementations run in their
+own regimes by their own authors.
+
 An independent procedural benchmark is a practical next test. The
 \texttt{merged\_lines} mask generator in the CNT\_SEM pipeline can export
 overlap-aware whole-bundle references and would add a different implementation

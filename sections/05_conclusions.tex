@@ -8,8 +8,11 @@ common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on 128 independently seeded
 held-out scenes from the same procedural generator, with performance declining
 as network density increased. On identical masks it gained
 \PlectaGreedyDeltaFOne{} \Fone{} over a greedy minimum-turning-angle
-continuation rule, the rule shared by several published linkers, which supports
-solving each junction exactly rather than pairing endpoints in priority order.
+continuation rule, the rule shared by several published linkers, and
+\PlectaDNAiDeltaFOne{} over a released implementation run from its own source.
+Both support solving each junction exactly rather than pairing endpoints in
+priority order, though the second is a limitation of domain and density rather
+than a general ranking.
 Development ablations identify junction chord-turn evidence, gap bridging, and
 junction-topology consolidation as the principal contributors. Optional
 image-informed rendering improves geometric presentation but remains separate

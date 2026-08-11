@@ -148,10 +148,65 @@ median and worst scenes for PLECTA under that contrast.
     \input{results/plecta_greedy_table}
 \end{table}
 
-This is a comparison against one transparent rule, not against the
-published methods that use it, and it is limited to this generator. Section
-\ref{sec:limitations} states what a matched comparison against a released
-implementation would still require.
+\subsection{Comparison with a released implementation}
+\label{sec:res-dnai}
+
+The greedy rule above is a reimplementation, so we also ran a published method
+from its own source. DNAi \citep{playout2026dnai} post-processes a binary
+segmentation: it detects junction pixels morphologically, clusters them by
+single linkage, erases a disk around each cluster, estimates an endpoint angle
+over a short trace, and enumerates the possible pairings at junctions of degree
+three or four. Its segmentation network was bypassed and only this stage was
+used, so that grouping is not confounded with segmentation quality, and both
+methods received the same masks and the same scorer.
+
+At its released defaults DNAi scored \Fone{}=\PlectaDNAiShippedFOne{} on the
+degraded masks, which is not a fair measure of it. The cause is its
+single-linkage clustering of junction pixels at 10~px. Our crossings are closer
+together than that, so the clustering chains: at 60\% coverage the largest
+cluster spans 89~px and is replaced by one small erasure disk, the crossings
+along it are never separated, and the whole tangle survives as a single
+instance. Reducing the clustering distance to 2~px on development scenes raised
+development \Fone{} from 0.211 to 0.378 and cut variation-of-information merge
+from 2.07 to 0.66, confirming the mechanism. Dilating the input to a thicker
+mask was also tested across 41 development configurations and made DNAi worse
+at every setting, so it was not used.
+
+At its best development-selected configuration DNAi scored
+\PlectaDNAiFOne{} against PLECTA's \PlectaDNAiPlectaFOne{}, a paired difference
+of \PlectaDNAiDeltaFOne{} (95\% CI [\PlectaDNAiDeltaCILow{},
+\PlectaDNAiDeltaCIHigh{}]) over \PlectaDNAiSceneCount{} scenes; on clean axes
+the difference was \PlectaDNAiCleanDeltaFOne{}
+[\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}]. The gap widens
+monotonically with density (Figure~\ref{fig:comparators}).
+
+This is a limitation of domain and density, not a general ranking. DNAi is
+built for DNA-fibre micrographs, which are sparse: its own bundled test image
+contains five junction clusters, whereas our scenes contain between 23 and 183.
+Where the network is sparse and the axis is clean it recovers
+\PlectaDNAiCleanSparseFOne{} at 20\% coverage. Two structural differences
+explain the rest. It commits to a pairing at every junction of degree two to
+four with no cost threshold, so it cannot decline a continuation the way a
+priced unmatched option can; and it resolves only junctions of degree at most
+four, though that cap accounts for little here, firing on under 2\% of
+junctions at its shipped setting.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_comparators_density.pdf}
+    \caption{PLECTA, the greedy continuation rule and DNAi across coverage, on
+    the same 50 scenes with identical masks and one scorer, for the degraded
+    and clean axis conditions. Plain means, ten scenes per point, no interval
+    and no inference. The connected-component floor is drawn per density
+    because it is itself strongly density-dependent, falling from 0.146 to
+    0.041 across this range; a score must be compared with the floor at its own
+    density and never with a pooled value. DNAi is shown at its released
+    defaults and at the best configuration selected on development scenes.}
+    \label{fig:comparators}
+\end{figure}
+
+Neither comparison establishes a general ranking. Both are limited to this
+generator, and Section~\ref{sec:limitations} states what remains untested.
 
 \begin{figure}[htbp]
     \centering
