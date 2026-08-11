@@ -1,25 +1,30 @@
-"""Extract the paired qualitative examples: PLECTA against one comparator.
+"""Extract the qualitative example scenes for Fig. 8.
 
-Deliberately parameterised.  The comparator's name, its per-scene record and
-the directory holding its predictions are all arguments, so a different
-comparator can be dropped in without touching the figure generator.
+Two selection modes, both stated rules rather than searches.
 
-Scene selection is a stated rule, not a search:
+``--select plecta`` (the mode Fig. 8 now uses).  The comparator column was
+dropped on review, so the rule can no longer be a difference against it.  The
+scenes are PLECTA's own best, median and *worst* F1 over the comparison set,
+so the figure is obliged to show a failure case.
 
-  * ``plecta_win``   the scene where PLECTA beats the comparator by most;
-  * ``typical``      the scene whose delta-F1 is closest to the median over
-                     the whole comparison set;
-  * ``comparator_win`` the scene where the comparator beats PLECTA by most.
+``--select comparator`` (the earlier mode, kept working).  The scene where
+PLECTA beats the comparator by most, the scene closest to the median
+delta-F1, and the scene where the comparator beats PLECTA by most.
 
-Showing only the first would be a difference-maximising rule; all three are
-recorded, together with the rule, in the manifest block of the output.
+``--render`` additionally runs the full downstream stack -- width measurement
+from the paired SEM image, then ribbon rendering -- and packs those masks
+alongside the evaluated centreline instances.  The two are stored separately
+and never mixed: the grouping that the paper scores is ``plecta``, and
+``plecta_rendered`` is a redrawing of exactly the same instances.  Rendering
+cannot move a pixel from one instance to another, only change how thickly each
+one is drawn.
 
-Writes ``results/plecta_examples_<comparator>.json``.
+Writes ``results/plecta_examples_<name>.json``.
 
     python scripts/figures/extract_plecta_examples.py \
-        --comparator greedy --comparator-label "Greedy continuation" \
-        --predictions C:/Repos/comparisons/filaseg_stubmatch_strandface/predictions/testcmp10/baseline_skeleton \
-        --scenes      C:/Repos/comparisons/filaseg_stubmatch_strandface/data/testcmp10
+        --select plecta --render --name full \
+        --record plecta_dnai_comparison.json \
+        --scenes C:/Repos/comparisons/filaseg_stubmatch_strandface/data/testcmp10
 """
 from __future__ import annotations
 
@@ -120,12 +125,37 @@ def union(layers, keep):
     return out
 
 
+def plecta_rows(record, condition):
+    """(scene, density, f1) per scene for PLECTA, from the DNAi record."""
+    rows = [r for r in record["per_scene"]
+            if r["method"] == "plecta" and r["mask_variant"] == condition
+            and r["status"] == "ok"]
+    return [{"scene": r["scene"], "density": int(r["density"]),
+             "plecta_f1": float(r["f1"])} for r in rows]
+
+
+def comparator_rows(record, condition):
+    rows = record["conditions"][condition]["per_scene"]
+    return [{"scene": r["scene"], "density": int(r["density"]),
+             "plecta_f1": float(r["plecta_f1"]),
+             "comparator_f1": float(r["greedy_f1"])} for r in rows]
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--plecta", default=r"C:/Repos/stubmatch")
-    ap.add_argument("--comparator", default="greedy")
+    ap.add_argument("--select", choices=("stratum", "plecta", "comparator"),
+                    default="stratum")
+    ap.add_argument("--strata", default="20,40,60",
+                    help="--select stratum: the coverage levels to show")
+    ap.add_argument("--name", default="full",
+                    help="output goes to results/plecta_examples_<name>.json")
+    ap.add_argument("--render", action="store_true",
+                    help="also emit the full downstream stack: width "
+                         "measurement from the paired SEM image, then ribbon "
+                         "rendering of the same instances")
     ap.add_argument("--comparator-label", default="Greedy continuation")
-    ap.add_argument("--record", default="plecta_greedy_baseline.json")
+    ap.add_argument("--record", default="plecta_dnai_comparison.json")
     ap.add_argument("--condition", default="degraded")
     ap.add_argument(
         "--predictions",
@@ -134,6 +164,7 @@ def main(argv=None) -> int:
         "--scenes",
         default=r"C:/Repos/comparisons/filaseg_stubmatch_strandface/data/testcmp10")
     ap.add_argument("--mask-name", default="mask_w1.png")
+    ap.add_argument("--sem-name", default="sem.png")
     args = ap.parse_args(argv)
 
     sys.path.insert(0, str(Path(args.plecta)))
@@ -141,15 +172,53 @@ def main(argv=None) -> int:
     from plecta.predict import load_params, predict      # noqa: E402
 
     record = json.loads((REPO / "results" / args.record).read_text(encoding="utf-8"))
-    rows = record["conditions"][args.condition]["per_scene"]
-    deltas = np.array([r["plecta_f1"] - r["greedy_f1"] for r in rows])
-    order = np.argsort(deltas)
-    picks = [
-        ("plecta_win", int(order[-1]), "largest PLECTA advantage"),
-        ("typical", int(np.argmin(np.abs(deltas - np.median(deltas)))),
-         "delta-F1 closest to the median over all %d scenes" % len(rows)),
-        ("comparator_win", int(order[0]), "largest comparator advantage"),
-    ]
+    if args.select == "stratum":
+        # One row per coverage level, each the *median* scene of its own
+        # stratum.  This spans the whole difficulty range -- the last row is
+        # the hardest density by construction -- and no row is chosen by how
+        # well or badly the method did.
+        rows = plecta_rows(record, args.condition)
+        score = np.array([r["plecta_f1"] for r in rows])
+        picks = []
+        for level in (int(v) for v in args.strata.split(",")):
+            idx = [i for i, r in enumerate(rows) if r["density"] == level]
+            median = float(np.median(score[idx]))
+            best = min(idx, key=lambda i: abs(score[i] - median))
+            picks.append((f"cov{level}", best,
+                          "median F1 of the %d scenes at %d%% coverage"
+                          % (len(idx), level)))
+        rule_text = ("One scene per row: the median-F1 scene at each of the "
+                     "coverage levels shown. The rows span the whole "
+                     "difficulty range and none is chosen by outcome.")
+    elif args.select == "plecta":
+        rows = plecta_rows(record, args.condition)
+        score = np.array([r["plecta_f1"] for r in rows])
+        order = np.argsort(score)
+        picks = [
+            ("best", int(order[-1]), "highest PLECTA F1 of the %d scenes"
+             % len(rows)),
+            ("median", int(np.argmin(np.abs(score - np.median(score)))),
+             "F1 closest to the median over all %d scenes" % len(rows)),
+            ("worst", int(order[0]), "lowest PLECTA F1 of the %d scenes"
+             % len(rows)),
+        ]
+        rule_text = ("One scene per row, chosen by a stated rule and not by "
+                     "inspection: PLECTA's highest, median and lowest F1 over "
+                     "the whole comparison set. The last row is therefore the "
+                     "worst case, not a favourable one.")
+    else:
+        rows = comparator_rows(record, args.condition)
+        score = np.array([r["plecta_f1"] - r["comparator_f1"] for r in rows])
+        order = np.argsort(score)
+        picks = [
+            ("plecta_win", int(order[-1]), "largest PLECTA advantage"),
+            ("typical", int(np.argmin(np.abs(score - np.median(score)))),
+             "delta-F1 closest to the median over all %d scenes" % len(rows)),
+            ("comparator_win", int(order[0]), "largest comparator advantage"),
+        ]
+        rule_text = ("One scene per row: the largest PLECTA advantage, the "
+                     "scene closest to the median delta-F1, and the largest "
+                     "comparator advantage.")
 
     params = load_params()
     scenes_root, pred_root = Path(args.scenes), Path(args.predictions)
@@ -157,49 +226,61 @@ def main(argv=None) -> int:
     for key, index, rule in picks:
         row = rows[index]
         scene = row["scene"]
-        scene_dir = scenes_root / f"cov{int(row['density'])}" / scene
+        scene_dir = scenes_root / f"cov{row['density']}" / scene
         mask = read_mask(scene_dir / args.mask_name)
         gt_layers, shape = load_layers(scene_dir / "gt_multilabel.npz")
         plecta_layers = list(predict(mask, params).values())
-        comp_layers = load_label_tif(
-            pred_root / f"cov{int(row['density'])}" / scene / "labels.tif",
-            shape)
 
         entry = {"key": key, "rule": rule, "scene": scene,
-                 "density": int(row["density"]),
-                 "delta_f1": round(float(deltas[index]), 4),
-                 "plecta_f1": round(float(row["plecta_f1"]), 4),
-                 "comparator_f1": round(float(row["greedy_f1"]), 4),
+                 "density": row["density"],
+                 "plecta_f1": round(row["plecta_f1"], 4),
                  "shape": list(shape),
                  "mask": pack(mask),
                  "reference": pack_labels(gt_layers),
                  "plecta": pack_labels(plecta_layers),
-                 "comparator": pack_labels(comp_layers),
                  "n_reference": len(gt_layers),
-                 "n_plecta": len(plecta_layers),
-                 "n_comparator": len(comp_layers)}
+                 "n_plecta": len(plecta_layers)}
+        if "comparator_f1" in row:
+            entry["comparator_f1"] = round(row["comparator_f1"], 4)
+            entry["delta_f1"] = round(float(score[index]), 4)
+            comp_layers = load_label_tif(
+                pred_root / f"cov{row['density']}" / scene / "labels.tif",
+                shape)
+            entry["comparator"] = pack_labels(comp_layers)
+            entry["n_comparator"] = len(comp_layers)
+        if args.render:
+            from image_characterization.pipeline import measure_scene
+            from image_characterization.refine import RefineParams, refine_scene
+            res = measure_scene(scene_dir, mask_name=args.mask_name,
+                                sem_name=args.sem_name, params=params)
+            ribbons, _poly, log = refine_scene(res, RefineParams())
+            entry["plecta_rendered"] = pack_labels(list(ribbons.values()))
+            entry["n_plecta_rendered"] = len(ribbons)
+            entry["n_absorbed_by_rendering"] = len(log) if log else 0
         panels.append(entry)
-        print(key, scene, "dF1", entry["delta_f1"], "instances",
-              entry["n_reference"], entry["n_plecta"], entry["n_comparator"],
-              flush=True)
+        print(key, scene, "cov", entry["density"], "F1", entry["plecta_f1"],
+              "instances", entry["n_reference"], entry["n_plecta"],
+              entry.get("n_plecta_rendered", "-"), flush=True)
 
     out = {
-        "schema": 1,
-        "comparator": args.comparator,
+        "schema": 2,
+        "select": args.select,
         "comparator_label": args.comparator_label,
         "condition": args.condition,
         "record": args.record,
+        "rendered": bool(args.render),
         "n_scenes_in_comparison": len(rows),
-        "selection_rule": "One scene per row, chosen by a stated rule and not "
-                          "by inspection: the largest PLECTA advantage, the "
-                          "scene closest to the median delta-F1, and the "
-                          "largest comparator advantage.",
+        "selection_rule": rule_text,
+        "rendering_note": "plecta_rendered redraws the instances in 'plecta' "
+                          "at their measured widths. It is downstream of the "
+                          "evaluated grouping and is not what the reported "
+                          "metrics score.",
         "colour_rule": "Instance colours are arbitrary and carry identity "
                        "only within one panel; they are not matched between "
                        "columns.",
         "panels": panels,
     }
-    path = REPO / "results" / f"plecta_examples_{args.comparator}.json"
+    path = REPO / "results" / f"plecta_examples_{args.name}.json"
     path.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
     print("[wrote]", path, round(path.stat().st_size / 1e6, 2), "MB")
     return 0

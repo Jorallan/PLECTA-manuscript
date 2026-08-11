@@ -1,14 +1,20 @@
-"""Figure: the four decisions PLECTA can make, and the gate on each.
+"""Figure 4: the four decisions the linker can make, and the gate on each.
 
-Built in the same idiom as the earlier reconnection-gate figure in this
-repository -- thick round-capped arms, tip markers, direction arrows, an
-accepted link drawn solid and a refused one dashed and crossed out, and one
-legend for the whole row.  The four panels are the four outcomes the linker
-can produce, with the numerical gate printed under each.
+Redrawn after review.  Two things were wrong with the earlier version:
 
-Idealised drawings.  The real numbers behind them are in Figs. "frame_cost"
-and "exact_matching", which use measured values throughout; this figure is
-the vocabulary, not the evidence.  Self-contained; no data file is read.
+  * the strokes were 5.4 pt wide in a 1.4 inch panel, so the arms merged into
+    each other and into the junction disc;
+  * each arm was drawn *backwards through* its own junction, so at a crossing
+    the two arms genuinely overlapped and the link between their tips was
+    buried underneath them.
+
+Now an arm is drawn where it belongs: outward from its stub tip, away from the
+junction, at 2.4 pt.  The tip sits clear of the node disc and the link the
+method draws between two tips is the most visible thing in the panel.  The
+small arrow at a tip is that stub's outward tangent -- the direction the
+method asks the arm to continue in -- so it points into the junction.
+
+Idealised drawings; the measured cases are Figs. 3 and 5.  Self-contained.
 
     python scripts/figures/fig_plecta_gates.py
 """
@@ -25,70 +31,81 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.patches import Arc, Circle, FancyArrowPatch
+from matplotlib.patches import Circle, FancyArrowPatch
 
 from _style import (BLUE, DARK, FIG_W, GRAY, GREEN, JUNCTION, ORANGE,
-                    PT_BODY, PT_LABEL, PT_TINY, plecta_style, save_fig)
+                    PT_ANNOT, PT_LEGEND, PT_TITLE, plecta_style, save_fig)
 
-FIG_H = 2.55
+FIG_H = 2.62
 DEG = math.pi / 180.0
-ARM_LW = 5.4
-HEAD = dict(arrowstyle="-|>,head_length=0.48,head_width=0.28",
-            mutation_scale=10, shrinkA=0, shrinkB=0)
+ARM_LW = 2.4
+R_TIP = 0.092          # tip sits this far from the node centre
+R_NODE = 0.050
+HEAD = dict(arrowstyle="-|>,head_length=0.50,head_width=0.30",
+            mutation_scale=8, shrinkA=0, shrinkB=0)
 
 
 def unit(deg):
     return np.array([math.cos(deg * DEG), math.sin(deg * DEG)])
 
 
-def arm(ax, tip, bearing, length, colour, bend=0.0, z=3):
-    """A fragment drawn *backwards* from its tip, so the tip is exact."""
+def arm_outward(ax, tip, bearing, length, colour, bend=0.0, z=3):
+    """The arm body: from its stub tip, outward, away from the junction."""
     t = unit(bearing)
     nrm = np.array([-t[1], t[0]])
-    s = np.linspace(0, 1, 60)[:, None]
-    pts = tip - t * length * s + nrm * bend * length * (s ** 2)
+    s = np.linspace(0, 1, 80)[:, None]
+    pts = tip + t * length * s + nrm * bend * length * (s ** 2)
     ax.plot(pts[:, 0], pts[:, 1], color=colour, lw=ARM_LW,
-            solid_capstyle="round", zorder=z, alpha=0.95)
-    return np.asarray(tip, float)
+            solid_capstyle="round", zorder=z)
 
 
 def tip_dot(ax, p, colour):
-    ax.add_patch(Circle(tuple(p), 0.030, facecolor="white", edgecolor=colour,
-                        linewidth=1.5, zorder=8))
+    ax.add_patch(Circle(tuple(p), 0.023, facecolor="white", edgecolor=colour,
+                        linewidth=1.2, zorder=8))
 
 
-def dir_arrow(ax, p, bearing, length=0.20, colour=DARK):
-    ax.add_patch(FancyArrowPatch(tuple(p), tuple(p + unit(bearing) * length),
-                                 color=colour, lw=1.3, zorder=7, **HEAD))
+def tangent(ax, tip, bearing, colour=DARK):
+    """The stub's outward tangent, drawn on the arm and pointing at the tip.
+
+    Off the tip rather than through it, so it never sits on top of the link
+    the panel exists to show.
+    """
+    u = unit(bearing)
+    ax.add_patch(FancyArrowPatch(tuple(tip + u * 0.105), tuple(tip + u * 0.030),
+                                 color=colour, lw=0.9, zorder=7, **HEAD))
 
 
 def accepted(ax, p0, p1):
-    ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=GREEN, lw=2.2,
+    ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=GREEN, lw=1.8,
             solid_capstyle="round", zorder=6)
 
 
-def refused(ax, p0, p1):
-    ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=GRAY, lw=1.6,
-            ls=(0, (3.4, 2.4)), zorder=5)
-    mid = (np.asarray(p0) + np.asarray(p1)) / 2.0
-    ax.plot([mid[0]], [mid[1]], marker="x", ms=7.5, mew=2.0, color=GRAY,
+def refused(ax, p0, p1, at=0.50):
+    p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
+    ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color=GRAY, lw=1.2,
+            ls=(0, (3.0, 2.2)), zorder=5)
+    cross = p0 + (p1 - p0) * at
+    ax.plot([cross[0]], [cross[1]], marker="x", ms=6.0, mew=1.6, color=GRAY,
             zorder=9)
 
 
-def node_disc(ax, centre, r=0.075):
-    ax.add_patch(Circle(tuple(centre), r, facecolor=JUNCTION,
-                        edgecolor="none", alpha=0.85, zorder=4))
+def junction(ax, centre, spokes):
+    """A node disc and its stubs.  ``spokes`` is (bearing, colour, length, bend).
 
-
-def angle_arc(ax, vertex, a_deg, b_deg, radius, label):
-    lo, hi = sorted((a_deg % 360.0, b_deg % 360.0))
-    if hi - lo > 180.0:
-        lo, hi = hi - 360.0, lo
-    ax.add_patch(Arc(tuple(vertex), 2 * radius, 2 * radius, theta1=lo,
-                     theta2=hi, color=GREEN, lw=1.3, zorder=8))
-    pos = np.asarray(vertex) + radius * 1.62 * unit((lo + hi) / 2.0)
-    ax.text(pos[0], pos[1], label, ha="center", va="center", color=GREEN,
-            fontsize=PT_LABEL, zorder=9)
+    Every stub tip sits ``R_TIP`` from the node centre, just outside the disc,
+    and its arm runs outward from there -- so the disc is the thing all the
+    tips touch and the link drawn between two tips is never buried under an
+    arm.
+    """
+    ax.add_patch(Circle(tuple(centre), R_NODE, facecolor=JUNCTION,
+                        edgecolor="none", alpha=0.80, zorder=2))
+    tips = []
+    for bearing, colour, length, bend in spokes:
+        tip = np.asarray(centre) + unit(bearing) * R_TIP
+        arm_outward(ax, tip, bearing, length, colour, bend=bend)
+        tip_dot(ax, tip, colour)
+        tips.append(tip)
+    return tips
 
 
 def stage(fig, rect, xspan=1.0):
@@ -106,78 +123,57 @@ def stage(fig, rect, xspan=1.0):
 
 
 # ── the four outcomes ─────────────────────────────────────────────────────
-#
-#  In every panel the stub tips sit outside the junction disc, so the link
-#  the method draws between them is visible rather than buried under it.
-
-R_TIP = 0.135
-R_NODE = 0.070
-
-
-def junction(ax, centre, bearings, colours, lengths, bends):
-    """A junction disc with its stubs, and the tip of each stub."""
-    ax.add_patch(Circle(tuple(centre), R_NODE, facecolor=JUNCTION,
-                        edgecolor="none", alpha=0.80, zorder=2))
-    tips = []
-    for bearing, colour, length, bend in zip(bearings, colours, lengths, bends):
-        tip = np.asarray(centre) + unit(bearing) * R_TIP
-        arm(ax, tip, bearing, length, colour, bend=bend)
-        tip_dot(ax, tip, colour)
-        tips.append(tip)
-    return tips
 
 
 def panel_pair_taken(ax):
-    Y = ax.yspan
-    node = np.array([0.50, 0.52 * Y])
-    ta, tb = junction(ax, node, [196, 16], [BLUE, ORANGE], [0.30, 0.30],
-                      [0.10, -0.10])
+    node = np.array([0.50, 0.52 * ax.yspan])
+    ta, tb = junction(ax, node, [(202, BLUE, 0.34, 0.12),
+                                 (18, ORANGE, 0.34, -0.12)])
     accepted(ax, ta, tb)
-    dir_arrow(ax, ta, 196, 0.15)
-    dir_arrow(ax, tb, 16, 0.15)
+    tangent(ax, ta, 202)
+    tangent(ax, tb, 18)
 
 
 def panel_pair_refused(ax):
-    Y = ax.yspan
-    node = np.array([0.50, 0.52 * Y])
-    ta, tb = junction(ax, node, [200, 104], [BLUE, ORANGE], [0.28, 0.26],
-                      [0.10, -0.08])
+    node = np.array([0.50, 0.46 * ax.yspan])
+    ta, tb = junction(ax, node, [(204, BLUE, 0.34, 0.10),
+                                 (92, ORANGE, 0.26, -0.10)])
     refused(ax, ta, tb)
-    dir_arrow(ax, ta, 200, 0.15)
-    dir_arrow(ax, tb, 104, 0.15)
+    tangent(ax, ta, 204)
+    tangent(ax, tb, 92)
 
 
 def panel_unmatched(ax):
-    Y = ax.yspan
-    node = np.array([0.52, 0.56 * Y])
-    ta, tb, tc = junction(ax, node, [192, 12, 278], [BLUE, BLUE, ORANGE],
-                          [0.28, 0.28, 0.22], [0.05, -0.05, 0.08])
+    node = np.array([0.50, 0.52 * ax.yspan])
+    ta, tb, tc = junction(ax, node, [(198, BLUE, 0.32, 0.07),
+                                     (14, BLUE, 0.32, -0.07),
+                                     (274, ORANGE, 0.26, 0.06)])
     accepted(ax, ta, tb)
-    ax.add_patch(Circle(tuple(tc), 0.058, facecolor="none", edgecolor=JUNCTION,
-                        linewidth=1.7, zorder=9))
-    ax.text(tc[0] - 0.085, tc[1] - 0.01, r"free", ha="right", va="center",
-            fontsize=PT_TINY, color=JUNCTION)
+    ax.add_patch(Circle(tuple(tc), 0.042, facecolor="none", edgecolor=JUNCTION,
+                        linewidth=1.3, zorder=9))
+    ax.text(tc[0] - 0.068, tc[1] - 0.030, "free", ha="right", va="center",
+            fontsize=PT_ANNOT, color=JUNCTION)
 
 
 def panel_gap(ax):
     Y = ax.yspan
-    ta = np.array([0.28, 0.44 * Y])
-    tb = np.array([0.62, 0.54 * Y])
-    arm(ax, ta, 15, 0.26, BLUE, bend=0.06)
-    arm(ax, tb, 195, 0.26, ORANGE, bend=-0.06)
+    ta = np.array([0.335, 0.415 * Y])
+    tb = np.array([0.665, 0.505 * Y])
+    arm_outward(ax, ta, 194, 0.30, BLUE, bend=0.07)
+    arm_outward(ax, tb, 14, 0.30, ORANGE, bend=-0.07)
     tip_dot(ax, ta, BLUE)
     tip_dot(ax, tb, ORANGE)
     accepted(ax, ta, tb)
-    dir_arrow(ax, ta, 15, 0.13)
-    dir_arrow(ax, tb, 195, 0.13)
-    off = np.array([0.0, 0.115])
+    tangent(ax, ta, 194)
+    tangent(ax, tb, 14)
+    off = np.array([0.0, 0.125])
     ax.annotate("", xy=tuple(tb + off), xytext=tuple(ta + off),
-                arrowprops=dict(arrowstyle="<|-|>,head_length=0.5,head_width=0.28",
-                                mutation_scale=9, color=GRAY, lw=0.9,
+                arrowprops=dict(arrowstyle="<|-|>,head_length=0.52,head_width=0.30",
+                                mutation_scale=8, color=GRAY, lw=0.8,
                                 shrinkA=0, shrinkB=0))
     mid = (ta + tb) / 2.0 + off
-    ax.text(mid[0], mid[1] + 0.030, r"$d$", ha="center", va="bottom",
-            fontsize=PT_LABEL, color=GRAY)
+    ax.text(mid[0], mid[1] + 0.024, r"$d$", ha="center", va="bottom",
+            fontsize=PT_ANNOT, color=GRAY)
 
 
 def main() -> int:
@@ -188,44 +184,43 @@ def main() -> int:
         (panel_pair_taken, "a", "Pairing taken",
          r"$C_{ab} = 0.15 < 1.24$", GREEN),
         (panel_pair_refused, "b", "Pairing refused",
-         r"$C_{ab} = 1.72 \geq 2p_i = 1.24$", GRAY),
-        (panel_unmatched, "c", "Stub left free",
-         "$p_i = 0.62$ beats every\nedge this stub has", JUNCTION),
+         r"$C_{ab} = 1.72 > 1.24$", GRAY),
+        (panel_unmatched, "c", "Stub left free", r"$p_i = 0.62$", JUNCTION),
         (panel_gap, "d", "Gap bridged",
-         r"$d \leq 85$ px,  $\theta \leq 0.40$ rad,"
-         "\n" r"$\varphi \leq 0.28$ rad,  $C_{ab} < 0.60$", GREEN),
+         r"$d \leq 85$ px,  $\theta \leq 0.40$"
+         "\n" r"$\varphi \leq 0.28$,  $C_{ab} < 0.60$", GREEN),
     ]
-    width, left, gap = 0.232, 0.016, 0.016
-    for i, (fn, letter, title, gate, colour) in enumerate(panels):
+    width, left, gap = 0.234, 0.014, 0.014
+    for i, (fn, letter, name, gate, colour) in enumerate(panels):
         x0 = left + i * (width + gap)
-        fn(stage(fig, [x0, 0.400, width, 0.400]))
+        fn(stage(fig, [x0, 0.330, width, 0.470]))
         centre = x0 + width / 2.0
-        fig.text(centre, 0.865, f"({letter})  {title}", fontsize=PT_BODY,
+        fig.text(centre, 0.868, f"({letter})  {name}", fontsize=PT_TITLE,
                  fontweight="bold", color=DARK, ha="center", va="bottom")
-        fig.text(centre, 0.372, gate, fontsize=PT_LABEL, color=colour,
-                 ha="center", va="top", linespacing=1.5)
+        fig.text(centre, 0.302, gate, fontsize=PT_ANNOT, color=colour,
+                 ha="center", va="top", linespacing=1.55)
 
     handles = [
         Line2D([], [], color=BLUE, lw=ARM_LW, solid_capstyle="round",
                label="Arm of filament A"),
         Line2D([], [], color=ORANGE, lw=ARM_LW, solid_capstyle="round",
                label="Arm of filament B"),
-        Line2D([], [], color=GREEN, lw=2.2, label="Link accepted"),
-        Line2D([], [], color=GRAY, lw=1.6, ls=(0, (3.4, 2.4)), marker="x",
-               ms=6.5, mew=1.8, label="Link refused"),
-        Line2D([], [], color=JUNCTION, lw=0, marker="o", ms=7.0,
+        Line2D([], [], color=GREEN, lw=1.8, label="Link accepted"),
+        Line2D([], [], color=GRAY, lw=1.2, ls=(0, (3.0, 2.2)), marker="x",
+               ms=5.5, mew=1.5, label="Link refused"),
+        Line2D([], [], color=JUNCTION, lw=0, marker="o", ms=6.0, alpha=0.8,
                label="Junction cluster"),
     ]
     fig.legend(handles=handles, ncol=5, frameon=False, loc="lower center",
-               bbox_to_anchor=(0.5, 0.012), fontsize=PT_LABEL,
+               bbox_to_anchor=(0.5, 0.010), fontsize=PT_LEGEND,
                handlelength=2.0, columnspacing=1.5, handletextpad=0.6)
 
     save_fig(fig, "fig_plecta_gates", bbox_inches=None)
     plt.close(fig)
-    print("saved fig_plecta_gates")
+    print("fig_plecta_gates  %.3f x %.3f in, arm lw %.1f pt"
+          % (FIG_W, FIG_H, ARM_LW))
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

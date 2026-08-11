@@ -58,13 +58,23 @@ def main() -> int:
     proc = data["procedural"]
 
     panel_in = 1.30
-    rows, fig_h = stack([("r1", panel_in, 0), ("r2", panel_in, 0)])
+    # bottom=0.34 in: panel (g) carries an axis label and tick labels below
+    # its box, and ``stack`` measures panels, not what hangs under them.
+    rows, fig_h = stack([("r1", panel_in, 0), ("r2", panel_in, 0)],
+                        bottom=0.34)
     fig = plt.figure(figsize=(FIG_W, fig_h))
     w, h = panel_in / FIG_W, panel_in / fig_h
 
+    # Four square panels across the page.  The step is derived from the panel
+    # width rather than typed in, so the fourth panel lands inside the canvas
+    # instead of hanging over the right edge and being cut off by the save.
+    x_left, x_right = 0.045, 0.995
+    step = (x_right - x_left - w) / 3.0
+    col = [x_left + i * step for i in range(4)]
+
     # ── (a) the ambiguity, on real pixels ──────────────────────────────
     r1 = rows["r1"]
-    ax_a = pixel_axes(fig, [0.045, r1["panel"], w, h], cr["size"])
+    ax_a = pixel_axes(fig, [col[0], r1["panel"], w, h], cr["size"])
     draw_pixels(ax_a, unpack(cr["mask"]), INK)
     draw_pixels(ax_a, unpack(cr["node_px"]), JUNCTION, z=3)
     for dx, dy in ((0.80, 0.14), (0.16, 0.86), (0.86, 0.84), (0.10, 0.16)):
@@ -74,7 +84,7 @@ def main() -> int:
 
     # ── (b) input: one whole binary axis mask ──────────────────────────
     mask = unpack(proc["mask_w1"])
-    ax_b = pixel_axes(fig, [0.300, r1["panel"], w, h], mask.shape[0])
+    ax_b = pixel_axes(fig, [col[1], r1["panel"], w, h], mask.shape[0])
     show_layers(ax_b, [mask], [INK], background=np.zeros_like(mask))
 
     # ── (c) output: overlapping instances ──────────────────────────────
@@ -83,13 +93,13 @@ def main() -> int:
     scene = next(row for row in ladder if row["density"] == proc["meta"].get(
         "coverage_percent", 30)) if False else None
     inst = [unpack(p) for p in proc["gt_layers"]]
-    ax_c = pixel_axes(fig, [0.555, r1["panel"], w, h], mask.shape[0])
+    ax_c = pixel_axes(fig, [col[2], r1["panel"], w, h], mask.shape[0])
     show_layers(ax_c, inst,
                 [INSTANCE_CYCLE[i % len(INSTANCE_CYCLE)] for i in range(len(inst))],
                 background=np.zeros_like(mask))
 
     # ── (d) the same crossing, as layers ───────────────────────────────
-    ax_d = pixel_axes(fig, [0.810, r1["panel"], w, h], cr["size"])
+    ax_d = pixel_axes(fig, [col[3], r1["panel"], w, h], cr["size"])
     shared = layers[0] & layers[1] if len(layers) >= 2 else np.zeros_like(layers[0])
     draw_pixels(ax_d, layers[0] & ~shared, FIL_A)
     if len(layers) >= 2:
@@ -97,30 +107,30 @@ def main() -> int:
     draw_split_pixels(ax_d, shared, FIL_A, FIL_B)
 
     y_arrow = r1["panel"] + h / 2.0
-    arrow_between(fig, 0.258, 0.292, y_arrow)
-    arrow_between(fig, 0.513, 0.547, y_arrow)
-    arrow_between(fig, 0.768, 0.802, y_arrow)
+    for i in range(3):
+        arrow_between(fig, col[i] + w + 0.006, col[i + 1] - 0.006, y_arrow)
 
-    fig_title(fig, 0.030, r1["title"], "a", "The ambiguity")
-    fig_title(fig, 0.285, r1["title"], "b", "The input")
-    fig_title(fig, 0.540, r1["title"], "c", "The reference")
-    fig_title(fig, 0.795, r1["title"], "d", "Overlap")
+    for x, letter, name in zip(col, "abcd",
+                               ("The ambiguity", "The input", "The reference",
+                                "Overlap")):
+        fig_title(fig, x - 0.015, r1["title"], letter, name)
 
 
     # ── row 2: what "layers, not a partition" costs and buys ───────────
     r2 = rows["r2"]
     stage4 = None
-    ax_e = pixel_axes(fig, [0.045, r2["panel"], w, h], cr["size"])
+    ax_e = pixel_axes(fig, [col[0], r2["panel"], w, h], cr["size"])
     only_a = layers[0] & ~shared
     draw_pixels(ax_e, only_a, FIL_A)
     draw_pixels(ax_e, shared, FIL_A, z=4)
 
-    ax_f = pixel_axes(fig, [0.300, r2["panel"], w, h], cr["size"])
+    ax_f = pixel_axes(fig, [col[1], r2["panel"], w, h], cr["size"])
     if len(layers) >= 2:
         draw_pixels(ax_f, layers[1] & ~shared, FIL_B)
         draw_pixels(ax_f, shared, FIL_B, z=4)
 
-    ax_g = fig.add_axes([0.600, r2["panel"] + 0.030, 0.360, h - 0.060])
+    ax_g = fig.add_axes([col[2] + 0.055, r2["panel"] + 0.030,
+                         x_right - col[2] - 0.090, h - 0.060])
     counts = [int(layers[0].sum()), int(layers[1].sum()) if len(layers) > 1 else 0,
               int(shared.sum())]
     labels = ["instance A", "instance B", "claimed by both"]
@@ -139,9 +149,9 @@ def main() -> int:
         ax_g.spines[s].set_visible(False)
     ax_g.tick_params(axis="y", length=0, pad=1.5)
 
-    fig_title(fig, 0.030, r2["title"], "e", "Layer A")
-    fig_title(fig, 0.285, r2["title"], "f", "Layer B")
-    fig_title(fig, 0.585, r2["title"], "g", "Layer sizes")
+    fig_title(fig, col[0] - 0.015, r2["title"], "e", "Layer A")
+    fig_title(fig, col[1] - 0.015, r2["title"], "f", "Layer B")
+    fig_title(fig, col[2] + 0.040, r2["title"], "g", "Layer sizes")
 
 
     save_fig(fig, "fig_plecta_task", bbox_inches=None)

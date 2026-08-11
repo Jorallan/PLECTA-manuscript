@@ -28,11 +28,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DARK, DENSITY_CYCLE, FIG_W, GRAY, PT_BODY, PT_LABEL,
-                    PT_TINY, plecta_style, save_fig)
+from _style import (DENSITY_CYCLE, FIG_W, GRAY, PT_AXIS, PT_LEGEND,
+                    PT_TICK, PT_TITLE, plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
-FIG_H = 3.55
+FIG_H = 3.15
 
 
 def load():
@@ -61,12 +61,12 @@ def panel(ax, table, variants, xticklabels, title, xlabel):
                 mfc=colour, mec="white", mew=1.1, zorder=4,
                 label=f"{density}%")
     ax.set_xticks(x)
-    ax.set_xticklabels(xticklabels, fontsize=PT_LABEL)
+    ax.set_xticklabels(xticklabels, fontsize=PT_TICK)
     ax.set_xlim(-0.35, len(variants) - 0.65)
     ax.set_ylim(0.45, 1.0)
-    ax.set_xlabel(xlabel, fontsize=PT_BODY)
-    ax.set_title(title, loc="left", fontsize=PT_BODY + 1.0, fontweight="bold")
-    ax.tick_params(labelsize=PT_LABEL)
+    ax.set_xlabel(xlabel, fontsize=PT_AXIS)
+    ax.set_title(title, loc="left", fontsize=PT_TITLE, fontweight="bold")
+    ax.tick_params(labelsize=PT_TICK)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     for s in ("left", "bottom"):
@@ -81,7 +81,7 @@ def main() -> int:
     fig, (ax_a, ax_b) = plt.subplots(
         1, 2, figsize=(FIG_W, FIG_H), sharey=True,
         gridspec_kw={"width_ratios": [1.45, 1.0]})
-    fig.subplots_adjust(left=0.100, right=0.985, top=0.925, bottom=0.335,
+    fig.subplots_adjust(left=0.100, right=0.985, top=0.918, bottom=0.300,
                         wspace=0.09)
 
     panel(ax_a, table, ["w1", "w2", "w3"], ["1 px", "2 px", "3 px"],
@@ -89,14 +89,13 @@ def main() -> int:
     panel(ax_b, table, ["w1", "clean"], ["Degraded\n(1 px, evaluated)",
                                          "Clean\naxis"],
           "(b) Degraded vs. clean axis", "Input axis-mask condition")
-    ax_a.set_ylabel("Development common-fragment $F_1$", fontsize=PT_BODY)
+    ax_a.set_ylabel("Development common-fragment $F_1$", fontsize=PT_AXIS)
 
     handles, labels = ax_a.get_legend_handles_labels()
     fig.legend(handles, labels, ncol=5, frameon=False, loc="lower center",
-               bbox_to_anchor=(0.5, 0.012), fontsize=PT_LABEL,
+               bbox_to_anchor=(0.5, 0.014), fontsize=PT_LEGEND,
+               title="Target areal coverage", title_fontsize=PT_LEGEND,
                handlelength=2.2, columnspacing=1.9, handletextpad=0.55)
-    fig.text(0.5, 0.098, "Target areal coverage", ha="center", va="bottom",
-             fontsize=PT_BODY, color=DARK)
 
     save_fig(fig, "fig_plecta_sensitivity", bbox_inches=None)
     plt.close(fig)

@@ -28,7 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DARK, FIG_W, GRAY, GREEN, PT_BODY, PT_LABEL,
+from _style import (DARK, FIG_W, GRAY, GREEN, PT_AXIS, PT_LEGEND, PT_TICK,
                     plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
@@ -36,9 +36,12 @@ RNG_SEED = 20260811
 N_BOOT = 20000
 FIG_H = 3.05
 
+#: Condition is carried by line style as well as by hue, so the two series
+#: stay distinguishable in greyscale: the degraded axis -- the input the paper
+#: actually evaluates -- is dashed, the clean axis is a solid smooth line.
 SERIES = (
-    ("degraded", "Degraded 1 px axis (evaluated input)", GREEN, "-", "o"),
-    ("clean", "Clean axis", DARK, (0, (5, 2)), "s"),
+    ("clean", "Clean axis", DARK, "-", "s"),
+    ("degraded", "Degraded axis (evaluated)", GREEN, (0, (5, 2)), "o"),
 )
 
 
@@ -85,14 +88,14 @@ def main() -> int:
     ax.set_xticklabels([f"{d}%" for d in (20, 30, 40, 50, 60)])
     ax.set_xlim(16, 64)
     ax.set_ylim(0.62, 1.0)
-    ax.set_xlabel("Target areal coverage", fontsize=PT_BODY)
-    ax.set_ylabel("Common-fragment $F_1$", fontsize=PT_BODY)
-    ax.tick_params(labelsize=PT_LABEL)
+    ax.set_xlabel("Target areal coverage", fontsize=PT_AXIS)
+    ax.set_ylabel("Common-fragment $F_1$", fontsize=PT_AXIS)
+    ax.tick_params(labelsize=PT_TICK)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
     for side in ("left", "bottom"):
         ax.spines[side].set_color(GRAY)
-    ax.legend(frameon=False, loc="lower left", fontsize=PT_LABEL,
+    ax.legend(frameon=False, loc="lower left", fontsize=PT_LEGEND,
               handlelength=2.6, labelspacing=0.5, borderpad=0.2)
 
     save_fig(fig, "fig_plecta_density", bbox_inches=None)

@@ -22,13 +22,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Rectangle
 
-from _style import (FIG_W, PT_BODY, PT_LABEL, PT_TINY, PT_TITLE,
+from _style import (FIG_W, PT_ANNOT, PT_AXIS, PT_TICK, PT_TITLE,
                     FIL_A, FIL_B, JUNCTION, CHORD, INK,
                     load_figure_data, plecta_style, save_fig, unpack,
                     unpack_labels)
 
-FIG_H = 3.00
-LINE_IN = 7.0 * 1.55 / 72.0          # one 7 pt line, inches
+FIG_H = 3.02
+LINE_IN = PT_ANNOT * 1.55 / 72.0     # one annotation line, inches
 LETTERS = "abcd"
 PANEL = 1.12                       # side of a square pixel panel, inches
 
@@ -44,13 +44,8 @@ def fy(inches):
 def title(fig, x, y, letter, text):
     fig.text(x, y, f"({letter})", fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="bottom")
-    fig.text(x + 0.038, y, text, fontsize=PT_TITLE, fontweight="bold",
+    fig.text(x + 0.036, y, text, fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="bottom")
-
-
-def prose(fig, x, y, text):
-    fig.text(x, y, text, fontsize=PT_TINY, color=INK, ha="left", va="top",
-             linespacing=1.55)
 
 
 def pixel_axes(fig, rect, n):
@@ -107,7 +102,7 @@ def panel_before(ax, data, names, bear):
         tip = j["frames"][str(sid)]["tip"]
         ang = math.radians(bear[sid])
         ax.text(tip[1] + 17.0 * math.cos(ang), tip[0] - 17.0 * math.sin(ang),
-                name, fontsize=PT_LABEL, fontweight="bold", color=INK,
+                name, fontsize=PT_ANNOT, fontweight="bold", color=INK,
                 ha="center", va="center", zorder=7,
                 bbox=dict(boxstyle="circle,pad=0.18", fc="white", ec=CHORD,
                           lw=0.5))
@@ -141,17 +136,18 @@ def panel_costs(ax, data, names):
                 color=INK if r["admissible"] else "white",
                 edgecolor=INK, linewidth=0.7, zorder=3)
         ax.text(r["cost"] + 0.10, yi, f"{r['cost']:.2f}", va="center",
-                ha="left", fontsize=PT_TINY, color=INK, zorder=4)
+                ha="left", fontsize=PT_ANNOT, color=INK, zorder=4)
     ax.axvline(limit, color=JUNCTION, lw=1.1, zorder=5)
     ax.text(limit + 0.06, len(rows) - 0.42, "$2p_i$", color=JUNCTION,
-            fontsize=PT_TINY, ha="left", va="top")
+            fontsize=PT_ANNOT, ha="left", va="top")
     ax.set_yticks(y)
     ax.set_yticklabels([f"{names[r['a']]}–{names[r['b']]}" for r in rows],
-                       fontsize=PT_LABEL)
+                       fontsize=PT_TICK)
     ax.set_xlim(0, 4.15)
     ax.set_ylim(-0.62, len(rows) - 0.30)
-    ax.set_xlabel("pairing cost $C_{ab}$", fontsize=PT_LABEL, labelpad=0.5)
+    ax.set_xlabel("pairing cost $C_{ab}$", fontsize=PT_AXIS, labelpad=0.5)
     ax.set_xticks([0, 1, 2, 3, 4])
+    ax.tick_params(axis="x", labelsize=PT_TICK)
     for s in ("top", "right", "left"):
         ax.spines[s].set_visible(False)
     ax.tick_params(axis="y", length=0, pad=1.5)
@@ -189,7 +185,7 @@ def config_diagram(ax, stubs, names, bear, pairs, total, chosen):
                 zorder=2)
         lab = np.array([math.cos(math.radians(lab_deg[s])),
                         math.sin(math.radians(lab_deg[s]))]) * 1.50
-        ax.text(*lab, names[s], fontsize=PT_TINY,
+        ax.text(*lab, names[s], fontsize=PT_ANNOT,
                 fontweight="bold", ha="center", va="center",
                 color=INK if s in matched else CHORD, zorder=6)
         if s not in matched:
@@ -202,7 +198,7 @@ def config_diagram(ax, stubs, names, bear, pairs, total, chosen):
         ax.add_patch(Rectangle((-1.78, -1.78), 3.56, 3.56, fill=False,
                                ec=INK, lw=1.0, zorder=1))
     ax.text(0, -2.96, f"{total:.2f}", ha="center", va="bottom",
-            fontsize=PT_LABEL, fontweight="bold" if chosen else "normal",
+            fontsize=PT_ANNOT, fontweight="bold" if chosen else "normal",
             color=INK if chosen else CHORD)
 
 
@@ -216,11 +212,12 @@ def panel_degrees(ax, data):
     ax.bar(x, frac, width=0.55, color=INK, zorder=3)
     for xi, value in zip(x, frac):
         ax.text(xi, value + 3.0, f"{value:.0f}%", ha="center", va="bottom",
-                fontsize=PT_TINY, color=INK)
+                fontsize=PT_ANNOT, color=INK)
     ax.set_xticks(x)
-    ax.set_xticklabels(["2–4", "5–8", "≥9"], fontsize=PT_LABEL)
-    ax.set_xlabel("stubs at the node", fontsize=PT_LABEL, labelpad=2.0)
-    ax.set_ylabel("nodes differing (%)", fontsize=PT_LABEL, labelpad=1.0)
+    ax.set_xticklabels(["2–4", "5–8", "≥9"], fontsize=PT_TICK)
+    ax.set_xlabel("stubs at the node", fontsize=PT_AXIS, labelpad=2.0)
+    ax.set_ylabel("nodes differing (%)", fontsize=PT_AXIS, labelpad=1.0)
+    ax.tick_params(axis="y", labelsize=PT_TICK)
     ax.set_ylim(0, 88)
     ax.set_yticks([0, 25, 50, 75])
     ax.tick_params(axis="x", length=0, pad=1.5)
@@ -278,8 +275,8 @@ def main() -> int:
                        chosen=(i == 0))
 
     title(fig, 0.030, r1["title"], "a", "Four stubs meet")
-    title(fig, 0.285, r1["title"], "b", "All six pairings")
-    title(fig, 0.563, r1["title"], "c", "Every admissible configuration")
+    title(fig, 0.285, r1["title"], "b", "Pairing costs")
+    title(fig, 0.563, r1["title"], "c", "Admissible configurations")
 
 
     # ── row 2: the free option, and what solving jointly buys ──────────
@@ -298,7 +295,7 @@ def main() -> int:
     panel_degrees(ax_f, data)
 
     title(fig, 0.030, r2["title"], "d", "The output")
-    title(fig, 0.285, r2["title"], "e", "Leaving a stub free")
+    title(fig, 0.285, r2["title"], "e", "A stub left free")
     title(fig, 0.700, r2["title"], "f", "Joint vs. sequential")
 
     declined = max(p["cost"] for p in j3["pairs"] if p["admissible"])

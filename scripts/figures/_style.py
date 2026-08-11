@@ -136,18 +136,41 @@ INSTANCE_CYCLE = (
 )
 
 #: \linewidth of the manuscript (11pt article, a4paper, margin=1in) is
-#: 451.3 TeX pt = 6.2447 in.  Figures are drawn at exactly this width and
-#: included with ``width=\linewidth``, so the include scale is 1.0 and a
-#: label specified at n pt prints at n pt.  Never draw below 7.0.
+#: 451.3 TeX pt = 449.61 bp = 6.2446 in.  Figures are drawn at exactly this
+#: width and included with ``width=\linewidth``, so the include scale is 1.0
+#: and a label specified at n pt prints at n pt.  Never draw below 7.0.
 FIG_W = 451.3 / 72.27
 MIN_PT = 7.0
 
-#: The sizes actually used.  Keeping them here (rather than per script) is
-#: what makes "no text below 7 pt" checkable by reading one file.
-PT_TITLE = 9.0       # panel titles
-PT_BODY = 8.0        # explanatory lines, axis labels
-PT_LABEL = 7.5       # in-figure annotation, tick labels, legend entries
-PT_TINY = 7.0        # the floor: dense numeric annotation only
+# ---------------------------------------------------------------------------
+#  THE TYPE SCALE.  Two sizes, five roles.
+#  ------------------------------------------------------------------------
+#  Every figure in the set uses these and nothing else.  An earlier round drew
+#  panel titles at 8.0, 9.0 and 9.6 pt in different figures and annotation at
+#  6.9, 7.0 and 7.2, which is what made the set look uneven; the fix is not a
+#  wider scale but a narrower one.  Bold weight and the (a)/(b) tags carry the
+#  hierarchy, so the title needs only a small step above body text.
+#
+#      8.5 bold   panel title
+#      7.5        axis label, tick label, in-figure annotation, legend
+#      7.0        hard floor, reserved for dense numeric annotation
+#
+#  ``check_type_scale.py`` re-derives the smallest size actually drawn in each
+#  figure from the figure object itself, so this block is a claim that is
+#  checked rather than asserted.
+# ---------------------------------------------------------------------------
+PT_TITLE = 8.5       # panel title (always bold)
+PT_AXIS = 7.5        # axis label
+PT_TICK = 7.5        # tick label
+PT_ANNOT = 7.5       # in-figure annotation
+PT_LEGEND = 7.5      # legend entry
+PT_MIN = 7.0         # the floor; dense numeric annotation only
+
+#: Names the earlier round used.  Kept so nothing has to be renamed twice, but
+#: they now resolve into the scale above rather than to three separate sizes.
+PT_BODY = PT_AXIS
+PT_LABEL = PT_TICK
+PT_TINY = PT_ANNOT
 
 
 def plecta_style():
@@ -155,13 +178,13 @@ def plecta_style():
     apply_style()
     plt.rcParams.update(
         {
-            "font.size": PT_BODY,
+            "font.size": PT_AXIS,
             "axes.titlesize": PT_TITLE,
             "axes.titleweight": "bold",
-            "axes.labelsize": PT_BODY,
-            "legend.fontsize": PT_LABEL,
-            "xtick.labelsize": PT_LABEL,
-            "ytick.labelsize": PT_LABEL,
+            "axes.labelsize": PT_AXIS,
+            "legend.fontsize": PT_LEGEND,
+            "xtick.labelsize": PT_TICK,
+            "ytick.labelsize": PT_TICK,
             "axes.edgecolor": INK,
             "axes.labelcolor": INK,
             "text.color": INK,
@@ -264,7 +287,7 @@ def panel_title(ax, text, dx=0.055, dy=1.0, **kw):
 #  what lets a block of prose silently land on the next row's title when
 #  either one changes length.
 
-LINE_IN = PT_TINY * 1.55 / 72.0        # height of one 7 pt line, inches
+LINE_IN = PT_ANNOT * 1.55 / 72.0        # height of one 7 pt line, inches
 
 
 def stack(rows, top=0.06, bottom=0.06):
@@ -305,7 +328,7 @@ def fig_title(fig, x, y, letter, text, gap=0.038):
 
 
 def fig_prose(fig, x, y, text, colour=INK):
-    fig.text(x, y, text, fontsize=PT_TINY, color=colour, ha="left", va="top",
+    fig.text(x, y, text, fontsize=PT_ANNOT, color=colour, ha="left", va="top",
              linespacing=1.55)
 
 
@@ -327,7 +350,7 @@ def pixel_axes(fig, rect, n_rows, n_cols=None):
 # ── the rounded-box schematic idiom, shared with fig_filaseg_scope ────────
 
 
-def rbox(ax, xc, yc, w, h, title, edge, face="white", lw=1.6, fontsize=7.8,
+def rbox(ax, xc, yc, w, h, title, edge, face="white", lw=1.6, fontsize=PT_ANNOT,
          fontcolor=None, ls="solid", bold=True, rounding=0.10, zorder=3,
          linespacing=1.3):
     from matplotlib.patches import FancyBboxPatch
@@ -342,8 +365,8 @@ def rbox(ax, xc, yc, w, h, title, edge, face="white", lw=1.6, fontsize=7.8,
             linespacing=linespacing)
 
 
-def stage_box(ax, xc, yc, w, h, tag, name, colour, fontsize=7.6,
-              tag_fontsize=6.8):
+def stage_box(ax, xc, yc, w, h, tag, name, colour, fontsize=PT_ANNOT,
+              tag_fontsize=PT_ANNOT):
     from matplotlib.patches import FancyBboxPatch
     ax.add_patch(FancyBboxPatch(
         (xc - w / 2, yc - h / 2), w, h,
@@ -379,7 +402,7 @@ def elbow(ax, pts, colour=None, lw=1.4, ls=(0, (4, 2.5)), zorder=2, mscale=12):
 
 
 def swatch_legend(ax, items, x_positions, y, box_w=0.34, box_h=0.18,
-                  fontsize=7.2, gap=0.46, lw=1.4):
+                  fontsize=PT_LEGEND, gap=0.46, lw=1.4):
     """The four-item outlined-swatch legend used by fig_filaseg_scope."""
     from matplotlib.patches import FancyBboxPatch
     for (colour, label), lx in zip(items, x_positions):

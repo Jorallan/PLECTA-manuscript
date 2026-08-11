@@ -1,15 +1,24 @@
-"""Figure: paired qualitative examples, PLECTA against one comparator.
+"""Figure 8: qualitative examples, and what the downstream rendering adds.
 
-Same four-column structure as the earlier paired-examples figure in this
-repository -- input mask, overlap-aware reference, comparator, method -- with
-the row label carrying the scene, its target coverage and the paired
-difference in F1.
+Changed after review.  The greedy-continuation column is gone.  In its place
+the figure now shows PLECTA twice: the grouping the paper evaluates, which is
+a set of one-pixel centreline instances, and the same instances after the full
+downstream stack -- width measured from the paired SEM image, gaps
+interpolated, centreline resampled and smoothed, each chain drawn at its
+fitted width.
 
-The comparator is a parameter, not a constant: point ``--data`` at any
-``results/plecta_examples_<name>.json`` written by
-``extract_plecta_examples.py`` and the columns relabel themselves.
+The two PLECTA columns contain the *same instances*.  Rendering redraws them;
+it cannot move a pixel from one instance to another, and the reported metrics
+score identity, so every number in this paper comes from the "scored" column.
+The column headings say so, and the caption says so again.
 
-    python scripts/figures/fig_plecta_examples.py --data plecta_examples_greedy.json
+Rows are one scene per coverage level, each the median scene of its own
+stratum, so the rows span the difficulty range and none is chosen by outcome.
+
+Data: results/plecta_examples_full.json (committed), written by
+scripts/figures/extract_plecta_examples.py.
+
+    python scripts/figures/fig_plecta_examples.py
 """
 from __future__ import annotations
 
@@ -26,15 +35,22 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DARK, FIG_W, GRAY, INSTANCE_CYCLE, PT_BODY, PT_LABEL,
-                    PT_TINY, plecta_style, save_fig, unpack, unpack_labels)
+from _style import (DARK, FIG_W, GRAY, INSTANCE_CYCLE, PT_ANNOT, PT_TITLE,
+                    plecta_style, save_fig, unpack, unpack_labels)
 
 REPO = Path(__file__).resolve().parents[2]
 BG = "#101216"
 
+COLUMNS = (
+    ("mask", "Input mask"),
+    ("reference", "Reference"),
+    ("plecta", "PLECTA\n(scored)"),
+    ("plecta_rendered", "PLECTA + rendering\n(not scored)"),
+)
+
 
 def label_rgb(payload):
-    """A label image as RGB on the dark ground the earlier figure used."""
+    """A label image as RGB on a dark ground."""
     import matplotlib.colors as mcolors
     lab = unpack_labels(payload)
     img = np.zeros((lab.shape[0], lab.shape[1], 3), float)
@@ -58,29 +74,34 @@ def mask_rgb(payload):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--data", default="plecta_examples_greedy.json")
+    ap.add_argument("--data", default="plecta_examples_full.json")
     args = ap.parse_args(argv)
 
     plecta_style()
     data = json.loads((REPO / "results" / args.data).read_text(encoding="utf-8"))
     panels = data["panels"]
-    columns = ("Input mask", "Reference",
-               data["comparator_label"], "PLECTA")
+    keys = [k for k, _ in COLUMNS if k in panels[0]]
+    heads = [t for k, t in COLUMNS if k in panels[0]]
 
-    left, right, top = 0.115, 0.995, 0.925
-    cell = (right - left) / 4.0
+    # right < 1 by enough that the widest column heading, which is centred on
+    # its column, still lands inside the canvas: bbox_inches is None, so
+    # anything past the figure edge is simply cut off.
+    left, right = 0.082, 0.984
+    cell = (right - left) / len(keys)
     side_in = cell * FIG_W
-    fig_h = len(panels) * side_in + 0.62
+    head_in, foot_in = 0.34, 0.05
+    fig_h = len(panels) * side_in + head_in + foot_in
     fig = plt.figure(figsize=(FIG_W, fig_h))
     cell_h = side_in / fig_h
+    top = 1.0 - head_in / fig_h
 
     for r, panel in enumerate(panels):
         y0 = top - (r + 1) * cell_h
-        images = (mask_rgb(panel["mask"]), label_rgb(panel["reference"]),
-                  label_rgb(panel["comparator"]), label_rgb(panel["plecta"]))
-        for c, img in enumerate(images):
-            ax = fig.add_axes([left + c * cell + 0.004, y0 + 0.004,
-                               cell - 0.008, cell_h - 0.008])
+        for c, key in enumerate(keys):
+            img = mask_rgb(panel[key]) if key == "mask" \
+                else label_rgb(panel[key])
+            ax = fig.add_axes([left + c * cell + 0.003, y0 + 0.0022,
+                               cell - 0.006, cell_h - 0.0044])
             ax.imshow(img, interpolation="nearest")
             ax.set_xticks([])
             ax.set_yticks([])
@@ -88,25 +109,25 @@ def main(argv=None) -> int:
                 s.set_color(GRAY)
                 s.set_linewidth(0.5)
             if r == 0:
-                ax.set_title(columns[c], fontsize=PT_LABEL, fontweight="bold",
-                             color=DARK, pad=3.5)
-        fig.text(left - 0.012, y0 + cell_h / 2.0,
-                 "{0}  {1}\ncov {2}%\n$\\Delta F_1 = {3:+.3f}$"
-                 .format(panel["scene"], "", panel["density"],
-                         panel["delta_f1"]).replace("  \n", "\n"),
-                 rotation=90, ha="right", va="center", fontsize=PT_TINY,
-                 color=DARK, linespacing=1.5)
-
-    fig.text(left, 0.012,
-             "Reference instances are the generator's rendered ribbons; the two "
-             "method columns are centreline instances, hence the thinner stroke.",
-             fontsize=PT_TINY, color=GRAY, ha="left", va="bottom")
+                ax.set_title(heads[c], fontsize=PT_TITLE, fontweight="bold",
+                             color=DARK, pad=3.5, linespacing=1.35)
+        fig.text(left - 0.010, y0 + cell_h / 2.0,
+                 "{0}\ncoverage {1}%\n$F_1 = {2:.3f}$"
+                 .format(panel["scene"], panel["density"],
+                         panel["plecta_f1"]),
+                 rotation=90, ha="right", va="center", fontsize=PT_ANNOT,
+                 color=DARK, linespacing=1.45)
 
     save_fig(fig, "fig_plecta_examples", bbox_inches=None)
     plt.close(fig)
+    print("columns:", keys)
+    print("selection rule:", data["selection_rule"])
     for panel in panels:
-        print(panel["key"], panel["scene"], panel["density"],
-              panel["delta_f1"], panel["rule"])
+        print(" ", panel["key"], panel["scene"], panel["density"],
+              "F1", panel["plecta_f1"],
+              "instances scored/rendered",
+              panel["n_plecta"], panel.get("n_plecta_rendered", "-"),
+              "absorbed", panel.get("n_absorbed_by_rendering", "-"))
     return 0
 
 
