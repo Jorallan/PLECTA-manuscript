@@ -1,0 +1,28 @@
+{
+  "description": "PLECTA against the greedy continuation baseline at the configuration selected on 84 development scenes (max_gap_px 24, max_turn_deg 15), not the hand-set 28/20.",
+  "bootstrap": {
+    "replicates": 20000,
+    "seed": 20260810,
+    "resampling": "within_density_paired_scene"
+  },
+  "conditions": {
+    "degraded": {
+      "n": 50,
+      "plecta_mean": 0.8217653986255884,
+      "greedy_swept_mean": 0.6763913031565374,
+      "mean_diff": 0.14537409546905095,
+      "ci95_lo": 0.1288711067612799,
+      "ci95_hi": 0.16231833900299644,
+      "wins_plecta": 49
+    },
+    "clean": {
+      "n": 50,
+      "plecta_mean": 0.8442099006886805,
+      "greedy_swept_mean": 0.7163705617204046,
+      "mean_diff": 0.12783933896827596,
+      "ci95_lo": 0.1125946091981379,
+      "ci95_hi": 0.14406972694573483,
+      "wins_plecta": 48
+    }
+  }
+}

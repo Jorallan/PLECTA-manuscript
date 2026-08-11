@@ -1,0 +1,2778 @@
+{
+  "description": "Fairness analysis of the comparator study: a development-set sweep of the greedy baseline, and a decomposition of the margin over DNAi into capability coverage and decision quality.",
+  "greedy_sweep": {
+    "selected_configuration": {
+      "max_gap_px": 24.0,
+      "max_turn_deg": 15.0,
+      "selected_on": "84 development scenes (synthetic_thick + dev_ext + gen_dev40), mean common-fragment F1"
+    },
+    "hand_set_configuration": {
+      "max_gap_px": 28.0,
+      "max_turn_deg": 20.0,
+      "provenance": "run_methods.py:41; no GT-scored selection record exists"
+    },
+    "shipped_defaults": {
+      "max_gap_px": 15.0,
+      "max_turn_deg": 90.0
+    },
+    "inference": "aggregate 50-scene paired differences only; per-density cells are plain means, n=10, no interval",
+    "per_variant": {
+      "degraded": {
+        "handset_28_20": {
+          "f1": 0.6701922081687017,
+          "precision": 0.7428828898857435,
+          "recall": 0.6148065440504509,
+          "fragment_recovery_recovery_rate": 0.5431324300466879,
+          "adjusted_rand_index": 0.6634504415242514,
+          "vi_split_bits": 0.6991806215124647,
+          "vi_merge_bits": 0.37646667989236865,
+          "vi_total_bits": 1.0756473014048336,
+          "n_scenes": 50,
+          "by_density": {
+            "cov20": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.8407995284948147,
+              "adjusted_rand_index": 0.833458185455928,
+              "vi_split_bits": 0.3049755026938302,
+              "vi_merge_bits": 0.13501194118415188
+            },
+            "cov30": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.758665886635974,
+              "adjusted_rand_index": 0.752125620280751,
+              "vi_split_bits": 0.5012523661119814,
+              "vi_merge_bits": 0.21559560000686276
+            },
+            "cov40": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.6688611349295618,
+              "adjusted_rand_index": 0.6617936537721777,
+              "vi_split_bits": 0.6449885601130514,
+              "vi_merge_bits": 0.37637885212006555
+            },
+            "cov50": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.5801553678712746,
+              "adjusted_rand_index": 0.5735076948874175,
+              "vi_split_bits": 0.9434222083517076,
+              "vi_merge_bits": 0.5003285804731251
+            },
+            "cov60": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.5024791229118832,
+              "adjusted_rand_index": 0.4963670532249824,
+              "vi_split_bits": 1.101264470291753,
+              "vi_merge_bits": 0.6550184256776379
+            }
+          }
+        },
+        "swept": {
+          "f1": 0.6763913031565374,
+          "precision": 0.7846802894213013,
+          "recall": 0.5990154287623125,
+          "fragment_recovery_recovery_rate": 0.5422901585497919,
+          "adjusted_rand_index": 0.6699084625260134,
+          "vi_split_bits": 0.7305812209633699,
+          "vi_merge_bits": 0.30521027177503923,
+          "vi_total_bits": 1.035791492738409,
+          "n_scenes": 50,
+          "by_density": {
+            "cov20": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.8262210958977679,
+              "adjusted_rand_index": 0.8184299496051031,
+              "vi_split_bits": 0.349698341017055,
+              "vi_merge_bits": 0.12243032685414659
+            },
+            "cov30": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.7450510689035762,
+              "adjusted_rand_index": 0.7382452273081836,
+              "vi_split_bits": 0.5614729140910273,
+              "vi_merge_bits": 0.19725340041387557
+            },
+            "cov40": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.6725668677863441,
+              "adjusted_rand_index": 0.6659992534291928,
+              "vi_split_bits": 0.7002058137676764,
+              "vi_merge_bits": 0.300619428687285
+            },
+            "cov50": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.6049335103141854,
+              "adjusted_rand_index": 0.5988692292866445,
+              "vi_split_bits": 0.9356287953195581,
+              "vi_merge_bits": 0.4103419569580014
+            },
+            "cov60": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.5331839728808137,
+              "adjusted_rand_index": 0.5279986530009443,
+              "vi_split_bits": 1.105900240621533,
+              "vi_merge_bits": 0.49540624596188776
+            }
+          }
+        },
+        "paired": {
+          "swept_minus_handset__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.6763913031565374,
+            "mean_b": 0.6701922081687017,
+            "mean_diff": 0.00619909498783579,
+            "wins_a": 30,
+            "wins_b": 20,
+            "ci95_lo_stratified": -0.0038940997303567684,
+            "ci95_hi_stratified": 0.015934624951218498,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": -0.014578432597046664,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": -0.0136148177323978,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.003705732856782229,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.024778142442910746,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.030704849968930442,
+                "inference": "none"
+              }
+            }
+          },
+          "plecta_minus_handset__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.8217653986255884,
+            "mean_b": 0.6701922081687017,
+            "mean_diff": 0.15157319045688677,
+            "wins_a": 48,
+            "wins_b": 2,
+            "ci95_lo_stratified": 0.13470930121830663,
+            "ci95_hi_stratified": 0.16903437145401695,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.05355003385227518,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.09866499983385427,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.13862302739009663,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.21628264034869513,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.2507452508595126,
+                "inference": "none"
+              }
+            }
+          },
+          "plecta_minus_swept__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.8217653986255884,
+            "mean_b": 0.6763913031565374,
+            "mean_diff": 0.14537409546905095,
+            "wins_a": 49,
+            "wins_b": 1,
+            "ci95_lo_stratified": 0.12907292111618,
+            "ci95_hi_stratified": 0.16229709534970715,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.06812846644932184,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.11227981756625205,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.1349172945333144,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.19150449790578442,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.22004040089058216,
+                "inference": "none"
+              }
+            }
+          },
+          "swept_minus_dnai_tuned__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.6763913031565374,
+            "mean_b": 0.3433842137307457,
+            "mean_diff": 0.33300708942579177,
+            "wins_a": 50,
+            "wins_b": 0,
+            "ci95_lo_stratified": 0.30795359622924834,
+            "ci95_hi_stratified": 0.35882744840420866,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.32263985867851597,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.33878756574379887,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.3383310515654528,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.3495544464461909,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.31572252469500023,
+                "inference": "none"
+              }
+            }
+          }
+        }
+      },
+      "clean": {
+        "handset_28_20": {
+          "f1": 0.6858943424293186,
+          "precision": 0.7179030414467042,
+          "recall": 0.6593227382729714,
+          "fragment_recovery_recovery_rate": 0.5796104757521935,
+          "adjusted_rand_index": 0.6789974784923006,
+          "vi_split_bits": 0.6271012288418955,
+          "vi_merge_bits": 0.44666033025176155,
+          "vi_total_bits": 1.073761559093657,
+          "n_scenes": 50,
+          "by_density": {
+            "cov20": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.8476303613564209,
+              "adjusted_rand_index": 0.8402779271867825,
+              "vi_split_bits": 0.2521577957233778,
+              "vi_merge_bits": 0.18079683189268164
+            },
+            "cov30": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.7702815611545804,
+              "adjusted_rand_index": 0.7633167323351253,
+              "vi_split_bits": 0.4002691146376442,
+              "vi_merge_bits": 0.2741393031219398
+            },
+            "cov40": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.7100374701891864,
+              "adjusted_rand_index": 0.7034583406169665,
+              "vi_split_bits": 0.545423712254605,
+              "vi_merge_bits": 0.4098612165582279
+            },
+            "cov50": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.5829005444858224,
+              "adjusted_rand_index": 0.5756325373665059,
+              "vi_split_bits": 0.8848899455329079,
+              "vi_merge_bits": 0.6029954573706413
+            },
+            "cov60": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.518621774960583,
+              "adjusted_rand_index": 0.5123018549561237,
+              "vi_split_bits": 1.0527655760609425,
+              "vi_merge_bits": 0.7655088423153169
+            }
+          }
+        },
+        "swept": {
+          "f1": 0.7163705617204046,
+          "precision": 0.7690607730487125,
+          "recall": 0.6736369292878683,
+          "fragment_recovery_recovery_rate": 0.6154323320311991,
+          "adjusted_rand_index": 0.7104411291950865,
+          "vi_split_bits": 0.6018449432063349,
+          "vi_merge_bits": 0.36891841008283843,
+          "vi_total_bits": 0.9707633532891733,
+          "n_scenes": 50,
+          "by_density": {
+            "cov20": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.8744116156776844,
+              "adjusted_rand_index": 0.8684720723742988,
+              "vi_split_bits": 0.23836292512297894,
+              "vi_merge_bits": 0.12540319831912788
+            },
+            "cov30": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.8092426129920411,
+              "adjusted_rand_index": 0.8034884605546726,
+              "vi_split_bits": 0.3477946629692007,
+              "vi_merge_bits": 0.2334661109449332
+            },
+            "cov40": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.7316665177038504,
+              "adjusted_rand_index": 0.7256860915731672,
+              "vi_split_bits": 0.5322454215143277,
+              "vi_merge_bits": 0.3542240593757412
+            },
+            "cov50": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.613674531405931,
+              "adjusted_rand_index": 0.6072318494198019,
+              "vi_split_bits": 0.8583847357030997,
+              "vi_merge_bits": 0.5035280491253512
+            },
+            "cov60": {
+              "n": 10,
+              "inference": "none",
+              "f1": 0.5528575308225157,
+              "adjusted_rand_index": 0.5473271720534917,
+              "vi_split_bits": 1.0324369707220669,
+              "vi_merge_bits": 0.6279706326490389
+            }
+          }
+        },
+        "paired": {
+          "swept_minus_handset__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.7163705617204046,
+            "mean_b": 0.6858943424293186,
+            "mean_diff": 0.030476219291085894,
+            "wins_a": 42,
+            "wins_b": 6,
+            "ci95_lo_stratified": 0.02227211233540471,
+            "ci95_hi_stratified": 0.038402575817480425,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.026781254321263482,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.03896105183746072,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.02162904751466399,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.03077398692010866,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.0342357558619326,
+                "inference": "none"
+              }
+            }
+          },
+          "plecta_minus_handset__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.8442099006886805,
+            "mean_b": 0.6858943424293186,
+            "mean_diff": 0.15831555825936186,
+            "wins_a": 49,
+            "wins_b": 1,
+            "ci95_lo_stratified": 0.14374309864382795,
+            "ci95_hi_stratified": 0.17267314187977464,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.09143283757650743,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.12751921771561897,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.11590088666194365,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.21456529922453732,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.2421595501182019,
+                "inference": "none"
+              }
+            }
+          },
+          "plecta_minus_swept__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.8442099006886805,
+            "mean_b": 0.7163705617204046,
+            "mean_diff": 0.12783933896827596,
+            "wins_a": 48,
+            "wins_b": 1,
+            "ci95_lo_stratified": 0.11256626321417612,
+            "ci95_hi_stratified": 0.1436616751367973,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.06465158325524395,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.08855816587815823,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.09427183914727966,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.18379131230442863,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.20792379425626928,
+                "inference": "none"
+              }
+            }
+          },
+          "swept_minus_dnai_tuned__f1": {
+            "n_paired_scenes": 50,
+            "mean_a": 0.7163705617204046,
+            "mean_b": 0.430597026170547,
+            "mean_diff": 0.2857735355498574,
+            "wins_a": 49,
+            "wins_b": 1,
+            "ci95_lo_stratified": 0.26469027744254725,
+            "ci95_hi_stratified": 0.3078983190824538,
+            "by_density": {
+              "cov20": {
+                "n": 10,
+                "mean_diff": 0.21419049865873602,
+                "inference": "none"
+              },
+              "cov30": {
+                "n": 10,
+                "mean_diff": 0.2819957030380781,
+                "inference": "none"
+              },
+              "cov40": {
+                "n": 10,
+                "mean_diff": 0.2995648857376176,
+                "inference": "none"
+              },
+              "cov50": {
+                "n": 10,
+                "mean_diff": 0.3041803037157512,
+                "inference": "none"
+              },
+              "cov60": {
+                "n": 10,
+                "mean_diff": 0.32893628659910423,
+                "inference": "none"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "junction_evidence": {
+    "per_variant": {
+      "degraded": {
+        "n_scenes": 50,
+        "inference": "none",
+        "note": "plain means over scenes; n = 10 per density, no interval",
+        "census_pooled": {
+          "pairs_total": 47668.0,
+          "pairs_low": 18333.0,
+          "pairs_high": 17743.0,
+          "pairs_gap": 11592.0,
+          "pairs_gap_disconnected": 4438.0,
+          "pairs_gap_connected": 7154.0,
+          "pairs_touching_high_degree": 18488.0,
+          "frac_low": 0.38459763363262567,
+          "frac_high": 0.37222035747251825,
+          "frac_gap": 0.24318200889485608,
+          "frac_gap_disconnected": 0.09310229084501133,
+          "frac_gap_connected": 0.15007971804984477,
+          "frac_touching_high_degree": 0.38784929092892506,
+          "n_clusters": 9125,
+          "n_clusters_high": 891,
+          "n_fragments": 14163,
+          "n_fragments_incident_high": 2785
+        },
+        "census_by_density": {
+          "cov20": {
+            "n_scenes": 10,
+            "frac_low": 0.6946454413892909,
+            "frac_high": 0.08031837916063676,
+            "frac_gap": 0.22503617945007237,
+            "frac_gap_disconnected": 0.15629522431259044,
+            "frac_gap_connected": 0.06874095513748191,
+            "frac_touching_high_degree": 0.10274963820549927,
+            "mean_clusters_per_scene": 34.4,
+            "mean_high_clusters_per_scene": 1.0
+          },
+          "cov30": {
+            "n_scenes": 10,
+            "frac_low": 0.5495829471733086,
+            "frac_high": 0.15755329008341057,
+            "frac_gap": 0.2928637627432808,
+            "frac_gap_disconnected": 0.22181031819586036,
+            "frac_gap_connected": 0.07105344454742045,
+            "frac_touching_high_degree": 0.20389249304911955,
+            "mean_clusters_per_scene": 75.9,
+            "mean_high_clusters_per_scene": 4.1
+          },
+          "cov40": {
+            "n_scenes": 10,
+            "frac_low": 0.4882907542579075,
+            "frac_high": 0.23509732360097324,
+            "frac_gap": 0.27661192214111924,
+            "frac_gap_disconnected": 0.15875912408759124,
+            "frac_gap_connected": 0.11785279805352798,
+            "frac_touching_high_degree": 0.2665754257907543,
+            "mean_clusters_per_scene": 142.1,
+            "mean_high_clusters_per_scene": 9.8
+          },
+          "cov50": {
+            "n_scenes": 10,
+            "frac_low": 0.36743962017477466,
+            "frac_high": 0.3647560723869814,
+            "frac_gap": 0.267804307438244,
+            "frac_gap_disconnected": 0.08422211518612813,
+            "frac_gap_connected": 0.18358219225211586,
+            "frac_touching_high_degree": 0.3871877795362279,
+            "mean_clusters_per_scene": 270.1,
+            "mean_high_clusters_per_scene": 27.3
+          },
+          "cov60": {
+            "n_scenes": 10,
+            "frac_low": 0.3210118505013674,
+            "frac_high": 0.46832269826800366,
+            "frac_gap": 0.210665451230629,
+            "frac_gap_disconnected": 0.05633546034639927,
+            "frac_gap_connected": 0.15432999088422972,
+            "frac_touching_high_degree": 0.4697356426618049,
+            "mean_clusters_per_scene": 390.0,
+            "mean_high_clusters_per_scene": 46.9
+          }
+        },
+        "methods": {
+          "dnai_tuned": {
+            "full": {
+              "f1": 0.3433842137307457,
+              "precision": 0.46217340286659125,
+              "recall": 0.28445292267527394,
+              "adjusted_rand_index": 0.3306018756277508,
+              "vi_split_bits": 1.4493289909527443,
+              "vi_merge_bits": 0.6576261280936084,
+              "n_fragments": 283.26,
+              "n_gt_pairs": 953.36,
+              "vi_total_bits": 2.1069551190463525,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.5035812372192521,
+                  "adjusted_rand_index": 0.48465318723973605,
+                  "vi_split_bits": 0.8683546346457767,
+                  "vi_merge_bits": 0.34517988949881984
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.40626350315977733,
+                  "adjusted_rand_index": 0.3928766720225096,
+                  "vi_split_bits": 1.217304724010624,
+                  "vi_merge_bits": 0.48338170870069985
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.33423581622089127,
+                  "adjusted_rand_index": 0.32151364805902366,
+                  "vi_split_bits": 1.4303743963645172,
+                  "vi_merge_bits": 0.6532521762839727
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.2553790638679946,
+                  "adjusted_rand_index": 0.24449587387699706,
+                  "vi_split_bits": 1.780572209706857,
+                  "vi_merge_bits": 0.8479835883472319
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.21746144818581334,
+                  "adjusted_rand_index": 0.20946999694048735,
+                  "vi_split_bits": 1.9500389900359458,
+                  "vi_merge_bits": 0.9583332776373183
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.5381040965316577,
+              "precision": 0.5661801539488311,
+              "recall": 0.5315887236947245,
+              "adjusted_rand_index": 0.5275020495699859,
+              "vi_split_bits": 0.6963940742378832,
+              "vi_merge_bits": 0.5158023320140849,
+              "n_fragments": 176.4,
+              "n_gt_pairs": 313.82,
+              "vi_total_bits": 1.2121964062519681,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.6729080783772414,
+                  "adjusted_rand_index": 0.6573699301946403,
+                  "vi_split_bits": 0.4346511505592131,
+                  "vi_merge_bits": 0.3348116849140595
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.5615272190711141,
+                  "adjusted_rand_index": 0.5493436982241425,
+                  "vi_split_bits": 0.6324689173835091,
+                  "vi_merge_bits": 0.4784552389737297
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.5201757920248615,
+                  "adjusted_rand_index": 0.5094324461865736,
+                  "vi_split_bits": 0.7467324040300254,
+                  "vi_merge_bits": 0.5373671389155216
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.4810557251109608,
+                  "adjusted_rand_index": 0.47285448862481105,
+                  "vi_split_bits": 0.8043660459113999,
+                  "vi_merge_bits": 0.5907168899150446
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.4548536680741105,
+                  "adjusted_rand_index": 0.44850968461976215,
+                  "vi_split_bits": 0.8637518533052692,
+                  "vi_merge_bits": 0.6376607073520693
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.3787905503294366,
+              "precision": 0.5086320914402436,
+              "recall": 0.3139671716244919,
+              "adjusted_rand_index": 0.36679696431353925,
+              "vi_split_bits": 1.2682810813688679,
+              "vi_merge_bits": 0.5560105219826859,
+              "n_fragments": 227.56,
+              "n_gt_pairs": 583.6,
+              "vi_total_bits": 1.8242916033515537,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.5214520196515643,
+                  "adjusted_rand_index": 0.5032884342484472,
+                  "vi_split_bits": 0.8049725864520412,
+                  "vi_merge_bits": 0.3185991228321753
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.43366982906075924,
+                  "adjusted_rand_index": 0.421213271470742,
+                  "vi_split_bits": 1.1169903859076862,
+                  "vi_merge_bits": 0.4176554576892385
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.3749032456037068,
+                  "adjusted_rand_index": 0.36321824829997507,
+                  "vi_split_bits": 1.2795436644512166,
+                  "vi_merge_bits": 0.5628593105560695
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.3013941727706922,
+                  "adjusted_rand_index": 0.29126386150961914,
+                  "vi_split_bits": 1.5150152635095222,
+                  "vi_merge_bits": 0.705210614140482
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.26253348456046083,
+                  "adjusted_rand_index": 0.2550010060389129,
+                  "vi_split_bits": 1.6248835065238727,
+                  "vi_merge_bits": 0.7757281046954642
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 1,
+                "broken_frac": 0.5
+              },
+              "deg3": {
+                "links": 2833,
+                "broken": 929,
+                "broken_frac": 0.3279209318743382
+              },
+              "deg4": {
+                "links": 6108,
+                "broken": 2305,
+                "broken_frac": 0.37737393582187295
+              },
+              "deg>=5": {
+                "links": 3325,
+                "broken": 2831,
+                "broken_frac": 0.8514285714285714
+              },
+              "gap_connected": {
+                "links": 453,
+                "broken": 452,
+                "broken_frac": 0.9977924944812362
+              },
+              "gap_disconnected": {
+                "links": 912,
+                "broken": 912,
+                "broken_frac": 1.0
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "deg3": {
+                  "links": 150,
+                  "broken": 44,
+                  "broken_frac": 0.29333333333333333
+                },
+                "deg4": {
+                  "links": 298,
+                  "broken": 60,
+                  "broken_frac": 0.20134228187919462
+                },
+                "deg>=5": {
+                  "links": 29,
+                  "broken": 27,
+                  "broken_frac": 0.9310344827586207
+                },
+                "gap_connected": {
+                  "links": 13,
+                  "broken": 13,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 62,
+                  "broken": 62,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 307,
+                  "broken": 112,
+                  "broken_frac": 0.36482084690553745
+                },
+                "deg4": {
+                  "links": 587,
+                  "broken": 168,
+                  "broken_frac": 0.28620102214650767
+                },
+                "deg>=5": {
+                  "links": 127,
+                  "broken": 101,
+                  "broken_frac": 0.7952755905511811
+                },
+                "gap_connected": {
+                  "links": 24,
+                  "broken": 24,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 170,
+                  "broken": 170,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 480,
+                  "broken": 155,
+                  "broken_frac": 0.3229166666666667
+                },
+                "deg4": {
+                  "links": 1062,
+                  "broken": 360,
+                  "broken_frac": 0.3389830508474576
+                },
+                "deg>=5": {
+                  "links": 315,
+                  "broken": 259,
+                  "broken_frac": 0.8222222222222222
+                },
+                "gap_connected": {
+                  "links": 65,
+                  "broken": 64,
+                  "broken_frac": 0.9846153846153847
+                },
+                "gap_disconnected": {
+                  "links": 193,
+                  "broken": 193,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 854,
+                  "broken": 267,
+                  "broken_frac": 0.3126463700234192
+                },
+                "deg4": {
+                  "links": 1699,
+                  "broken": 613,
+                  "broken_frac": 0.36080047086521483
+                },
+                "deg>=5": {
+                  "links": 991,
+                  "broken": 854,
+                  "broken_frac": 0.8617558022199798
+                },
+                "gap_connected": {
+                  "links": 152,
+                  "broken": 152,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 223,
+                  "broken": 223,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                },
+                "deg3": {
+                  "links": 1042,
+                  "broken": 351,
+                  "broken_frac": 0.33685220729366605
+                },
+                "deg4": {
+                  "links": 2462,
+                  "broken": 1104,
+                  "broken_frac": 0.44841592201462227
+                },
+                "deg>=5": {
+                  "links": 1863,
+                  "broken": 1590,
+                  "broken_frac": 0.8534621578099839
+                },
+                "gap_connected": {
+                  "links": 199,
+                  "broken": 199,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 264,
+                  "broken": 264,
+                  "broken_frac": 1.0
+                }
+              }
+            }
+          },
+          "greedy_baseline": {
+            "full": {
+              "f1": 0.6701922081687017,
+              "precision": 0.7428828898857435,
+              "recall": 0.6148065440504509,
+              "adjusted_rand_index": 0.6634504415242514,
+              "vi_split_bits": 0.6991806215124647,
+              "vi_merge_bits": 0.37646667989236865,
+              "n_fragments": 283.26,
+              "n_gt_pairs": 953.36,
+              "vi_total_bits": 1.0756473014048333,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8407995284948147,
+                  "adjusted_rand_index": 0.833458185455928,
+                  "vi_split_bits": 0.3049755026938302,
+                  "vi_merge_bits": 0.13501194118415188
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.758665886635974,
+                  "adjusted_rand_index": 0.752125620280751,
+                  "vi_split_bits": 0.5012523661119814,
+                  "vi_merge_bits": 0.21559560000686276
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.6688611349295618,
+                  "adjusted_rand_index": 0.6617936537721777,
+                  "vi_split_bits": 0.6449885601130514,
+                  "vi_merge_bits": 0.37637885212006555
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.5801553678712746,
+                  "adjusted_rand_index": 0.5735076948874175,
+                  "vi_split_bits": 0.9434222083517076,
+                  "vi_merge_bits": 0.5003285804731251
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.5024791229118832,
+                  "adjusted_rand_index": 0.4963670532249824,
+                  "vi_split_bits": 1.101264470291753,
+                  "vi_merge_bits": 0.6550184256776379
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.7465824260354222,
+              "precision": 0.7606493065252615,
+              "recall": 0.737796699103002,
+              "adjusted_rand_index": 0.7413209034471453,
+              "vi_split_bits": 0.3695598507339169,
+              "vi_merge_bits": 0.29799301030186487,
+              "n_fragments": 176.4,
+              "n_gt_pairs": 313.82,
+              "vi_total_bits": 0.6675528610357817,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8722077289840383,
+                  "adjusted_rand_index": 0.8661781772003057,
+                  "vi_split_bits": 0.19490987142216532,
+                  "vi_merge_bits": 0.13083034973277613
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8116469949839198,
+                  "adjusted_rand_index": 0.8063238279107188,
+                  "vi_split_bits": 0.2817329483812582,
+                  "vi_merge_bits": 0.19328230624408987
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.7408781319925537,
+                  "adjusted_rand_index": 0.7353103607571684,
+                  "vi_split_bits": 0.3477120925733991,
+                  "vi_merge_bits": 0.32228276463254024
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.6913366499892333,
+                  "adjusted_rand_index": 0.6866221629307774,
+                  "vi_split_bits": 0.4757440164011427,
+                  "vi_merge_bits": 0.35366330124561873
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.616842624227366,
+                  "adjusted_rand_index": 0.6121699884367566,
+                  "vi_split_bits": 0.547700324891619,
+                  "vi_merge_bits": 0.48990632965429953
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.6762296679630903,
+              "precision": 0.7554221296278854,
+              "recall": 0.6176389088738533,
+              "adjusted_rand_index": 0.6697435946132435,
+              "vi_split_bits": 0.6499288983707591,
+              "vi_merge_bits": 0.3341443158843317,
+              "n_fragments": 227.56,
+              "n_gt_pairs": 583.6,
+              "vi_total_bits": 0.9840732142550908,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8402661508683991,
+                  "adjusted_rand_index": 0.8330059961410562,
+                  "vi_split_bits": 0.3000864859649828,
+                  "vi_merge_bits": 0.1277631732379359
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.7611721116012908,
+                  "adjusted_rand_index": 0.7548005259025812,
+                  "vi_split_bits": 0.48161452556252915,
+                  "vi_merge_bits": 0.2029182570867151
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.6773459750059894,
+                  "adjusted_rand_index": 0.6705566401030177,
+                  "vi_split_bits": 0.6005689901082419,
+                  "vi_merge_bits": 0.354525946499072
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.5842344993745445,
+                  "adjusted_rand_index": 0.5779597051406354,
+                  "vi_split_bits": 0.8769346120840635,
+                  "vi_merge_bits": 0.4203787398905929
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.5181296029652275,
+                  "adjusted_rand_index": 0.5123951057789278,
+                  "vi_split_bits": 0.9904398781339779,
+                  "vi_merge_bits": 0.5651354627073422
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 0,
+                "broken_frac": 0.0
+              },
+              "deg3": {
+                "links": 2833,
+                "broken": 904,
+                "broken_frac": 0.31909636427815036
+              },
+              "deg4": {
+                "links": 6108,
+                "broken": 1423,
+                "broken_frac": 0.23297314996725607
+              },
+              "deg>=5": {
+                "links": 3325,
+                "broken": 1436,
+                "broken_frac": 0.4318796992481203
+              },
+              "gap_connected": {
+                "links": 453,
+                "broken": 259,
+                "broken_frac": 0.5717439293598234
+              },
+              "gap_disconnected": {
+                "links": 912,
+                "broken": 503,
+                "broken_frac": 0.5515350877192983
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "deg3": {
+                  "links": 150,
+                  "broken": 32,
+                  "broken_frac": 0.21333333333333335
+                },
+                "deg4": {
+                  "links": 298,
+                  "broken": 37,
+                  "broken_frac": 0.12416107382550336
+                },
+                "deg>=5": {
+                  "links": 29,
+                  "broken": 6,
+                  "broken_frac": 0.20689655172413793
+                },
+                "gap_connected": {
+                  "links": 13,
+                  "broken": 6,
+                  "broken_frac": 0.46153846153846156
+                },
+                "gap_disconnected": {
+                  "links": 62,
+                  "broken": 20,
+                  "broken_frac": 0.3225806451612903
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 307,
+                  "broken": 84,
+                  "broken_frac": 0.2736156351791531
+                },
+                "deg4": {
+                  "links": 587,
+                  "broken": 83,
+                  "broken_frac": 0.141396933560477
+                },
+                "deg>=5": {
+                  "links": 127,
+                  "broken": 30,
+                  "broken_frac": 0.23622047244094488
+                },
+                "gap_connected": {
+                  "links": 24,
+                  "broken": 9,
+                  "broken_frac": 0.375
+                },
+                "gap_disconnected": {
+                  "links": 170,
+                  "broken": 74,
+                  "broken_frac": 0.43529411764705883
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 480,
+                  "broken": 140,
+                  "broken_frac": 0.2916666666666667
+                },
+                "deg4": {
+                  "links": 1062,
+                  "broken": 174,
+                  "broken_frac": 0.1638418079096045
+                },
+                "deg>=5": {
+                  "links": 315,
+                  "broken": 99,
+                  "broken_frac": 0.3142857142857143
+                },
+                "gap_connected": {
+                  "links": 65,
+                  "broken": 28,
+                  "broken_frac": 0.4307692307692308
+                },
+                "gap_disconnected": {
+                  "links": 193,
+                  "broken": 106,
+                  "broken_frac": 0.5492227979274611
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 854,
+                  "broken": 266,
+                  "broken_frac": 0.3114754098360656
+                },
+                "deg4": {
+                  "links": 1699,
+                  "broken": 388,
+                  "broken_frac": 0.22836962919364331
+                },
+                "deg>=5": {
+                  "links": 991,
+                  "broken": 416,
+                  "broken_frac": 0.41977800201816345
+                },
+                "gap_connected": {
+                  "links": 152,
+                  "broken": 93,
+                  "broken_frac": 0.6118421052631579
+                },
+                "gap_disconnected": {
+                  "links": 223,
+                  "broken": 129,
+                  "broken_frac": 0.57847533632287
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "deg3": {
+                  "links": 1042,
+                  "broken": 382,
+                  "broken_frac": 0.3666026871401152
+                },
+                "deg4": {
+                  "links": 2462,
+                  "broken": 741,
+                  "broken_frac": 0.30097481722177094
+                },
+                "deg>=5": {
+                  "links": 1863,
+                  "broken": 885,
+                  "broken_frac": 0.4750402576489533
+                },
+                "gap_connected": {
+                  "links": 199,
+                  "broken": 123,
+                  "broken_frac": 0.6180904522613065
+                },
+                "gap_disconnected": {
+                  "links": 264,
+                  "broken": 174,
+                  "broken_frac": 0.6590909090909091
+                }
+              }
+            }
+          },
+          "plecta": {
+            "full": {
+              "f1": 0.8217653986255884,
+              "precision": 0.8306064946630304,
+              "recall": 0.8144098972748908,
+              "adjusted_rand_index": 0.8174893882318364,
+              "vi_split_bits": 0.30153875534447977,
+              "vi_merge_bits": 0.27101633408714426,
+              "n_fragments": 283.26,
+              "n_gt_pairs": 953.36,
+              "vi_total_bits": 0.572555089431624,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8943495623470898,
+                  "adjusted_rand_index": 0.8890160374858009,
+                  "vi_split_bits": 0.160581090504314,
+                  "vi_merge_bits": 0.11017381296639925
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8573308864698284,
+                  "adjusted_rand_index": 0.8529186051680812,
+                  "vi_split_bits": 0.20636717185371248,
+                  "vi_merge_bits": 0.21328519651490657
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.8074841623196584,
+                  "adjusted_rand_index": 0.8030247067248562,
+                  "vi_split_bits": 0.30457937132857993,
+                  "vi_merge_bits": 0.27681398575197286
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.7964380082199698,
+                  "adjusted_rand_index": 0.7926724497230044,
+                  "vi_split_bits": 0.3594291104378342,
+                  "vi_merge_bits": 0.33810485179356115
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7532243737713958,
+                  "adjusted_rand_index": 0.7498151420574382,
+                  "vi_split_bits": 0.47673703259795824,
+                  "vi_merge_bits": 0.4167038234088814
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.832530420759105,
+              "precision": 0.8234157375169486,
+              "recall": 0.8438048338264421,
+              "adjusted_rand_index": 0.8287393999589283,
+              "vi_split_bits": 0.2041274985094894,
+              "vi_merge_bits": 0.23467880581074385,
+              "n_fragments": 176.4,
+              "n_gt_pairs": 313.82,
+              "vi_total_bits": 0.43880630432023326,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.9093270392926941,
+                  "adjusted_rand_index": 0.904638492788713,
+                  "vi_split_bits": 0.12155513137323122,
+                  "vi_merge_bits": 0.10985116594221393
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8585234752316422,
+                  "adjusted_rand_index": 0.8542776093701878,
+                  "vi_split_bits": 0.15394140230426828,
+                  "vi_merge_bits": 0.19953078909196362
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.8216585844012496,
+                  "adjusted_rand_index": 0.8176790629310776,
+                  "vi_split_bits": 0.2085118524628081,
+                  "vi_merge_bits": 0.2463580238469901
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.8001451080343698,
+                  "adjusted_rand_index": 0.7968972887136812,
+                  "vi_split_bits": 0.24443894211521608,
+                  "vi_merge_bits": 0.2951668554911248
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7729978968355697,
+                  "adjusted_rand_index": 0.7702045459909816,
+                  "vi_split_bits": 0.29219016429192324,
+                  "vi_merge_bits": 0.32248719468142684
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.8367063881070199,
+              "precision": 0.8425411692195369,
+              "recall": 0.8324719450166875,
+              "adjusted_rand_index": 0.832756591258338,
+              "vi_split_bits": 0.26201632565376387,
+              "vi_merge_bits": 0.2385018379234288,
+              "n_fragments": 227.56,
+              "n_gt_pairs": 583.6,
+              "vi_total_bits": 0.5005181635771927,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8913445660069863,
+                  "adjusted_rand_index": 0.8859781504875299,
+                  "vi_split_bits": 0.16279453573807362,
+                  "vi_merge_bits": 0.11033182532943224
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8690922245110455,
+                  "adjusted_rand_index": 0.8651097914377488,
+                  "vi_split_bits": 0.17951336697562742,
+                  "vi_merge_bits": 0.1926092258631006
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.8186201684504513,
+                  "adjusted_rand_index": 0.8144615123161968,
+                  "vi_split_bits": 0.2782219216851594,
+                  "vi_merge_bits": 0.2575029399573363
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.8195407599328121,
+                  "adjusted_rand_index": 0.8162394750571724,
+                  "vi_split_bits": 0.30125838190774246,
+                  "vi_merge_bits": 0.292513988214988
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7849342216338037,
+                  "adjusted_rand_index": 0.7819940269930425,
+                  "vi_split_bits": 0.3882934219622166,
+                  "vi_merge_bits": 0.3395512102522868
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 0,
+                "broken_frac": 0.0
+              },
+              "deg3": {
+                "links": 2833,
+                "broken": 741,
+                "broken_frac": 0.261560183551006
+              },
+              "deg4": {
+                "links": 6108,
+                "broken": 840,
+                "broken_frac": 0.137524557956778
+              },
+              "deg>=5": {
+                "links": 3325,
+                "broken": 955,
+                "broken_frac": 0.28721804511278193
+              },
+              "gap_connected": {
+                "links": 453,
+                "broken": 79,
+                "broken_frac": 0.17439293598233996
+              },
+              "gap_disconnected": {
+                "links": 912,
+                "broken": 151,
+                "broken_frac": 0.16557017543859648
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "deg3": {
+                  "links": 150,
+                  "broken": 23,
+                  "broken_frac": 0.15333333333333332
+                },
+                "deg4": {
+                  "links": 298,
+                  "broken": 24,
+                  "broken_frac": 0.08053691275167785
+                },
+                "deg>=5": {
+                  "links": 29,
+                  "broken": 4,
+                  "broken_frac": 0.13793103448275862
+                },
+                "gap_connected": {
+                  "links": 13,
+                  "broken": 3,
+                  "broken_frac": 0.23076923076923078
+                },
+                "gap_disconnected": {
+                  "links": 62,
+                  "broken": 10,
+                  "broken_frac": 0.16129032258064516
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 307,
+                  "broken": 64,
+                  "broken_frac": 0.20846905537459284
+                },
+                "deg4": {
+                  "links": 587,
+                  "broken": 44,
+                  "broken_frac": 0.07495741056218058
+                },
+                "deg>=5": {
+                  "links": 127,
+                  "broken": 26,
+                  "broken_frac": 0.2047244094488189
+                },
+                "gap_connected": {
+                  "links": 24,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "gap_disconnected": {
+                  "links": 170,
+                  "broken": 21,
+                  "broken_frac": 0.12352941176470589
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 480,
+                  "broken": 114,
+                  "broken_frac": 0.2375
+                },
+                "deg4": {
+                  "links": 1062,
+                  "broken": 121,
+                  "broken_frac": 0.11393596986817325
+                },
+                "deg>=5": {
+                  "links": 315,
+                  "broken": 66,
+                  "broken_frac": 0.20952380952380953
+                },
+                "gap_connected": {
+                  "links": 65,
+                  "broken": 10,
+                  "broken_frac": 0.15384615384615385
+                },
+                "gap_disconnected": {
+                  "links": 193,
+                  "broken": 36,
+                  "broken_frac": 0.18652849740932642
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 854,
+                  "broken": 213,
+                  "broken_frac": 0.24941451990632318
+                },
+                "deg4": {
+                  "links": 1699,
+                  "broken": 203,
+                  "broken_frac": 0.11948204826368453
+                },
+                "deg>=5": {
+                  "links": 991,
+                  "broken": 244,
+                  "broken_frac": 0.2462159434914228
+                },
+                "gap_connected": {
+                  "links": 152,
+                  "broken": 31,
+                  "broken_frac": 0.20394736842105263
+                },
+                "gap_disconnected": {
+                  "links": 223,
+                  "broken": 34,
+                  "broken_frac": 0.15246636771300448
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                },
+                "deg3": {
+                  "links": 1042,
+                  "broken": 327,
+                  "broken_frac": 0.31381957773512476
+                },
+                "deg4": {
+                  "links": 2462,
+                  "broken": 448,
+                  "broken_frac": 0.18196588139723802
+                },
+                "deg>=5": {
+                  "links": 1863,
+                  "broken": 615,
+                  "broken_frac": 0.33011272141706927
+                },
+                "gap_connected": {
+                  "links": 199,
+                  "broken": 35,
+                  "broken_frac": 0.17587939698492464
+                },
+                "gap_disconnected": {
+                  "links": 264,
+                  "broken": 50,
+                  "broken_frac": 0.1893939393939394
+                }
+              }
+            }
+          }
+        },
+        "paired": {
+          "plecta_minus_dnai_tuned__full": {
+            "mean_diff": 0.4783811848948428,
+            "wins_a": 50,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.3907683251278378,
+              "cov30": 0.4510673833100509,
+              "cov40": 0.47324834609876715,
+              "cov50": 0.5410589443519752,
+              "cov60": 0.5357629255855824
+            }
+          },
+          "plecta_minus_dnai_tuned__restricted": {
+            "mean_diff": 0.2944263242274474,
+            "wins_a": 50,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.23641896091545278,
+              "cov30": 0.29699625616052827,
+              "cov40": 0.30148279237638786,
+              "cov50": 0.319089382923409,
+              "cov60": 0.31814422876145915
+            }
+          },
+          "plecta_minus_dnai_tuned__restricted_incident": {
+            "mean_diff": 0.45791583777758305,
+            "wins_a": 50,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.36989254635542207,
+              "cov30": 0.43542239545028627,
+              "cov40": 0.4437169228467443,
+              "cov50": 0.5181465871621199,
+              "cov60": 0.5224007370733428
+            }
+          },
+          "plecta_minus_greedy_baseline__full": {
+            "mean_diff": 0.15157319045688677,
+            "wins_a": 48,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.05355003385227518,
+              "cov30": 0.09866499983385427,
+              "cov40": 0.13862302739009663,
+              "cov50": 0.21628264034869513,
+              "cov60": 0.2507452508595126
+            }
+          },
+          "plecta_minus_greedy_baseline__restricted": {
+            "mean_diff": 0.08594799472368289,
+            "wins_a": 44,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.03711931030865585,
+              "cov30": 0.04687648024772254,
+              "cov40": 0.08078045240869577,
+              "cov50": 0.10880845804513654,
+              "cov60": 0.1561552726082037
+            }
+          },
+          "plecta_minus_greedy_baseline__restricted_incident": {
+            "mean_diff": 0.16047672014392952,
+            "wins_a": 49,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.05107841513858733,
+              "cov30": 0.10792011290975463,
+              "cov40": 0.1412741934444619,
+              "cov50": 0.23530626055826756,
+              "cov60": 0.2668046186685761
+            }
+          }
+        }
+      },
+      "clean": {
+        "n_scenes": 50,
+        "inference": "none",
+        "note": "plain means over scenes; n = 10 per density, no interval",
+        "census_pooled": {
+          "pairs_total": 59059.0,
+          "pairs_low": 26456.0,
+          "pairs_high": 32575.0,
+          "pairs_gap": 28.0,
+          "pairs_gap_disconnected": 7.0,
+          "pairs_gap_connected": 21.0,
+          "pairs_touching_high_degree": 27511.0,
+          "frac_low": 0.4479588208401768,
+          "frac_high": 0.5515670769908058,
+          "frac_gap": 0.0004741021690174233,
+          "frac_gap_disconnected": 0.00011852554225435582,
+          "frac_gap_connected": 0.0003555766267630674,
+          "frac_touching_high_degree": 0.4658223132799404,
+          "n_clusters": 10408,
+          "n_clusters_high": 1157,
+          "n_fragments": 15712,
+          "n_fragments_incident_high": 3971
+        },
+        "census_by_density": {
+          "cov20": {
+            "n_scenes": 10,
+            "frac_low": 0.8080120937263794,
+            "frac_high": 0.1889644746787604,
+            "frac_gap": 0.0030234315948601664,
+            "frac_gap_disconnected": 0.0030234315948601664,
+            "frac_gap_connected": 0.0,
+            "frac_touching_high_degree": 0.18216175359032502,
+            "mean_clusters_per_scene": 36.2,
+            "mean_high_clusters_per_scene": 1.5
+          },
+          "cov30": {
+            "n_scenes": 10,
+            "frac_low": 0.7622435020519835,
+            "frac_high": 0.23775649794801643,
+            "frac_gap": 0.0,
+            "frac_gap_disconnected": 0.0,
+            "frac_gap_connected": 0.0,
+            "frac_touching_high_degree": 0.21450068399452804,
+            "mean_clusters_per_scene": 87.9,
+            "mean_high_clusters_per_scene": 4.1
+          },
+          "cov40": {
+            "n_scenes": 10,
+            "frac_low": 0.5996713436986475,
+            "frac_high": 0.3988117810643408,
+            "frac_gap": 0.0015168752370117557,
+            "frac_gap_disconnected": 0.0,
+            "frac_gap_connected": 0.0015168752370117557,
+            "frac_touching_high_degree": 0.34799646062444695,
+            "mean_clusters_per_scene": 164.7,
+            "mean_high_clusters_per_scene": 13.2
+          },
+          "cov50": {
+            "n_scenes": 10,
+            "frac_low": 0.45025883412108936,
+            "frac_high": 0.5490659464325905,
+            "frac_gap": 0.0006752194463200541,
+            "frac_gap_disconnected": 0.00016880486158001352,
+            "frac_gap_connected": 0.0005064145847400405,
+            "frac_touching_high_degree": 0.4425500787756021,
+            "mean_clusters_per_scene": 298.0,
+            "mean_high_clusters_per_scene": 32.2
+          },
+          "cov60": {
+            "n_scenes": 10,
+            "frac_low": 0.34703148109021764,
+            "frac_high": 0.6529685189097824,
+            "frac_gap": 0.0,
+            "frac_gap_disconnected": 0.0,
+            "frac_gap_connected": 0.0,
+            "frac_touching_high_degree": 0.5587717444890485,
+            "mean_clusters_per_scene": 454.0,
+            "mean_high_clusters_per_scene": 64.7
+          }
+        },
+        "methods": {
+          "dnai_tuned": {
+            "full": {
+              "f1": 0.430597026170547,
+              "precision": 0.5244410978949141,
+              "recall": 0.38247853463703974,
+              "adjusted_rand_index": 0.41905267466387724,
+              "vi_split_bits": 1.2797412139555147,
+              "vi_merge_bits": 0.6378373716982477,
+              "n_fragments": 314.24,
+              "n_gt_pairs": 1181.18,
+              "vi_total_bits": 1.9175785856537624,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.6602211170189483,
+                  "adjusted_rand_index": 0.643533509690064,
+                  "vi_split_bits": 0.5292926103559381,
+                  "vi_merge_bits": 0.32316322478030235
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.527246909953963,
+                  "adjusted_rand_index": 0.5135851174549362,
+                  "vi_split_bits": 0.8606218567995342,
+                  "vi_merge_bits": 0.5297652661006566
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.4321016319662327,
+                  "adjusted_rand_index": 0.4208610124881682,
+                  "vi_split_bits": 1.224922519720564,
+                  "vi_merge_bits": 0.6404551263307527
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.3094942276901797,
+                  "adjusted_rand_index": 0.30054667099165067,
+                  "vi_split_bits": 1.7260483631465564,
+                  "vi_merge_bits": 0.754458422105354
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.22392124422341145,
+                  "adjusted_rand_index": 0.21673706269456733,
+                  "vi_split_bits": 2.0578207197549814,
+                  "vi_merge_bits": 0.9413448191741731
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.5849717482510547,
+              "precision": 0.6282551370348589,
+              "recall": 0.5665290122110909,
+              "adjusted_rand_index": 0.5759652571095897,
+              "vi_split_bits": 0.7199357306695895,
+              "vi_merge_bits": 0.4499677890518289,
+              "n_fragments": 212.34,
+              "n_gt_pairs": 456.96,
+              "vi_total_bits": 1.1699035197214185,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.7544481062289412,
+                  "adjusted_rand_index": 0.7424749722910373,
+                  "vi_split_bits": 0.3009430321839295,
+                  "vi_merge_bits": 0.26784274853179985
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.6269915528733774,
+                  "adjusted_rand_index": 0.6156419400668328,
+                  "vi_split_bits": 0.5781573878141384,
+                  "vi_merge_bits": 0.4492423129861459
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.5809458953820401,
+                  "adjusted_rand_index": 0.5719494609717696,
+                  "vi_split_bits": 0.7316499241511413,
+                  "vi_merge_bits": 0.4905402725957866
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.5225268846485236,
+                  "adjusted_rand_index": 0.5156563957076692,
+                  "vi_split_bits": 0.9349586136522007,
+                  "vi_merge_bits": 0.4741773249924228
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.4399463021223914,
+                  "adjusted_rand_index": 0.43410351651063933,
+                  "vi_split_bits": 1.0539696955465365,
+                  "vi_merge_bits": 0.5680362861529888
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.49464561090302483,
+              "precision": 0.5869016871984916,
+              "recall": 0.44488856561615064,
+              "adjusted_rand_index": 0.48433875312030655,
+              "vi_split_bits": 1.0236799578107612,
+              "vi_merge_bits": 0.508411258150366,
+              "n_fragments": 234.82,
+              "n_gt_pairs": 630.96,
+              "vi_total_bits": 1.532091215961127,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.707630795836294,
+                  "adjusted_rand_index": 0.6939662988492141,
+                  "vi_split_bits": 0.4446660614101302,
+                  "vi_merge_bits": 0.2689246114303133
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.5882691927738275,
+                  "adjusted_rand_index": 0.5761766920246505,
+                  "vi_split_bits": 0.7163518312062006,
+                  "vi_merge_bits": 0.44419302654901394
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.4947259866967485,
+                  "adjusted_rand_index": 0.4842735165971148,
+                  "vi_split_bits": 0.9950840563570432,
+                  "vi_merge_bits": 0.5356263942288391
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.3865672576069726,
+                  "adjusted_rand_index": 0.3782766257003027,
+                  "vi_split_bits": 1.3854486461929851,
+                  "vi_merge_bits": 0.5841463975950638
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.29603482160128153,
+                  "adjusted_rand_index": 0.2890006324302504,
+                  "vi_split_bits": 1.576849193887447,
+                  "vi_merge_bits": 0.7091658609486005
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 1,
+                "broken_frac": 0.5
+              },
+              "deg3": {
+                "links": 2163,
+                "broken": 737,
+                "broken_frac": 0.3407304669440592
+              },
+              "deg4": {
+                "links": 9469,
+                "broken": 3580,
+                "broken_frac": 0.37807582638082166
+              },
+              "deg>=5": {
+                "links": 5039,
+                "broken": 4475,
+                "broken_frac": 0.8880730303631673
+              },
+              "gap_connected": {
+                "links": 2,
+                "broken": 1,
+                "broken_frac": 0.5
+              },
+              "gap_disconnected": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg3": {
+                  "links": 97,
+                  "broken": 26,
+                  "broken_frac": 0.26804123711340205
+                },
+                "deg4": {
+                  "links": 406,
+                  "broken": 63,
+                  "broken_frac": 0.15517241379310345
+                },
+                "deg>=5": {
+                  "links": 49,
+                  "broken": 43,
+                  "broken_frac": 0.8775510204081632
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 235,
+                  "broken": 56,
+                  "broken_frac": 0.23829787234042554
+                },
+                "deg4": {
+                  "links": 965,
+                  "broken": 257,
+                  "broken_frac": 0.26632124352331604
+                },
+                "deg>=5": {
+                  "links": 160,
+                  "broken": 139,
+                  "broken_frac": 0.86875
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 395,
+                  "broken": 106,
+                  "broken_frac": 0.2683544303797468
+                },
+                "deg4": {
+                  "links": 1600,
+                  "broken": 496,
+                  "broken_frac": 0.31
+                },
+                "deg>=5": {
+                  "links": 493,
+                  "broken": 436,
+                  "broken_frac": 0.8843813387423936
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 0,
+                  "broken_frac": 0.0
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 626,
+                  "broken": 218,
+                  "broken_frac": 0.34824281150159747
+                },
+                "deg4": {
+                  "links": 2750,
+                  "broken": 1037,
+                  "broken_frac": 0.3770909090909091
+                },
+                "deg>=5": {
+                  "links": 1442,
+                  "broken": 1291,
+                  "broken_frac": 0.8952843273231623
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 2,
+                  "broken": 1,
+                  "broken_frac": 0.5
+                },
+                "deg3": {
+                  "links": 810,
+                  "broken": 331,
+                  "broken_frac": 0.408641975308642
+                },
+                "deg4": {
+                  "links": 3748,
+                  "broken": 1727,
+                  "broken_frac": 0.4607790821771611
+                },
+                "deg>=5": {
+                  "links": 2895,
+                  "broken": 2566,
+                  "broken_frac": 0.8863557858376512
+                }
+              }
+            }
+          },
+          "greedy_baseline": {
+            "full": {
+              "f1": 0.6858943424293186,
+              "precision": 0.7179030414467042,
+              "recall": 0.6593227382729714,
+              "adjusted_rand_index": 0.6789974784923006,
+              "vi_split_bits": 0.6271012288418955,
+              "vi_merge_bits": 0.44666033025176155,
+              "n_fragments": 314.24,
+              "n_gt_pairs": 1181.18,
+              "vi_total_bits": 1.073761559093657,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8476303613564209,
+                  "adjusted_rand_index": 0.8402779271867825,
+                  "vi_split_bits": 0.2521577957233778,
+                  "vi_merge_bits": 0.18079683189268164
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.7702815611545804,
+                  "adjusted_rand_index": 0.7633167323351253,
+                  "vi_split_bits": 0.4002691146376442,
+                  "vi_merge_bits": 0.2741393031219398
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.7100374701891864,
+                  "adjusted_rand_index": 0.7034583406169665,
+                  "vi_split_bits": 0.545423712254605,
+                  "vi_merge_bits": 0.4098612165582279
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.5829005444858224,
+                  "adjusted_rand_index": 0.5756325373665059,
+                  "vi_split_bits": 0.8848899455329079,
+                  "vi_merge_bits": 0.6029954573706413
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.518621774960583,
+                  "adjusted_rand_index": 0.5123018549561237,
+                  "vi_split_bits": 1.0527655760609425,
+                  "vi_merge_bits": 0.7655088423153169
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.7250713346937523,
+              "precision": 0.732697442779026,
+              "recall": 0.7207143006132152,
+              "adjusted_rand_index": 0.7192031340857912,
+              "vi_split_bits": 0.44143631789910365,
+              "vi_merge_bits": 0.37088705554154905,
+              "n_fragments": 212.34,
+              "n_gt_pairs": 456.96,
+              "vi_total_bits": 0.8123233734406528,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8452787127031247,
+                  "adjusted_rand_index": 0.8382239447096506,
+                  "vi_split_bits": 0.2253313467982966,
+                  "vi_merge_bits": 0.17520656210687058
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8017787511621439,
+                  "adjusted_rand_index": 0.7958499633418572,
+                  "vi_split_bits": 0.3258857039486532,
+                  "vi_merge_bits": 0.24785035257407734
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.746515844248949,
+                  "adjusted_rand_index": 0.7410398583595146,
+                  "vi_split_bits": 0.40572742614503915,
+                  "vi_merge_bits": 0.3538084407221308
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.6390100123418367,
+                  "adjusted_rand_index": 0.6331086879809107,
+                  "vi_split_bits": 0.6178092620646048,
+                  "vi_merge_bits": 0.4898645746008766
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.5927733530127073,
+                  "adjusted_rand_index": 0.5877932160370236,
+                  "vi_split_bits": 0.6324278505389244,
+                  "vi_merge_bits": 0.5877053477037897
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.6967509416947942,
+              "precision": 0.7290580028597244,
+              "recall": 0.670358925569849,
+              "adjusted_rand_index": 0.6901225320592682,
+              "vi_split_bits": 0.5614413625039814,
+              "vi_merge_bits": 0.40246337540650273,
+              "n_fragments": 234.82,
+              "n_gt_pairs": 630.96,
+              "vi_total_bits": 0.9639047379104841,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.8427594347325021,
+                  "adjusted_rand_index": 0.8353722119282025,
+                  "vi_split_bits": 0.23848700669875256,
+                  "vi_merge_bits": 0.17556817145533257
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.788708761927888,
+                  "adjusted_rand_index": 0.7823653186851066,
+                  "vi_split_bits": 0.35876693315990354,
+                  "vi_merge_bits": 0.25190183567753055
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.7207466268655633,
+                  "adjusted_rand_index": 0.714471551099426,
+                  "vi_split_bits": 0.5055620620734088,
+                  "vi_merge_bits": 0.3825230258754819
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.5930906963084679,
+                  "adjusted_rand_index": 0.5860605627476174,
+                  "vi_split_bits": 0.8035542582593926,
+                  "vi_merge_bits": 0.5429367849723599
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.5384491886395495,
+                  "adjusted_rand_index": 0.5323430158359883,
+                  "vi_split_bits": 0.9008365523284485,
+                  "vi_merge_bits": 0.6593870590518087
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 1,
+                "broken_frac": 0.5
+              },
+              "deg3": {
+                "links": 2163,
+                "broken": 805,
+                "broken_frac": 0.37216828478964403
+              },
+              "deg4": {
+                "links": 9469,
+                "broken": 2568,
+                "broken_frac": 0.2712007603759637
+              },
+              "deg>=5": {
+                "links": 5039,
+                "broken": 2230,
+                "broken_frac": 0.4425481246279024
+              },
+              "gap_connected": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              },
+              "gap_disconnected": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg3": {
+                  "links": 97,
+                  "broken": 22,
+                  "broken_frac": 0.2268041237113402
+                },
+                "deg4": {
+                  "links": 406,
+                  "broken": 52,
+                  "broken_frac": 0.12807881773399016
+                },
+                "deg>=5": {
+                  "links": 49,
+                  "broken": 8,
+                  "broken_frac": 0.16326530612244897
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 235,
+                  "broken": 57,
+                  "broken_frac": 0.2425531914893617
+                },
+                "deg4": {
+                  "links": 965,
+                  "broken": 170,
+                  "broken_frac": 0.17616580310880828
+                },
+                "deg>=5": {
+                  "links": 160,
+                  "broken": 53,
+                  "broken_frac": 0.33125
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 395,
+                  "broken": 116,
+                  "broken_frac": 0.2936708860759494
+                },
+                "deg4": {
+                  "links": 1600,
+                  "broken": 348,
+                  "broken_frac": 0.2175
+                },
+                "deg>=5": {
+                  "links": 493,
+                  "broken": 168,
+                  "broken_frac": 0.3407707910750507
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 626,
+                  "broken": 254,
+                  "broken_frac": 0.4057507987220447
+                },
+                "deg4": {
+                  "links": 2750,
+                  "broken": 785,
+                  "broken_frac": 0.28545454545454546
+                },
+                "deg>=5": {
+                  "links": 1442,
+                  "broken": 618,
+                  "broken_frac": 0.42857142857142855
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 2,
+                  "broken": 1,
+                  "broken_frac": 0.5
+                },
+                "deg3": {
+                  "links": 810,
+                  "broken": 356,
+                  "broken_frac": 0.43950617283950616
+                },
+                "deg4": {
+                  "links": 3748,
+                  "broken": 1213,
+                  "broken_frac": 0.3236392742796158
+                },
+                "deg>=5": {
+                  "links": 2895,
+                  "broken": 1383,
+                  "broken_frac": 0.47772020725388603
+                }
+              }
+            }
+          },
+          "plecta": {
+            "full": {
+              "f1": 0.8442099006886805,
+              "precision": 0.8505245252259224,
+              "recall": 0.8387416297910738,
+              "adjusted_rand_index": 0.8407094615160043,
+              "vi_split_bits": 0.26992302727815215,
+              "vi_merge_bits": 0.25996268951935286,
+              "n_fragments": 314.24,
+              "n_gt_pairs": 1181.18,
+              "vi_total_bits": 0.5298857167975051,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.9390631989329282,
+                  "adjusted_rand_index": 0.935955870801906,
+                  "vi_split_bits": 0.09691346029703966,
+                  "vi_merge_bits": 0.07696897128545038
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.8978007788701994,
+                  "adjusted_rand_index": 0.8945721435266805,
+                  "vi_split_bits": 0.14793345140431616,
+                  "vi_merge_bits": 0.15975221724513097
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.82593835685113,
+                  "adjusted_rand_index": 0.8218141472049296,
+                  "vi_split_bits": 0.2689808251734274,
+                  "vi_merge_bits": 0.2853046401067866
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.7974658437103594,
+                  "adjusted_rand_index": 0.7937415525927771,
+                  "vi_split_bits": 0.36655294864738214,
+                  "vi_merge_bits": 0.3477536532308294
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7607813250787849,
+                  "adjusted_rand_index": 0.7574635934537287,
+                  "vi_split_bits": 0.4692344508685955,
+                  "vi_merge_bits": 0.43003396572856706
+                }
+              }
+            },
+            "restricted": {
+              "f1": 0.8688497411172158,
+              "precision": 0.8611849738055116,
+              "recall": 0.8773132052968353,
+              "adjusted_rand_index": 0.866167968905626,
+              "vi_split_bits": 0.18715545615589543,
+              "vi_merge_bits": 0.20977349727958788,
+              "n_fragments": 212.34,
+              "n_gt_pairs": 456.96,
+              "vi_total_bits": 0.3969289534354833,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.9613764618929611,
+                  "adjusted_rand_index": 0.9594102319164793,
+                  "vi_split_bits": 0.06066597941386047,
+                  "vi_merge_bits": 0.05656394197324589
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.9100925549791528,
+                  "adjusted_rand_index": 0.9073428324077947,
+                  "vi_split_bits": 0.11675188563500531,
+                  "vi_merge_bits": 0.1417832971747516
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.8492758406807359,
+                  "adjusted_rand_index": 0.8459284357878492,
+                  "vi_split_bits": 0.2060824123784164,
+                  "vi_merge_bits": 0.2444330908456344
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.832415492840808,
+                  "adjusted_rand_index": 0.8296330883634336,
+                  "vi_split_bits": 0.2470591359545832,
+                  "vi_merge_bits": 0.27982944571328117
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7910883551924207,
+                  "adjusted_rand_index": 0.7885252560525727,
+                  "vi_split_bits": 0.3052178673976117,
+                  "vi_merge_bits": 0.3262577106910264
+                }
+              }
+            },
+            "restricted_incident": {
+              "f1": 0.8617991977285401,
+              "precision": 0.8677993984884309,
+              "recall": 0.8566434002063974,
+              "adjusted_rand_index": 0.8586770196912634,
+              "vi_split_bits": 0.22690503004649784,
+              "vi_merge_bits": 0.21933993838240895,
+              "n_fragments": 234.82,
+              "n_gt_pairs": 630.96,
+              "vi_total_bits": 0.4462449684289068,
+              "by_density": {
+                "cov20": {
+                  "n_scenes": 10,
+                  "f1": 0.9422466772189075,
+                  "adjusted_rand_index": 0.939367484791821,
+                  "vi_split_bits": 0.09307446189598083,
+                  "vi_merge_bits": 0.07041382610418524
+                },
+                "cov30": {
+                  "n_scenes": 10,
+                  "f1": 0.9049526011542065,
+                  "adjusted_rand_index": 0.9019851316458809,
+                  "vi_split_bits": 0.13195117422482883,
+                  "vi_merge_bits": 0.14836648468112792
+                },
+                "cov40": {
+                  "n_scenes": 10,
+                  "f1": 0.8393250177303555,
+                  "adjusted_rand_index": 0.835561464473191,
+                  "vi_split_bits": 0.2383978582263107,
+                  "vi_merge_bits": 0.2538344264001206
+                },
+                "cov50": {
+                  "n_scenes": 10,
+                  "f1": 0.8286864337998721,
+                  "adjusted_rand_index": 0.8255543285401284,
+                  "vi_split_bits": 0.3008743201272054,
+                  "vi_merge_bits": 0.28824078450535534
+                },
+                "cov60": {
+                  "n_scenes": 10,
+                  "f1": 0.7937852587393591,
+                  "adjusted_rand_index": 0.7909166890052961,
+                  "vi_split_bits": 0.37022733575816336,
+                  "vi_merge_bits": 0.3358441702212557
+                }
+              }
+            },
+            "links": {
+              "deg2": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              },
+              "deg3": {
+                "links": 2163,
+                "broken": 706,
+                "broken_frac": 0.32639852057327784
+              },
+              "deg4": {
+                "links": 9469,
+                "broken": 1341,
+                "broken_frac": 0.14162002323371
+              },
+              "deg>=5": {
+                "links": 5039,
+                "broken": 1506,
+                "broken_frac": 0.2988688231792022
+              },
+              "gap_connected": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              },
+              "gap_disconnected": {
+                "links": 2,
+                "broken": 2,
+                "broken_frac": 1.0
+              }
+            },
+            "links_by_density": {
+              "cov20": {
+                "deg3": {
+                  "links": 97,
+                  "broken": 17,
+                  "broken_frac": 0.17525773195876287
+                },
+                "deg4": {
+                  "links": 406,
+                  "broken": 14,
+                  "broken_frac": 0.034482758620689655
+                },
+                "deg>=5": {
+                  "links": 49,
+                  "broken": 6,
+                  "broken_frac": 0.12244897959183673
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov30": {
+                "deg3": {
+                  "links": 235,
+                  "broken": 46,
+                  "broken_frac": 0.19574468085106383
+                },
+                "deg4": {
+                  "links": 965,
+                  "broken": 72,
+                  "broken_frac": 0.07461139896373056
+                },
+                "deg>=5": {
+                  "links": 160,
+                  "broken": 28,
+                  "broken_frac": 0.175
+                }
+              },
+              "cov40": {
+                "deg3": {
+                  "links": 395,
+                  "broken": 113,
+                  "broken_frac": 0.28607594936708863
+                },
+                "deg4": {
+                  "links": 1600,
+                  "broken": 190,
+                  "broken_frac": 0.11875
+                },
+                "deg>=5": {
+                  "links": 493,
+                  "broken": 121,
+                  "broken_frac": 0.24543610547667344
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov50": {
+                "deg3": {
+                  "links": 626,
+                  "broken": 209,
+                  "broken_frac": 0.33386581469648563
+                },
+                "deg4": {
+                  "links": 2750,
+                  "broken": 390,
+                  "broken_frac": 0.14181818181818182
+                },
+                "deg>=5": {
+                  "links": 1442,
+                  "broken": 402,
+                  "broken_frac": 0.2787794729542302
+                },
+                "gap_connected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                },
+                "gap_disconnected": {
+                  "links": 1,
+                  "broken": 1,
+                  "broken_frac": 1.0
+                }
+              },
+              "cov60": {
+                "deg2": {
+                  "links": 2,
+                  "broken": 2,
+                  "broken_frac": 1.0
+                },
+                "deg3": {
+                  "links": 810,
+                  "broken": 321,
+                  "broken_frac": 0.3962962962962963
+                },
+                "deg4": {
+                  "links": 3748,
+                  "broken": 675,
+                  "broken_frac": 0.18009605122732122
+                },
+                "deg>=5": {
+                  "links": 2895,
+                  "broken": 949,
+                  "broken_frac": 0.32780656303972366
+                }
+              }
+            }
+          }
+        },
+        "paired": {
+          "plecta_minus_dnai_tuned__full": {
+            "mean_diff": 0.41361287451813333,
+            "wins_a": 50,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.27884208191397997,
+              "cov30": 0.37055386891623643,
+              "cov40": 0.3938367248848973,
+              "cov50": 0.4879716160201798,
+              "cov60": 0.5368600808553734
+            }
+          },
+          "plecta_minus_dnai_tuned__restricted": {
+            "mean_diff": 0.283877992866161,
+            "wins_a": 49,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.20692835566401993,
+              "cov30": 0.28310100210577527,
+              "cov40": 0.2683299452986959,
+              "cov50": 0.3098886081922846,
+              "cov60": 0.3511420530700293
+            }
+          },
+          "plecta_minus_dnai_tuned__restricted_incident": {
+            "mean_diff": 0.36715358682551524,
+            "wins_a": 50,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.2346158813826135,
+              "cov30": 0.316683408380379,
+              "cov40": 0.3445990310336069,
+              "cov50": 0.4421191761928993,
+              "cov60": 0.4977504371380775
+            }
+          },
+          "plecta_minus_greedy_baseline__full": {
+            "mean_diff": 0.15831555825936186,
+            "wins_a": 49,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.09143283757650743,
+              "cov30": 0.12751921771561897,
+              "cov40": 0.11590088666194365,
+              "cov50": 0.21456529922453732,
+              "cov60": 0.2421595501182019
+            }
+          },
+          "plecta_minus_greedy_baseline__restricted": {
+            "mean_diff": 0.14377840642346343,
+            "wins_a": 49,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.11609774918983659,
+              "cov30": 0.10831380381700884,
+              "cov40": 0.10275999643178697,
+              "cov50": 0.19340548049897127,
+              "cov60": 0.19831500217971348
+            }
+          },
+          "plecta_minus_greedy_baseline__restricted_incident": {
+            "mean_diff": 0.16504825603374595,
+            "wins_a": 49,
+            "n": 50,
+            "by_density": {
+              "cov20": 0.0994872424864054,
+              "cov30": 0.1162438392263185,
+              "cov40": 0.1185783908647922,
+              "cov50": 0.23559573749140394,
+              "cov60": 0.25533607009980974
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "reference": "gt_labels.tif passed to instance_io.load_gt, which resolves the sibling gt_multilabel.npz (overlap-aware) -- identical to every stored testcmp10 row",
+      "scorer": "common_metric.pairwise_scores(gt_unassigned_policy='singleton')",
+      "junction_clusters": "8-connected components of the pruned skeleton's degree>=3 pixels; degree = number of distinct surviving common fragments 8-adjacent to the cluster",
+      "high_degree_threshold": 5,
+      "restricted_population": "fragments not incident on any cluster of degree >= 5; applied identically to every method",
+      "inference": "none -- plain means, n = 50 scenes (10 per density)"
+    }
+  },
+  "paired_full_vs_restricted": {
+    "degraded|full|plecta_minus_dnai_tuned": {
+      "mean_diff": 0.4783811848948428,
+      "ci95_lo_stratified": 0.4563960697810882,
+      "ci95_hi_stratified": 0.5012619879037914,
+      "wins_plecta": 50,
+      "n": 50
+    },
+    "degraded|full|plecta_minus_greedy_baseline": {
+      "mean_diff": 0.15157319045688677,
+      "ci95_lo_stratified": 0.13470930121830663,
+      "ci95_hi_stratified": 0.16903437145401695,
+      "wins_plecta": 48,
+      "n": 50
+    },
+    "degraded|restricted|plecta_minus_dnai_tuned": {
+      "mean_diff": 0.2944263242274474,
+      "ci95_lo_stratified": 0.266941757060779,
+      "ci95_hi_stratified": 0.3225319275931763,
+      "wins_plecta": 50,
+      "n": 50
+    },
+    "degraded|restricted|plecta_minus_greedy_baseline": {
+      "mean_diff": 0.08594799472368289,
+      "ci95_lo_stratified": 0.07208976613098869,
+      "ci95_hi_stratified": 0.10012408458531999,
+      "wins_plecta": 44,
+      "n": 50
+    },
+    "clean|full|plecta_minus_dnai_tuned": {
+      "mean_diff": 0.41361287451813333,
+      "ci95_lo_stratified": 0.392378341272929,
+      "ci95_hi_stratified": 0.436136455761512,
+      "wins_plecta": 50,
+      "n": 50
+    },
+    "clean|full|plecta_minus_greedy_baseline": {
+      "mean_diff": 0.15831555825936186,
+      "ci95_lo_stratified": 0.14374309864382795,
+      "ci95_hi_stratified": 0.17267314187977464,
+      "wins_plecta": 49,
+      "n": 50
+    },
+    "clean|restricted|plecta_minus_dnai_tuned": {
+      "mean_diff": 0.283877992866161,
+      "ci95_lo_stratified": 0.26168695658833085,
+      "ci95_hi_stratified": 0.3066310809725049,
+      "wins_plecta": 49,
+      "n": 50
+    },
+    "clean|restricted|plecta_minus_greedy_baseline": {
+      "mean_diff": 0.14377840642346343,
+      "ci95_lo_stratified": 0.12772179038677658,
+      "ci95_hi_stratified": 0.15947218777629912,
+      "wins_plecta": 49,
+      "n": 50
+    }
+  },
+  "provenance": {
+    "study": "C:/Repos/comparisons/dnai_comparison",
+    "greedy_sweep_sha256": "b01682a6ad8d6c78205c488b57e2dd54c560fd5c93736b7be6fa4e3f4a36c8ad",
+    "junction_evidence_sha256": "8a690f0fe6b9d7db776ac24bf4cca453c1f84b37c42a37da5c63334172a7cc64",
+    "paired_sha256": "c7447c53eb421afd105a2edcd01e02a62cecb593eaab12cdc3a89a61cdf9ef31",
+    "selection_scenes": "84 development scenes; the 50-scene comparison set was never consulted for selection and the locked set was never read"
+  },
+  "statistics": {
+    "aggregate": "density-stratified paired bootstrap over 50 scenes",
+    "per_density": "plain means, n = 10, no interval, no inference"
+  }
+}
