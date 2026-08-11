@@ -12,7 +12,7 @@
   },
   "provenance": {
     "study": "C:/Repos/comparisons/graft_comparison",
-    "summary_sha256": "1fc607e8c7dca26c799177f8dcedb6590a6d0748c40c47cd725eb8392318bfb4",
+    "summary_sha256": "47680bdd9e9dda25c8a7adf51ce0c984e338cf4b7e8f3d43a49e241938137538",
     "overlap_sha256": "67adf8563ec583a597a857d4043346e36640f0b05099f932b616241d56bb7e17",
     "parity_gate": null
   },
@@ -1104,7 +1104,7 @@
       "n_ok": 49,
       "n_failed": 1,
       "failures": [
-        "prediction file absent"
+        "per-scene wall-clock budget of 2400s exceeded; GraFT's constrained DFS did not terminate"
       ],
       "overall": {
         "f1": 0.4408149454133027,
