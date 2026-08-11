@@ -92,7 +92,7 @@ def main() -> int:
             ax.spines[side].set_visible(False)
         for side in ("left", "bottom"):
             ax.spines[side].set_color(GRAY)
-    axes[0].set_ylabel("Mean common-fragment $F_1$", fontsize=PT_AXIS)
+    axes[0].set_ylabel("Mean common-fragment F₁", fontsize=PT_AXIS)
 
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, ncol=3, frameon=False, loc="lower center",

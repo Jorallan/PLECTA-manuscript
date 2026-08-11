@@ -112,7 +112,7 @@ def main(argv=None) -> int:
                 ax.set_title(heads[c], fontsize=PT_TITLE, fontweight="bold",
                              color=DARK, pad=3.5, linespacing=1.35)
         fig.text(left - 0.010, y0 + cell_h / 2.0,
-                 "{0}\ncoverage {1}%\n$F_1 = {2:.3f}$"
+                 "{0}\ncoverage {1}%\nF₁ = {2:.3f}"
                  .format(panel["scene"], panel["density"],
                          panel["plecta_f1"]),
                  rotation=90, ha="right", va="center", fontsize=PT_ANNOT,

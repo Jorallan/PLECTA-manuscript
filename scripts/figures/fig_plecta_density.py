@@ -89,7 +89,7 @@ def main() -> int:
     ax.set_xlim(16, 64)
     ax.set_ylim(0.62, 1.0)
     ax.set_xlabel("Target areal coverage", fontsize=PT_AXIS)
-    ax.set_ylabel("Common-fragment $F_1$", fontsize=PT_AXIS)
+    ax.set_ylabel("Common-fragment F₁", fontsize=PT_AXIS)
     ax.tick_params(labelsize=PT_TICK)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)

@@ -89,7 +89,7 @@ def main() -> int:
     panel(ax_b, table, ["w1", "clean"], ["Degraded\n(1 px, evaluated)",
                                          "Clean\naxis"],
           "(b) Degraded vs. clean axis", "Input axis-mask condition")
-    ax_a.set_ylabel("Development common-fragment $F_1$", fontsize=PT_AXIS)
+    ax_a.set_ylabel("Development common-fragment F₁", fontsize=PT_AXIS)
 
     handles, labels = ax_a.get_legend_handles_labels()
     fig.legend(handles, labels, ncol=5, frameon=False, loc="lower center",

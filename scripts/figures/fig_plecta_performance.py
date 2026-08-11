@@ -81,7 +81,7 @@ def panel_spread(ax, heldout, **_):
     ax.set_ylim(0.40, 1.05)
     ax.set_yticks([0.4, 0.6, 0.8, 1.0])
     ax.set_xlabel("Target areal coverage", fontsize=PT_AXIS, labelpad=1.5)
-    ax.set_ylabel("Common-fragment $F_1$", fontsize=PT_AXIS, labelpad=2.0)
+    ax.set_ylabel("Common-fragment F₁", fontsize=PT_AXIS, labelpad=2.0)
     ax.tick_params(labelsize=PT_TICK)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
@@ -110,7 +110,7 @@ def panel_control(ax, factorial, **_):
                 mec="white", mew=0.8, zorder=4, label=label, alpha=0.9)
     control = factorial["width_negative_control"]
     ax.text(0.985, 0.975,
-            r"coverage $\times$%.2f" "\n" r"$F_1$ range %.3f"
+            "coverage ×%.2f" "\n" "F₁ range %.3f"
             % (control["max_areal_coverage_ratio_within_geometry"],
                control["max_within_geometry_f1_range"]),
             transform=ax.transAxes, ha="right", va="top",
@@ -121,7 +121,7 @@ def panel_control(ax, factorial, **_):
     ax.set_xticks([10, 30, 50])
     ax.set_xticklabels(["10%", "30%", "50%"], fontsize=PT_TICK)
     ax.set_xlabel("Realised areal coverage", fontsize=PT_AXIS, labelpad=1.5)
-    ax.set_ylabel("Common-fragment $F_1$", fontsize=PT_AXIS, labelpad=2.0)
+    ax.set_ylabel("Common-fragment F₁", fontsize=PT_AXIS, labelpad=2.0)
     ax.tick_params(labelsize=PT_TICK)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)

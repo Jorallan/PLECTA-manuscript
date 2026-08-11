@@ -155,9 +155,9 @@ MIN_PT = 7.0
 #      7.5        axis label, tick label, in-figure annotation, legend
 #      7.0        hard floor, reserved for dense numeric annotation
 #
-#  ``check_type_scale.py`` re-derives the smallest size actually drawn in each
-#  figure from the figure object itself, so this block is a claim that is
-#  checked rather than asserted.
+#  ``check_type_scale.py`` re-derives the smallest size actually *written into
+#  each PDF* -- the ``/F<n> <size> Tf`` operators in the content stream -- so
+#  this block is a claim that is checked rather than asserted.
 # ---------------------------------------------------------------------------
 PT_TITLE = 8.5       # panel title (always bold)
 PT_AXIS = 7.5        # axis label
@@ -165,6 +165,61 @@ PT_TICK = 7.5        # tick label
 PT_ANNOT = 7.5       # in-figure annotation
 PT_LEGEND = 7.5      # legend entry
 PT_MIN = 7.0         # the floor; dense numeric annotation only
+
+# ---------------------------------------------------------------------------
+#  SUB- AND SUPERSCRIPTS.  Two rules, because there are two kinds of them.
+#  ------------------------------------------------------------------------
+#  Matplotlib mathtext draws a script at ``SHRINK_FACTOR`` times the base size,
+#  and ships 0.70.  A label asked for at 7.5 pt therefore put a 5.25 pt glyph
+#  on the page, and one asked for at 8.5 pt put 5.95 -- well under the floor
+#  above, in eight of the ten figures, invisibly, because the size *asked for*
+#  was right.  The fix has two halves.
+#
+#  1. A subscript that is only typography -- the 1 in F1, the 2 in px^2 -- is
+#     not set as mathtext at all.  It is written as the Unicode glyph (F₁,
+#     px², ×), a form DejaVu Sans draws at the label's own size with
+#     its own stem weight, so nothing is scaled and nothing drops below the
+#     floor.  As a bonus the F comes out upright, matching \Fone in the text
+#     rather than the italic F that ``$F_1$`` produced.
+#
+#  2. A subscript that is notation -- φ_a, φ_b, κ_a, κ_b,
+#     C_ab, p_i, t_a, t_b, α_r -- has to keep matching the equations in
+#     the Methods, so it stays mathtext.  Unicode cannot compose these: it has
+#     no subscript ``b`` (the block runs a e o x h k l m n p s t plus i j r u v
+#     -- there is no b, and never has been), so φ_a could be composed and
+#     φ_b could not, which would put two different-looking subscripts side
+#     by side in one panel.  Raising the base instead does not work either: at
+#     a 0.70 script ratio the base has to reach 10 pt for the script to clear
+#     7, which is larger than the 8.5 pt panel titles, overruns the 1.46 in
+#     gate panels of fig_plecta_gates, and would leave the two x-axis labels of
+#     fig_plecta_exact_matching at two different sizes.
+#
+#     So the ratio is pinned instead of the base: bases stay 7.5 and 8.5 and
+#     the script lands at 7.05 and 7.99.  A 7.0 pt floor under a 7.5 pt base
+#     leaves only 0.5 pt of room, so a script that clears the floor is
+#     necessarily ~94% of its base rather than the customary 70%; that is
+#     arithmetic, not a choice.  If the customary proportion is wanted back,
+#     the whole notation layer has to move to a 10 pt base.
+# ---------------------------------------------------------------------------
+SCRIPT_SHRINK = (PT_MIN + 0.05) / PT_ANNOT     # 0.94: 7.5 -> 7.05, 8.5 -> 7.99
+
+
+def _pin_mathtext_script_size():
+    """Stop mathtext from shrinking scripts below the floor.
+
+    ``SHRINK_FACTOR`` is read out of the module at draw time by every
+    ``shrink()`` in the mathtext box model, so rebinding it here is enough and
+    it applies to the size, width, height and kerning together.  It is private
+    API; if a future matplotlib renames it this raises rather than silently
+    going back to 0.70, and ``check_type_scale.py`` reads the written PDFs, so
+    a regression fails the gate either way.
+    """
+    import matplotlib._mathtext as _mathtext
+    if not hasattr(_mathtext, "SHRINK_FACTOR"):
+        raise RuntimeError(
+            "matplotlib._mathtext.SHRINK_FACTOR is gone; mathtext scripts "
+            "would silently drop back below the %.1f pt floor" % PT_MIN)
+    _mathtext.SHRINK_FACTOR = SCRIPT_SHRINK
 
 #: Names the earlier round used.  Kept so nothing has to be renamed twice, but
 #: they now resolve into the scale above rather than to three separate sizes.
@@ -176,6 +231,7 @@ PT_TINY = PT_ANNOT
 def plecta_style():
     """rcParams for the PLECTA set.  Call once, before creating a figure."""
     apply_style()
+    _pin_mathtext_script_size()
     plt.rcParams.update(
         {
             "font.size": PT_AXIS,
