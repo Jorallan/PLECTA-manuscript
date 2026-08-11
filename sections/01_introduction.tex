@@ -19,62 +19,62 @@ evaluation, so folding it in would mean defending two methods at once. The
 current draft therefore keeps the CNT story as the application and the
 identity problem as the idea. Please say if you would rather we widen it.}
 
-The properties of carbon-nanotube (CNT) sheets, yarns, and composites depend on
-the geometry of their bundle networks: length, width, orientation, curvature,
-and contact topology influence mechanical and electrical response
+Separating the individual objects in an image of a dense filament network is an
+instance-segmentation problem with an awkward geometry. The objects are long,
+thin and open, they touch and cross and occlude one another, and what
+distinguishes them is local continuation rather than shape or extent. This paper
+presents a method for that problem. Its proof-of-concept application is scanning
+electron microscopy (SEM) of carbon-nanotube (CNT) sheets, whose mechanical and
+electrical response depends on the geometry of the bundle network: length,
+width, orientation, curvature and contact topology
 \citep{devolder2013cnt,coleman2006small,volkov2010structural,%
-ostanin2013distinct,wittmaack2018mesoscopic}. Scanning electron microscopy
-(SEM) resolves this projected network, but routine image analysis often stops
-at coverage or orientation distributions
-\citep{dong2022detecting,imtiaz2023facile}. Instance-resolved analysis instead
-requires each visible bundle to remain addressable across gaps, touches, and
-crossings.
+ostanin2013distinct,wittmaack2018mesoscopic}. SEM resolves that projected
+network, but routine image analysis often stops at coverage or orientation
+distributions \citep{dong2022detecting,imtiaz2023facile}, whereas
+instance-resolved analysis requires each visible bundle to remain addressable
+across gaps, touches and crossings.
 
-This requirement is distinct from semantic segmentation. U-Net and its
+That requirement is distinct from semantic segmentation. U-Net and its
 self-configuring variants can identify filament foreground
 \citep{ronneberger2015unet,isensee2021nnunet}, but a binary foreground mask does
-not encode object identity. A faded segment splits one filament into several
-connected components; a crossing joins different filaments into one component.
-The ambiguity is greatest in dense networks, where several local continuations
-can be geometrically plausible. Compact-object instance priors---bounded blobs,
-centre-directed flows, or star-convex shapes---are poorly matched to long open
+not encode object identity: a faded segment splits one filament into several
+connected components, and a crossing joins different filaments into one. The
+ambiguity is greatest in dense networks, where several local continuations are
+geometrically plausible. Compact-object instance priors (bounded blobs,
+centre-directed flows, star-convex shapes) are poorly matched to long open
 curves that may overlap \citep{stringer2021cellpose,schmidt2018stardist,%
-kirillov2023sam}.
-
-Ridge and vesselness filters enhance curvilinear signal but do not assign
-identity across junctions
+kirillov2023sam}. Ridge and vesselness filters enhance curvilinear signal but do
+not assign identity across junctions
 \citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and fibre
 extraction packages such as FIRE, CT-FIRE, SOAX, FiNTA and DiameterJ report
 network statistics rather than resolved instances
 \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,flormann2021finta,%
 hotaling2015diameterj}.
 
-Recovering individual filaments through crossings is itself established
-prior art, and the design space is well explored. Basu et al.\ localise
-centreline particles, build a minimum spanning tree, delete every bifurcation
-node, and recombine the resulting segments with a binary integer program over
-chains of at most three segments, each priced by the integrated squared
-curvature of a fitted spline; singleton variables let a segment stay unlinked,
-and the program is re-solved after refitting until the segment set stops
-changing \citep{basu2015extraction}. DeFiNe consumes a pre-extracted weighted
-graph and solves a filament cover as a linear program minimising path
-roughness, with a mode in which one edge may be covered by several paths, so
+Recovering individual filaments through crossings is itself established prior
+art, and the design space is well explored. Basu et al.\ build a minimum
+spanning tree over centreline particles, delete every bifurcation node, and
+recombine the segments with a binary integer program over chains of at most
+three, priced by the integrated squared curvature of a fitted spline; a segment
+may stay unlinked, and the program is re-solved after refitting until the
+segment set stops changing \citep{basu2015extraction}. DeFiNe consumes a
+pre-extracted weighted graph and solves a filament cover as a linear program
+minimising path roughness, optionally letting several paths cover one edge, so
 overlaps are representable \citep{breuer2015define}. SIFNE excises each crossing
-pixel together with its neighbourhood, estimates a tip direction from the
-terminus to the local centre of mass, and pairs termini greedily in priority
-order inside a fan-shaped search region under angular and continuity gates,
-leaving unmatched tips as filament ends \citep{zhang2017sifne}. De et al.\
-resolve crossovers by partitioning a directed graph \citep{de2016graph}.
-Wegmayr et al.\ group skeleton branches by lowest mutual angle as a baseline and
-learn pixel embeddings for tangled microplastic fibres, sharing junction pixels
-in principle but assigning them arbitrarily \citep{wegmayr2020microplastic}.
-DNAi detects junctions morphologically, clusters them by single linkage, erases
-a disk the width of the fibre, estimates endpoint angles over a short trace, and
-enumerates the possible pairings at junctions of degree three or four
-\citep{playout2026dnai}. GraFT builds a graph from a Frangi-filtered skeleton,
-derives an angle threshold per component, and traces filaments by constrained
-depth-first search and a greedy longest-first path cover, additionally tracking
-them over time \citep{osterlund2026graft}. Learned alternatives include
+with its neighbourhood, estimates tip directions towards the local centre of
+mass, and pairs termini greedily in priority order inside a fan-shaped region
+under angular and continuity gates, leftover tips becoming ends
+\citep{zhang2017sifne}. De et al.\ resolve crossovers by partitioning a directed
+graph \citep{de2016graph}, and Wegmayr et al.\ group skeleton branches by lowest
+mutual angle and learn pixel embeddings for tangled microplastic fibres, sharing
+junction pixels in principle but assigning them arbitrarily
+\citep{wegmayr2020microplastic}. DNAi detects junctions morphologically,
+clusters them by single linkage, erases a disk the width of the fibre, and
+enumerates the pairings at junctions of degree three or four from endpoint
+angles traced over a short span \citep{playout2026dnai}. GraFT builds a graph
+from a Frangi-filtered skeleton, derives an angle threshold per component, and
+traces filaments by constrained depth-first search and a greedy longest-first
+path cover \citep{osterlund2026graft}. Learned alternatives include
 orientation-aware terminus pairing \citep{liu2019intersection}, FibeR-CNN, and
 recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.
 
@@ -95,22 +95,26 @@ works from a mask, reconnects across gaps and permits overlapping output, but
 pairs termini greedily and depends on a trained orientation network
 \citep{liu2019intersection}.
 
-CNT-specific workflows increasingly combine semantic segmentation with
-algorithmic tracing and transverse intensity profiles
-\citep{peters2026fibre}. The present work focuses on the difficult middle step
-of that workflow: binary mask to overlap-aware instances. This separation is
-deliberate. It allows grouping to be evaluated independently of the upstream
-segmenter and prevents width rendering from changing an identity metric. An
-optional CycleGAN/U-Net route supplies masks for the SEM application
-\citep{ruehle2021workflow,allan2026cntsem}, but it is not the principal
-contribution.
-
 We introduce PLECTA, a deterministic graph-matching method for dense filament
 networks, named after the Latin \emph{plecta}, a braid. PLECTA decomposes a
 skeleton into arms, endpoint stubs, and merged junction nodes. It then
 alternates exact per-node continuation matching with globally gated gap
 matching while tangent and curvature estimates expand from local arms to
 assembled chains. Its output is a set of projected 2-D instance layers in which
-crossing pixels may be shared. We evaluate it on 128 unseen scenes from the
-development generator, on 50 paired clean and degraded scenes, and on two
-annotated CNT-sheet SEM fields.
+crossing pixels may be shared.
+
+Reaching real micrographs takes one more component. A complete CNT workflow
+combines semantic segmentation with algorithmic tracing and transverse intensity
+profiles \citep{peters2026fibre}, and we divide that workflow in two.
+Pipeline~A turns a raw SEM micrograph into a binary filament-axis mask by a
+synthetic-data-driven CycleGAN/U-Net route
+\citep{ruehle2021workflow,allan2026cntsem}; Pipeline~B is PLECTA. Pipeline~A is
+what makes the proof of concept on real data possible at all, since without it
+the method could only ever be exercised on masks drawn by hand or emitted by a
+generator. The division also lets grouping be measured on its own, against
+references whose identities are known exactly, and keeps width rendering from
+moving an identity score. Pipeline~A carries its own evaluation
+\citep{allan2026cntsem} and is not re-evaluated here. We evaluate PLECTA on
+\PlectaHeldoutSceneCount{} unseen scenes from the development generator and on
+\PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate
+the two pipelines together on two annotated CNT-sheet SEM fields.

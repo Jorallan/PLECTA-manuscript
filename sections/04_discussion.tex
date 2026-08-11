@@ -1,106 +1,91 @@
 \section{Discussion}
 \label{sec:discussion}
 
-PLECTA addresses a narrow problem: assigning fragments in a binary
-filament-axis mask to overlapping projected instances. Its held-out
+PLECTA addresses a narrow problem: assigning fragments of a binary
+filament-axis mask to overlapping projected instances. A held-out
 common-fragment $F_1$ of \PlectaHeldoutFOneMean{} shows that explicit geometry
-can recover substantial identity without instance-labelled training data or
-SEM intensity. The mechanism is the combination of local and accumulated
-evidence. Exact matching at each junction selects mutually compatible
-continuations, gated gap matching reconnects separated arms, and repeated
-rounds replace short-arm direction estimates with tangent and curvature
-estimates from the chains assembled so far. Shared crossing pixels remain in
-each applicable instance rather than being forced into one label.
+recovers substantial identity with no instance-labelled training data and no
+SEM intensity. What recovers it is the combination of local and accumulated
+evidence, neither of which suffices alone: a junction is resolved by mutual
+compatibility rather than by the cheapest available continuation, and the
+evidence for that judgement is re-read along the chains as they assemble.
 
-The ablations support this interpretation but do not prove that every
-term is independently necessary. On the development set, removing the junction
-chord-turn term reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{},
-removing gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
-connector-based junction-cluster consolidation by
-\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing
-chain-extended frames produced a smaller decrease of
-\PlectaAblationNoChainExtendedFramesDeltaFOne{}. Thus the largest gains arise
-from solving both kinds of discontinuity---junctions and missing mask
-segments---with complementary geometric evidence; iterative context provides
-an additional, more modest benefit. Because these tests reused development
-scenes, their values describe mechanism and configuration sensitivity, not
-independent effect estimates.
+The ablations locate that effect without proving each term independently
+necessary: the two large losses correspond to the two kinds of discontinuity,
+the junction and the missing mask segment, while accumulated context is worth
+distinctly less than either.
 
 \subsection{Density, masks, and optional rendering}
 
-Performance depends on the geometry preserved by the input mask. Mean
-held-out $F_1$ declined from \PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
-\PlectaDensitySixZeroFOneMean{} at 60\%, where crossings and locally plausible
-alternatives are more frequent. On the 50 paired scenes of the controlled
-robustness set, generated after the configuration was fixed, the clean
-axis masks scored \PlectaCleanMinusDegradedFOneMean{} higher than degraded
-masks (95\% CI \PlectaCleanMinusDegradedFOneCILow{}--
-\PlectaCleanMinusDegradedFOneCIHigh{}). PLECTA can bridge short omissions, but
-it cannot infer a filament absent from the mask or reliably reject a false
-axis introduced upstream. Supplying identical masks isolates grouping in an
-algorithmic comparison; it does not establish end-to-end SEM performance.
+Difficulty follows the density of centrelines rather than the amount of ink, so
+what costs the score is the number of locally plausible alternatives at a
+crossing, and the decline with coverage is a decline with the length density
+that accompanies it under this generator.
 
-Image-informed ribbon rendering is downstream of grouping. On the
-development set it produced $F_1=\PlectaStageFourFOne{}$, a change of
-\PlectaStageFourDeltaFOne{} relative to the core output. Its value is
-connectivity rather than identity: the fraction of instances delivered as more
-than one disjoint pixel run falls from \PlectaCoreDisconnected{} to
-\PlectaStageFourDisconnected{}, because the core paints arms and junction
-clusters but not the accepted gap links that carry identity across a break.
-Silhouette absorption changes the instance partition and scored
-\PlectaStageFourAbsorbFOne{}; it is therefore optional and should not be
-conflated with the fixed mask-only grouping result. Width and brightness can
-be reported for characterised instances, but their physical accuracy requires
-separate references.
+The rest of the sensitivity belongs to the upstream segmenter, which fixes the
+thickness of the mask and therefore how clean a skeleton PLECTA is given. PLECTA
+can bridge a short omission, but it cannot infer a filament absent from the
+mask, nor reliably reject a false axis introduced upstream. Supplying identical
+masks isolates grouping in an algorithmic comparison; it does not establish
+end-to-end SEM performance, which is why the two-field case is a demonstration
+of the joined pipelines rather than a measurement of them.
+
+Ribbon rendering, being downstream of grouping, buys connectivity rather than
+identity: it delivers as single connected curves nearly all of the instances the
+core emits in several pieces, at a small cost in $F_1$, because the core paints
+arms and junction clusters but not the gap links that carry identity across a
+break. Silhouette absorption differs in kind, since it changes the partition
+itself, and so stays optional. Width and brightness can be reported for
+characterised instances, but their physical accuracy requires separate
+references.
 
 \subsection{Evidence boundary}
 \label{sec:limitations}
 
-The principal limitation is distributional. The 128 held-out scenes use
-independent seeds but the same procedural generator family used for
-development. Their confidence intervals quantify sampling variation within
-that family, not transfer to another simulator, specimen, microscope, or
-segmentation pipeline. The ablation and rendering studies are development-only
-and must remain secondary to the fixed held-out result.
+The principal limitation is distributional. The held-out scenes use independent
+seeds but the same procedural generator family used for development. Their
+confidence intervals quantify sampling variation within that family, not
+transfer to another simulator, specimen, microscope, or segmentation pipeline.
+The ablation and rendering studies are development-only and remain secondary to
+the fixed held-out result.
 
 The real SEM study is deliberately a case study with two fields, not a
-population validation. Manual-derived masks are an oracle-like input
-condition: they test grouping when the axis evidence is curated, not automatic
+population validation. Manual-derived masks are an oracle-like input condition:
+they test grouping when the axis evidence is curated, not automatic
 SEM-to-instance performance. B58\_100 is training-contaminated for the U-Net
-condition, whereas B58\_110 is documented as training-clean; only the latter can
-illustrate an unseen upstream mask, and one field cannot estimate
-generalisation. Moreover, manual-derived and U-Net masks generate different
-fragment universes. Their $F_1$ values therefore describe performance under
-each input condition but are not a paired comparison of identical objects.
-More independent fields, sealed before configuration, and annotations from
-multiple readers are required.
+condition and B58\_110 documented as training-clean, so only the latter
+illustrates an unseen upstream mask, and one field cannot estimate
+generalisation. The two mask sources also generate different fragment universes,
+so their $F_1$ values describe performance under each input condition rather
+than comparing identical objects. More independent fields, sealed before
+configuration, and annotations from multiple readers are required.
 
-Two further scope limits concern the output itself. First, PLECTA recovers
-projected two-dimensional identity. Shared pixels encode overlap but not which
-filament passes above another, so no three-dimensional topology follows.
-Second, the grouping metric evaluates ownership of centreline fragments and is
-not a validation of rendered width. Quantitative diameter claims require
-matched physical measurements across the relevant scale, contrast, and
-specimen ranges. Pairwise fragment scores also emphasise instances containing
-many fragments; object recovery and ARI are retained as complementary views.
+Two further limits concern the output itself. PLECTA recovers projected
+two-dimensional identity: shared pixels encode overlap but not which filament
+passes above another, so no three-dimensional topology follows. And the grouping
+metric evaluates ownership of centreline fragments, which is not a validation of
+rendered width; quantitative diameter claims require matched physical
+measurements across the relevant scale, contrast, and specimen ranges. Pairwise
+fragment scores also emphasise instances containing many fragments, which is why
+object recovery and ARI are kept alongside them.
 
 Both comparisons are bounded. The greedy rule is our reimplementation of a
-principle, not of any particular paper, and DNAi was run outside the domain it
-was built for: its own bundled test image holds five junction clusters against
-23 to 183 in ours, and part of its cost function reads a colour channel our
-masks do not have. What the two results support is narrow and mechanical --
+principle rather than of any particular paper, and DNAi was run outside the
+domain it was built for: its own bundled test image holds five junction clusters
+against 23 to 183 in ours, and part of its cost function reads a colour channel
+our masks do not have. What the two results support is narrow and mechanical,
 that pairing endpoints greedily, or committing to a pairing with no option to
-decline, loses identity in dense crossings -- not that PLECTA is generally
-superior. A ranking would need several released implementations run in their
-own regimes by their own authors.
+decline, loses identity in dense crossings. They do not support a claim that
+PLECTA is generally superior; that would need several released implementations
+run in their own regimes by their own authors.
 
-An independent procedural benchmark is a practical next test. The
+An independent procedural benchmark is the practical next test. The
 \texttt{merged\_lines} mask generator in the CNT\_SEM pipeline can export
 overlap-aware whole-bundle references and would add a different implementation
-and morphology model. It should supplement, not replace, the current generator:
-its field-of-view preset is presently calibrated to a narrow coverage regime,
-whereas the primary benchmark spans density. A multi-scene run should be made
-only after pooled calibration is fixed and its seeds are separated from any
-configuration work. No result from that generator is included in the present
-evidence. Broader validation should then extend to independent real masks and
-other filament domains while keeping input fragments and scoring rules fixed.
+and morphology model, but it should supplement rather than replace the current
+generator: its field-of-view preset is calibrated to a narrow coverage regime
+where the primary benchmark spans density. A multi-scene run should follow only
+once that calibration is fixed and its seeds separated from any configuration
+work, and no result from it is included here. Broader validation should then
+extend to independent real masks and other filament domains while keeping input
+fragments and scoring rules fixed.

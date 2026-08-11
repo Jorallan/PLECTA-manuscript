@@ -1,11 +1,12 @@
-Dense filament networks are difficult to partition into instances because
-crossings join distinct objects while segmentation gaps divide single objects.
-We present PLECTA, a deterministic method that converts a binary filament-axis
-mask into overlap-aware two-dimensional instances. PLECTA skeletonises and
-decomposes the mask into arms and junctions, alternates exact per-junction
+Dense filament networks resist instance segmentation because their two failure
+modes pull in opposite directions: crossings join distinct objects into one
+connected component, while gaps in the segmentation divide a single object into
+several. We present PLECTA, a deterministic method that converts a binary
+filament-axis mask into overlap-aware two-dimensional instances. It decomposes
+the skeletonised mask into arms and junctions, alternates exact per-junction
 continuation matching with globally gated gap matching, and re-estimates
-tangent, chord, and curvature evidence from the assembled chains. Crossing
-pixels may therefore belong to more than one output instance.
+tangent, chord, and curvature evidence from the assembled chains, so that a
+crossing pixel may belong to more than one output instance.
 
 Evaluation used a method-independent partition of each input skeleton into
 common fragments. On \PlectaHeldoutSceneCount{} independently seeded held-out
@@ -18,7 +19,7 @@ scenes from the same procedural generator, PLECTA achieved mean pairwise
 \PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
 \PlectaDensitySixZeroFOneMean{} at 60\%, identifying dense crossings as the main
 remaining regime of error. Against a greedy minimum-turning-angle continuation
-rule on identical masks, PLECTA gained \PlectaGreedyDeltaFOne{} \Fone{}
+rule on identical masks, PLECTA gained \PlectaGreedySweptDeltaFOne{} \Fone{}
 [\PlectaGreedyDeltaCILow{}, \PlectaGreedyDeltaCIHigh{}] over
 \PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} over a released
 implementation run from its own source at a development-selected configuration.
@@ -26,9 +27,10 @@ Development-only ablations showed that
 chord-turn evidence, gap bridging, and junction-topology consolidation made the
 largest contributions.
 
-CNT-sheet scanning electron microscopy provides the application case. An
-optional upstream synthetic-data-driven U-Net supplies the binary mask; SEM
-width measurement and ribbon rendering are downstream characterisation stages
-and did not affect the held-out grouping result. The evidence supports
-same-generator synthetic generalisation and a development illustration on real
-SEM data, not general real-image or three-dimensional reconstruction claims.
+CNT-sheet scanning electron microscopy is the proof-of-concept application: an
+upstream synthetic-data-driven CycleGAN/U-Net route prepares the binary masks
+that let the method run on real micrographs, while SEM width measurement and
+ribbon rendering are downstream stages that leave the grouping fixed. The
+evidence supports same-generator synthetic generalisation and a two-field
+demonstration on real SEM data, not general real-image or three-dimensional
+reconstruction claims.

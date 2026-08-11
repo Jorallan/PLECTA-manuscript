@@ -44,6 +44,9 @@ SOURCE = Path("C:/Repos/comparisons/filaseg_stubmatch_strandface/results")
 # publication-facing comparison.
 PLECTA = "stubmatch"
 GREEDY = "baseline_skeleton"
+# The swept rows live in their own file, keyed by a different method name.
+SWEPT_SOURCE = Path("C:/Repos/comparisons/dnai_comparison/results/greedy_sweep")
+SWEPT_METHOD = "greedy_baseline_swept"
 
 METRICS = ("f1", "precision", "recall", "fragment_recovery_recovery_rate",
            "adjusted_rand_index", "vi_split_bits", "vi_merge_bits",
@@ -60,6 +63,34 @@ def sha256(path: Path) -> str:
 def load(path: Path) -> list[dict]:
     with path.open(newline="", encoding="utf-8-sig") as handle:
         return list(csv.DictReader(handle))
+
+
+def merge_swept(rows: list[dict], variant: str) -> list[dict]:
+    """Replace the hand-set baseline rows with the development-swept ones.
+
+    The baseline was first run at hand-set gates with no scored selection
+    record. Those rows stay on disk; the manuscript reports the configuration
+    selected on the same development scenes PLECTA was configured on.
+    """
+    path = SWEPT_SOURCE / "testcmp10_greedy_handset_vs_swept.csv"
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        swept = [r for r in csv.DictReader(handle)
+                 if r["method"] == SWEPT_METHOD and r["mask_variant"] == variant]
+    by_scene = {r["scene_id"]: r for r in swept}
+    out = []
+    for row in rows:
+        if row["method"] != GREEDY:
+            out.append(row)
+            continue
+        key = f"{row['cov']}/{row['scene']}"
+        replacement = by_scene.get(key)
+        if replacement is None:
+            continue
+        merged = dict(row)
+        for field in METRICS:
+            merged[field] = replacement[field]
+        out.append(merged)
+    return out
 
 
 def paired(rows: list[dict]) -> tuple[list[dict], list[str]]:
@@ -148,8 +179,12 @@ def main() -> None:
             "rule": ("skeletonise, prune spurs, split into branches, then "
                      "greedily accept the lowest-turning-angle pairing between "
                      "branch ends within a distance and turning-angle gate"),
-            "max_gap_px": 28.0,
-            "max_turn_deg": 20.0,
+            "max_gap_px": 24.0,
+            "max_turn_deg": 15.0,
+            "selection": ("gates chosen by a grid sweep over the same 84 "
+                          "development scenes PLECTA was configured on, by "
+                          "mean common-fragment F1; the 50-scene comparison "
+                          "set was never consulted for selection"),
         },
         "bootstrap": {"replicates": N_BOOT, "seed": SEED,
                       "resampling": "within_density_paired_scene"},
@@ -159,7 +194,7 @@ def main() -> None:
     for variant, filename in (("degraded", "testcmp10_per_scene.csv"),
                               ("clean", "testcmp10_per_scene_clean.csv")):
         path = SOURCE / filename
-        records, dropped = paired(load(path))
+        records, dropped = paired(merge_swept(load(path), variant))
         payload["conditions"][variant] = {
             "source_file": str(path).replace("\\", "/"),
             "source_sha256": sha256(path),
