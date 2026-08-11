@@ -6,12 +6,17 @@ mask by alternating exact junction matching with gated gap matching as local
 arm geometry expands into chain-level evidence. The fixed method achieved
 common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on 128 independently seeded
 held-out scenes from the same procedural generator, with performance declining
-as network density increased. Development ablations identify crossing
-matching, gap bridging, and tangent evidence as the principal contributors.
-Optional image-informed rendering improves geometric presentation but remains
-separate from the grouping claim. Two real SEM fields demonstrate the workflow
-under manual-derived and U-Net masks, not population generalisation or width
+as network density increased. On identical masks it gained
+\PlectaGreedyDeltaFOne{} \Fone{} over a greedy minimum-turning-angle
+continuation rule, the rule shared by several published linkers, which supports
+solving each junction exactly rather than pairing endpoints in priority order.
+Development ablations identify junction chord-turn evidence, gap bridging, and
+junction-topology consolidation as the principal contributors. Optional
+image-informed rendering improves geometric presentation but remains separate
+from the grouping claim. Two real SEM fields demonstrate the workflow under
+manual-derived and U-Net masks, not population generalisation or width
 accuracy. The method therefore provides an inspectable, deterministic approach
 for projected filament identity; broader claims require independent real
-fields, validated physical widths, and an external-generator benchmark with a
-fixed calibration and sealed seeds.}
+fields, validated physical widths, a matched comparison against a released
+implementation, and an external-generator benchmark with a fixed calibration
+and sealed seeds.}

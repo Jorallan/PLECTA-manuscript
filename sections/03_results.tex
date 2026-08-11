@@ -36,6 +36,54 @@ the intermediate 30\% and 40\% means were \PlectaDensityThreeZeroFOneMean{} and
 90th percentile \PlectaHeldoutRuntimePNinety{}~s, and maximum
 \PlectaHeldoutRuntimeMaximum{}~s; these timings are hardware-specific.}
 
+\subsection{\rev{Comparison with greedy continuation}}
+\label{sec:res-greedy}
+
+\rev{The contribution claimed in Section~\ref{sec:intro} is that a junction is
+better solved as one exact matching, with an explicit priced option to leave an
+arm unmatched, than by pairing endpoints greedily. Greedy priority-ranked
+pairing is the rule used by SIFNE, by GraFT's path cover, and by the continuity
+baseline of Wegmayr et al.\ \citep{zhang2017sifne,osterlund2026graft,%
+wegmayr2020microplastic}, so the claim is tested directly against it. The
+comparator skeletonises the same mask, prunes spurs, splits the skeleton into
+branches, and then greedily accepts the lowest-turning-angle pairing between
+branch ends within a distance gate of 28~px and a turning-angle gate of
+$20^\circ$. Both methods received identical masks and were scored through the
+same common-fragment procedure on
+\PlectaGreedySceneCount{} scenes generated after both configurations were
+fixed.}
+
+\rev{PLECTA scored \PlectaGreedyPlectaFOne{} against
+\PlectaGreedyBaselineFOne{}, a paired difference of
+\PlectaGreedyDeltaFOne{} (95\% CI [\PlectaGreedyDeltaCILow{},
+\PlectaGreedyDeltaCIHigh{}]), and was better in
+\PlectaGreedyWinCount{} of \PlectaGreedySceneCount{} scenes
+(Table~\ref{tab:plecta-greedy}). Adjusted Rand index and variation of
+information rank the two methods the same way, so the result does not depend on
+the in-house measure. The gap is widest in recall and in reference-instance
+recovery, which is the expected signature: a greedy pass commits to the locally
+straightest continuation and cannot revise it when that choice leaves a better
+partner stranded, so single filaments are left divided. On clean axes the
+difference was \PlectaGreedyCleanDeltaFOne{}
+[\PlectaGreedyCleanDeltaCILow{}, \PlectaGreedyCleanDeltaCIHigh{}], so it is not
+an artefact of mask degradation.}
+
+\begin{table}[t]
+    \centering
+    \caption{\rev{PLECTA against a greedy minimum-turning-angle continuation
+    baseline on \PlectaGreedySceneCount{} scenes with identical input masks and
+    one scorer. Differences are paired, with density-stratified 95\% bootstrap
+    intervals.}}
+    \label{tab:plecta-greedy}
+    \small
+    \input{results/plecta_greedy_table}
+\end{table}
+
+\rev{This is a comparison against one transparent rule, not against the
+published methods that use it, and it is limited to this generator. Section
+\ref{sec:limitations} states what a matched comparison against a released
+implementation would still require.}
+
 \subsection{\rev{Input-mask robustness}}
 \label{sec:res-mask}
 
