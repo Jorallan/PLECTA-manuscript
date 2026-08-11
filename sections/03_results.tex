@@ -55,15 +55,16 @@ testing robustness to a different image distribution.}
 \rev{One-at-a-time ablations were evaluated only on the
 \PlectaDevelopmentSceneCount{} development scenes
 (Table~\ref{tab:plecta-ablation}; Figure~\ref{fig:plecta-performance}b).
-Relative to the evaluated configuration, using tangent evidence alone changed
-\Fone{} by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap matching by
-\PlectaAblationNoGapBridgingDeltaFOne{}, and removing crossing matching by
+Relative to the evaluated configuration, removing the junction chord-turn term
+changed \Fone{} by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing gap
+matching by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
+connector-based junction-cluster consolidation by
 \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Removing chain-extended
 frames and using a single round produced smaller changes of
 \PlectaAblationNoChainExtendedFramesDeltaFOne{} and
 \PlectaAblationSingleRoundDeltaFOne{}. These development results identify
-chord-aware continuation, gap matching, and crossing matching as the largest
-tested contributors; they are not held-out effect estimates.}
+chord-aware continuation, gap matching, and junction-topology preconditioning
+as the largest tested contributors; they are not held-out effect estimates.}
 
 \begin{table}[t]
     \centering

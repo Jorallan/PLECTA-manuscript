@@ -13,10 +13,11 @@ estimates from the chains assembled so far. Shared crossing pixels remain in
 each applicable instance rather than being forced into one label.}
 
 \rev{The ablations support this interpretation but do not prove that every
-term is independently necessary. On the development set, using only tangent
-evidence reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{}, removing
-gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and removing crossing
-matching by \PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing
+term is independently necessary. On the development set, removing the junction
+chord-turn term reduced $F_1$ by \PlectaAblationTangentTermOnlyDeltaFOne{},
+removing gap bridging by \PlectaAblationNoGapBridgingDeltaFOne{}, and disabling
+connector-based junction-cluster consolidation by
+\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}. Preventing
 chain-extended frames produced a smaller decrease of
 \PlectaAblationNoChainExtendedFramesDeltaFOne{}. Thus the largest gains arise
 from solving both kinds of discontinuity---junctions and missing mask
