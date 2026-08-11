@@ -1,5 +1,6 @@
 %==============================================================================
-%  PLECTA: overlap-aware instance reconstruction of dense filament networks
+%  FilaSeg: Geometry-based instance reconstruction of carbon nanotube bundles
+%  from degraded centreline masks
 %
 %  Working format: Materials Characterization research article
 %  (Introduction / Materials and methods / Results / Discussion / Conclusions).
@@ -7,7 +8,10 @@
 %  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf main.tex).
 %  Uses only standard CTAN packages.
 %
-%  Open author-supplied metadata are flagged with \todo{} or \needed{}.
+%  WORKING DRAFT - NOT THE SUBMISSION VERSION.
+%  Several Materials-and-methods and Discussion subsections are still condensed
+%  to short summaries. Open points are flagged inline with \note{}, \todo{} and
+%  \needed{} so they stay visible while we finish the draft.
 %==============================================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -30,44 +34,14 @@
 \usepackage{enumitem}
 \usepackage{parskip}
 \usepackage{url}
+\usepackage[colorinlistoftodos,textwidth=4cm,shadow]{todonotes}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
-\hypersetup{
-  pdftitle={PLECTA: Overlap-aware instance reconstruction of dense filament networks from binary masks},
-  pdfauthor={Oday Allan, Stefan Luding, Igor Ostanin},
-  pdfkeywords={filament networks, instance segmentation, graph matching, carbon nanotubes, scanning electron microscopy}
-}
 
 %------------------------------- style ----------------------------------------
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
-%  \rev{...} marked revised passages in cyan. Nearly the whole manuscript ended
-%  up inside it, so the colour stopped carrying information and the draft is now
-%  restructured as plain text. The macro is kept as a no-op so any stray call
-%  still typesets normally; set the body to \textcolor{revisioncyan}{#1} to turn
-%  marking back on.
-\definecolor{revisioncyan}{HTML}{00A6C8}
-\newcommand{\rev}[1]{#1}
-\newcommand{\supervisorcomment}[1]{\par\smallskip\noindent%
-  \textcolor{purple!75!black}{\textbf{Supervisor comment:} #1}\par\smallskip}
-
-%------------------------------------------------------------------------------
-%  \Igor{...} - supervisor comments, carried over verbatim from the Overleaf
-%  project (branch overleaf-2026-08-11-0842). Overleaf rendered these through
-%  todonotes; that package defines its own \todo and would collide with ours
-%  below, so they are typeset here instead. Numbered, and never edited.
-%  \igorreply{...} is our response, and is ours, not Igor's.
-%------------------------------------------------------------------------------
-\newcounter{igorcomment}
-\newcommand{\Igor}[1]{%
-  \par\smallskip\refstepcounter{igorcomment}\noindent%
-  \begin{minipage}{\linewidth}%
-  \small\colorbox{green!8}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
-    \textcolor{green!30!black}{\textbf{[Igor~\theigorcomment]}}~#1}}%
-  \end{minipage}\par\smallskip}
-\newcommand{\igorreply}[1]{\par\noindent{\small\textcolor{green!30!black}{%
-  \textbf{[Response]}}~#1}\par\smallskip}
 \captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
@@ -76,6 +50,8 @@
 \newcommand{\undermerge}{\textit{under-merge}}
 \newcommand{\Overmerge}{\textit{Over-merge}}
 \newcommand{\Undermerge}{\textit{Under-merge}}
+
+
 
 %------------------------------------------------------------------------------
 %  \todo{...} - a short reminder to ourselves about something still to be
@@ -100,16 +76,28 @@
 \newcommand{\note}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Note:} #1}\par\smallskip}
 \newcommand{\reviewnote}[1]{\note{#1}}      % older name, kept so both still work
 
+\newcounter{Igor}
+\newcommand{\Igor}[1]{
+	\refstepcounter{Igor}{
+		\todo[inline,color={green!11!green!22},size=\small]{\textbf{[Igor\theIgor]:}~#1}
+	}
+}
+
+
 %------------------------------------------------------------------------------
 %  Generated numerical results.
 %
-%  results/plecta_results.tex is generated from the machine-readable PLECTA
-%  records by scripts/results/make_plecta_results.py. Do not edit it directly.
+%  paper/results/filaseg_results.tex is written by
+%  paper/scripts/results/make_result_macros.py from the machine-readable evaluation
+%  records under paper/results/. It is the single numerical source of truth:
+%  every headline value in the Abstract, Results, Discussion, Conclusions and
+%  the tables is a macro defined there, so no number is typed by hand in more
+%  than one place. Do not edit the generated file.
 %------------------------------------------------------------------------------
-\input{results/plecta_results}
+\input{results/filaseg_results}
 
-\title{\vspace{-1.2cm}\bfseries PLECTA: Overlap-aware instance
-reconstruction of dense filament networks from binary masks}
+\title{\vspace{-1.2cm}\bfseries FilaSeg: Geometry-based instance reconstruction
+of carbon nanotube bundles from degraded centreline masks}
 
 \author{%
   \begin{minipage}{0.94\textwidth}
@@ -134,19 +122,29 @@ reconstruction of dense filament networks from binary masks}
 \input{sections/00_abstract}
 \end{abstract}
 
-\noindent\textbf{Keywords:} filament networks; instance segmentation;
-graph matching; geometric reconstruction; carbon nanotubes; scanning electron
-microscopy.
+\Igor{I must say I'm not quite happy with FilaSeg - we need to come up with a better name of the software. I think we do more than just "Seg", I'd avoid that in the name anyways. I would not go towards something trivial like FIBER or STRING either - not enough distinctive. I find attractive something like REUSS, OCCAM or COSSERAT - with reference to physics/mechanics besides the meaning in abbreviation. But that's your baby of course, your word will be the last.}
 
-\Igor{I must say I'm not quite happy with FilaSeg - we need to come up with a
-better name of the software. I think we do more than just "Seg", I'd avoid that
-in the name anyways. I would not go towards something trivial like FIBER or
-STRING either - not enough distinctive. I find attractive something like REUSS,
-OCCAM or COSSERAT - with reference to physics/mechanics besides the meaning in
-abbreviation. But that's your baby of course, your word will be the last.}
-\igorreply{Addressed. The method is now PLECTA, after Latin \emph{plecta},
-a braid or twisted rope. It carries a meaning tied to what the method does,
-avoids \emph{Seg}, and is not generic. No expansion is forced onto the letters.}
+\note{A broader upstream pipeline also exists around the method described in
+this manuscript: real SEM images and procedurally generated masks $\to$
+CycleGAN image translation $\to$ U-Net semantic segmentation $\to$ binary CNT
+bundle-axis mask $\to$ FilaSeg instance extraction $\to$ SEM-assisted Stage-4
+width estimation, overlap handling, and rendering. This manuscript currently
+treats the binary axis mask as the formal input and evaluates only the
+instance-extraction stages. To discuss:
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
+  \item Should the complete upstream CycleGAN/U-Net pipeline be integrated
+  into this paper?
+  \item Should it instead remain a separate paper or companion workflow?
+  \item Should the current manuscript continue to treat the binary axis mask
+  as the formal input?
+  \item Give Stage 4 (SEM-assisted measurement/postprocessing) its own
+  discussion.
+\end{itemize}
+}
+
+\noindent\textbf{Keywords:} carbon nanotubes; scanning electron microscopy;
+instance segmentation; curvilinear structure extraction; Hough transform;
+filament tracing; image-based microstructural characterization.
 
 \input{sections/01_introduction}
 \input{sections/02_materials_methods}
@@ -165,19 +163,25 @@ personal relationships that could have appeared to influence the work reported
 in this paper.
 
 \section*{Data and code availability}
-The PLECTA source, complete fixed configuration, compact seed manifest,
-and aggregate machine-readable evidence are available at
-\url{https://github.com/Jorallan/PLECTA}. Generated scenes, detailed per-scene
-records, and development diagnostics are retained locally.
-\todo{Create a tagged archival release and add its DOI before submission; do
-not infer or preassign a DOI.}
+The FilaSeg source code, the procedural synthetic benchmark generator, the
+evaluation subsystem, and the manually annotated real test crop are contained in
+the accompanying repository. Every numerical result reported here is reproducible
+from that repository using the commands, environment versions, configuration
+hashes and seeds recorded in \texttt{docs/REPRODUCIBILITY.md}, together with the
+per-scene evaluation manifest distributed with the manuscript.
+\todo{Replace the repository link with a citable archived release (a Zenodo DOI
+or a tagged GitHub release) before submission, and confirm a clean checkout
+reproduces the reported numbers first -- see Section~\ref{sec:limitations}.}
 
 \section*{Acknowledgements}
-The authors thank the maintainers of NumPy, SciPy, scikit-image, NetworkX,
-and Matplotlib. The upstream synthetic-data-driven mask workflow adapts the
-open CycleGAN/U-Net particle-segmentation workflow of Rühle et
-al.~\citep{ruehle2021workflow}; it is not evaluated as the contribution of this
-paper.
+The authors thank the maintainers of the open-source scientific-Python stack
+(NumPy, SciPy, scikit-image, OpenCV, Matplotlib) on which this work is built.
+The binary centreline masks used in the real case study were produced by a
+separate synthetic-data-driven segmentation workflow (Section~\ref{sec:mm-masks})
+that adapts the open CycleGAN/U-Net particle-segmentation workflow of Rühle and
+colleagues at BAM (Bundesanstalt für Materialforschung und
+-prüfung)~\citep{ruehle2021workflow}; that workflow is not evaluated here and we
+gratefully acknowledge its authors.
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}
