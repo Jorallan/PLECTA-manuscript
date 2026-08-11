@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "method": "one_instance_per_connected_component",
+  "population": "same 128 held-out scenes as PLECTA",
+  "n_scenes": 128,
+  "n_failed": 0,
+  "summary": {
+    "f1": 0.08547276604390941,
+    "precision": 0.046820275898323334,
+    "recall": 0.8501880010401788,
+    "fragment_recovery": 0.10368911120403232,
+    "adjusted_rand_index": 0.034764613813364154,
+    "vi_split_bits": 0.269165174733225,
+    "vi_merge_bits": 4.103215317352971
+  },
+  "f1_by_coverage": {
+    "20": 0.15971508565275944,
+    "30": 0.09810770976214706,
+    "40": 0.05195706539749028,
+    "60": 0.03211120336324085
+  },
+  "source_record": "PLECTA .local/evaluation/results/baseline_cc_heldout.json",
+  "interpretation": "A diagnostic floor, not a competitive filament tracer. It preserves many same-filament pairs but merges different filaments within connected networks."
+}

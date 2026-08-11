@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "scope": "development-only synthetic validation of optional image characterization",
+  "n_scenes": 84,
+  "purity_threshold": 0.9,
+  "n_instances": 3059,
+  "width_vs_renderer_truth": {
+    "pearson_r": 0.963834,
+    "spearman_r": 0.977581,
+    "mae_px": 0.268243,
+    "median_absolute_error_px": 0.132455,
+    "rmse_px": 0.744535
+  },
+  "quality_stratified_interval": {
+    "nominal_coverage": 0.9,
+    "scene_cross_validated_coverage": 0.8987,
+    "n_instances": 3059
+  },
+  "source_record": "PLECTA .local/archive/internal_report/docs/analysis/results/validation_dev.json",
+  "limitation": "The reference is the known synthetic renderer width. These results do not validate physical CNT diameter or transfer to real SEM."
+}
