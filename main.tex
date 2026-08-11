@@ -46,6 +46,23 @@
 \newcommand{\rev}[1]{\textcolor{revisioncyan}{#1}}
 \newcommand{\supervisorcomment}[1]{\par\smallskip\noindent%
   \textcolor{purple!75!black}{\textbf{Supervisor comment:} #1}\par\smallskip}
+
+%------------------------------------------------------------------------------
+%  \Igor{...} - supervisor comments, carried over verbatim from the Overleaf
+%  project (branch overleaf-2026-08-11-0842). Overleaf rendered these through
+%  todonotes; that package defines its own \todo and would collide with ours
+%  below, so they are typeset here instead. Numbered, and never edited.
+%  \igorreply{...} is our response, and is ours, not Igor's.
+%------------------------------------------------------------------------------
+\newcounter{igorcomment}
+\newcommand{\Igor}[1]{%
+  \par\smallskip\refstepcounter{igorcomment}\noindent%
+  \begin{minipage}{\linewidth}%
+  \small\colorbox{green!8}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+    \textcolor{green!30!black}{\textbf{[Igor~\theigorcomment]}}~#1}}%
+  \end{minipage}\par\smallskip}
+\newcommand{\igorreply}[1]{\par\noindent{\small\textcolor{green!30!black}{%
+  \textbf{[Response]}}~\rev{#1}}\par\smallskip}
 \captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
@@ -115,6 +132,16 @@ reconstruction of dense filament networks from binary masks}}
 \noindent\textbf{Keywords:} \rev{filament networks; instance segmentation;
 graph matching; geometric reconstruction; carbon nanotubes; scanning electron
 microscopy.}
+
+\Igor{I must say I'm not quite happy with FilaSeg - we need to come up with a
+better name of the software. I think we do more than just "Seg", I'd avoid that
+in the name anyways. I would not go towards something trivial like FIBER or
+STRING either - not enough distinctive. I find attractive something like REUSS,
+OCCAM or COSSERAT - with reference to physics/mechanics besides the meaning in
+abbreviation. But that's your baby of course, your word will be the last.}
+\igorreply{Addressed. The method is now PLECTA, after Latin \emph{plecta},
+a braid or twisted rope. It carries a meaning tied to what the method does,
+avoids \emph{Seg}, and is not generic. No expansion is forced onto the letters.}
 
 \input{sections/01_introduction}
 \input{sections/02_materials_methods}

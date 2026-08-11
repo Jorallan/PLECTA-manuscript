@@ -1,6 +1,24 @@
 \section{\rev{Introduction}}
 \label{sec:intro}
 
+\Igor{The paper definitely should have one (and only one) focused, bright
+central idea. My preference - we present a black box that magically transforms
+microphotographs of entangled bundles of sticky elastic rods into
+high-resolution, segmented 3D models. We can frame it as the story about CNTs
+and make it carbon-specific or talk about arbitrary systems (spagetti, straw,
+bone tissue etc) and make it an image analysis paper. But we certainly should
+not pick separate elements of the pipeline and discus only those - this way the
+value of the paper becomes incrementally small.}
+\igorreply{Open decision, not yet settled. The single central idea here is
+\emph{recovering individual filament identity through crossings}, and the paper
+is built around it end to end: micrograph, mask, instances, geometry. Two
+constraints pull against the wider framing. The reconstruction is projected and
+two-dimensional, so \emph{3D models} would overclaim unless we add depth
+evidence; and the upstream segmenter is a separate contribution with its own
+evaluation, so folding it in would mean defending two methods at once. The
+current draft therefore keeps the CNT story as the application and the
+identity problem as the idea. Please say if you would rather we widen it.}
+
 \rev{The properties of carbon-nanotube (CNT) sheets, yarns, and composites
 depend on the geometry of their bundle networks: length, width, orientation,
 curvature, and contact topology influence mechanical and electrical response
@@ -50,14 +68,13 @@ optional CycleGAN/U-Net route supplies masks for the SEM application
 \citep{ruehle2021workflow,allan2026cntsem}, but it is not the principal
 contribution.}
 
-\rev{We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents
-and Assignment), a deterministic graph-matching method for dense filament
-networks. PLECTA decomposes a skeleton into arms, endpoint stubs, and merged
-junction nodes. It then alternates exact per-node continuation matching with
-globally gated gap matching while tangent and curvature estimates expand from
-local arms to assembled chains. Its output is a set of projected 2-D instance
-layers in which crossing pixels may be shared. The name evokes the Latin
-\emph{plectere}, to weave or interlace, without implying recovery of depth.}
+\rev{We introduce PLECTA, a deterministic graph-matching method for dense
+filament networks, named after the Latin \emph{plecta}, a braid. PLECTA
+decomposes a skeleton into arms, endpoint stubs, and merged junction nodes. It
+then alternates exact per-node continuation matching with globally gated gap
+matching while tangent and curvature estimates expand from local arms to
+assembled chains. Its output is a set of projected 2-D instance layers in which
+crossing pixels may be shared.}
 
 \rev{The study asks three questions. First, how accurately does the fixed
 method group method-independent skeleton fragments on unseen procedural scenes,
