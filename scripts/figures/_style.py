@@ -73,7 +73,15 @@ def save_fig(fig, name, subdir=None, **kwargs):
     os.makedirs(out_dir, exist_ok=True)
     pdf_path = os.path.join(out_dir, f"{name}.pdf")
     png_path = os.path.join(out_dir, f"{name}.png")
-    fig.savefig(pdf_path, **kwargs)
+    #  Omit the PDF's /CreationDate. Without this every figure PDF differs from
+    #  its committed copy in one timestamp after any regeneration, and
+    #  check_type_scale.py regenerates all of them by design -- so running the
+    #  mandatory gate left fourteen files dirty and a figure diff meant
+    #  nothing. With it, a figure PDF changes when, and only when, the picture
+    #  does. Caller metadata wins, so a generator can still override.
+    pdf_kwargs = dict(kwargs)
+    pdf_kwargs["metadata"] = {"CreationDate": None, **kwargs.get("metadata", {})}
+    fig.savefig(pdf_path, **pdf_kwargs)
     fig.savefig(png_path, dpi=300, **kwargs)
     print(f"[saved] {pdf_path}")
     print(f"[saved] {png_path}")
