@@ -4,6 +4,7 @@
   "detection_metric": "DNAi's greedy-IoU object detection F1, at its shipped IoU threshold of 0.1. The tolerance is the symmetric placement tolerance of the completeness/correctness/quality triple: a reference pixel counts as found when the prediction passes within it. At 0 px it is the vendor's strict overlap exactly.",
   "join_metric": "one count per decision the mask poses -- a pair of fragment ends within PLECTA's own gap_max_len of 85 px -- instead of one per pair of fragments, so a filament the mask breaks into n pieces poses n-1 decisions rather than C(n,2) pairs",
   "why_the_tolerance_is_not_a_free_gain": "on the manual-derived axis, where the input mask is a skeleton of the annotation itself and nothing is displaced, the tolerance moves the detection score by 0.000; the whole of its effect is on the U-Net axis, where two independent readings of the same field are being compared",
+  "cldice_verdict": "centreline Dice (Shit et al. 2021), which FISBe substitutes for IoU on long thin objects, was tried as the matching criterion and does not solve this. At its published definition it still falls from 0.94 on the manual-derived axis to 0.34 on the U-Net one -- the same collapse the raw IoU shows. It reads above the raw IoU's 0.14 only because Dice is a more generous normalisation than Jaccard, not because it forgives displacement: on a synthetic line displaced by two pixels it scores exactly 0.000. The structural reason is that clDice tests each side's skeleton against the other side's volume, and what this paper evaluates is a centreline grouping, so the prediction has no volume for its second term to test against. Given the same width allowance it reaches 0.70, slightly above the tolerant IoU, because it is then doing the same job",
   "what_it_does_not_show": "neither reading closes the gap between the two mask sources. The join score narrows it from a factor of 2.0 to a factor of 1.7 and the tolerant detection score leaves 0.62 to 0.67 against 0.93 to 0.94. Both conditions remain exploratory development cases, n=2 images, no inference",
   "reported_tolerance_px": 3,
   "iou_threshold": 0.1,
@@ -13,11 +14,19 @@
     "script": "scripts/real_detection_f1.py",
     "json": {
       "file": "results/real_detection_f1.json",
-      "sha256": "97f9fe4c16d3ba2985541a0b2191a182925cc2d9f933decdca0007f01c913325"
+      "sha256": "c638e4b790e71dfc848da1b05caa034c7f6e1101df775e11b1b2f6b3543416e5"
     }
   },
   "conditions": [
     {
+      "cldice_f1_strict": 0.9444444444444444,
+      "cldice_f1_widened": 0.9444444444444444,
+      "cldice_by_width": {
+        "0": 0.9444444444444444,
+        "1": 0.9444444444444444,
+        "2": 0.9444444444444444,
+        "3": 0.9444444444444444
+      },
       "image": "B58_100",
       "input_axis": "manual-derived",
       "pairwise_f1": 0.8824069820854387,
@@ -40,6 +49,14 @@
       "unassigned_fraction_at_zero": 0.0
     },
     {
+      "cldice_f1_strict": 0.34062499999999996,
+      "cldice_f1_widened": 0.703125,
+      "cldice_by_width": {
+        "0": 0.34062499999999996,
+        "1": 0.634375,
+        "2": 0.678125,
+        "3": 0.703125
+      },
       "image": "B58_100",
       "input_axis": "U-Net",
       "pairwise_f1": 0.43792915531335147,
@@ -62,6 +79,14 @@
       "unassigned_fraction_at_zero": 0.0238290879211175
     },
     {
+      "cldice_f1_strict": 0.9325153374233128,
+      "cldice_f1_widened": 0.9349693251533742,
+      "cldice_by_width": {
+        "0": 0.9325153374233128,
+        "1": 0.9325153374233128,
+        "2": 0.9349693251533742,
+        "3": 0.9349693251533742
+      },
       "image": "B58_110",
       "input_axis": "manual-derived",
       "pairwise_f1": 0.8367144977733795,
@@ -84,6 +109,14 @@
       "unassigned_fraction_at_zero": 0.0
     },
     {
+      "cldice_f1_strict": 0.35250917992656056,
+      "cldice_f1_widened": 0.6829865361077111,
+      "cldice_by_width": {
+        "0": 0.35250917992656056,
+        "1": 0.6144430844553244,
+        "2": 0.6585067319461444,
+        "3": 0.6829865361077111
+      },
       "image": "B58_110",
       "input_axis": "U-Net",
       "pairwise_f1": 0.4519171113041321,

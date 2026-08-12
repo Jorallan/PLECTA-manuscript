@@ -570,7 +570,14 @@ two one-pixel centrelines two pixels apart intersect in nothing. Allowed the
 same \PlectaMaskQualityTolerance{}-px placement tolerance as the triple above,
 they read \PlectaDetectionBFiveEightOneZeroZeroUNetTolerant{} and
 \PlectaDetectionBFiveEightOneOneZeroUNetTolerant{}, while the manual-derived
-figures do not move at all, there being nothing displaced there to forgive. The
+figures do not move at all, there being nothing displaced there to forgive.
+Centreline Dice \citep{shit2021cldice}, which the thin-structure benchmark of
+\citet{mais2024fisbe} substitutes for overlap in this exact situation, does not
+avoid the problem: it tests each side's skeleton against the other's
+\emph{volume}, and a centreline grouping has none, so it falls the same way
+(\PlectaClDiceBFiveEightOneZeroZeroUNetStrict{} against
+\PlectaClDiceBFiveEightOneZeroZeroManualStrict{}) and needs the same width
+allowance to recover. The
 pairwise score is separately quadratic in fragments, so a filament the U-Net
 mask breaks into several pieces carries every one of its pairs; counting
 instead one decision per pair of fragment ends the mask brings within the

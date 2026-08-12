@@ -87,8 +87,12 @@ def main() -> None:
                             % (row["field"], row["input_axis"], was,
                                row["pairwise_f1"]))
         det = row["detection_by_tolerance"]
+        cld = row["cldice_by_width"]
         join = row["join"]
         conditions.append({
+            "cldice_f1_strict": cld[STRICT_TOL][IOU]["detection_f1"],
+            "cldice_f1_widened": cld[REPORTED_TOL][IOU]["detection_f1"],
+            "cldice_by_width": {w: cld[w][IOU]["detection_f1"] for w in cld},
             "image": row["field"],
             "input_axis": row["input_axis"],
             "pairwise_f1": row["pairwise_f1"],
@@ -139,6 +143,21 @@ def main() -> None:
             "moves the detection score by 0.000; the whole of its effect is on "
             "the U-Net axis, where two independent readings of the same field "
             "are being compared"),
+        "cldice_verdict": (
+            "centreline Dice (Shit et al. 2021), which FISBe substitutes for "
+            "IoU on long thin objects, was tried as the matching criterion and "
+            "does not solve this. At its published definition it still falls "
+            "from 0.94 on the manual-derived axis to 0.34 on the U-Net one -- "
+            "the same collapse the raw IoU shows. It reads above the raw IoU's "
+            "0.14 only because Dice is a more generous normalisation than "
+            "Jaccard, not because it forgives displacement: on a synthetic "
+            "line displaced by two pixels it scores exactly 0.000. The "
+            "structural reason is that clDice tests each side's skeleton "
+            "against the other side's volume, and what this paper evaluates is "
+            "a centreline grouping, so the prediction has no volume for its "
+            "second term to test against. Given the same width allowance it "
+            "reaches 0.70, slightly above the tolerant IoU, because it is then "
+            "doing the same job"),
         "what_it_does_not_show": (
             "neither reading closes the gap between the two mask sources. The "
             "join score narrows it from a factor of 2.0 to a factor of 1.7 and "
@@ -161,13 +180,14 @@ def main() -> None:
     destination.write_text(json.dumps(payload, indent=2) + "\n",
                            encoding="utf-8")
     print("wrote", destination)
-    print("\n%-9s %-15s %9s %9s %9s %9s %9s %10s"
+    print("\n%-9s %-15s %9s %9s %9s %9s %9s %9s %9s %10s"
           % ("field", "input axis", "pairwise", "det(0px)", "det(3px)",
-             "join F1", "join P", "decisions"))
+             "clD(0px)", "clD(3px)", "join F1", "join P", "decisions"))
     for c in conditions:
-        print("%-9s %-15s %9.3f %9.3f %9.3f %9.3f %9.3f %10d"
+        print("%-9s %-15s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %10d"
               % (c["image"], c["input_axis"], c["pairwise_f1"],
                  c["detection_f1_strict"], c["detection_f1_tolerant"],
+                 c["cldice_f1_strict"], c["cldice_f1_widened"],
                  c["join_f1"], c["join_precision"], c["n_decisions"]))
     print("\nparity: all four pairwise values reproduce "
           "results/plecta_real_masks.json.")
