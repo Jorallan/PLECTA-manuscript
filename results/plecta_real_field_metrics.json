@@ -1,0 +1,109 @@
+{
+  "role": "two gentler readings of the two real fields of Section 3.7, on the identical predictions the pairwise score is computed from; neither replaces it",
+  "parity": "the study re-runs PLECTA from the frozen package and its pairwise score reproduces all four values results/plecta_real_masks.json already prints, within 0.005",
+  "detection_metric": "DNAi's greedy-IoU object detection F1, at its shipped IoU threshold of 0.1. The tolerance is the symmetric placement tolerance of the completeness/correctness/quality triple: a reference pixel counts as found when the prediction passes within it. At 0 px it is the vendor's strict overlap exactly.",
+  "join_metric": "one count per decision the mask poses -- a pair of fragment ends within PLECTA's own gap_max_len of 85 px -- instead of one per pair of fragments, so a filament the mask breaks into n pieces poses n-1 decisions rather than C(n,2) pairs",
+  "why_the_tolerance_is_not_a_free_gain": "on the manual-derived axis, where the input mask is a skeleton of the annotation itself and nothing is displaced, the tolerance moves the detection score by 0.000; the whole of its effect is on the U-Net axis, where two independent readings of the same field are being compared",
+  "what_it_does_not_show": "neither reading closes the gap between the two mask sources. The join score narrows it from a factor of 2.0 to a factor of 1.7 and the tolerant detection score leaves 0.62 to 0.67 against 0.93 to 0.94. Both conditions remain exploratory development cases, n=2 images, no inference",
+  "reported_tolerance_px": 3,
+  "iou_threshold": 0.1,
+  "join_reach_px": 85.0,
+  "source_record": {
+    "study": "C:/Repos/comparisons/graft_regime",
+    "script": "scripts/real_detection_f1.py",
+    "json": {
+      "file": "results/real_detection_f1.json",
+      "sha256": "97f9fe4c16d3ba2985541a0b2191a182925cc2d9f933decdca0007f01c913325"
+    }
+  },
+  "conditions": [
+    {
+      "image": "B58_100",
+      "input_axis": "manual-derived",
+      "pairwise_f1": 0.8824069820854387,
+      "detection_f1_strict": 0.9407407407407407,
+      "detection_f1_tolerant": 0.9407407407407407,
+      "detection_f1_strict_iou_half": 0.9185185185185185,
+      "detection_f1_tolerant_iou_half": 0.9222222222222222,
+      "detection_by_tolerance": {
+        "0": 0.9407407407407407,
+        "1": 0.9407407407407407,
+        "2": 0.9407407407407407,
+        "3": 0.9407407407407407
+      },
+      "join_f1": 0.9249884951679704,
+      "join_precision": 0.9203296703296703,
+      "join_recall": 0.9296947271045328,
+      "n_decisions": 11650,
+      "n_true_joins": 1081,
+      "unassigned_fraction_at_default": 0.0,
+      "unassigned_fraction_at_zero": 0.0
+    },
+    {
+      "image": "B58_100",
+      "input_axis": "U-Net",
+      "pairwise_f1": 0.43792915531335147,
+      "detection_f1_strict": 0.14375,
+      "detection_f1_tolerant": 0.6656249999999999,
+      "detection_f1_strict_iou_half": 0.0,
+      "detection_f1_tolerant_iou_half": 0.325,
+      "detection_by_tolerance": {
+        "0": 0.14375,
+        "1": 0.5375,
+        "2": 0.628125,
+        "3": 0.6656249999999999
+      },
+      "join_f1": 0.5364156102411136,
+      "join_precision": 0.6850793650793651,
+      "join_recall": 0.44076797385620914,
+      "n_decisions": 17233,
+      "n_true_joins": 2448,
+      "unassigned_fraction_at_default": 0.010682004930156122,
+      "unassigned_fraction_at_zero": 0.0238290879211175
+    },
+    {
+      "image": "B58_110",
+      "input_axis": "manual-derived",
+      "pairwise_f1": 0.8367144977733795,
+      "detection_f1_strict": 0.9300613496932515,
+      "detection_f1_tolerant": 0.9300613496932515,
+      "detection_f1_strict_iou_half": 0.9030674846625767,
+      "detection_f1_tolerant_iou_half": 0.905521472392638,
+      "detection_by_tolerance": {
+        "0": 0.9300613496932515,
+        "1": 0.9300613496932515,
+        "2": 0.9300613496932515,
+        "3": 0.9300613496932515
+      },
+      "join_f1": 0.9107598164201939,
+      "join_precision": 0.9006555723651034,
+      "join_recall": 0.9210933470861269,
+      "n_decisions": 24870,
+      "n_true_joins": 1939,
+      "unassigned_fraction_at_default": 0.0,
+      "unassigned_fraction_at_zero": 0.0
+    },
+    {
+      "image": "B58_110",
+      "input_axis": "U-Net",
+      "pairwise_f1": 0.4519171113041321,
+      "detection_f1_strict": 0.17870257037943696,
+      "detection_f1_tolerant": 0.6242350061199511,
+      "detection_f1_strict_iou_half": 0.0,
+      "detection_f1_tolerant_iou_half": 0.24724602203182378,
+      "detection_by_tolerance": {
+        "0": 0.17870257037943696,
+        "1": 0.5605875152998776,
+        "2": 0.602203182374541,
+        "3": 0.6242350061199511
+      },
+      "join_f1": 0.5928694652098907,
+      "join_precision": 0.6805280528052805,
+      "join_recall": 0.5252165053489557,
+      "n_decisions": 16134,
+      "n_true_joins": 1963,
+      "unassigned_fraction_at_default": 0.004893964110929853,
+      "unassigned_fraction_at_zero": 0.017128874388254486
+    }
+  ]
+}

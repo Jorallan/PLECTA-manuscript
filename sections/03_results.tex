@@ -545,15 +545,37 @@ this makes explicit, and that, rather than anything about the reconstruction, is
 most of the distance between the two conditions of
 Table~\ref{tab:plecta-real-masks}.
 
-Four other published mask and instance measures were examined against these
-data and not adopted, the evidence being recorded with the comparison study:
-GraFT's Jaccard as published scores an unthinned prediction and so charges a
-mask for its own thickness (\PlectaMaskQualityGraFTAsPublished{} where the
-corrected form on the same masks is \PlectaMaskQualitySyntheticThree{}); its
-false-flag ratio divides by the reference and is therefore unbounded above,
-with no reading as a rate; its one-to-one filament-matching count saturates
-because it scores existence rather than correctness, ranking PLECTA fourth of
-five where every metric of Table~\ref{tab:plecta-comparators} ranks it first;
-and DNAi's detection \Fone{} at an intersection-over-union threshold of 0.5
-calls the undegraded mask harder than the degraded one, which is a statement
-about instance length rather than about quality.
+Two object-level readings of the same predictions say how much of the remaining
+distance between the two conditions is the measure. DNAi's detection \Fone{},
+which pairs whole predicted objects with whole reference objects by overlap,
+reads \PlectaDetectionBFiveEightOneZeroZeroManualStrict{} and
+\PlectaDetectionBFiveEightOneOneZeroManualStrict{} from the manual-derived axes
+but \PlectaDetectionBFiveEightOneZeroZeroUNetStrict{} and
+\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} from the U-Net ones, because
+two one-pixel centrelines two pixels apart intersect in nothing. Allowed the
+same \PlectaMaskQualityTolerance{}-px placement tolerance as the triple above,
+they read \PlectaDetectionBFiveEightOneZeroZeroUNetTolerant{} and
+\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{}, while the manual-derived
+figures do not move at all, there being nothing displaced there to forgive. The
+pairwise score is separately quadratic in fragments, so a filament the U-Net
+mask breaks into several pieces carries every one of its pairs; counting
+instead one decision per pair of fragment ends the mask brings within the
+\PlectaRealJoinReach{}\,px this method will bridge gives
+\PlectaJoinBFiveEightOneZeroZeroManualFOne{} against
+\PlectaJoinBFiveEightOneZeroZeroUNetFOne{} on B58\_100, over
+\PlectaJoinBFiveEightOneZeroZeroManualDecisions{} decisions against
+\PlectaJoinBFiveEightOneZeroZeroUNetDecisions{}. Neither reading closes the
+gap, and the second says what the rest of it is: a join precision of
+\PlectaJoinBFiveEightOneZeroZeroUNetPrecision{} against a recall of
+\PlectaJoinBFiveEightOneZeroZeroUNetRecall{} is a method declining joins, not
+fusing filaments. Under a looser mask it fails by conservatism.
+
+Three other published measures were examined against these data and not
+adopted, the evidence being recorded with the comparison study: GraFT's
+Jaccard as published scores an unthinned prediction and so charges a mask for
+its own thickness (\PlectaMaskQualityGraFTAsPublished{} where the corrected
+form on the same masks is \PlectaMaskQualitySyntheticThree{}); its false-flag
+ratio divides by the reference and is therefore unbounded above, with no
+reading as a rate; and its one-to-one filament-matching count scores existence
+rather than correctness, as Section~\ref{sec:res-comparators} measures
+directly.
