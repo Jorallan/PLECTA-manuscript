@@ -94,9 +94,12 @@ as a proxy for the length density accompanying them under this generator.
 \subsection{Comparison with prior linkers}
 \label{sec:res-comparators}
 
-Three comparators were run on identical input masks with one scorer: a greedy
-minimum-turning-angle continuation rule, which tests the paper's central claim
-directly, and two published methods, DNAi \citep{playout2026dnai} and GraFT
+One baseline and two published methods were run on identical input masks with
+one scorer. The baseline is a greedy minimum-turning-angle continuation rule,
+and it is ours: not a reimplementation of any particular paper but of the
+pairing principle several of them share, reported as the transparent floor the
+claim of Section~\ref{sec:intro} is made against and never as an external
+result. The published methods are DNAi \citep{playout2026dnai} and GraFT
 \citep{osterlund2026graft}, each executed from its own released source. All were
 scored through the same conversion and metric code as PLECTA, and that path was
 gated on parity: before any comparator number was believed it had to reproduce
@@ -191,14 +194,10 @@ a pooled value would flatter any method at 60\% coverage.
     stratum. \textbf{(a)}~degraded and \textbf{(b)}~clean input mask: mean
     common-fragment \Fone{}, $n=10$ scenes per point
     except where labelled otherwise; plain means, no interval is drawn and none
-    is claimed. GraFT exceeded its per-scene wall-clock budget on 3 of the 50
+    is claimed. The aggregate paired differences and their intervals are in the
+    table. GraFT exceeded its per-scene wall-clock budget on 3 of the 50
     degraded scenes and 1 of the clean ones, the hardest of the densest
-    stratum, so its curve is optimistic.
-    \textbf{(c)}~aggregate paired difference with
-    its density-stratified bootstrap 95\,\% interval (20\,000 replicates),
-    filled markers degraded and open markers clean; the fraction beside each
-    interval is the number of scenes on which PLECTA scored higher, of those
-    both completed.}
+    stratum, so its curve is optimistic.}
   \label{fig:comparators}
 \end{figure}
 
@@ -253,6 +252,25 @@ into one connected graph, as it does above 30\% coverage.
 the set, so that exclusion flatters GraFT. Neither released method establishes a
 general ranking, and Section~\ref{sec:limitations} states what these comparisons
 leave untested.
+
+\textbf{One frame that is not ours.} Every scene above comes from one generator,
+which Section~\ref{sec:limitations} names as this paper's principal limitation,
+so it is worth reporting that GraFT's repository bundles a single
+\PlectaGraFTFrameSide{}$\times$\PlectaGraFTFrameSide{}~px synthetic frame with
+per-filament ground truth, and that the ordering survives it. Scored through the
+identical pipeline, PLECTA reached \Fone{}=\PlectaGraFTFramePlectaFOne{} against
+\PlectaGraFTFrameGreedyFOne{} for the greedy baseline,
+\PlectaGraFTFrameGraFTNativeFOne{} for GraFT run end to end on its own noisy
+image and \PlectaGraFTFrameGraFTInjectedFOne{} for GraFT with the mask injected
+as it is elsewhere here; the rasterisation of that reference reproduces the
+vendor's own noise-free image at \PlectaGraFTFrameReferenceAgreement{}. This is
+one frame with no interval and it is not a benchmark. Its instructive detail is
+that GraFT resolved \PlectaGraFTFrameGraFTInjectedSolved{} of the frame's
+\PlectaGraFTFrameCrossingCount{} crossings exactly while scoring
+\PlectaGraFTFrameGraFTInjectedFOne{}, where PLECTA resolved
+\PlectaGraFTFramePlectaSolved{}: crossing accuracy and pairwise agreement
+answer to different failures, which is why Section~\ref{sec:res-overlap} reports
+both.
 
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
 each method\'s own computation only (Table~\ref{tab:plecta-comparators};
@@ -314,20 +332,23 @@ Section~\ref{sec:limitations} takes up what that means for the comparison.
 
 Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
 taking at three coverage levels the scene whose \Fone{} is closest to the
-median, so the rows are typical rather than selected. Its fourth column adds
-the fitted widths the full pipeline delivers, included because the comparison
-with the reference is only legible once instances are drawn at width;
-rendering redraws the instances the grouping produced and cannot merge or
-divide them.
+median, so the rows are typical rather than selected. Its instances are drawn
+at their fitted widths, because the comparison with the reference is only
+legible once they are; the \Fone{} beside each row is the score of the
+centreline grouping those widths are drawn onto.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
     \caption{Reconstruction at three coverage levels, each the scene closest to
     the median \Fone{} of its stratum. Columns: the degraded input mask, the
-    overlap-aware reference, the evaluated centreline instances, and the same
-    instances after optional width rendering. Only the third column is scored.
-    Instance colours are arbitrary and not matched between columns.}
+    overlap-aware reference, and PLECTA's instances drawn at their fitted
+    widths. What is evaluated in this paper is the grouping of centreline
+    pixels the method produces from the mask alone, and the \Fone{} beside each
+    row is that grouping's score; the width rendering shown here is a
+    downstream step that redraws those instances and cannot move a pixel from
+    one to another. Instance colours are arbitrary and not matched between
+    columns.}
     \label{fig:examples}
 \end{figure}
 
@@ -399,25 +420,16 @@ membership. Enabling the separate 0.6 silhouette-absorption rule reduced
 merge identities it remained disabled. None of these topology measurements
 validates apparent width.
 
-The negative control of Section~\ref{sec:res-factorial} is worth seeing scene
-by scene (Figure~\ref{fig:performance}), because a mean can hide a null.
-PLECTA's errors are also two-sided, where a fragment \Fone{} can be reached
-one-sidedly: it sits on the precision--recall diagonal, whereas the
-connected-component floor recovers \PlectaCCFloorRecall{} of same-filament
-pairs at a precision of only \PlectaCCFloorPrecision{}.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_control.pdf}
-    \caption{The width factorial, scene by scene. Each arrow is one of the
-    \PlectaFactorialGeometryCount{} geometries, drawn from its narrowest to its
-    widest rendering. Along an arrow the centreline geometry and the input mask
-    are fixed and only the bundle width changes, so realised areal coverage
-    moves by up to a factor of \PlectaFactorialMaxCoverageRatio{} while $F_1$
-    moves by \PlectaFactorialMaxFOneRange{}. The bracket marks the spread
-    between geometries, the scale against which that null should be read.}
-    \label{fig:performance}
-\end{figure}
+The negative control of Section~\ref{sec:res-factorial} holds scene by scene and
+not only on average: in every one of the \PlectaFactorialGeometryCount{}
+geometries, widening the bundles moves realised areal coverage by up to a factor
+of \PlectaFactorialMaxCoverageRatio{} while \Fone{} moves by
+\PlectaFactorialMaxFOneRange{}, which is small against the
+\PlectaFactorialFOneSpread{} spread between geometries that is the scale it
+should be read at. PLECTA's errors are also two-sided, where a fragment
+\Fone{} can be reached one-sidedly: it sits on the precision--recall diagonal,
+whereas the connected-component floor recovers \PlectaCCFloorRecall{} of
+same-filament pairs at a precision of only \PlectaCCFloorPrecision{}.
 
 \subsection{Two-field CNT SEM mask-source case}
 \label{sec:res-real}
@@ -437,8 +449,51 @@ set out in Section~\ref{sec:limitations}.
     \centering
     \caption{Exploratory reconstruction from manual-derived and U-Net
     axes in two CNT SEM fields. Axis recall and precision compare the U-Net
-    skeleton with the manual-derived skeleton using a symmetric 3-px tolerance.}
+    skeleton with the manual-derived skeleton using a symmetric
+    \PlectaMaskQualityTolerance{}-px tolerance.}
     \label{tab:plecta-real-masks}
     \small
     \input{results/plecta_real_masks_table}
 \end{table}
+
+Those two agreement figures are, under their usual names, the completeness and
+correctness of the tolerant completeness/correctness/quality triple standard for
+thin structures; its third member, quality, is the tolerant Jaccard, and is also
+GraFT's published Jaccard index in its intended reading, so it is what lets a
+reader from that literature place these masks. At the same
+\PlectaMaskQualityTolerance{}-px tolerance it is
+\PlectaMaskQualityBFiveEightOneZeroZeroQualityThree{} on B58\_100 and
+\PlectaMaskQualityBFiveEightOneOneZeroQualityThree{} on B58\_110. This measures
+binary segmentation and not grouping: no reconstruction is opened to compute it,
+and it characterises the input PLECTA is handed rather than anything PLECTA
+does.
+
+The tolerance is not a formality here, and reporting the triple without saying
+so would mislead. Quality falls to
+\PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{} and
+\PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} at 1\,px, because the manual
+annotation and the U-Net output are two independent readings of the same
+filaments and disagree in placement almost everywhere. On the synthetic degraded
+axis, where the evaluated mask is derived from the reference rather than read
+from the image a second time, the same measure is nearly flat above 1\,px
+(\PlectaMaskQualitySyntheticOne{} against
+\PlectaMaskQualitySyntheticThree{} over
+\PlectaMaskQualitySyntheticSceneCount{} scenes) and collapses to
+\PlectaMaskQualitySyntheticZero{} at zero tolerance, where it reports raster
+placement rather than geometry. The real masks are the looser input by a margin
+this makes explicit, and that, rather than anything about the reconstruction, is
+most of the distance between the two conditions of
+Table~\ref{tab:plecta-real-masks}.
+
+Four other published mask and instance measures were examined against these
+data and not adopted, the evidence being recorded with the comparison study:
+GraFT's Jaccard as published scores an unthinned prediction and so charges a
+mask for its own thickness (\PlectaMaskQualityGraFTAsPublished{} where the
+corrected form on the same masks is \PlectaMaskQualitySyntheticThree{}); its
+false-flag ratio divides by the reference and is therefore unbounded above,
+with no reading as a rate; its one-to-one filament-matching count saturates
+because it scores existence rather than correctness, ranking PLECTA fourth of
+five where every metric of Table~\ref{tab:plecta-comparators} ranks it first;
+and DNAi's detection \Fone{} at an intersection-over-union threshold of 0.5
+calls the undegraded mask harder than the degraded one, which is a statement
+about instance length rather than about quality.

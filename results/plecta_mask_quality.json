@@ -1,0 +1,177 @@
+{
+  "role": "tolerant completeness / correctness / quality of the two upstream real axes; characterises the input, not the reconstruction",
+  "synthetic_reference": {
+    "role": "the synthetic degraded axis against the generator's clean axis; the test axis is derived from the reference",
+    "n_scenes": 50,
+    "by_tolerance": [
+      {
+        "tol_px": 0,
+        "completeness": 0.6663477415290179,
+        "correctness": 0.7511210731874323,
+        "quality": 0.545317071010021
+      },
+      {
+        "tol_px": 1,
+        "completeness": 0.917073042108518,
+        "correctness": 0.9975505961777748,
+        "quality": 0.9121328347005024
+      },
+      {
+        "tol_px": 2,
+        "completeness": 0.9247117004791267,
+        "correctness": 0.9977162454098254,
+        "quality": 0.919283043295806
+      },
+      {
+        "tol_px": 3,
+        "completeness": 0.9317802836639468,
+        "correctness": 0.9978857803692732,
+        "quality": 0.9260148736992037
+      }
+    ],
+    "graft_jaccard_as_published": 0.5643635179441925,
+    "graft_jaccard_note": "GraFT's own JI, computed against the unthinned prediction, so it charges the mask for its thickness",
+    "source_record": {
+      "study": "C:/Repos/comparisons/metrics_study",
+      "file": "results/summary.json",
+      "sha256": "b7d832eb0a7bf75e707984fa96cf3821f1abdf4e536dc96a2fc6e54de48f6739",
+      "path_in_file": "mask_quality/degraded/overall"
+    }
+  },
+  "definition": "both sides skeletonised, each tested against the other dilated by tol; completeness is tolerant recall of the manual axis, correctness tolerant precision of the U-Net axis, quality the tolerant Jaccard",
+  "reported_tolerance_px": 3,
+  "source_record": {
+    "study": "C:/Repos/comparisons/real_sem_study",
+    "metric_definition": "C:/Repos/comparisons/metrics_study/scripts/metrics_lib.py::ccq"
+  },
+  "images": [
+    {
+      "image": "B58_100",
+      "reference_axis": "manual-derived skeleton",
+      "test_axis": "upstream U-Net",
+      "masks": {
+        "reference": {
+          "file": "scenes/b58_100/skel/mask.png",
+          "sha256": "050783317ab471a2cc94341d5794e8c2145ec509541daba2ada369e350d2bb28"
+        },
+        "test": {
+          "file": "scenes/b58_100/nnunet/mask.png",
+          "sha256": "4cfa16e9ea03f5cb7fe5b5ccbd0404db0747fe3ea0a83a097287305b918b1d08"
+        }
+      },
+      "by_tolerance": [
+        {
+          "tol_px": 0,
+          "completeness": 0.13557336621454993,
+          "correctness": 0.13003114282335318,
+          "quality": 0.07109066025841353,
+          "n_reference_px": 48660,
+          "n_test_px": 50734
+        },
+        {
+          "tol_px": 1,
+          "completeness": 0.45291820797369503,
+          "correctness": 0.43686679544289825,
+          "quality": 0.285368380163149,
+          "n_reference_px": 48660,
+          "n_test_px": 50734
+        },
+        {
+          "tol_px": 2,
+          "completeness": 0.6673448417591451,
+          "correctness": 0.6407340245200457,
+          "quality": 0.48549045404936686,
+          "n_reference_px": 48660,
+          "n_test_px": 50734
+        },
+        {
+          "tol_px": 3,
+          "completeness": 0.781894780106864,
+          "correctness": 0.7530847163637797,
+          "quality": 0.6218150914409923,
+          "n_reference_px": 48660,
+          "n_test_px": 50734
+        }
+      ],
+      "reported": {
+        "tol_px": 3,
+        "completeness": 0.781894780106864,
+        "correctness": 0.7530847163637797,
+        "quality": 0.6218150914409923,
+        "n_reference_px": 48660,
+        "n_test_px": 50734
+      },
+      "parity_against_manuscript": {
+        "tol_px": 3,
+        "axis_recall_stored": 0.7823496898605908,
+        "axis_recall_recomputed": 0.781894780106864,
+        "axis_precision_stored": 0.7534197973745417,
+        "axis_precision_recomputed": 0.7530847163637797
+      }
+    },
+    {
+      "image": "B58_110",
+      "reference_axis": "manual-derived skeleton",
+      "test_axis": "upstream U-Net",
+      "masks": {
+        "reference": {
+          "file": "scenes/b58_110/skel/mask.png",
+          "sha256": "fd060e5e1dcfeb689677a21ff0878a6e32ad500f6ebf67267503c8dac1ab6de9"
+        },
+        "test": {
+          "file": "scenes/b58_110/nnunet/mask.png",
+          "sha256": "0c24891f7ac966795363ebe5c2a54bb7985343ccfab0d749ff47ba42b519c9dc"
+        }
+      },
+      "by_tolerance": [
+        {
+          "tol_px": 0,
+          "completeness": 0.16334919247823412,
+          "correctness": 0.21228180862250262,
+          "quality": 0.10170277078085642,
+          "n_reference_px": 61794,
+          "n_test_px": 47550
+        },
+        {
+          "tol_px": 1,
+          "completeness": 0.48923843738874323,
+          "correctness": 0.6247318611987381,
+          "quality": 0.37549297198907877,
+          "n_reference_px": 61794,
+          "n_test_px": 47550
+        },
+        {
+          "tol_px": 2,
+          "completeness": 0.650969349775059,
+          "correctness": 0.8096950578338591,
+          "quality": 0.5570329002575306,
+          "n_reference_px": 61794,
+          "n_test_px": 47550
+        },
+        {
+          "tol_px": 3,
+          "completeness": 0.727950933747613,
+          "correctness": 0.8866876971608832,
+          "quality": 0.6550861546588773,
+          "n_reference_px": 61794,
+          "n_test_px": 47550
+        }
+      ],
+      "reported": {
+        "tol_px": 3,
+        "completeness": 0.727950933747613,
+        "correctness": 0.8866876971608832,
+        "quality": 0.6550861546588773,
+        "n_reference_px": 61794,
+        "n_test_px": 47550
+      },
+      "parity_against_manuscript": {
+        "tol_px": 3,
+        "axis_recall_stored": 0.7286557419230336,
+        "axis_recall_recomputed": 0.727950933747613,
+        "axis_precision_stored": 0.8868980021030495,
+        "axis_precision_recomputed": 0.8866876971608832
+      }
+    }
+  ]
+}
