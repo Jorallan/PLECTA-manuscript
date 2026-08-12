@@ -334,7 +334,8 @@ def main() -> int:
                 overlap["pooled"]["plecta_f1_cost_of_flattening_max"]),
              fontsize=PT_ANNOT, color=INK, ha="left", va="top")
 
-    save_fig(fig, "fig_common_fragment_metric", bbox_inches=None)
+    save_fig(fig, "fig_common_fragment_metric", subdir="archive",
+             bbox_inches=None)
     plt.close(fig)
 
     print("crop %s %dx%d  mask %d px  skeleton %d px  junction %d px"

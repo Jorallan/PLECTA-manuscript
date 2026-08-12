@@ -45,17 +45,16 @@ from matplotlib.text import Text
 import _style
 from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 
-#: The nine figures the manuscript includes, in the order it includes them.
+#: The eight figures the manuscript includes, in the order it includes them.
 SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
     ("fig_plecta_gates", 3),
     ("fig_plecta_exact_matching", 4),
-    ("fig_common_fragment_metric", 5),
-    ("fig_plecta_density", 6),
-    ("fig_comparators", 7),
-    ("fig_plecta_examples", 8),
-    ("fig_plecta_sensitivity", 9),
+    ("fig_plecta_density", 5),
+    ("fig_comparators", 6),
+    ("fig_plecta_examples", 7),
+    ("fig_plecta_sensitivity", 8),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was
@@ -67,6 +66,7 @@ SHIPPED = [
 #: shared-style change cannot quietly break one of them, but they are numbered
 #: apart so the table above never suggests the manuscript has thirteen figures.
 SUPERSEDED = [
+    ("fig_common_fragment_metric", 100),
     ("fig_plecta_task", 101),
     ("fig_comparators_density", 102),
     ("fig_plecta_performance", 103),
