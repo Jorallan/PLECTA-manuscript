@@ -28,7 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DENSITY_CYCLE, FIG_W, GRAY, PT_AXIS, PT_LEGEND,
+from _style import (DENSITY_CYCLE, FIG_W, FONE, GRAY, PT_AXIS, PT_LEGEND,
                     PT_TICK, PT_TITLE, plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
@@ -89,7 +89,7 @@ def main() -> int:
     panel(ax_b, table, ["w1", "clean"], ["Degraded\n(1 px, evaluated)",
                                          "Clean\naxis"],
           "(b) Degraded vs. clean axis", "Input axis-mask condition")
-    ax_a.set_ylabel("Development common-fragment F₁", fontsize=PT_AXIS)
+    ax_a.set_ylabel("Development common-fragment " + FONE, fontsize=PT_AXIS)
 
     handles, labels = ax_a.get_legend_handles_labels()
     fig.legend(handles, labels, ncol=5, frameon=False, loc="lower center",

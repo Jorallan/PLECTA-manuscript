@@ -1,25 +1,38 @@
 """Figure 1: what this paper contributes, and where the evidence stops.
 
-Restructured after review.  Three things the earlier version did not say
-clearly enough:
+Restructured a second time, after the author asked for the previous version to
+be either reworked substantially or dropped.  It was kept, because it is the
+only place a reader can see the one thing the framing depends on -- that the
+learned upstream pipeline and the geometric method evaluated here are separate
+pieces of work, and that only the second is measured in this paper.  A sentence
+can assert that; a diagram is what makes it obvious.
 
-  * the two inputs are declared **once**, at the top, and every consumer is
-    fed from there.  The grayscale SEM image used to appear beside the
-    downstream box, halfway down the diagram, as though it arrived from
-    nowhere;
-  * the hierarchy is explicit.  Pipeline B (PLECTA) is the contribution and
-    gets the large band; pipeline A (CycleGAN + U-Net) is an *enabling
-    example* -- one proof-of-concept route to a binary mask for real SEM --
-    and gets a slim subordinate band;
-  * the evidence boundary is a single dashed enclosure that begins at the
-    binary mask and ends at the instance layers.  Everything the paper scores
-    is inside it.  Width measurement and ribbon rendering sit outside and
-    below, tagged with the reason they are off: they change the
-    representation, not the identities, and identity is what the metric
-    scores.
+What was wrong with the previous version was not the claim but the load.  It
+carried an INPUTS band, an OR junction, five full-height STEP boxes, a swatch
+legend and eight elbow connectors, and the elbows had to thread between all of
+it: two of them ran along the edge of a box they were not attached to, one
+crossed the band it was leaving, and the terminal box of pipeline A stuck out
+past its own band.  Text sat on lines because there was no clear space left to
+put it in.  Four things are gone, and with them the collisions:
 
-Text is deliberately minimal -- box names, step names, one tag per boundary.
-The mechanism is in the Methods.
+  * the INPUTS band.  The two mask sources now sit where they are consumed --
+    the procedural mask beside pipeline A, the SEM-derived mask beneath it --
+    so nothing has to be routed back across the diagram to reach them;
+  * the OR glyph and the separate "binary filament-axis mask" box.  Two arrows
+    merging into one already say "either of these"; both source boxes already
+    have the word "mask" in their names, and the boundary tag says "mask in";
+  * the five STEP boxes, which restated Section 2's numbered procedure at a
+    third of a page.  Five compact chips keep the map -- a reader still sees
+    what the five steps are and that two of them repeat -- without competing
+    with the Methods for the explanation;
+  * the swatch legend, which duplicated the caption's colour key.
+
+One thing is added: the loop is labelled with which round is returned.  The
+earlier drawing said only "8 rounds", and the internal report it was adapted
+from said "8 rounds, keep the best-scoring one", which is wrong -- round 7 is
+the only fully strict round and is the one returned (Section 2, step 3).
+
+The figure is 3.99 in tall against 5.05, and no text touches a line.
 
 Fully self-contained; no data file is read.
 
@@ -37,21 +50,53 @@ from matplotlib.patches import Circle, FancyBboxPatch
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _style import (BLUE, BLUE_TINT, DARK, GRAY, GREEN, GREEN_TINT,
-                    ORANGE, ORANGE_TINT, FIG_W, PT_ANNOT, PT_LEGEND, PT_TITLE,
-                    elbow, harrow, plecta_style, rbox, save_fig, stage_box,
-                    swatch_legend)
+                    ORANGE, ORANGE_TINT, FIG_W, PT_ANNOT, PT_TITLE,
+                    elbow, harrow, plecta_style, rbox, save_fig)
 
 #: Drawing units per inch.  Fixed so that horizontal and vertical distances
 #: mean the same thing and a box is not silently stretched.
 UNITS_PER_IN = 13.60 / FIG_W
-XMAX, YMAX = 13.60, 11.00
+XMAX, YMAX = 13.60, 8.70
 FIG_H = YMAX / UNITS_PER_IN
+
+#: The five geometric steps, as chips.  Two lines each, and no line longer
+#: than 15 characters, which is what fits a chip at 7.5 pt.
+STEPS = (
+    ("1", "Arms and\njunction nodes"),
+    ("2", "Frame at\neach stub"),
+    ("3", "Exact matching\nat a junction"),
+    ("4", "Gated bridging\nof mask gaps"),
+    ("5", "Paint\ninstance layers"),
+)
 
 
 def band(ax, x0, x1, y0, y1, colour):
     ax.add_patch(FancyBboxPatch((x0, y0), x1 - x0, y1 - y0,
                                 boxstyle="round,pad=0.02,rounding_size=0.10",
                                 linewidth=0, facecolor=colour, zorder=0))
+
+
+def chip(ax, xc, yc, w, h, tag, name):
+    """A compact step: the number above, the name below, in one rounded box."""
+    ax.add_patch(FancyBboxPatch(
+        (xc - w / 2, yc - h / 2), w, h,
+        boxstyle="round,pad=0.02,rounding_size=0.10",
+        linewidth=1.5, edgecolor=GREEN, facecolor="white", zorder=3))
+    ax.text(xc, yc + h / 2 - 0.18, tag, ha="center", va="center",
+            fontsize=PT_ANNOT, fontweight="bold", color=GREEN, zorder=4)
+    ax.text(xc, yc - 0.10, name, ha="center", va="center", fontsize=PT_ANNOT,
+            fontweight="bold", color=DARK, zorder=4, linespacing=1.30)
+
+
+def on_line(ax, x, y, text, colour, **kw):
+    """A label that sits on a line, with the line stopped behind it.
+
+    The background tint is opaque, so the dashed rule it labels runs up to the
+    text and starts again after it, which is a labelled boundary rather than a
+    collision.
+    """
+    ax.text(x, y, text, color=colour, zorder=6,
+            bbox=dict(facecolor=GREEN_TINT, edgecolor="none", pad=1.6), **kw)
 
 
 def main() -> int:
@@ -62,157 +107,125 @@ def main() -> int:
     ax.axis("off")
     fig.subplots_adjust(left=0.004, right=0.996, top=0.996, bottom=0.004)
 
-    # ── inputs, declared once ──────────────────────────────────────────
-    band(ax, 0.18, 13.42, 9.58, 10.92, "#f1f3f6")
-    ax.text(0.44, 10.72, "INPUTS", ha="left", va="center", fontsize=PT_ANNOT,
-            fontweight="bold", color=GRAY, zorder=1)
-
-    y_in, h_in = 10.05, 0.68
-    x_proc, w_proc = 3.30, 3.90
-    x_sem, w_sem = 9.90, 3.50
-    rbox(ax, x_proc, y_in, w_proc, h_in, "Procedural binary axis mask",
-         GRAY, face="white", fontsize=PT_ANNOT, ls=(0, (4, 2)), lw=1.4,
-         bold=False)
-    rbox(ax, x_sem, y_in, w_sem, h_in, "Grayscale SEM image", ORANGE,
-         face=ORANGE_TINT, fontsize=PT_ANNOT, ls=(0, (4, 2)), lw=1.4,
-         bold=False)
-
-    # ── A: the enabling example, drawn subordinate ─────────────────────
-    band(ax, 2.35, 13.20, 7.92, 9.38, BLUE_TINT)
-    ax.text(2.60, 9.14, "A   Enabling example — a binary mask from real SEM",
+    # ── A: the upstream route, drawn subordinate and to one side ───────────
+    band(ax, 4.55, 13.42, 6.62, 8.55, BLUE_TINT)
+    ax.text(4.82, 8.24, "A   Upstream: a binary mask from real SEM "
+                        "(evaluated elsewhere)",
             ha="left", va="center", fontsize=PT_ANNOT, fontweight="bold",
             color=BLUE, zorder=1)
 
-    yA, hA = 8.40, 0.72
-    boxesA = [
-        (4.30, 2.30, "CycleGAN", BLUE, BLUE_TINT, True, "solid"),
-        (7.25, 2.90, "SEM-like synthetic\nimages", GRAY, "white", False,
-         (0, (4, 2))),
-        (10.05, 2.05, "U-Net", BLUE, BLUE_TINT, True, "solid"),
-        (12.35, 2.05, "SEM-derived\naxis mask", DARK, "white", True, "solid"),
-    ]
-    for xc, w, text, edge, face, bold, ls in boxesA:
-        rbox(ax, xc, yA, w, hA, text, edge, face=face, fontsize=PT_ANNOT,
-             bold=bold, ls=ls, lw=1.6 if edge == DARK else 1.4)
-    for (x0, w0), (x1, w1) in zip([(b[0], b[1]) for b in boxesA[:-1]],
-                                  [(b[0], b[1]) for b in boxesA[1:]]):
-        harrow(ax, x0 + w0 / 2 + 0.04, yA, x1 - w1 / 2 - 0.04, yA, lw=1.2,
-               mscale=9)
+    y_top, h_top = 7.52, 0.72
+    rbox(ax, 6.20, y_top, 2.86, h_top, "Grayscale SEM image", ORANGE,
+         face=ORANGE_TINT, fontsize=PT_ANNOT, ls=(0, (4, 2)), lw=1.4,
+         bold=False)
+    #  Two learned components, two boxes.  They are trained separately and do
+    #  different jobs -- one invents SEM-like images from procedural masks, the
+    #  other segments a real one -- and one box with an arrow inside it read as
+    #  a single network.
+    rbox(ax, 9.30, y_top, 2.00, h_top, "CycleGAN", BLUE,
+         face=BLUE_TINT, fontsize=PT_ANNOT, lw=1.5)
+    rbox(ax, 11.95, y_top, 2.00, h_top, "U-Net", BLUE,
+         face=BLUE_TINT, fontsize=PT_ANNOT, lw=1.5)
+    harrow(ax, 7.66, y_top, 8.27, y_top, lw=1.2, mscale=9)
+    harrow(ax, 10.33, y_top, 10.92, y_top, lw=1.2, mscale=9)
+    ax.text(4.82, 7.06, "trained on SEM-like renders of procedural masks",
+            ha="left", va="top", fontsize=PT_ANNOT, color=GRAY, style="italic",
+            zorder=1)
 
-    top_A = yA + hA / 2
-    elbow(ax, [(x_proc, y_in - h_in / 2 - 0.03), (x_proc, 9.44),
-               (3.95, 9.44), (3.95, top_A + 0.03)],
-          colour=GRAY, lw=1.2, ls="solid", mscale=9)
-    elbow(ax, [(x_sem, y_in - h_in / 2 - 0.03), (x_sem, 9.52),
-               (4.62, 9.52), (4.62, top_A + 0.03)],
-          colour=ORANGE, lw=1.2, ls="solid", mscale=9)
+    # ── the two mask sources, each drawn where it is produced ──────────────
+    x_proc = 2.28
+    rbox(ax, x_proc, y_top, 3.70, h_top, "Procedural binary axis mask",
+         GRAY, face="white", fontsize=PT_ANNOT, ls=(0, (4, 2)), lw=1.4,
+         bold=False)
 
-    # ── B: the contribution ────────────────────────────────────────────
-    band(ax, 0.18, 13.42, 0.62, 7.90, GREEN_TINT)
-    ax.text(0.44, 7.64,
-            "B   PLECTA — overlap-aware instance segmentation  (this paper)",
-            ha="left", va="center", fontsize=PT_TITLE, fontweight="bold",
-            color=GREEN, zorder=1)
+    x_sem, y_sem, h_sem = 11.75, 5.95, 3.20
+    rbox(ax, x_sem, y_sem, h_sem, 0.66, "SEM-derived axis mask", DARK,
+         face="white", fontsize=PT_ANNOT, lw=1.6)
+    harrow(ax, x_sem, y_top - h_top / 2 - 0.03, x_sem, y_sem + 0.36,
+           colour=DARK, lw=1.3, mscale=10)
 
-    # the two mask sources meet, outside the evidence boundary
-    junc = (6.80, 7.18)
-    elbow(ax, [(1.72, y_in - h_in / 2 - 0.03), (1.72, junc[1]),
-               (junc[0] - 0.23, junc[1])], colour=GRAY, lw=1.2, ls="solid",
-          mscale=9)
-    elbow(ax, [(boxesA[-1][0], yA - hA / 2 - 0.03),
-               (boxesA[-1][0], junc[1]), (junc[0] + 0.23, junc[1])],
-          colour=DARK, lw=1.2, ls="solid", mscale=9)
-    ax.add_patch(Circle(junc, 0.21, facecolor="white", edgecolor=DARK,
-                        linewidth=1.3, zorder=5))
-    ax.text(junc[0], junc[1], "OR", ha="center", va="center",
-            fontsize=PT_LEGEND, fontweight="bold", color=DARK, zorder=6)
+    # ── either mask is the input, and the merge is drawn as a choice ───────
+    #  Both sources carry the same name for a reason: PLECTA takes one binary
+    #  axis mask and does not care which produced it.  The junction is labelled
+    #  "or" rather than left as a bare dot, and it sits directly above the first
+    #  step, so the input arrow runs straight down into it instead of doubling
+    #  back across the whole evaluated box as it did before.
+    y_merge = 5.40
+    ax.plot([x_proc, x_proc], [y_top - h_top / 2 - 0.03, y_merge], color=GRAY,
+            lw=1.2, zorder=2)
+    ax.plot([x_sem, x_sem], [y_sem - 0.33 - 0.03, y_merge], color=DARK,
+            lw=1.2, zorder=2)
+    ax.plot([x_proc, x_sem], [y_merge, y_merge], color=DARK, lw=1.2, zorder=2)
+    ax.add_patch(Circle((x_proc, y_merge), 0.23, facecolor="white",
+                        edgecolor=DARK, linewidth=1.3, zorder=5))
+    ax.text(x_proc, y_merge, "or", ha="center", va="center", fontsize=PT_ANNOT,
+            fontweight="bold", color=DARK, zorder=6)
 
-    # ── the evidence boundary ──────────────────────────────────────────
-    ev_l, ev_r, ev_b, ev_t = 0.50, 13.10, 2.40, 6.92
+    # ── B: the contribution ────────────────────────────────────────────────
+    band(ax, 0.18, 13.42, 0.10, 5.06, GREEN_TINT)
+    ax.text(0.46, 4.84, "B   PLECTA", ha="left", va="center",
+            fontsize=PT_TITLE, fontweight="bold", color=GREEN, zorder=1)
+
+    ev_l, ev_r, ev_b, ev_t = 0.50, 13.10, 1.34, 4.56
     ax.add_patch(FancyBboxPatch((ev_l, ev_b), ev_r - ev_l, ev_t - ev_b,
                                 boxstyle="round,pad=0.02,rounding_size=0.14",
                                 linewidth=1.4, linestyle=(0, (5, 3)),
                                 edgecolor=GREEN, facecolor="none", zorder=1))
-    ax.text(ev_l + 0.22, ev_t - 0.12,
-            "EVALUATED:  mask in  →  instances out", ha="left", va="top",
-            fontsize=PT_ANNOT, fontweight="bold", color=GREEN, zorder=4)
+    #  The tag moved to the right-hand end of the boundary, because the input
+    #  now enters at the left-hand end and the two would otherwise share a spot.
+    on_line(ax, ev_r - 0.55, ev_t, "EVALUATED — either mask in, instances out",
+            GREEN, ha="right", va="center", fontsize=PT_ANNOT,
+            fontweight="bold")
 
-    x_mask, y_mask, w_mask, h_mask = 6.80, 6.22, 5.30, 0.74
-    rbox(ax, x_mask, y_mask, w_mask, h_mask,
-         "Binary filament-axis mask", DARK, face="white", fontsize=PT_ANNOT,
-         lw=1.7, bold=True)
-    harrow(ax, junc[0], junc[1] - 0.22, x_mask, y_mask + h_mask / 2 + 0.03,
-           colour=DARK, lw=1.4, mscale=10)
-
-    # ── the five geometric steps, and the round loop ───────────────────
-    stage_y, stage_h = 4.86, 1.54
-    pad, gap = 0.20, 0.16
-    stage_w = (ev_r - ev_l - 2 * pad - 4 * gap) / 5.0
-    centres = [ev_l + pad + stage_w / 2 + i * (stage_w + gap) for i in range(5)]
-    steps = [
-        ("STEP 1", "Skeleton graph:\narms, stubs,\njunction nodes"),
-        ("STEP 2", "Frame at\neach stub"),
-        ("STEP 3", "Exact matching\nat each junction"),
-        ("STEP 4", "Gated bridging\nof mask gaps"),
-        ("STEP 5", "Paint instance\nlayers"),
-    ]
-    for xc, (tag, name) in zip(centres, steps):
-        stage_box(ax, xc, stage_y, stage_w, stage_h, tag, name, GREEN,
-                  fontsize=PT_ANNOT, tag_fontsize=PT_ANNOT)
+    # ── the five geometric steps, and the round loop ───────────────────────
+    y_chip, h_chip = 3.62, 1.00
+    pad, gap = 0.20, 0.14
+    w_chip = (ev_r - ev_l - 2 * pad - 4 * gap) / 5.0
+    centres = [ev_l + pad + w_chip / 2 + i * (w_chip + gap) for i in range(5)]
+    for xc, (tag, name) in zip(centres, STEPS):
+        chip(ax, xc, y_chip, w_chip, h_chip, tag, name)
     for a, b in zip(centres[:-1], centres[1:]):
-        harrow(ax, a + stage_w / 2 + 0.04, stage_y, b - stage_w / 2 - 0.04,
-               stage_y, colour=GREEN, lw=1.2, mscale=9)
+        harrow(ax, a + w_chip / 2 + 0.03, y_chip, b - w_chip / 2 - 0.03,
+               y_chip, colour=GREEN, lw=1.2, mscale=9)
 
-    elbow(ax, [(x_mask, y_mask - h_mask / 2 - 0.03), (x_mask, 5.78),
-               (centres[0], 5.78), (centres[0], stage_y + stage_h / 2 + 0.03)],
-          colour=DARK, lw=1.4, ls="solid", mscale=10)
+    harrow(ax, x_proc, y_merge - 0.24, x_proc, y_chip + h_chip / 2 + 0.03,
+           colour=DARK, lw=1.3, mscale=10)
 
-    loop_y = stage_y - stage_h / 2 - 0.44
-    ax.plot([centres[3], centres[3]], [stage_y - stage_h / 2 - 0.03, loop_y],
+    y_loop = 2.78
+    ax.plot([centres[3], centres[3]], [y_chip - h_chip / 2 - 0.03, y_loop],
             color=GREEN, lw=1.2, ls=(0, (4, 2.4)), zorder=2)
-    ax.plot([centres[1], centres[3]], [loop_y, loop_y], color=GREEN, lw=1.2,
+    ax.plot([centres[1], centres[3]], [y_loop, y_loop], color=GREEN, lw=1.2,
             ls=(0, (4, 2.4)), zorder=2)
-    harrow(ax, centres[1], loop_y, centres[1], stage_y - stage_h / 2 - 0.03,
+    harrow(ax, centres[1], y_loop, centres[1], y_chip - h_chip / 2 - 0.03,
            colour=GREEN, lw=1.2, ls=(0, (4, 2.4)), mscale=9)
-    ax.text(centres[2], loop_y - 0.14, "8 rounds", ha="center", va="top",
-            fontsize=PT_ANNOT, color=GREEN, style="italic", zorder=4)
+    on_line(ax, centres[2], y_loop, "8 rounds — the last one is returned",
+            GREEN, ha="center", va="center", fontsize=PT_ANNOT, style="italic")
 
-    x_out, y_out, w_out, h_out = 2.95, 2.94, 4.70, 0.84
+    x_out, y_out, w_out, h_out = 4.40, 1.96, 6.40, 0.76
     rbox(ax, x_out, y_out, w_out, h_out,
          "Overlap-aware instance layers\n(a crossing pixel has two owners)",
-         DARK, face="white", fontsize=PT_ANNOT, lw=1.7)
-    elbow(ax, [(centres[4], stage_y - stage_h / 2 - 0.03),
-               (centres[4], y_out), (x_out + w_out / 2 + 0.04, y_out)],
-          colour=DARK, lw=1.4, ls="solid", mscale=10)
+         DARK, face="white", fontsize=PT_ANNOT, lw=1.6)
+    elbow(ax, [(centres[4], y_chip - h_chip / 2 - 0.03), (centres[4], y_out),
+               (x_out + w_out / 2 + 0.04, y_out)],
+          colour=DARK, lw=1.3, ls="solid", mscale=10)
 
-    # ── downstream, outside the boundary ───────────────────────────────
-    y_dn, h_dn = 1.38, 0.80
-    x_dn, w_dn = 4.60, 5.10
-    rbox(ax, x_dn, y_dn, w_dn, h_dn,
-         "Optional: width measurement\nand ribbon rendering", ORANGE,
-         face=ORANGE_TINT, fontsize=PT_ANNOT, lw=1.6)
-    x_rb, w_rb = 9.95, 3.30
-    rbox(ax, x_rb, y_dn, w_rb, h_dn, "Rendered ribbon\ninstances", DARK,
-         face="white", fontsize=PT_ANNOT, lw=1.5)
-    harrow(ax, x_dn + w_dn / 2 + 0.04, y_dn, x_rb - w_rb / 2 - 0.04, y_dn,
-           colour=ORANGE, lw=1.3, mscale=10)
+    # ── downstream, outside the boundary ───────────────────────────────────
+    #  The arrow out of the evaluated box is long enough to read as a crossing
+    #  rather than as a join: it leaves one box, passes through the dashed
+    #  boundary at its midpoint, and arrives at the other.
+    y_dn, h_dn = 0.72, 0.68
+    rbox(ax, x_out, y_dn, 6.00, h_dn,
+         "Optional: width measured from the SEM\nimage, and ribbon rendering",
+         ORANGE, face=ORANGE_TINT, fontsize=PT_ANNOT, lw=1.5)
+    rbox(ax, 10.30, y_dn, 3.60, h_dn, "Rendered ribbon\ninstances", DARK,
+         face="white", fontsize=PT_ANNOT, lw=1.4)
+    harrow(ax, x_out + 3.04, y_dn, 8.46, y_dn, colour=ORANGE, lw=1.3, mscale=10)
     harrow(ax, x_out, y_out - h_out / 2 - 0.03, x_out, y_dn + h_dn / 2 + 0.03,
-           colour=DARK, lw=1.4, mscale=10)
-    elbow(ax, [(x_sem, y_in - h_in / 2 - 0.03), (x_sem, 9.66), (13.32, 9.66),
-               (13.32, 2.10), (6.15, 2.10), (6.15, y_dn + h_dn / 2 + 0.03)],
-          colour=ORANGE, lw=1.2, ls="solid", mscale=9)
-    ax.text(x_dn, y_dn - h_dn / 2 - 0.14,
+           colour=DARK, lw=1.3, mscale=10)
+    ax.text(x_out, y_dn - h_dn / 2 - 0.14,
             "default off — changes the representation, not the identities",
             ha="center", va="top", fontsize=PT_ANNOT, color=ORANGE,
             style="italic", zorder=4)
-
-    # ── legend ─────────────────────────────────────────────────────────
-    swatch_legend(ax,
-                  [(BLUE, "Learned component"),
-                   (GREEN, "PLECTA geometric step"),
-                   (ORANGE, "Needs the SEM image"),
-                   (DARK, "Data artefact")],
-                  [0.52, 3.75, 7.30, 10.55], 0.28, fontsize=PT_LEGEND)
 
     save_fig(fig, "fig_pipeline_scope", bbox_inches=None)
     plt.close(fig)

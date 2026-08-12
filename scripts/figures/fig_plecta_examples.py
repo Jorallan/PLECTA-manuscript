@@ -1,16 +1,19 @@
-"""Figure 8: qualitative examples, and what the downstream rendering adds.
+"""Figure 8: qualitative examples of the reconstruction.
 
-Changed after review.  The greedy-continuation column is gone.  In its place
-the figure now shows PLECTA twice: the grouping the paper evaluates, which is
-a set of one-pixel centreline instances, and the same instances after the full
-downstream stack -- width measured from the paired SEM image, gaps
-interpolated, centreline resampled and smoothed, each chain drawn at its
-fitted width.
+Changed after review, twice.  The greedy-continuation column went first; then
+the second PLECTA column went too.  The figure used to show PLECTA's output
+twice -- the one-pixel centreline instances that are scored, and the same
+instances after the downstream stack -- under headings reading "(scored)" and
+"(not scored)".
 
-The two PLECTA columns contain the *same instances*.  Rendering redraws them;
-it cannot move a pixel from one instance to another, and the reported metrics
-score identity, so every number in this paper comes from the "scored" column.
-The column headings say so, and the caption says so again.
+One output column is enough.  At this panel size a one-pixel centreline is
+barely visible against the reference beside it, so the column that carried the
+figure's qualitative argument was always the rendered one; the other column
+spent a quarter of the width restating in faint pixels what the F1 beside each
+row already states as a number.  The distinction it was drawn to make is a
+sentence, not a column: rendering is downstream of the grouping and cannot move
+a pixel from one instance to another, so the identities shown are exactly the
+identities scored.  The caption says that in words.
 
 Rows are one scene per coverage level, each the median scene of its own
 stratum, so the rows span the difficulty range and none is chosen by outcome.
@@ -35,7 +38,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DARK, FIG_W, GRAY, INSTANCE_CYCLE, PT_ANNOT, PT_TITLE,
+from _style import (DARK, FIG_W, FONE, GRAY, INSTANCE_CYCLE, PT_ANNOT,
+                    PT_TITLE,
                     plecta_style, save_fig, unpack, unpack_labels)
 
 REPO = Path(__file__).resolve().parents[2]
@@ -44,8 +48,7 @@ BG = "#101216"
 COLUMNS = (
     ("mask", "Input mask"),
     ("reference", "Reference"),
-    ("plecta", "PLECTA\n(scored)"),
-    ("plecta_rendered", "PLECTA + rendering\n(not scored)"),
+    ("plecta_rendered", "PLECTA + rendering"),
 )
 
 
@@ -89,7 +92,7 @@ def main(argv=None) -> int:
     left, right = 0.082, 0.984
     cell = (right - left) / len(keys)
     side_in = cell * FIG_W
-    head_in, foot_in = 0.34, 0.05
+    head_in, foot_in = 0.20, 0.05      # one-line headings now, not two
     fig_h = len(panels) * side_in + head_in + foot_in
     fig = plt.figure(figsize=(FIG_W, fig_h))
     cell_h = side_in / fig_h
@@ -112,7 +115,7 @@ def main(argv=None) -> int:
                 ax.set_title(heads[c], fontsize=PT_TITLE, fontweight="bold",
                              color=DARK, pad=3.5, linespacing=1.35)
         fig.text(left - 0.010, y0 + cell_h / 2.0,
-                 "{0}\ncoverage {1}%\nF₁ = {2:.3f}"
+                 "{0}\ncoverage {1}%\n" + FONE + " = {2:.3f}"
                  .format(panel["scene"], panel["density"],
                          panel["plecta_f1"]),
                  rotation=90, ha="right", va="center", fontsize=PT_ANNOT,

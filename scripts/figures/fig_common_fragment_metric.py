@@ -51,7 +51,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Polygon, Rectangle
 
-from _style import (CHORD, FIG_W, FIL_A, FIL_B, GRAY, INK, INSTANCE_CYCLE,
+from _style import (CHORD, FIG_W, FIL_A, FIL_B, FONE, GRAY, INK,
+                    INSTANCE_CYCLE,
                     JUNCTION, PT_ANNOT, PT_MIN, PT_TITLE, blank_rgb,
                     load_figure_data, paint, plecta_style, save_fig)
 
@@ -251,7 +252,7 @@ def main() -> int:
 
     # The tag goes above the panel, the step name below it: a two-line name is
     # what collided with the tag when both sat on the same baseline.
-    names = ("input mask", "skeletonise,\nprune spurs", "delete pixels with\n≥ 3 neighbours",
+    names = ("input mask", "skeletonise,\nprune spurs", "delete pixels with\n" r"$\geq$" " 3 neighbours",
              "label 8-connected\npieces", "assign each to\none instance")
     for x, letter, name in zip(col, "abcde", names):
         fig.text(x, row1_y + h1 + 0.010, "(%s)" % letter, fontsize=PT_TITLE,
@@ -297,8 +298,8 @@ def main() -> int:
     crossing([bx[1], row2_y, w2, h2], inst_colour, None)
     crossing([bx[1] + w2 + gap_in, row2_y, w2, h2], swap_colour, None)
 
-    for x, sign in ((bx[0] + w2 + gap_in / 2.0, "="),
-                    (bx[1] + w2 + gap_in / 2.0, "≠")):
+    for x, sign in ((bx[0] + w2 + gap_in / 2.0, r"$=$"),
+                    (bx[1] + w2 + gap_in / 2.0, r"$\neq$")):
         # 8.5 bold, not larger: the two-size scale holds for symbols too, and
         # an 11 pt "=" was the only glyph in the set outside it.
         fig.text(x, row2_y + h2 / 2.0, sign, fontsize=PT_TITLE,
@@ -327,8 +328,8 @@ def main() -> int:
     shared = [overlap["by_density"][k]["plecta_shared_fraction"]
               for k in sorted(overlap["by_density"], key=int)]
     fig.text(left, 1.0 - (at["prose"] + 0.045) * IN,
-             "Measured: %.1f–%.1f %% of PLECTA's pixels have two owners; "
-             "flattening them all moves F₁ by %.3f."
+             ("Measured: %.1f–%.1f %% of PLECTA's pixels have two owners; "
+              "flattening them all moves " + FONE + " by %.3f.")
              % (100 * min(shared), 100 * max(shared),
                 overlap["pooled"]["plecta_f1_cost_of_flattening_max"]),
              fontsize=PT_ANNOT, color=INK, ha="left", va="top")

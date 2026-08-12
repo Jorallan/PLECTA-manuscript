@@ -45,27 +45,35 @@ from matplotlib.text import Text
 import _style
 from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 
-MODULES = [
+#: The nine figures the manuscript includes, in the order it includes them.
+SHIPPED = [
     ("fig_pipeline_scope", 1),
-    ("fig_plecta_task", 2),
-    ("fig_plecta_frame_cost", 3),
-    ("fig_plecta_gates", 4),
-    ("fig_plecta_exact_matching", 5),
+    ("fig_plecta_frame_cost", 2),
+    ("fig_plecta_gates", 3),
+    ("fig_plecta_exact_matching", 4),
+    ("fig_common_fragment_metric", 5),
     ("fig_plecta_density", 6),
-    ("fig_comparators_density", 7),
+    ("fig_comparators", 7),
     ("fig_plecta_examples", 8),
     ("fig_plecta_sensitivity", 9),
-    ("fig_plecta_performance", 10),
-    # Round 3.  fig_comparators merges the DNAi, GraFT and greedy-baseline
-    # stories that fig_comparators_density carried only a third of;
-    # fig_common_fragment_metric is the scorer figure the primary endpoint
-    # never had; fig_plecta_control is the proposed replacement for
-    # fig_plecta_performance.  The superseded generators stay in the list so a
-    # regression in either version is still caught.
-    ("fig_comparators", 11),
-    ("fig_common_fragment_metric", 12),
-    ("fig_plecta_control", 13),
 ]
+
+#: Generators no ``\includegraphics`` reaches any more, kept because each was
+#: once a figure and may be wanted again: fig_comparators_density carried a
+#: third of what fig_comparators now carries; fig_plecta_control and
+#: fig_plecta_performance both drew the width negative control, which is a null
+#: and is now reported in the text; fig_plecta_task predates
+#: fig_common_fragment_metric.  They are still rendered and still gated, so a
+#: shared-style change cannot quietly break one of them, but they are numbered
+#: apart so the table above never suggests the manuscript has thirteen figures.
+SUPERSEDED = [
+    ("fig_plecta_task", 101),
+    ("fig_comparators_density", 102),
+    ("fig_plecta_performance", 103),
+    ("fig_plecta_control", 104),
+]
+
+MODULES = SHIPPED + SUPERSEDED
 
 TF = re.compile(rb"/[A-Za-z0-9]+\s+([0-9]*\.?[0-9]+)\s+Tf")
 STREAM = re.compile(rb"stream\r?\n(.*?)endstream", re.S)

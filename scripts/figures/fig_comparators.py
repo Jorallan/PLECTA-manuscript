@@ -10,8 +10,13 @@ to the last digit, which is the check that they describe one population.
 
   (a), (b)  plain means per coverage stratum, n = 10 per point unless the point
             is annotated otherwise.  No interval is drawn and none is claimed.
-  (c)       the aggregate paired difference, which is the only quantity here
-            that carries a bootstrap interval.
+
+A third panel, a forest plot of the aggregate paired differences, was dropped
+after review: every number in it -- the difference, its stratified bootstrap
+interval and the win count -- is also a cell of the comparator table, and a
+figure that restates a table earns nothing.  ``paired_gaps`` survives it and is
+still printed on the console, because those printed values are what a reader of
+this script checks the table against.
 
 Two honesty constraints are built into the drawing rather than left to the
 caption.  GraFT did not finish 3 of the 50 degraded scenes and 1 of the clean
@@ -43,11 +48,12 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (BLUE, DARK, FIG_W, GRAY, GREEN, ORANGE, PT_AXIS, PT_LEGEND,
+from _style import (BLUE, DARK, FIG_W, FONE, GRAY, GREEN, ORANGE, PT_AXIS,
+                    PT_LEGEND,
                     PT_MIN, PT_TICK, PT_TITLE, plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
-FIG_H = 2.50
+FIG_H = 2.25
 DENSITIES = (20, 30, 40, 50, 60)
 
 #: The figure contains no filaments and carries its own legend, so BLUE and
@@ -150,50 +156,6 @@ def paired_gaps(dnai, graft, greedy):
     return out
 
 
-def panel_gaps(ax, gaps):
-    """Paired PLECTA - comparator difference, with its bootstrap interval."""
-    ticks, labels = [], []
-    y = 0.0
-    for ci, (condition, marker, fill) in enumerate(
-            (("degraded", "o", True), ("clean", "o", False))):
-        for key, label, colour in GAPS:
-            diff, lo, hi, n, wins = gaps[condition][key]
-            ax.plot([lo, hi], [y, y], color=colour, lw=1.5, solid_capstyle="butt",
-                    zorder=4)
-            for x in (lo, hi):
-                ax.plot([x, x], [y - 0.16, y + 0.16], color=colour, lw=1.1,
-                        zorder=4)
-            ax.plot([diff], [y], marker=marker, ms=4.6, zorder=6,
-                    mfc=colour if fill else "white", mec=colour, mew=1.3,
-                    linestyle="none")
-            note = "%d/%d" % (wins, n)
-            ax.annotate(note, (hi, y), textcoords="offset points",
-                        xytext=(4.0, 0), ha="left", va="center",
-                        fontsize=PT_MIN, color=colour, zorder=6)
-            ticks.append(y)
-            labels.append(label)
-            y -= 1.0
-        y -= 0.55
-    ax.axvline(0.0, color=GRAY, lw=0.8, zorder=2)
-    ax.set_yticks(ticks)
-    ax.set_yticklabels(labels, fontsize=PT_TICK)
-    ax.set_ylim(ticks[-1] - 0.72, 0.80)
-    ax.set_xlim(0.0, 0.74)
-    ax.set_xticks([0.0, 0.2, 0.4, 0.6])
-    ax.set_xlabel("PLECTA − comparator, F₁", fontsize=PT_AXIS, labelpad=1.5)
-    ax.tick_params(labelsize=PT_TICK)
-    ax.tick_params(axis="y", length=0, pad=1.5)
-    for side in ("top", "right", "left"):
-        ax.spines[side].set_visible(False)
-    ax.spines["bottom"].set_color(GRAY)
-    # Group headers sit in the empty left margin of each group, where nothing
-    # else is drawn, rather than on the right where they meet the win counts.
-    for row, name in ((0, "degraded mask"), (3, "clean mask")):
-        ax.text(0.005, ticks[row] + 0.60, name, ha="left", va="center",
-                fontsize=PT_MIN, color=GRAY, style="italic")
-    return ticks
-
-
 def main() -> int:
     plecta_style()
     dnai = read("plecta_dnai_comparison.json")
@@ -209,14 +171,13 @@ def main() -> int:
     if max(anchors) - min(anchors) > 1e-9:
         raise SystemExit("sources disagree on PLECTA: %r" % (anchors,))
 
-    # Explicit rects, not a uniform gridspec: (a) and (b) share one scale and
-    # sit close together with the ticks written once, while (c) needs a wider
-    # gap to its left for its own row labels.
+    # Explicit rects, not a uniform gridspec: (a) and (b) share one scale, so
+    # the y ticks are written once, on (a), and (b) sits close enough that the
+    # two read as one chart with two conditions rather than two charts.
     fig = plt.figure(figsize=(FIG_W, FIG_H))
     y0, dy = 0.256, 0.634
-    rects = {"a": [0.074, y0, 0.246, dy],
-             "b": [0.344, y0, 0.246, dy],
-             "c": [0.706, y0, 0.282, dy]}
+    rects = {"a": [0.086, y0, 0.408, dy],
+             "b": [0.560, y0, 0.408, dy]}
 
     ax_a = None
     for key, condition, name in (("a", "degraded", "Degraded mask"),
@@ -228,17 +189,13 @@ def main() -> int:
         ax.set_title("(%s) %s" % (key, name), loc="left",
                      fontsize=PT_TITLE, fontweight="bold", pad=5.0)
         if ax_a is None:
-            ax.set_ylabel("Mean common-fragment F₁", fontsize=PT_AXIS,
+            ax.set_ylabel("Mean common-fragment " + FONE, fontsize=PT_AXIS,
                           labelpad=2.0)
             ax_a = ax
         else:
             ax.tick_params(axis="y", labelleft=False)
 
-    ax_c = fig.add_axes(rects["c"])
     gaps = paired_gaps(dnai, graft, greedy)
-    panel_gaps(ax_c, gaps)
-    ax_c.set_title("(c) Paired difference", loc="left", fontsize=PT_TITLE,
-                   fontweight="bold", pad=5.0)
 
     handles, labels = fig.axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, ncol=5, frameon=False, loc="lower center",

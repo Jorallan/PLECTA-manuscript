@@ -1,8 +1,32 @@
-"""Figure: the pairing at a crossing is solved jointly and exactly.
+"""Figure 4: the pairing at a crossing is solved jointly and exactly.
 
-Every number here is measured, not illustrative: the pixels, the six pairwise
+Rebuilt after review.  The figure carried six panels and read as six; it is now
+four, and each one draws real geometry rather than an abstract star or a bar
+chart standing in for one.
+
+What changed and why:
+
+  * **six panels became four.**  The old (a) "four stubs meet" and (d) "the
+    output" were the same node before and after the decision, so they are one
+    panel with two frames.  The old (b), a bar chart of the six pairwise costs,
+    is gone entirely: the costs belong on the edges they price, and they are
+    now written there, inside the configurations.  What the bar chart uniquely
+    showed -- that four of the six candidates fail the admissibility gate --
+    is Figure 3's subject, not this one's.
+  * **the arms are the node's own.**  Every diagram is drawn from the arm
+    pixels stored with the node, as smooth round-capped polylines rather than a
+    staircase of per-pixel rectangles, and rigidly rotated so the node's long
+    axis runs diagonally.  A rotation preserves every angle and every length,
+    and the angles are the whole content: a reader can now see that one pairing
+    continues smoothly while its competitor turns a corner, which is exactly
+    what a radial star of labelled spokes could not show.
+  * **(d) says what it measures.**  It was titled "joint vs. sequential" over
+    an axis reading "nodes differing", which named the comparison without
+    stating the outcome, and carried no n.
+
+Every number is measured, not illustrative: the arm geometry, the six pairwise
 costs, the joint score of each admissible configuration, the
-declined-but-admissible edge at a real T-junction, and the node-by-node
+declined-but-admissible edge at a real three-arm node, and the node-by-node
 comparison against a sequential cheapest-edge-first rule.  All of it is read
 from ``results/plecta_figure_data.json``.
 
@@ -20,143 +44,87 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon, Rectangle
+from matplotlib.patches import Circle, Rectangle
 
-from _style import (FIG_W, PT_ANNOT, PT_AXIS, PT_TICK, PT_TITLE,
+from _style import (FIG_W, PT_ANNOT, PT_AXIS, PT_MIN, PT_TICK, PT_TITLE,
                     FIL_A, FIL_B, JUNCTION, CHORD, INK,
-                    load_figure_data, plecta_style, save_fig, unpack,
-                    unpack_labels)
+                    load_figure_data, plecta_style, save_fig, unpack)
 
-FIG_H = 3.02
-LINE_IN = PT_ANNOT * 1.55 / 72.0     # one annotation line, inches
+FIG_H = 3.36
 LETTERS = "abcd"
-PANEL = 1.12                       # side of a square pixel panel, inches
 
-
-def fx(inches):
-    return inches / FIG_W
+#: How much of each arm to draw, in pixels from the tip.  Long enough that the
+#: direction an arm leaves in is unmistakable, short enough that the node stays
+#: the subject.
+ARM_PX = 26
 
 
 def fy(inches):
-    return inches / FIG_H
+    """Figure fraction of a distance measured down from the top edge."""
+    return 1.0 - inches / FIG_H
 
 
 def title(fig, x, y, letter, text):
     fig.text(x, y, f"({letter})", fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="bottom")
-    fig.text(x + 0.036, y, text, fontsize=PT_TITLE, fontweight="bold",
+    fig.text(x + 0.034, y, text, fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="bottom")
 
 
-def pixel_axes(fig, rect, n):
-    ax = fig.add_axes(rect)
-    ax.set_xlim(-0.5, n - 0.5)
-    ax.set_ylim(n - 0.5, -0.5)          # row 0 at the top, as in the image
-    ax.set_aspect("equal", adjustable="box")
-    ax.set_xticks([])
-    ax.set_yticks([])
-    for s in ax.spines.values():
-        s.set_color(CHORD)
-        s.set_linewidth(0.5)
-    return ax
-
-
-def draw_pixels(ax, mask, colour, z=2):
-    for r, c in zip(*np.nonzero(mask)):
-        ax.add_patch(Rectangle((c - 0.5, r - 0.5), 1, 1, facecolor=colour,
-                               edgecolor="none", zorder=z))
-
-
-def draw_split_pixels(ax, mask, first, second, z=4):
-    """A pixel owned by two instances, drawn in both of their colours."""
-    for r, c in zip(*np.nonzero(mask)):
-        x0, y0 = c - 0.5, r - 0.5
-        ax.add_patch(Polygon([(x0, y0), (x0 + 1, y0), (x0, y0 + 1)],
-                             facecolor=first, edgecolor="none", zorder=z))
-        ax.add_patch(Polygon([(x0 + 1, y0), (x0 + 1, y0 + 1), (x0, y0 + 1)],
-                             facecolor=second, edgecolor="none", zorder=z))
-
-
-def letter_map(frames, stubs):
-    """Name the stubs a, b, c, ... anticlockwise from due east.
-
-    Display bearing, so the letters in every panel run the same way round as
-    the arms in the pixel panel.
-    """
+def letter_map(node):
+    """Name the stubs a, b, c, ... anticlockwise from due east."""
     bear = {}
-    for sid in stubs:
-        dr, dc = frames[str(sid)]["tangent"]
+    for sid in node["stubs"]:
+        dr, dc = node["frames"][str(sid)]["tangent"]
         bear[sid] = math.degrees(math.atan2(-dr, dc)) % 360.0
-    ordered = sorted(stubs, key=lambda s: bear[s])
-    return {s: LETTERS[i] for i, s in enumerate(ordered)}, bear
+    return {s: LETTERS[i]
+            for i, s in enumerate(sorted(node["stubs"], key=lambda s: bear[s]))}
 
 
-# ── panels ────────────────────────────────────────────────────────────────
+# ── the node, as its own geometry ─────────────────────────────────────────
 
 
-def panel_before(ax, data, names, bear):
-    j, cr = data["junction4"], data["crossing"]
-    draw_pixels(ax, unpack(cr["mask"]), INK)
-    draw_pixels(ax, unpack(cr["node_px"]), JUNCTION, z=3)
-    for sid, name in names.items():
-        tip = j["frames"][str(sid)]["tip"]
-        ang = math.radians(bear[sid])
-        ax.text(tip[1] + 17.0 * math.cos(ang), tip[0] - 17.0 * math.sin(ang),
-                name, fontsize=PT_ANNOT, fontweight="bold", color=INK,
-                ha="center", va="center", zorder=7,
-                bbox=dict(boxstyle="circle,pad=0.18", fc="white", ec=CHORD,
-                          lw=0.5))
+def arm_xy(frame, n=ARM_PX):
+    """The arm's own pixels, tip first, trimmed to ``n`` of them.
+
+    ``arm`` is stored from whichever end the tracer walked, so it is oriented
+    against ``tip`` rather than assumed.
+    """
+    pts = np.asarray(frame["arm"], float)
+    tip = np.asarray(frame["tip"], float)
+    if np.hypot(*(pts[0] - tip)) > np.hypot(*(pts[-1] - tip)):
+        pts = pts[::-1]
+    return pts[:n][:, ::-1] * np.array([1.0, -1.0])   # (row, col) -> (x, y up)
 
 
-def panel_after(ax, data, names, first_pair):
-    """Colour the layer that contains the first chosen pair as filament A."""
-    cr = data["crossing"]
-    arms = unpack_labels(cr["arms"])
-    layers = [unpack(p) for p in cr["layers"]]
-    aid_first = data["junction4"]["frames"][str(first_pair[0])]["aid"]
-    key = np.argmax([int((lay & (arms == aid_first + 1)).sum())
-                     for lay in layers])
-    order = [layers[key]] + [lay for i, lay in enumerate(layers) if i != key]
+def node_arms(node, target_deg=52.0, n=ARM_PX):
+    """Every arm of one node, rotated so its long axis runs diagonally.
 
-    shared = order[0] & order[1] if len(order) >= 2 else np.zeros_like(order[0])
-    draw_pixels(ax, order[0] & ~shared, FIL_A)
-    if len(order) >= 2:
-        draw_pixels(ax, order[1] & ~shared, FIL_B)
-    draw_split_pixels(ax, shared, FIL_A, FIL_B)
-    return int(shared.sum())
-
-
-def panel_costs(ax, data, names):
-    j = data["junction4"]
-    rows = sorted(j["pairs"], key=lambda r: r["cost"])
-    limit = j["admissibility_limit"]
-    y = np.arange(len(rows))[::-1]
-    for yi, r in zip(y, rows):
-        ax.barh(yi, r["cost"], height=0.60,
-                color=INK if r["admissible"] else "white",
-                edgecolor=INK, linewidth=0.7, zorder=3)
-        ax.text(r["cost"] + 0.10, yi, f"{r['cost']:.2f}", va="center",
-                ha="left", fontsize=PT_ANNOT, color=INK, zorder=4)
-    ax.axvline(limit, color=JUNCTION, lw=1.1, zorder=5)
-    ax.text(limit + 0.06, len(rows) - 0.42, "$2p_i$", color=JUNCTION,
-            fontsize=PT_ANNOT, ha="left", va="top")
-    ax.set_yticks(y)
-    ax.set_yticklabels([f"{names[r['a']]}–{names[r['b']]}" for r in rows],
-                       fontsize=PT_TICK)
-    ax.set_xlim(0, 4.15)
-    ax.set_ylim(-0.62, len(rows) - 0.30)
-    ax.set_xlabel("pairing cost $C_{ab}$", fontsize=PT_AXIS, labelpad=0.5)
-    ax.set_xticks([0, 1, 2, 3, 4])
-    ax.tick_params(axis="x", labelsize=PT_TICK)
-    for s in ("top", "right", "left"):
-        ax.spines[s].set_visible(False)
-    ax.tick_params(axis="y", length=0, pad=1.5)
+    In image orientation both of these nodes are tall splinters a few pixels
+    wide -- the three-arm node's stubs leave at bearings 73, 238 and 256
+    degrees, two of them 18 degrees apart.  A rotation is the fix that costs
+    nothing: it preserves every angle and every length.
+    """
+    raw = {sid: arm_xy(node["frames"][str(sid)], n) for sid in node["stubs"]}
+    pts = np.vstack(list(raw.values()))
+    centre = pts.mean(axis=0)
+    axis = np.linalg.svd(pts - centre, full_matrices=False)[2][0]
+    delta = math.radians(target_deg) - math.atan2(axis[1], axis[0])
+    rot = np.array([[math.cos(delta), -math.sin(delta)],
+                    [math.sin(delta), math.cos(delta)]])
+    arms = {sid: (arm - centre) @ rot.T for sid, arm in raw.items()}
+    hub = np.array([arm[0] for arm in arms.values()]).mean(axis=0)
+    return arms, hub
 
 
-def config_axes(fig, rect):
+def node_axes(fig, rect, arms, pad=4.2):
+    """A square frame shared by every diagram of one node."""
+    pts = np.vstack(list(arms.values()))
+    centre = pts.mean(axis=0)
+    half = float(np.abs(pts - centre).max()) + pad
     ax = fig.add_axes(rect)
-    ax.set_xlim(-2.45, 2.45)
-    ax.set_ylim(-3.05, 2.45)
+    ax.set_xlim(centre[0] - half, centre[0] + half)
+    ax.set_ylim(centre[1] - half, centre[1] + half)
     ax.set_aspect("equal", adjustable="box")
     ax.set_xticks([])
     ax.set_yticks([])
@@ -165,44 +133,102 @@ def config_axes(fig, rect):
     return ax
 
 
-def config_diagram(ax, stubs, names, bear, pairs, total, chosen):
-    """One configuration: which stubs are joined, which pay to stay free."""
-    pos = {s: np.array([math.cos(math.radians(bear[s])),
-                        math.sin(math.radians(bear[s]))]) for s in stubs}
+def blob(ax, hub, radius, colour=JUNCTION, alpha=0.20, z=2):
+    """The junction cluster: one soft disc, not a staircase of pixels."""
+    ax.add_patch(Circle(tuple(hub), radius, facecolor=colour, alpha=alpha,
+                        edgecolor="none", zorder=z))
+
+
+def bridge(ax, arms, pairs):
+    """Paint each taken pair as the one filament it asserts."""
+    for k, (p, q) in enumerate(pairs):
+        colour = (FIL_A, FIL_B)[k % 2]
+        ax.plot([arms[p][0, 0], arms[q][0, 0]], [arms[p][0, 1], arms[q][0, 1]],
+                color=colour, lw=2.1, solid_capstyle="round", zorder=4)
+
+
+def pair_colours(arms, pairs, rest=CHORD):
+    colours = {sid: rest for sid in arms}
+    for k, (p, q) in enumerate(pairs):
+        colours[p] = colours[q] = (FIL_A, FIL_B)[k % 2]
+    return colours
+
+
+# ── panels ────────────────────────────────────────────────────────────────
+
+
+def panel_crossing(fig, rects, node, names, arms, hub, n_shared):
+    """The same node before and after the decision, side by side."""
+    ax = node_axes(fig, rects[0], arms)
+    blob(ax, hub, 3.4)
+    for arm in arms.values():
+        ax.plot(arm[:, 0], arm[:, 1], color=INK, lw=2.1,
+                solid_capstyle="round", zorder=4)
+    for sid, arm in arms.items():
+        step = arm[-1] - arm[max(0, len(arm) - 6)]
+        step = step / max(1e-9, float(np.hypot(*step)))
+        ax.text(*(arm[-1] + step * 2.8), names[sid], fontsize=PT_MIN,
+                fontweight="bold", color=INK, ha="center", va="center",
+                zorder=7, bbox=dict(boxstyle="circle,pad=0.16", fc="white",
+                                    ec=CHORD, lw=0.5))
+    ax.text(0.5, -0.115, "one blob, four arms", transform=ax.transAxes,
+            ha="center", va="top", fontsize=PT_MIN, color=CHORD)
+
+    ax = node_axes(fig, rects[1], arms)
+    pairs = [tuple(p) for p in node["exact"]]
+    colours = pair_colours(arms, pairs)
+    for sid, arm in arms.items():
+        ax.plot(arm[:, 0], arm[:, 1], color=colours[sid], lw=2.1,
+                solid_capstyle="round", zorder=4)
+    bridge(ax, arms, pairs)
+    blob(ax, hub, 3.4, colour=FIL_A, alpha=0.16)
+    blob(ax, hub, 3.4, colour=FIL_B, alpha=0.16)
+    ax.text(0.5, -0.06, "two instances,\n%d pixels owned twice" % n_shared,
+            transform=ax.transAxes, ha="center", va="top", fontsize=PT_MIN,
+            color=CHORD, linespacing=1.45)
+
+
+def option(ax, arms, hub, pairs, costs, price, total, chosen, free_label):
+    """One admissible configuration of one node.
+
+    An arm left unmatched keeps its grey and gets an open ring; the cost of
+    each taken edge sits on that edge; and the arithmetic that decides between
+    the options is written out rather than reduced to a total.
+    """
     matched = {s for p in pairs for s in p}
-    # Two arms can leave a node in almost the same direction.  Fan those
-    # labels apart along the circle instead of letting them overprint; a
-    # radial stagger would push one of them onto the score printed below.
-    lab_deg, placed = {}, []
-    for s in sorted(stubs, key=lambda s: bear[s]):
-        angle = bear[s]
-        while any(min(abs(angle - q), 360 - abs(angle - q)) < 26 for q in placed):
-            angle += 13.0
-        lab_deg[s] = angle
-        placed.append(angle)
-    for s in stubs:
-        ax.plot(*np.array([pos[s] * 0.26, pos[s]]).T, color=CHORD, lw=0.8,
-                zorder=2)
-        lab = np.array([math.cos(math.radians(lab_deg[s])),
-                        math.sin(math.radians(lab_deg[s]))]) * 1.50
-        ax.text(*lab, names[s], fontsize=PT_ANNOT,
-                fontweight="bold", ha="center", va="center",
-                color=INK if s in matched else CHORD, zorder=6)
-        if s not in matched:
-            ax.plot(*pos[s], "o", ms=3.6, mfc="white", mec=JUNCTION, mew=1.0,
-                    zorder=5)
-    for k, (a, b) in enumerate(pairs):
-        ax.plot(*np.array([pos[a], pos[b]]).T, color=(FIL_A, FIL_B)[k % 2],
-                lw=2.0, solid_capstyle="round", zorder=4)
+    colours = pair_colours(arms, pairs)
+    for sid, arm in arms.items():
+        ax.plot(arm[:, 0], arm[:, 1], color=colours[sid],
+                lw=2.1 if sid in matched else 1.3, solid_capstyle="round",
+                zorder=4 if sid in matched else 3)
+    blob(ax, hub, 3.2, alpha=0.14)
+    bridge(ax, arms, pairs)
+    #  No cost is written on an edge.  Four arms meeting inside twenty pixels
+    #  leave nowhere to put a label that is not already an arm, and the line
+    #  underneath prints every cost anyway, in the order they are added up.
+    for sid in arms:
+        if sid not in matched:
+            tip = arms[sid][0]
+            ax.plot([tip[0]], [tip[1]], "o", ms=4.2, mfc="white",
+                    mec=JUNCTION, mew=1.1, zorder=6)
+
+    n_free = len(arms) - len(matched)
+    terms = ["%.2f" % costs[frozenset(p)] for p in pairs]
+    if n_free == 1:
+        terms.append("%.2f" % price)
+    elif n_free > 1:
+        terms.append("%d × %.2f" % (n_free, price))
+    ax.text(0.5, -0.02, "%s\n= %.2f" % (" + ".join(terms), total),
+            transform=ax.transAxes, ha="center", va="top", fontsize=PT_MIN,
+            color=INK if chosen else CHORD, linespacing=1.45,
+            fontweight="bold" if chosen else "normal")
     if chosen:
-        ax.add_patch(Rectangle((-1.78, -1.78), 3.56, 3.56, fill=False,
-                               ec=INK, lw=1.0, zorder=1))
-    ax.text(0, -2.96, f"{total:.2f}", ha="center", va="bottom",
-            fontsize=PT_ANNOT, fontweight="bold" if chosen else "normal",
-            color=INK if chosen else CHORD)
+        ax.add_patch(Rectangle((0.01, 0.01), 0.98, 0.98, fill=False, ec=INK,
+                               lw=0.9, zorder=1, transform=ax.transAxes))
 
 
 def panel_degrees(ax, data):
+    """How often the joint solution and cheapest-edge-first disagree."""
     div = data["greedy_divergence"]
     order = ["2-4", "5-8", "9+"]
     frac = [100.0 * div["buckets"][k]["n_differ"]
@@ -211,11 +237,16 @@ def panel_degrees(ax, data):
     x = np.arange(3)
     ax.bar(x, frac, width=0.55, color=INK, zorder=3)
     for xi, value in zip(x, frac):
-        ax.text(xi, value + 3.0, f"{value:.0f}%", ha="center", va="bottom",
+        ax.text(xi, value + 3.0, "%.0f%%" % value, ha="center", va="bottom",
                 fontsize=PT_ANNOT, color=INK)
     ax.set_xticks(x)
-    ax.set_xticklabels(["2–4", "5–8", "≥9"], fontsize=PT_TICK)
-    ax.set_xlabel("stubs at the node", fontsize=PT_AXIS, labelpad=2.0)
+    #  Each bucket carries its own n on its own tick, which is where a reader
+    #  looks for it, rather than on a second row of text under the axis.
+    ax.set_xticklabels(["2–4" + chr(10) + "n=%d" % ns[0],
+                        "5–8" + chr(10) + "n=%d" % ns[1],
+                        r"$\geq$9" + chr(10) + "n=%d" % ns[2]],
+                       fontsize=PT_TICK, linespacing=1.45)
+    ax.set_xlabel("arms meeting at the node", fontsize=PT_AXIS, labelpad=2.0)
     ax.set_ylabel("nodes differing (%)", fontsize=PT_AXIS, labelpad=1.0)
     ax.tick_params(axis="y", labelsize=PT_TICK)
     ax.set_ylim(0, 88)
@@ -225,88 +256,51 @@ def panel_degrees(ax, data):
         ax.spines[s].set_visible(False)
 
 
-
-def _rows():
-    """Vertical layout, laid out top-down in inches then converted once.
-
-    Working in inches and converting at the end is what keeps a row of prose
-    from landing on the next row's title when either one changes length.
-    """
-    out, y = {}, 0.06
-    for key, n_prose in (("r1", 0), ("r2", 0)):
-        y += 0.115
-        out[key] = {"title": 1.0 - fy(y)}
-        y += 0.055
-        out[key]["panel"] = 1.0 - fy(y + PANEL)
-        y += PANEL + 0.075
-        out[key]["prose"] = 1.0 - fy(y)
-        y += n_prose * LINE_IN + 0.10
-    out["total_in"] = y
-    return out
-
-
-ROWS = _rows()
-
-
 def main() -> int:
     plecta_style()
     data = load_figure_data()
     j4, j3 = data["junction4"], data["junction3"]
-    names4, bear4 = letter_map(j4["frames"], j4["stubs"])
-    names3, bear3 = letter_map(j3["frames"], j3["stubs"])
-    div = data["greedy_divergence"]
+    names4 = letter_map(j4)
+    arms4, hub4 = node_arms(j4)
+    arms3, hub3 = node_arms(j3)
+    cost4 = {frozenset((p["a"], p["b"])): p["cost"] for p in j4["pairs"]}
+    cost3 = {frozenset((p["a"], p["b"])): p["cost"] for p in j3["pairs"]}
+    layers = [unpack(p) for p in data["crossing"]["layers"]]
+    n_shared = int((layers[0] & layers[1]).sum())
 
     fig = plt.figure(figsize=(FIG_W, FIG_H))
-    w_sq, h_sq = fx(PANEL), fy(PANEL)
+    h = 0.95 / FIG_H
 
-    # ── row 1: one real crossing, decided ──────────────────────────────
-    r1 = ROWS["r1"]
-    ax_a = pixel_axes(fig, [0.045, r1["panel"], w_sq, h_sq],
-                      data["crossing"]["size"])
-    panel_before(ax_a, data, names4, bear4)
-
-    ax_b = fig.add_axes([0.300, r1["panel"] + 0.055, 0.215, h_sq - 0.055])
-    panel_costs(ax_b, data, names4)
-
+    # ── row 1: one crossing, and every way it could have been paired ──────
+    row1 = fy(1.33)
+    panel_crossing(fig, [[0.048, row1, 0.126, h], [0.208, row1, 0.126, h]],
+                   j4, names4, arms4, hub4, n_shared)
     for i, cfg in enumerate(j4["configurations"]):
-        ax = config_axes(fig, [0.578 + i * 0.100, r1["panel"], 0.096, h_sq])
-        config_diagram(ax, j4["stubs"], names4, bear4,
-                       [tuple(p) for p in cfg["pairs"]], cfg["total"],
-                       chosen=(i == 0))
+        ax = node_axes(fig, [0.392 + i * 0.152, row1, 0.136, h], arms4)
+        option(ax, arms4, hub4, [tuple(p) for p in cfg["pairs"]], cost4,
+               j4["price"], cfg["total"], chosen=(i == 0), free_label="free")
+    title(fig, 0.032, fy(0.30), "a", "One crossing, decided")
+    title(fig, 0.376, fy(0.30), "b", "Every pairing, scored as a whole")
 
-    title(fig, 0.030, r1["title"], "a", "Four stubs meet")
-    title(fig, 0.285, r1["title"], "b", "Pairing costs")
-    title(fig, 0.563, r1["title"], "c", "Admissible configurations")
-
-
-    # ── row 2: the free option, and what solving jointly buys ──────────
-    r2 = ROWS["r2"]
-    ax_d = pixel_axes(fig, [0.045, r2["panel"], w_sq, h_sq],
-                      data["crossing"]["size"])
-    n_shared = panel_after(ax_d, data, names4, tuple(j4["exact"][0]))
-
+    # ── row 2: the priced free option, and what solving jointly buys ──────
+    row2 = fy(2.93)
     for i, cfg in enumerate(j3["configurations"]):
-        ax = config_axes(fig, [0.300 + i * 0.100, r2["panel"], 0.096, h_sq])
-        config_diagram(ax, j3["stubs"], names3, bear3,
-                       [tuple(p) for p in cfg["pairs"]], cfg["total"],
-                       chosen=(i == 0))
-
-    ax_f = fig.add_axes([0.760, r2["panel"] + 0.075, 0.205, h_sq - 0.115])
-    panel_degrees(ax_f, data)
-
-    title(fig, 0.030, r2["title"], "d", "The output")
-    title(fig, 0.285, r2["title"], "e", "A stub left free")
-    title(fig, 0.700, r2["title"], "f", "Joint vs. sequential")
-
-    declined = max(p["cost"] for p in j3["pairs"] if p["admissible"])
+        ax = node_axes(fig, [0.048 + i * 0.156, row2, 0.138, h], arms3)
+        option(ax, arms3, hub3, [tuple(p) for p in cfg["pairs"]], cost3,
+               j3["price"], cfg["total"], chosen=(i == 0),
+               free_label="free" if cfg["pairs"] else "all free")
+    ax_d = fig.add_axes([0.680, row2 + 0.085, 0.295, h - 0.150])
+    panel_degrees(ax_d, data)
+    title(fig, 0.032, fy(1.88), "c", "An arm left free, and its price")
+    title(fig, 0.610, fy(1.88), "d", "Exact against greedy")
 
     save_fig(fig, "fig_plecta_exact_matching", bbox_inches=None)
     plt.close(fig)
-    print("shared px:", n_shared, "names:", names4, "declined:", declined,
-          "needed height (in):", round(ROWS["total_in"], 3))
+    declined = max(p["cost"] for p in j3["pairs"] if p["admissible"])
+    print("shared px:", n_shared, "names:", names4,
+          "declined edge:", declined)
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

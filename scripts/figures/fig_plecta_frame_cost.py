@@ -148,34 +148,69 @@ def panel_frame(ax):
 
 
 def panel_theta(ax):
-    """theta between t_a and -t_b, both drawn at the first arm's tip."""
-    Y = ax.yspan
-    tip_a = np.array([0.360, 0.400 * Y])
-    tip_b = tip_a + unit(U_DEG) * 0.115
+    """theta, drawn as the two-step construction it is.
+
+    The previous version put both steps in one sketch: the reversed tangent
+    appeared once where it lies and once again at the common origin, and the
+    reader had to work out that the two arrows were the same vector.  Splitting
+    it makes each move a picture -- here are the two outward tangents, and here
+    they are with one of them reversed and both read from a single point --
+    which is the construction the definition describes, in the order it
+    describes it.
+    """
+    left, right = 0.205, 0.790
+
+    # step 1: the two arms as they lie, each with its own outward tangent
+    #  The two arrows point at each other along nearly one line -- that is what
+    #  a continuation *is* -- so they are drawn short against a wide tip
+    #  separation, and their labels are stacked off the line, above one head
+    #  and below the other.  Long arrows here meet in the middle and read as a
+    #  single double-headed one.
+    tip_a = np.array([0.120, 0.110])
+    tip_b = tip_a + unit(U_DEG) * 0.190
     ta, tb = unit(A_DEG), unit(B_DEG)
-    for tip, t, col, bend in ((tip_a, ta, FIL_A, 0.22), (tip_b, tb, FIL_B, -0.22)):
-        arm = arm_to_tip(tip, t, 0.30, bend=bend)
+    for tip, t, col, bend in ((tip_a, ta, FIL_A, 0.22),
+                              (tip_b, tb, FIL_B, -0.22)):
+        arm = arm_to_tip(tip, t, 0.115, bend=bend)
         ax.plot(arm[:, 0], arm[:, 1], color=col, lw=2.1,
                 solid_capstyle="round", zorder=3)
         ax.plot([tip[0]], [tip[1]], "o", ms=3.4, mfc="white", mec=col,
                 mew=1.2, zorder=9)
-
-    arrow(ax, tip_b, tip_b + tb * 0.20, FIL_B, lw=1.2)
-    ax.text(*(tip_b + tb * 0.235 + np.array([-0.008, -0.016])),
+    arrow(ax, tip_a, tip_a + ta * 0.060, FIL_A, lw=1.2, z=8)
+    arrow(ax, tip_b, tip_b + tb * 0.060, FIL_B, lw=1.2, z=8)
+    ax.text(*(tip_a + ta * 0.060 + np.array([0.0, 0.014])),
+            r"$\mathbf{t}_a$", color=FIL_A, fontsize=PT_ANNOT, ha="center",
+            va="bottom", zorder=9)
+    ax.text(*(tip_b + tb * 0.060 + np.array([0.0, -0.012])),
             r"$\mathbf{t}_b$", color=FIL_B, fontsize=PT_ANNOT, ha="center",
-            va="top")
+            va="top", zorder=9)
 
-    R = 0.30
-    arrow(ax, tip_a, tip_a + ta * R, FIL_A, lw=1.2, z=8)
-    arrow(ax, tip_a, tip_a + unit(B_DEG - 180.0) * R, FIL_B, lw=1.1,
+    # the move
+    arrow(ax, np.array([0.435, 0.150]), np.array([0.545, 0.150]), CHORD,
+          lw=1.0, z=4)
+
+    # step 2: one origin, one tangent reversed, and the angle between them
+    origin = np.array([right - 0.100, 0.112])
+    stub = arm_to_tip(origin, ta, 0.095, bend=0.22)
+    ax.plot(stub[:, 0], stub[:, 1], color=FIL_A, lw=2.1,
+            solid_capstyle="round", zorder=3)
+    R = 0.185
+    arrow(ax, origin, origin + ta * R, FIL_A, lw=1.2, z=8)
+    arrow(ax, origin, origin + unit(B_DEG - 180.0) * R, FIL_B, lw=1.1,
           ls=(0, (2.6, 1.8)), z=8)
-    angle_arc(ax, tip_a, B_DEG - 180.0, A_DEG, R * 0.55, r"$\theta$",
-              lab_r=R * 0.86)
-    ax.text(*(tip_a + ta * R + np.array([0.014, 0.008])), r"$\mathbf{t}_a$",
+    ax.plot([origin[0]], [origin[1]], "o", ms=3.4, mfc="white", mec=FIL_A,
+            mew=1.2, zorder=9)
+    angle_arc(ax, origin, B_DEG - 180.0, A_DEG, R * 0.58, r"$\theta$",
+              lab_r=R * 0.94)
+    ax.text(*(origin + ta * R + np.array([0.010, 0.006])), r"$\mathbf{t}_a$",
             color=FIL_A, fontsize=PT_ANNOT, ha="left", va="bottom", zorder=9)
-    ax.text(*(tip_a + unit(B_DEG - 180.0) * R + np.array([0.016, -0.006])),
+    ax.text(*(origin + unit(B_DEG - 180.0) * R + np.array([0.012, -0.004])),
             r"$-\mathbf{t}_b$", color=FIL_B, fontsize=PT_ANNOT, ha="left",
             va="top", zorder=9)
+
+    for x, text in ((left, "as they lie"), (right, "reversed, one origin")):
+        ax.text(x, 0.322, text, ha="center", va="top", fontsize=PT_ANNOT,
+                color=CHORD, zorder=9)
 
 
 def panel_phi(ax):
@@ -250,7 +285,7 @@ def main() -> int:
 
     fig = plt.figure(figsize=(FIG_W, FIG_H))
     ax_a = stage(fig, [0.045, 0.560, 0.400, 0.330])
-    ax_b = stage(fig, [0.530, 0.560, 0.430, 0.330])
+    ax_b = stage(fig, [0.505, 0.555, 0.470, 0.340])
     ax_c = stage(fig, [0.045, 0.080, 0.415, 0.350])
     ax_d = fig.add_axes([0.640, 0.155, 0.320, 0.275])
 
@@ -260,7 +295,7 @@ def main() -> int:
     panel_q(ax_d, separations)
 
     title(fig, 0.030, 0.918, "a", "Frame at a stub")
-    title(fig, 0.515, 0.918, "b", r"Tangent reversal  $\theta$")
+    title(fig, 0.490, 0.918, "b", r"Tangent reversal  $\theta$")
     title(fig, 0.030, 0.452, "c", r"Chord turns  $\varphi_a,\ \varphi_b$")
     title(fig, 0.515, 0.452, "d", r"Chord fade  $q(d)$")
 

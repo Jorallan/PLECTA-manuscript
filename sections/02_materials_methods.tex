@@ -147,9 +147,12 @@ the weights, $\ell_0$ and $d_0$ are fixed in the public configuration.
     least-squares arclength fit over window $w$, read outward from the tip at
     $s=0$, giving outward tangent $\mathbf{t}$ and signed curvature $\kappa$;
     the fit is quadratic when the span is at least 18\,px and linear otherwise.
-    (b)~$\theta=\arccos(\mathbf{t}_a\cdot-\mathbf{t}_b)$, drawn where the
-    reversed tangent lies and again from the common origin where the angle is
-    read. (c)~The chord turns $\varphi_a$, $\varphi_b$ onto the chord
+    (b)~$\theta=\arccos(\mathbf{t}_a\cdot-\mathbf{t}_b)$, in the two steps its
+    definition takes: the two outward tangents where they lie, then the same
+    pair with $\mathbf{t}_b$ reversed and both read from one origin, which is
+    where the angle is measured. A perfect continuation makes the two tangents
+    antiparallel, so $\theta=0$. (c)~The chord turns $\varphi_a$, $\varphi_b$
+    onto the chord
     $\mathbf{u}$ joining the tips. (d)~The fade $q(d)$ against tip separation;
     triangles mark the six real separations at the crossing of
     Figure~\ref{fig:matching}.}
@@ -212,7 +215,7 @@ from inventing a continuation for the arm that has no partner.
 Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
 shows what it buys on real nodes. A locally attractive edge can be declined, as
-at the three-arm node of Figure~\ref{fig:matching}e. Joint and sequential solutions
+at the three-arm node of Figure~\ref{fig:matching}c. Joint and sequential solutions
 coincide at plain crossings and diverge only as nodes grow dense: over 20
 development scenes they
 never disagreed at nodes of degree 2--4 ($n=542$), disagreed at 22\,\% of nodes
@@ -226,17 +229,23 @@ difference is no longer confined to dense nodes
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
-    \caption{The pairing at a crossing, solved jointly and exactly; every number
-    shown is measured. (a)~A four-arm crossing (development scene
-    \texttt{cov20/synth\_0001}, node~9), arms named $a$ to $d$ anticlockwise by
-    outward tangent, junction pixels red. (b)~All six pairwise costs; open bars
-    are the four refused by $C_{ab}<2p_i=1.24$. (c)~Every admissible
-    configuration, scored jointly; the boxed one is returned. (d)~The result:
-    two instances sharing the seven junction pixels. (e)~A three-arm node
-    (\texttt{cov40/synth\_0001}) at which an admissible edge costing 1.01 is
-    declined: taking it scores 1.63 overall, against 0.77 for pairing the other
-    two arms and paying to leave the third free. (f)~Joint against sequential
-    cheapest-edge-first solutions, by node degree, over 20 development scenes.}
+    \caption{The pairing at a crossing, solved jointly and exactly. Every
+    number shown is measured, and every node is drawn from its own arm pixels,
+    rigidly rotated to fit its panel, so every angle shown is the measured one.
+    (a)~A four-arm crossing (development scene \texttt{cov20/synth\_0001},
+    node~9) before and after the decision: arms named $a$ to $d$ anticlockwise
+    by outward tangent, the junction cluster shaded, and the two instances it
+    becomes, which share seven pixels. (b)~Every configuration the
+    admissibility gate allows at that node, each scored as a whole. Under each
+    is the sum of its edge costs and the price $p_i=0.62$ of every arm it
+    leaves free, a ring marking such an arm; the boxed configuration is the one
+    returned. (c)~The same at a three-arm node
+    (\texttt{cov40/synth\_0001}), where an admissible edge costing 1.01 is
+    declined: taking it totals 1.63, against 0.77 for pairing the two arms that
+    continue into one another and paying to leave the third free, and 1.86 for
+    leaving all three free. (d)~How often one maximum-weight matching per node
+    and a sequential cheapest-edge-first rule pair the same node differently,
+    by the number of arms meeting there, over 20 development scenes.}
     \label{fig:matching}
 \end{figure}
 

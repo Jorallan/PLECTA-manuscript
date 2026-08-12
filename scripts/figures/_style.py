@@ -167,39 +167,33 @@ PT_LEGEND = 7.5      # legend entry
 PT_MIN = 7.0         # the floor; dense numeric annotation only
 
 # ---------------------------------------------------------------------------
-#  SUB- AND SUPERSCRIPTS.  Two rules, because there are two kinds of them.
+#  SUB- AND SUPERSCRIPTS.  One rule, since the set moved to the body face.
 #  ------------------------------------------------------------------------
 #  Matplotlib mathtext draws a script at ``SHRINK_FACTOR`` times the base size,
 #  and ships 0.70.  A label asked for at 7.5 pt therefore put a 5.25 pt glyph
 #  on the page, and one asked for at 8.5 pt put 5.95 -- well under the floor
 #  above, in eight of the ten figures, invisibly, because the size *asked for*
-#  was right.  The fix has two halves.
+#  was right.
 #
-#  1. A subscript that is only typography -- the 1 in F1, the 2 in px^2 -- is
-#     not set as mathtext at all.  It is written as the Unicode glyph (F₁,
-#     px², ×), a form DejaVu Sans draws at the label's own size with
-#     its own stem weight, so nothing is scaled and nothing drops below the
-#     floor.  As a bonus the F comes out upright, matching \Fone in the text
-#     rather than the italic F that ``$F_1$`` produced.
+#  An earlier round worked around that by writing the typographic scripts as
+#  Unicode glyphs instead -- F₁, px², × -- which DejaVu Sans draws at the
+#  label's own size.  That is no longer available: the set is now set in Latin
+#  Modern Roman, the body face, and Latin Modern has no U+2081 (nor ≥, nor ≠).
+#  So every script is mathtext again, typographic and notational alike:
+#  ``$\mathrm{F}_1$`` for the score, ``$\varphi_a$``, ``$C_{ab}$``, ``$p_i$``,
+#  ``$\mathbf{t}_a$``, ``$\alpha_r$`` for the notation that has to match the
+#  equations in the Methods.  ``\mathrm`` keeps the F upright, as ``\Fone``
+#  is in the text; a bare ``$F_1$`` would set it in maths italic.
 #
-#  2. A subscript that is notation -- φ_a, φ_b, κ_a, κ_b,
-#     C_ab, p_i, t_a, t_b, α_r -- has to keep matching the equations in
-#     the Methods, so it stays mathtext.  Unicode cannot compose these: it has
-#     no subscript ``b`` (the block runs a e o x h k l m n p s t plus i j r u v
-#     -- there is no b, and never has been), so φ_a could be composed and
-#     φ_b could not, which would put two different-looking subscripts side
-#     by side in one panel.  Raising the base instead does not work either: at
-#     a 0.70 script ratio the base has to reach 10 pt for the script to clear
-#     7, which is larger than the 8.5 pt panel titles, overruns the 1.46 in
-#     gate panels of fig_plecta_gates, and would leave the two x-axis labels of
-#     fig_plecta_exact_matching at two different sizes.
-#
-#     So the ratio is pinned instead of the base: bases stay 7.5 and 8.5 and
-#     the script lands at 7.05 and 7.99.  A 7.0 pt floor under a 7.5 pt base
-#     leaves only 0.5 pt of room, so a script that clears the floor is
-#     necessarily ~94% of its base rather than the customary 70%; that is
-#     arithmetic, not a choice.  If the customary proportion is wanted back,
-#     the whole notation layer has to move to a 10 pt base.
+#  Which means the floor now rests entirely on the ratio, so the ratio is
+#  pinned rather than the base: bases stay 7.5 and 8.5 and the script lands at
+#  7.05 and 7.99.  A 7.0 pt floor under a 7.5 pt base leaves only 0.5 pt of
+#  room, so a script that clears the floor is necessarily ~94% of its base
+#  rather than the customary 70%; that is arithmetic, not a choice.  If the
+#  customary proportion is wanted back, the whole notation layer has to move to
+#  a 10 pt base -- which is larger than the panel titles, overruns the 1.46 in
+#  gate panels of fig_plecta_gates, and would leave the two x-axis labels of
+#  fig_plecta_exact_matching at two different sizes.
 # ---------------------------------------------------------------------------
 SCRIPT_SHRINK = (PT_MIN + 0.05) / PT_ANNOT     # 0.94: 7.5 -> 7.05, 8.5 -> 7.99
 
@@ -228,12 +222,180 @@ PT_LABEL = PT_TICK
 PT_TINY = PT_ANNOT
 
 
+# ---------------------------------------------------------------------------
+#  THE FACE.  The same one the manuscript is set in.
+#  ------------------------------------------------------------------------
+#  The set used to be drawn in DejaVu Sans, bold for titles, against a Latin
+#  Modern body: a wide, heavy sans on a page of narrow, light serif, which is
+#  what made the figures read as pasted in from somewhere else.  They are now
+#  set in Latin Modern Roman itself -- literally ``lmodern``, the family
+#  ``main.tex`` loads -- at the optical size cut for 8 pt rather than the 10 pt
+#  cut scaled down, because a Computer Modern design shrunk from 10 to 7.5 pt
+#  goes spindly and the 8 pt cut is drawn with sturdier stems for exactly this.
+#
+#  Maths moves with it: ``mathtext.fontset`` is ``cm``, so θ, φ, κ and the
+#  subscripts are Computer Modern, the design Latin Modern extends.  One glyph
+#  does not make it -- matplotlib's Bakoma tables have no ``\neq`` -- and falls
+#  back to STIX, which is a Times-like serif and passes unremarked at the size
+#  it is used, once, as an operator between two panels of
+#  fig_common_fragment_metric.
+#
+#  The font is resolved through ``kpsewhich``, so it is the same file the
+#  document is typeset from and there is nothing to vendor.  It cannot be used
+#  as it ships, though.  Latin Modern is distributed as CFF-flavoured OpenType,
+#  and matplotlib's PDF backend embeds every font as ``/CIDFontType2`` with a
+#  ``/FontFile2`` stream -- the TrueType path -- whatever the outlines really
+#  are.  Handing it a CFF font therefore produces a font dictionary that
+#  contradicts its own font file: readers cope, but ``pdftoppm`` reports
+#  "Mismatch between font type and embedded font file" on every page, pdfTeX
+#  copies the malformed objects straight into ``main.pdf``, and a publisher's
+#  preflight is entitled to reject it.  So the outlines are converted to
+#  quadratics once, cached outside the repository, and matplotlib is given a
+#  genuine TrueType file.  ``_verify_body_face`` checks that the conversion
+#  lost nothing.
+#
+#  If no TeX distribution is on the path, or fontTools is missing, the set
+#  falls back to DejaVu Serif and says so loudly: half a figure set in one face
+#  and half in another is worse than either.
+# ---------------------------------------------------------------------------
+BODY_FAMILY = "Latin Modern Roman"
+
+#: The optical size cut for 8 pt, regular and bold.  No italic: nothing in the
+#: set is italic in the body face -- the italic notes are mathtext.
+BODY_FACES = (("lmroman8-regular.otf", "LMRoman8-Regular.ttf"),
+              ("lmroman8-bold.otf", "LMRoman8-Bold.ttf"))
+
+_FONT_STATE = {"resolved": None}
+
+
+def _font_cache_dir():
+    import tempfile
+    path = os.path.join(tempfile.gettempdir(), "plecta_body_face")
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+def _kpsewhich(stem):
+    import subprocess
+    try:
+        out = subprocess.run(["kpsewhich", stem], capture_output=True,
+                             text=True, timeout=60).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    path = out.splitlines()[0] if out else ""
+    return path if path and os.path.exists(path) else ""
+
+
+def _otf_to_ttf(src, dst, max_err=1.0):
+    """Re-cut a CFF OpenType face as TrueType, outlines and all.
+
+    ``max_err`` is in font units: at 1000 units per em and 7.5 pt on the page,
+    one unit is under a thousandth of a millimetre, so the quadratic fit is
+    exact as far as any output here is concerned.
+    """
+    from fontTools.ttLib import TTFont, newTable
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+    from fontTools.pens.cu2quPen import Cu2QuPen
+
+    font = TTFont(src)
+    if font.sfntVersion != "OTTO" or "CFF " not in font:
+        raise ValueError("%s is not a CFF OpenType font" % src)
+    order = font.getGlyphOrder()
+    glyph_set = font.getGlyphSet()
+    quad = {}
+    for name in order:
+        pen = TTGlyphPen(glyph_set)
+        glyph_set[name].draw(Cu2QuPen(pen, max_err, reverse_direction=True))
+        quad[name] = pen.glyph()
+
+    font["loca"] = newTable("loca")
+    font["glyf"] = glyf = newTable("glyf")
+    glyf.glyphOrder = order
+    glyf.glyphs = quad
+    del font["CFF "]
+    glyf.compile(font)                  # this is what fills in xMin per glyph
+
+    hmtx = font["hmtx"]                 # lsb must agree with the new bounds,
+    for name, glyph in glyf.glyphs.items():   # or maxp refuses to recalculate
+        if hasattr(glyph, "xMin"):
+            hmtx[name] = (hmtx[name][0], glyph.xMin)
+
+    font["maxp"] = maxp = newTable("maxp")
+    maxp.tableVersion = 0x00010000
+    maxp.maxZones = 1
+    maxp.maxTwilightPoints = 0
+    maxp.maxStorage = 0
+    maxp.maxFunctionDefs = 0
+    maxp.maxInstructionDefs = 0
+    maxp.maxStackElements = 0
+    maxp.maxSizeOfInstructions = 0
+    maxp.maxComponentElements = max(
+        (len(getattr(g, "components", ())) for g in glyf.glyphs.values()),
+        default=0)
+    maxp.numGlyphs = len(order)
+    maxp.compile(font)
+
+    post = font["post"]
+    post.formatType = 2.0
+    post.extraNames = []
+    post.mapping = {}
+    post.glyphOrder = order
+    if "VORG" in font:
+        del font["VORG"]
+    font.sfntVersion = "\x00\x01\x00\x00"
+    font.save(dst)
+
+
+def _verify_body_face(src, dst):
+    """Every code point the source could set, the conversion can still set."""
+    from matplotlib import ft2font
+    before = set(ft2font.FT2Font(src).get_charmap())
+    after = set(ft2font.FT2Font(dst).get_charmap())
+    lost = before - after
+    if lost:
+        raise RuntimeError("%d code points lost converting %s: %s"
+                           % (len(lost), os.path.basename(src),
+                              sorted(lost)[:8]))
+
+
+def _resolve_body_face():
+    """Put Latin Modern Roman 8 in matplotlib's hands; True if it is there."""
+    if _FONT_STATE["resolved"] is not None:
+        return _FONT_STATE["resolved"]
+    from matplotlib import font_manager
+    cache, ready = _font_cache_dir(), 0
+    for stem, cached in BODY_FACES:
+        dst = os.path.join(cache, cached)
+        src = _kpsewhich(stem)
+        try:
+            if src and (not os.path.exists(dst)
+                        or os.path.getmtime(dst) < os.path.getmtime(src)):
+                _otf_to_ttf(src, dst)
+                _verify_body_face(src, dst)
+            if os.path.exists(dst):
+                font_manager.fontManager.addfont(dst)
+                ready += 1
+        except Exception as exc:                       # noqa: BLE001
+            print("[_style] could not prepare %s: %s" % (stem, exc))
+    _FONT_STATE["resolved"] = ready == len(BODY_FACES)
+    if not _FONT_STATE["resolved"]:
+        print("[_style] WARNING: Latin Modern Roman is not available (needs "
+              "kpsewhich from a TeX distribution and fontTools). Falling back "
+              "to DejaVu Serif: these figures will NOT match the manuscript "
+              "body face and should not be shipped.")
+    return _FONT_STATE["resolved"]
+
+
 def plecta_style():
     """rcParams for the PLECTA set.  Call once, before creating a figure."""
     apply_style()
     _pin_mathtext_script_size()
+    body = _resolve_body_face()
+    serif = ([BODY_FAMILY] if body else []) + ["DejaVu Serif"]
     plt.rcParams.update(
         {
+            "font.family": "serif",
+            "font.serif": serif,
             "font.size": PT_AXIS,
             "axes.titlesize": PT_TITLE,
             "axes.titleweight": "bold",
@@ -253,11 +415,16 @@ def plecta_style():
             "ytick.major.size": 2.6,
             "lines.linewidth": 1.2,
             "patch.linewidth": 0.7,
-            "mathtext.fontset": "dejavusans",
+            "mathtext.fontset": "cm" if body else "dejavuserif",
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
         }
     )
+
+
+#: The score, set as the body sets it: upright F, subscript 1.  Written once
+#: here so the eight places that print it cannot drift apart.
+FONE = r"$\mathrm{F}_1$"
 
 
 # ── payload helpers (results/plecta_figure_data.json) ──────────────────────

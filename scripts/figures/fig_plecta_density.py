@@ -28,7 +28,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from _style import (DARK, FIG_W, GRAY, GREEN, PT_AXIS, PT_LEGEND, PT_TICK,
+from _style import (DARK, FIG_W, FONE, GRAY, GREEN, PT_AXIS, PT_LEGEND,
+                    PT_TICK,
                     plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
@@ -89,7 +90,7 @@ def main() -> int:
     ax.set_xlim(16, 64)
     ax.set_ylim(0.62, 1.0)
     ax.set_xlabel("Target areal coverage", fontsize=PT_AXIS)
-    ax.set_ylabel("Common-fragment F₁", fontsize=PT_AXIS)
+    ax.set_ylabel("Common-fragment " + FONE, fontsize=PT_AXIS)
     ax.tick_params(labelsize=PT_TICK)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
