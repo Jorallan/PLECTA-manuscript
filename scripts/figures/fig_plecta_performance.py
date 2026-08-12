@@ -189,7 +189,7 @@ def main(argv=None) -> int:
         ax.set_title(f"({chr(97 + i)}) {name}", loc="left",
                      fontsize=PT_TITLE, fontweight="bold", pad=5.0)
 
-    save_fig(fig, "fig_plecta_performance", bbox_inches=None)
+    save_fig(fig, "fig_plecta_performance", subdir="archive", bbox_inches=None)
     plt.close(fig)
     control = payload["factorial"]["width_negative_control"]
     print("panels drawn:", keys)

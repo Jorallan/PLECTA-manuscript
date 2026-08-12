@@ -99,7 +99,7 @@ def main() -> int:
                bbox_to_anchor=(0.5, 0.008), fontsize=PT_LEGEND,
                handlelength=2.4, columnspacing=1.6, handletextpad=0.55)
 
-    save_fig(fig, "fig_comparators_density", bbox_inches=None)
+    save_fig(fig, "fig_comparators_density", subdir="archive", bbox_inches=None)
     plt.close(fig)
     print("n per point:", sorted(n_per_point), "-- plain means, no interval")
     for key, values in sorted(reported.items()):

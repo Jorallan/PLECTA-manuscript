@@ -154,7 +154,7 @@ def main() -> int:
     fig_title(fig, col[2] + 0.040, r2["title"], "g", "Layer sizes")
 
 
-    save_fig(fig, "fig_plecta_task", bbox_inches=None)
+    save_fig(fig, "fig_plecta_task", subdir="archive", bbox_inches=None)
     plt.close(fig)
     print("fig height:", round(fig_h, 3), "reference instances:", len(inst))
     return 0

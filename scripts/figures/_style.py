@@ -59,11 +59,20 @@ def apply_style():
     )
 
 
-def save_fig(fig, name, **kwargs):
-    """Save fig as both PDF and PNG (300dpi) into paper/figures/."""
-    os.makedirs(FIGURES_DIR, exist_ok=True)
-    pdf_path = os.path.join(FIGURES_DIR, f"{name}.pdf")
-    png_path = os.path.join(FIGURES_DIR, f"{name}.png")
+def save_fig(fig, name, subdir=None, **kwargs):
+    """Save fig as both PDF and PNG (300dpi) into paper/figures/.
+
+    ``subdir="archive"`` writes into ``figures/archive/`` instead.  That is
+    where a generator no ``\\includegraphics`` reaches any more puts its output:
+    it stays runnable and stays gated, but it does not leave a file beside the
+    nine the manuscript actually includes, where the next reader has to work out
+    which is which.
+    """
+    out_dir = FIGURES_DIR if subdir is None else os.path.join(FIGURES_DIR,
+                                                              subdir)
+    os.makedirs(out_dir, exist_ok=True)
+    pdf_path = os.path.join(out_dir, f"{name}.pdf")
+    png_path = os.path.join(out_dir, f"{name}.png")
     fig.savefig(pdf_path, **kwargs)
     fig.savefig(png_path, dpi=300, **kwargs)
     print(f"[saved] {pdf_path}")

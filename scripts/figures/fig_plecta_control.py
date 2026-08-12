@@ -185,7 +185,7 @@ def main() -> int:
     ax_b.set_title("(b) Precision vs. recall", loc="left", fontsize=PT_TITLE,
                    fontweight="bold", pad=5.0)
 
-    save_fig(fig, "fig_plecta_control", bbox_inches=None)
+    save_fig(fig, "fig_plecta_control", subdir="archive", bbox_inches=None)
     plt.close(fig)
 
     control = factorial["width_negative_control"]
