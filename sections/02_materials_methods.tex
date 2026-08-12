@@ -194,27 +194,18 @@ $\alpha=1$, is the only fully strict one and is the one returned. In full:
   \item Return the links of round $r=7$.
 \end{enumerate}
 
-Figure~\ref{fig:gates} enumerates the outcomes this admits: every stub is either
-paired or pays the unmatched price, and there is no third possibility. The
-priced option is what lets a filament genuinely end, and what stops a T-junction
-from inventing a continuation for the arm that has no partner.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_gates.pdf}
-    \caption{Every decision the linker can make. (a)~A junction pairing
-    accepted below the admissibility limit $2p_i$. (b)~A competing pairing at
-    the same node refused, its cost exceeding $2p_i=1.24$. (c)~A stub left
-    unmatched because paying $p_i=0.62$ beats any edge it has. (d)~A gap joined
-    between two stubs the junction stage left free, under four gates at once.
-    Idealised drawing; measured values are in Figures~\ref{fig:cost}
-    and~\ref{fig:matching}.}
-    \label{fig:gates}
-\end{figure}
+Every stub is therefore either paired or pays the unmatched price, and there is
+no third possibility. The priced option is what lets a filament genuinely end,
+and what stops a T-junction from inventing a continuation for the arm that has
+no partner. The admissibility limit is not a separate threshold: an edge with
+$C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective, so a
+maximum-weight \emph{partial} matching would never select it, and refusing to
+offer it removes an edge that could not have been chosen.
 
 Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
-shows what it buys on real nodes. A locally attractive edge can be declined, as
+shows what it buys on real nodes, alongside the other two decisions the linker
+makes. A locally attractive edge can be declined, as
 at the three-arm node of Figure~\ref{fig:matching}c. Joint and sequential solutions
 coincide at plain crossings and diverge only as nodes grow dense: over 20
 development scenes they
@@ -229,9 +220,11 @@ difference is no longer confined to dense nodes
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
-    \caption{The pairing at a crossing, solved jointly and exactly. Every
-    number shown is measured, and every node is drawn from its own arm pixels,
-    rigidly rotated to fit its panel, so every angle shown is the measured one.
+    \caption{Every decision the linker can make, on the nodes it made them at.
+    Every number shown is measured, and every arm is the skeleton it was
+    measured from, drawn through a short moving average that removes the raster
+    staircase and moves no point by a pixel; the two nodes are rigidly rotated
+    to fit their panels, so every angle shown is the measured one.
     (a)~A four-arm crossing (development scene \texttt{cov20/synth\_0001},
     node~9) before and after the decision: arms named $a$ to $d$ anticlockwise
     by outward tangent, the junction cluster shaded, and the two instances it
@@ -239,13 +232,16 @@ difference is no longer confined to dense nodes
     admissibility gate allows at that node, each scored as a whole. Under each
     is the sum of its edge costs and the price $p_i=0.62$ of every arm it
     leaves free, a ring marking such an arm; the boxed configuration is the one
-    returned. (c)~The same at a three-arm node
+    returned. The two candidate pairs missing here cost 3.15 and 3.33, above
+    $p_i+p_j=1.24$, so pairing them would cost more than leaving both free.
+    (c)~The same at a three-arm node
     (\texttt{cov40/synth\_0001}), where an admissible edge costing 1.01 is
     declined: taking it totals 1.63, against 0.77 for pairing the two arms that
     continue into one another and paying to leave the third free, and 1.86 for
-    leaving all three free. (d)~How often one maximum-weight matching per node
-    and a sequential cheapest-edge-first rule pair the same node differently,
-    by the number of arms meeting there, over 20 development scenes.}
+    leaving all three free. (d)~The third decision, on the same scene: two arm
+    tips 25.8\,px apart joined across a break in the mask, with the other mask
+    pieces of the crop in grey. A gap link must clear four gates at once, and
+    10 of the scene's 207 candidates did.}
     \label{fig:matching}
 \end{figure}
 

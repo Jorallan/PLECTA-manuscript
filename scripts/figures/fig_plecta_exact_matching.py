@@ -1,34 +1,26 @@
-"""Figure 4: the pairing at a crossing is solved jointly and exactly.
+"""Figure 3: every decision the linker can make, on the nodes it made them at.
 
-Rebuilt after review.  The figure carried six panels and read as six; it is now
-four, and each one draws real geometry rather than an abstract star or a bar
-chart standing in for one.
+This absorbs what was a separate "gates" figure.  That one drew the same four
+outcomes -- a pairing taken, a pairing refused, a stub left free, a gap bridged
+-- as idealised curves with the real values printed underneath, next to this
+figure which drew real geometry.  Two figures for one subject, one of them a
+cartoon of the other, so they are now one.
 
-What changed and why:
+Two things came out of the merge:
 
-  * **six panels became four.**  The old (a) "four stubs meet" and (d) "the
-    output" were the same node before and after the decision, so they are one
-    panel with two frames.  The old (b), a bar chart of the six pairwise costs,
-    is gone entirely: the costs belong on the edges they price, and they are
-    now written there, inside the configurations.  What the bar chart uniquely
-    showed -- that four of the six candidates fail the admissibility gate --
-    is Figure 3's subject, not this one's.
-  * **the arms are the node's own.**  Every diagram is drawn from the arm
-    pixels stored with the node, as smooth round-capped polylines rather than a
-    staircase of per-pixel rectangles, and rigidly rotated so the node's long
-    axis runs diagonally.  A rotation preserves every angle and every length,
-    and the angles are the whole content: a reader can now see that one pairing
-    continues smoothly while its competitor turns a corner, which is exactly
-    what a radial star of labelled spokes could not show.
-  * **(d) says what it measures.**  It was titled "joint vs. sequential" over
-    an axis reading "nodes differing", which named the comparison without
-    stating the outcome, and carried no n.
+  * **the drawing is smoothed.**  Arms are still the node's own skeleton pixels,
+    but drawn through a short moving average instead of joining pixel centres,
+    which removes the raster staircase without moving any point as much as a
+    pixel.  It reads like the idealised figure and stays the measured geometry;
+    every angle on the page is the angle the cost was computed from.
+  * **the exact-against-greedy bar chart is gone.**  Its three numbers and their
+    three n are all stated in the adjacent sentence of Section 2.4.2, and a bar
+    chart of three numbers printed beside it is not a figure.
 
-Every number is measured, not illustrative: the arm geometry, the six pairwise
-costs, the joint score of each admissible configuration, the
-declined-but-admissible edge at a real three-arm node, and the node-by-node
-comparison against a sequential cheapest-edge-first rule.  All of it is read
-from ``results/plecta_figure_data.json``.
+Every number here is measured: the arm geometry, the pairwise costs, the joint
+score of each admissible configuration, the declined-but-admissible edge at a
+real three-arm node, and the accepted gap with its separation.  All of it is
+read from ``results/plecta_figure_data.json``.
 
     python scripts/figures/fig_plecta_exact_matching.py
 """
@@ -46,8 +38,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle
 
-from _style import (FIG_W, PT_ANNOT, PT_AXIS, PT_MIN, PT_TICK, PT_TITLE,
-                    FIL_A, FIL_B, JUNCTION, CHORD, INK,
+from _style import (FIG_W, PT_MIN, PT_TITLE,
+                    FIL_A, FIL_B, JUNCTION, CHORD, INK, PLECTA,
                     load_figure_data, plecta_style, save_fig, unpack)
 
 FIG_H = 3.36
@@ -112,9 +104,48 @@ def node_arms(node, target_deg=52.0, n=ARM_PX):
     delta = math.radians(target_deg) - math.atan2(axis[1], axis[0])
     rot = np.array([[math.cos(delta), -math.sin(delta)],
                     [math.sin(delta), math.cos(delta)]])
-    arms = {sid: (arm - centre) @ rot.T for sid, arm in raw.items()}
+    arms = {sid: smooth((arm - centre) @ rot.T)
+            for sid, arm in raw.items()}
     hub = np.array([arm[0] for arm in arms.values()]).mean(axis=0)
     return arms, hub
+
+
+def smooth(path, window=5):
+    """A polyline through a moving average of its own points.
+
+    The skeleton is a raster, so joining pixel centres draws a staircase.  A
+    short box filter along the path removes it.  The window is odd and small
+    and the ends are held fixed, so no drawn point sits as much as a pixel from
+    a real one and the direction each arm leaves in is untouched -- which
+    matters, because that direction is what the cost was computed from.
+    """
+    path = np.asarray(path, float)
+    if len(path) < window or window < 3:
+        return path
+    pad = window // 2
+    padded = np.vstack([np.repeat(path[:1], pad, axis=0), path,
+                        np.repeat(path[-1:], pad, axis=0)])
+    kernel = np.ones(window) / window
+    return np.column_stack([np.convolve(padded[:, k], kernel, mode="valid")
+                            for k in (0, 1)])
+
+
+def walk(pixels, start):
+    """Order a thin connected component into a path, nearest neighbour first."""
+    remaining = {tuple(p) for p in pixels}
+    here = min(remaining, key=lambda p: (p[0] - start[0]) ** 2
+               + (p[1] - start[1]) ** 2)
+    remaining.discard(here)
+    out = [here]
+    while remaining:
+        nxt = min(remaining, key=lambda p: (p[0] - here[0]) ** 2
+                  + (p[1] - here[1]) ** 2)
+        if (nxt[0] - here[0]) ** 2 + (nxt[1] - here[1]) ** 2 > 8:
+            break                      # a separate piece, not this arm
+        out.append(nxt)
+        remaining.discard(nxt)
+        here = nxt
+    return np.asarray(out, float)
 
 
 def node_axes(fig, rect, arms, pad=4.2):
@@ -227,33 +258,67 @@ def option(ax, arms, hub, pairs, costs, price, total, chosen, free_label):
                                lw=0.9, zorder=1, transform=ax.transAxes))
 
 
-def panel_degrees(ax, data):
-    """How often the joint solution and cheapest-edge-first disagree."""
-    div = data["greedy_divergence"]
-    order = ["2-4", "5-8", "9+"]
-    frac = [100.0 * div["buckets"][k]["n_differ"]
-            / max(1, div["buckets"][k]["n_nodes"]) for k in order]
-    ns = [div["buckets"][k]["n_nodes"] for k in order]
-    x = np.arange(3)
-    ax.bar(x, frac, width=0.55, color=INK, zorder=3)
-    for xi, value in zip(x, frac):
-        ax.text(xi, value + 3.0, "%.0f%%" % value, ha="center", va="bottom",
-                fontsize=PT_ANNOT, color=INK)
-    ax.set_xticks(x)
-    #  Each bucket carries its own n on its own tick, which is where a reader
-    #  looks for it, rather than on a second row of text under the axis.
-    ax.set_xticklabels(["2–4" + chr(10) + "n=%d" % ns[0],
-                        "5–8" + chr(10) + "n=%d" % ns[1],
-                        r"$\geq$9" + chr(10) + "n=%d" % ns[2]],
-                       fontsize=PT_TICK, linespacing=1.45)
-    ax.set_xlabel("arms meeting at the node", fontsize=PT_AXIS, labelpad=2.0)
-    ax.set_ylabel("nodes differing (%)", fontsize=PT_AXIS, labelpad=1.0)
-    ax.tick_params(axis="y", labelsize=PT_TICK)
-    ax.set_ylim(0, 88)
-    ax.set_yticks([0, 25, 50, 75])
-    ax.tick_params(axis="x", length=0, pad=1.5)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
+def panel_gap(fig, rect, text_x, data):
+    """The fourth decision: a break in the mask, bridged under four gates.
+
+    Drawn from the accepted gap of ``cov20/synth_0001`` -- two arms 25.8 px
+    apart whose tips the global gap matching joined.  The other mask pieces in
+    the same crop are drawn too, in grey, because they are what the gates exist
+    to rule out.
+    """
+    from scipy.ndimage import label
+
+    case, gates = data["gap_case"], data["gap_gates"]
+    mask = unpack(case["mask"])
+    pieces, n = label(mask, structure=np.ones((3, 3), bool))
+    tips = [np.asarray(t, float) for t in case["tips"]]
+    joined = {int(pieces[int(round(t[0])), int(round(t[1]))]) for t in tips}
+
+    ax = fig.add_axes(rect)
+    side = mask.shape[0]
+    ax.set_xlim(-2, side + 1)
+    ax.set_ylim(side + 1, -2)                  # row 0 at the top
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    for k in range(1, n + 1):
+        pts = np.array(np.nonzero(pieces == k)).T
+        if len(pts) < 4:
+            continue
+        far = pts[np.argmax(np.linalg.norm(
+            pts - np.mean([t for t in tips], axis=0), axis=1))]
+        path = smooth(walk(pts, far))
+        on = k in joined
+        ax.plot(path[:, 1], path[:, 0], color=FIL_A if on else CHORD,
+                lw=2.1 if on else 1.3, solid_capstyle="round",
+                zorder=4 if on else 3)
+
+    ax.plot([tips[0][1], tips[1][1]], [tips[0][0], tips[1][0]], color=PLECTA,
+            lw=1.6, ls=(0, (3.2, 2.2)), zorder=5)
+    for t in tips:
+        ax.plot([t[1]], [t[0]], "o", ms=4.2, mfc="white", mec=FIL_A, mew=1.1,
+                zorder=6)
+    ax.annotate("d = %.1f px" % case["d"],
+                (0.5 * (tips[0][1] + tips[1][1]), 0.5 * (tips[0][0] + tips[1][0])),
+                textcoords="offset points", xytext=(-7.0, 0.0), ha="right",
+                va="center", fontsize=PT_MIN, color=PLECTA, zorder=7)
+
+    lines = ["a gap link must pass", "all four:",
+             "d $\\leq$ %.0f px" % gates["max_len"],
+             r"$\theta \leq$ %.2f" % gates["max_theta"],
+             r"$\varphi \leq$ %.2f" % gates["max_phi"],
+             "C $<$ %.2f" % gates["cost_limit"]]
+    y = rect[1] + rect[3] - 0.055
+    for k, line in enumerate(lines):
+        fig.text(text_x, y - k * 0.052, line, fontsize=PT_MIN,
+                 color=CHORD if k < 2 else INK, ha="left", va="top")
+    n_pass = sum(1 for c in gates["candidates"] if c["gated_in"])
+    fig.text(text_x, y - len(lines) * 0.052 - 0.012,
+             "%d of %d candidates" % (n_pass, len(gates["candidates"])),
+             fontsize=PT_MIN, color=CHORD, ha="left", va="top")
 
 
 def main() -> int:
@@ -289,10 +354,9 @@ def main() -> int:
         option(ax, arms3, hub3, [tuple(p) for p in cfg["pairs"]], cost3,
                j3["price"], cfg["total"], chosen=(i == 0),
                free_label="free" if cfg["pairs"] else "all free")
-    ax_d = fig.add_axes([0.680, row2 + 0.085, 0.295, h - 0.150])
-    panel_degrees(ax_d, data)
+    panel_gap(fig, [0.610, row2, 0.150, h], 0.790, data)
     title(fig, 0.032, fy(1.88), "c", "An arm left free, and its price")
-    title(fig, 0.610, fy(1.88), "d", "Exact against greedy")
+    title(fig, 0.596, fy(1.88), "d", "A gap bridged")
 
     save_fig(fig, "fig_plecta_exact_matching", bbox_inches=None)
     plt.close(fig)

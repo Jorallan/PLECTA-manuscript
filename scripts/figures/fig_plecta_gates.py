@@ -215,7 +215,8 @@ def main() -> int:
                bbox_to_anchor=(0.5, 0.010), fontsize=PT_LEGEND,
                handlelength=2.0, columnspacing=1.5, handletextpad=0.6)
 
-    save_fig(fig, "fig_plecta_gates", bbox_inches=None)
+    save_fig(fig, "fig_plecta_gates", subdir="archive",
+             bbox_inches=None)
     plt.close(fig)
     print("fig_plecta_gates  %.3f x %.3f in, arm lw %.1f pt"
           % (FIG_W, FIG_H, ARM_LW))
