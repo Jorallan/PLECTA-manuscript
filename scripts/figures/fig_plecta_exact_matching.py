@@ -268,6 +268,9 @@ def panel_gap(fig, rect, text_x, data):
     """
     from scipy.ndimage import label
 
+    #  No count of how many candidates this particular scene offered or
+    #  accepted: the panel states the rule, and a scene-specific tally invites
+    #  the reader to treat one crop as evidence about the method.
     case, gates = data["gap_case"], data["gap_gates"]
     mask = unpack(case["mask"])
     pieces, n = label(mask, structure=np.ones((3, 3), bool))
@@ -315,10 +318,6 @@ def panel_gap(fig, rect, text_x, data):
     for k, line in enumerate(lines):
         fig.text(text_x, y - k * 0.052, line, fontsize=PT_MIN,
                  color=CHORD if k < 2 else INK, ha="left", va="top")
-    n_pass = sum(1 for c in gates["candidates"] if c["gated_in"])
-    fig.text(text_x, y - len(lines) * 0.052 - 0.012,
-             "%d of %d candidates" % (n_pass, len(gates["candidates"])),
-             fontsize=PT_MIN, color=CHORD, ha="left", va="top")
 
 
 def main() -> int:
