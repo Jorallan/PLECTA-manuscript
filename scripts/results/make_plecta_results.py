@@ -495,6 +495,24 @@ def graft_regime_macros(regime: dict) -> list[str]:
               fmt(lo["methods"]["graft_native"]["f1"])),
         macro("PlectaRegimeHighGraFTNativeFOne",
               fmt(hi["methods"]["graft_native"]["f1"])),
+        #  The counts behind the emission ratio, because "104 objects where 130
+        #  filaments exist" is the sentence a reader can check.
+        macro("PlectaRegimeHighTrueCount",
+              "%.0f" % hi["methods"]["plecta"]["n_instances_true"]),
+        macro("PlectaRegimeHighPlectaCount",
+              "%.0f" % hi["methods"]["plecta"]["n_instances_emitted"]),
+        macro("PlectaRegimeHighGraFTCount",
+              "%.0f" % hi["methods"]["graft"]["n_instances_emitted"]),
+        macro("PlectaRegimeHighDNAiCount",
+              "%.0f" % hi["methods"]["dnai"]["n_instances_emitted"]),
+        #  How nearly the permissive measure is that count and nothing else.
+        #  PLECTA's residual is exactly zero on all forty scenes, so this is
+        #  reported as the largest residual over the three methods rather than
+        #  as a per-method figure that would read as three separate claims.
+        macro("PlectaRegimeCoverageCountResidual",
+              "%.2f" % max(regime["overall"][m]
+                           ["max_abs_deviation_from_emission_ratio"]
+                           for m in ("plecta", "graft", "dnai"))),
     ]
     for tag, block in (("Low", lo), ("High", hi)):
         for key, stem in (("plecta", "Plecta"), ("graft", "GraFT"),
@@ -504,6 +522,11 @@ def graft_regime_macros(regime: dict) -> list[str]:
                 macro(f"PlectaRegime{tag}{stem}FOne", fmt(b["f1"])),
                 macro(f"PlectaRegime{tag}{stem}Matched",
                       fmt(b["filament_matched_coverage"])),
+                #  The same matching once a detection has to cover half the
+                #  filament it claims. The gap between this and the line above
+                #  is what the permissive form is not asking.
+                macro(f"PlectaRegime{tag}{stem}MatchedHalf",
+                      fmt(b["filament_matched_coverage_half"])),
                 macro(f"PlectaRegime{tag}{stem}Emitted",
                       "%.2f" % (b["n_instances_emitted"]
                                 / b["n_instances_true"])),

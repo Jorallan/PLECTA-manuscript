@@ -80,6 +80,12 @@ def main() -> None:
                 "n_censored": len([r for r in rows if r["method"] == m]) - len(sub),
                 **{k: mean(float(r[k]) for r in sub) for k in METRICS},
                 "filament_matched_coverage": mean(float(r["fmc"]) for r in own_sub),
+                #  The identical bipartite matching with one edge condition
+                #  added: a detection may claim a filament only if it covers
+                #  half of its axis. The difference between the two columns is
+                #  exactly what the permissive form does not ask.
+                "filament_matched_coverage_half": mean(float(r["fmc_half"])
+                                                       for r in own_sub),
                 "filament_coverage": mean(float(r["filament_coverage"])
                                           for r in own_sub),
                 "n_instances_emitted": mean(float(r["n_pred"]) for r in own_sub),
@@ -97,8 +103,19 @@ def main() -> None:
             "n_scored": len(sub),
             **{k: mean(float(r[k]) for r in sub) for k in METRICS},
             "filament_matched_coverage": mean(float(r["fmc"]) for r in own_sub),
+            "filament_matched_coverage_half": mean(float(r["fmc_half"])
+                                                   for r in own_sub),
             "filament_coverage": mean(float(r["filament_coverage"])
                                       for r in own_sub),
+            #  How closely the permissive measure is simply a count of objects.
+            #  A method emitting more objects than the scene contains has a
+            #  spare for every filament, so its ceiling is 1; one emitting
+            #  fewer is capped at the ratio. Measuring the residual per scene
+            #  turns that from an argument into a number.
+            "max_abs_deviation_from_emission_ratio": max(
+                (abs(float(r["fmc"])
+                     - min(1.0, float(r["n_pred"]) / max(1.0, float(r["n_gt"]))))
+                 for r in own_sub), default=None),
         }
 
     payload = {
@@ -123,7 +140,19 @@ def main() -> None:
                           "whole-filament to whole-detection matching, so "
                           "neither can see which arms were joined at a "
                           "crossing"),
+            "graft_own_half": ("the identical matching with one edge condition "
+                               "added: a detection may be matched to a filament "
+                               "only when it covers at least half that "
+                               "filament's axis. graft_metrics.suite computes "
+                               "it; nothing else in the measure changes"),
         },
+        "what_the_permissive_form_measures": (
+            "essentially the number of objects emitted. Per scene, filament "
+            "matched coverage equals min(1, objects emitted / filaments "
+            "present) to within the max_abs_deviation_from_emission_ratio "
+            "reported per method below. Requiring half coverage separates the "
+            "methods again and restores the pairwise ordering, which is the "
+            "measurement that settles whether the reversal is earned"),
         "source_record": {
             "study": str(STUDY).replace("\\", "/"),
             "protocol": "PROTOCOL.md",

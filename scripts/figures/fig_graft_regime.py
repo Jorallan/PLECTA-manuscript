@@ -8,19 +8,26 @@ continues into ours.
 
   (a) the manuscript's endpoint. PLECTA leads at every density and the margin
       widens; nothing crosses over.
-  (b) GraFT's own Fig. 2 metric on the identical predictions. The ranking
-      inverts at the dense end: GraFT is first and PLECTA last.
+  (b) GraFT's own Fig. 2 metric on the identical predictions, drawn twice. The
+      solid lines are the measure as published, where the ranking inverts at
+      the dense end: GraFT is first and PLECTA last. The dashed lines are the
+      identical bipartite matching with one edge condition added -- a detection
+      may claim a filament only when it covers half that filament's axis -- and
+      the inversion disappears.
 A third panel drew the ratio of objects emitted to objects present, which is
 the mechanism: matched coverage pairs each reference filament with at most one
 detection, so emitting fewer objects than a scene contains caps the score while
 emitting more does not. It is gone. That ratio is one number per method and the
-prose gives it, and (b) carries the point by itself once its axis is resolved to
-the range the values actually occupy.
+prose gives it; the dashed lines now carry the same point as a measurement
+rather than as an arithmetic aside, which is why (b) is no longer truncated.
 
 The two panels are not in tension. Matched coverage asks whether each true
 filament was found; the pairwise score asks whether the pieces were put
 together correctly. A method that shatters every filament at its crossings
 still offers a distinct detection for each one and still scores near 1 in (b).
+What the dashed lines add is that those detections are then mostly fragments:
+the solid-to-dashed drop is the share of matches that do not survive being
+asked to resemble the filament they were matched to.
 
 Data: results/plecta_graft_regime.json, written by
 scripts/results/make_graft_regime_record.py.
@@ -55,10 +62,15 @@ SERIES = (("plecta", "PLECTA", GREEN, "o"),
 PUBLISHED_LIMIT = 0.020
 
 
-def panel(ax, xs, series, ylabel, ylim, yticks):
+def panel(ax, xs, series, ylabel, ylim, yticks, dashed=None):
     for key, label, colour, marker in SERIES:
         ax.plot(xs, series[key], color=colour, lw=1.6, marker=marker, ms=3.8,
                 mfc="white", mew=1.2, zorder=4, label=label, clip_on=False)
+        if dashed is not None:
+            #  Same colour, no marker: this is the same method under a stricter
+            #  reading of the same measure, not a fourth series.
+            ax.plot(xs, dashed[key], color=colour, lw=1.2,
+                    ls=(0, (2.4, 1.8)), zorder=3, clip_on=False)
     ax.axvline(PUBLISHED_LIMIT, color=GRAY, lw=0.8, ls=(0, (2.6, 2.0)),
                zorder=2)
     ax.set_xlim(0, 0.060)
@@ -84,6 +96,8 @@ def main() -> int:
     f1 = {k: [s["methods"][k]["f1"] for s in strata] for k, *_ in SERIES}
     fmc = {k: [s["methods"][k]["filament_matched_coverage"] for s in strata]
            for k, *_ in SERIES}
+    fmc_half = {k: [s["methods"][k]["filament_matched_coverage_half"]
+                    for s in strata] for k, *_ in SERIES}
     #  No longer drawn -- the third panel is gone -- but still printed, because
     #  it is the mechanism the prose quotes.
     ratio = {k: [s["methods"][k]["n_instances_emitted"]
@@ -104,14 +118,18 @@ def main() -> int:
                 xytext=(5.0, 0.0), ha="left", va="center", fontsize=PT_MIN,
                 color=GRAY, linespacing=1.4)
 
-    #  A truncated axis, deliberately: every value lies above 0.75 and the
-    #  differences that decide the ranking are hundredths. Stated in the
-    #  caption. (a) is not truncated, because there the range is real.
+    #  Full range, matching (a): the half-coverage lines reach 0.257, so the
+    #  truncation this panel used to need is gone and both panels are now read
+    #  on the same scale.
     ax = fig.add_axes(rects[1])
-    panel(ax, xs, fmc, "Filament matched coverage", (0.75, 1.005),
-          [0.75, 0.80, 0.85, 0.90, 0.95, 1.00])
+    panel(ax, xs, fmc, "Filament matched coverage", (0.0, 1.0),
+          [0, 0.25, 0.5, 0.75, 1.0], dashed=fmc_half)
     ax.set_title("(b) GraFT's own measure", loc="left", fontsize=PT_TITLE,
                  fontweight="bold", pad=4.0)
+    ax.annotate("half-coverage" + chr(10) + "condition added",
+                (xs[-1], fmc_half["dnai"][-1]), textcoords="offset points",
+                xytext=(-4.0, -1.0), ha="right", va="top", fontsize=PT_MIN,
+                color=GRAY, linespacing=1.4)
 
     handles, labels = fig.axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, ncol=3, frameon=False, loc="lower center",

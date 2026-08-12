@@ -298,12 +298,21 @@ disagreement is worth stating rather than resolving. Filament matched coverage
 asks whether each reference filament was matched one-to-one to some detection.
 At the densest stratum it reads \PlectaRegimeHighGraFTMatched{} for GraFT,
 \PlectaRegimeHighDNAiMatched{} for DNAi and \PlectaRegimeHighPlectaMatched{}
-for PLECTA --- the reverse order. Because the matching is one-to-one, a method
-emitting fewer objects than the scene contains is capped by that ratio, and
-PLECTA emits \PlectaRegimeHighPlectaEmitted{} objects per reference filament
-against \PlectaRegimeHighGraFTEmitted{} for GraFT: PLECTA's coverage figure is
-its emission ratio to three decimals. The measure is not wrong. It asks whether
-each filament was found, and a method that severs every filament at its
+for PLECTA --- the reverse order. What it is counting is objects. Because the
+matching is one-to-one, a method emitting more objects than the scene contains
+has a spare for every filament while one emitting fewer cannot match them all:
+of the \PlectaRegimeHighTrueCount{} filaments in a densest-stratum scene GraFT
+emits \PlectaRegimeHighGraFTCount{}, DNAi \PlectaRegimeHighDNAiCount{} and
+PLECTA \PlectaRegimeHighPlectaCount{}, and across the whole ladder each method's
+matched coverage is the smaller of one and its emission ratio to within
+\PlectaRegimeCoverageCountResidual{} --- exactly, for every PLECTA scene. The
+condition it never imposes is that a matched detection resemble what it claims.
+Adding it, so a detection may take a filament only when it covers half that
+filament's axis and nothing else in the matching changes, restores the order at
+the densest stratum: \PlectaRegimeHighPlectaMatchedHalf{} for PLECTA against
+\PlectaRegimeHighGraFTMatchedHalf{} for GraFT and
+\PlectaRegimeHighDNAiMatchedHalf{} for DNAi. The measure is not wrong. It asks
+whether each filament was found, and a method that severs every filament at its
 crossings still offers a distinct detection for each one; it cannot ask whether
 the pieces were then put together correctly, which is what the pairwise score
 asks and what this paper is about. Both are reported here for that reason.
@@ -316,9 +325,10 @@ asks and what this paper is about. Both are reported here for that reason.
     no interval drawn and none claimed. Dashed line: the density at which
     GraFT's published comparison ends. \textbf{(a)}~the endpoint used
     throughout this paper. \textbf{(b)}~GraFT's own filament matched coverage,
-    on the identical predictions, which reverses the order at high density.
-    Its vertical axis is truncated to the range the values occupy; that of
-    \textbf{(a)} is not.}
+    on the identical predictions, which reverses the order at high density
+    (solid). Dashed: the identical matching with one edge condition added, that
+    a detection may claim a filament only when it covers half that filament's
+    axis. PLECTA's two lines nearly coincide; the other two separate.}
   \label{fig:regime}
 \end{figure}
 
