@@ -543,6 +543,21 @@ def graft_regime_macros(regime: dict) -> list[str]:
                            ["max_abs_deviation_from_emission_ratio"]
                            for m in ("plecta", "graft", "dnai"))),
     ]
+    #  The field-standard pair, pooled over the whole ladder, so the paragraph
+    #  can say the in-house endpoint is not carrying the ordering alone. VI is
+    #  emitted as split, merge and total together: the repository rule is that
+    #  split never appears without merge, because a method that fuses
+    #  everything never splits anything and scores near zero on it.
+    for key, stem in (("plecta", "Plecta"), ("graft", "GraFT"),
+                      ("dnai", "DNAi")):
+        b = regime["overall"][key]
+        lines.extend([
+            macro(f"PlectaRegimeOverall{stem}ARI", fmt(b["adjusted_rand_index"])),
+            macro(f"PlectaRegimeOverall{stem}VISplit", fmt(b["vi_split_bits"])),
+            macro(f"PlectaRegimeOverall{stem}VIMerge", fmt(b["vi_merge_bits"])),
+            macro(f"PlectaRegimeOverall{stem}VITotal",
+                  fmt(b["vi_split_bits"] + b["vi_merge_bits"])),
+        ])
     for tag, block in (("Low", lo), ("High", hi)):
         for key, stem in (("plecta", "Plecta"), ("graft", "GraFT"),
                           ("dnai", "DNAi")):

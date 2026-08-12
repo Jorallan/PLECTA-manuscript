@@ -286,7 +286,17 @@ throughout this paper PLECTA leads at every density, from
 \PlectaRegimeLowDNAiFOne{} at the sparsest, to
 \PlectaRegimeHighPlectaFOne{} against \PlectaRegimeHighGraFTFOne{} and
 \PlectaRegimeHighDNAiFOne{} at the densest; the margin widens with density and
-nothing crosses over, including inside GraFT's published range. GraFT was also
+nothing crosses over, including inside GraFT's published range. The
+field-standard measures order them identically over the whole ladder, adjusted
+Rand index \PlectaRegimeOverallPlectaARI{}, \PlectaRegimeOverallGraFTARI{} and
+\PlectaRegimeOverallDNAiARI{} against variation of information
+\PlectaRegimeOverallPlectaVITotal{}, \PlectaRegimeOverallGraFTVITotal{} and
+\PlectaRegimeOverallDNAiVITotal{} bits, and its two components separate what
+the totals cannot: PLECTA's errors are mildly fusion-leaning
+(\PlectaRegimeOverallPlectaVISplit{} split against
+\PlectaRegimeOverallPlectaVIMerge{} merge) where both comparators divide more
+than they fuse at every density above the sparsest
+(Figure~\ref{fig:regime}c). GraFT was also
 run end to end on the noisy images with its own front end, which on this data
 is inside its design envelope rather than degenerate as it is on ours; that arm
 scored \PlectaRegimeLowGraFTNativeFOne{} and
@@ -328,7 +338,11 @@ asks and what this paper is about. Both are reported here for that reason.
     on the identical predictions, which reverses the order at high density
     (solid). Dashed: the identical matching with one edge condition added, that
     a detection may claim a filament only when it covers half that filament's
-    axis. PLECTA's two lines nearly coincide; the other two separate.}
+    axis. PLECTA's two lines nearly coincide; the other two separate.
+    \textbf{(c)}~the variation-of-information decomposition of the same
+    predictions, splitting against fusing, both in bits with the origin best,
+    each method traced across the density ladder. The diagonal marks equal
+    split and merge error, which is why neither component is quoted alone.}
   \label{fig:regime}
 \end{figure}
 
