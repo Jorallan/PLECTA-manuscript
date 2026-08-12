@@ -78,6 +78,24 @@ path cover \citep{osterlund2026graft}. Learned alternatives include
 orientation-aware terminus pairing \citep{liu2019intersection}, FibeR-CNN, and
 recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.
 
+Two of those methods are compared against directly here, so what each was built
+for matters. DNAi is an end-to-end tool for DNA fibre spreading assays, in which
+immunofluorescence images of replicating DNA carry two nucleoside-analogue
+labels and the quantity wanted is the length ratio of the two tracts; it matches
+trained human annotators on that task and is released with both its models and
+its annotated data \citep{playout2026dnai}. GraFT traces and tracks filamentous
+structures through time in confocal series of the plant actin cytoskeleton, and
+the temporal dimension it handles is outside the scope of this work
+\citep{osterlund2026graft}. Both are strong in their own domains, and both make
+design choices those domains license: DNAi commits to a pairing at every
+junction of degree two to four and attempts none above that, while GraFT's
+greedy longest-first path cover cannot revise an early commitment. Such choices
+cost little where filaments are sparse and well separated, which is the regime
+each was validated in, and more where filaments are dense and crossings are
+frequent. Section~\ref{sec:res-comparators} runs both from their own released
+sources, on identical input masks and through one scorer, and reports what that
+costs.
+
 Skeleton graphs, junction excision, continuation angles, distance gates,
 combinatorial optimisation, iterative refitting and overlapping filament output
 are therefore all prior art, and none is claimed here. Two distinctions are
