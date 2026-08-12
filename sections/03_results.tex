@@ -272,6 +272,56 @@ that GraFT resolved \PlectaGraFTFrameGraFTInjectedSolved{} of the frame's
 answer to different failures, which is why Section~\ref{sec:res-overlap} reports
 both.
 
+\textbf{A ladder on GraFT's own ground.} One frame is an anecdote, so the same
+question was put to GraFT's own generator, run unmodified at its published
+settings, over \PlectaRegimeSceneCount{} scenes in
+\PlectaRegimeStratumCount{} density strata
+(Figure~\ref{fig:regime}). The ladder spans
+\PlectaRegimeDensityLow{} to \PlectaRegimeDensityHigh{} centreline pixels per
+image pixel: GraFT's published comparison reaches
+\PlectaRegimeDensityPublished{}, so its whole range is the lower half of this
+one and this paper's own scenes occupy the upper half. On the endpoint used
+throughout this paper PLECTA leads at every density, from
+\PlectaRegimeLowPlectaFOne{} against \PlectaRegimeLowGraFTFOne{} and
+\PlectaRegimeLowDNAiFOne{} at the sparsest, to
+\PlectaRegimeHighPlectaFOne{} against \PlectaRegimeHighGraFTFOne{} and
+\PlectaRegimeHighDNAiFOne{} at the densest; the margin widens with density and
+nothing crosses over, including inside GraFT's published range. GraFT was also
+run end to end on the noisy images with its own front end, which on this data
+is inside its design envelope rather than degenerate as it is on ours; that arm
+scored \PlectaRegimeLowGraFTNativeFOne{} and
+\PlectaRegimeHighGraFTNativeFOne{} at the two ends, below the injected arm
+almost everywhere, so injecting the mask continues to favour it.
+
+The same predictions score differently under GraFT's own measure, and the
+disagreement is worth stating rather than resolving. Filament matched coverage
+asks whether each reference filament was matched one-to-one to some detection.
+At the densest stratum it reads \PlectaRegimeHighGraFTMatched{} for GraFT,
+\PlectaRegimeHighDNAiMatched{} for DNAi and \PlectaRegimeHighPlectaMatched{}
+for PLECTA --- the reverse order. Because the matching is one-to-one, a method
+emitting fewer objects than the scene contains is capped by that ratio, and
+PLECTA emits \PlectaRegimeHighPlectaEmitted{} objects per reference filament
+against \PlectaRegimeHighGraFTEmitted{} for GraFT: PLECTA's coverage figure is
+its emission ratio to three decimals. The measure is not wrong. It asks whether
+each filament was found, and a method that severs every filament at its
+crossings still offers a distinct detection for each one; it cannot ask whether
+the pieces were then put together correctly, which is what the pairwise score
+asks and what this paper is about. Both are reported here for that reason.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_graft_regime.pdf}
+  \caption{Three methods on GraFT's own generator, at its published settings,
+    over \PlectaRegimeSceneCount{} scenes; means of five scenes per stratum,
+    no interval drawn and none claimed. Dashed line: the density at which
+    GraFT's published comparison ends. \textbf{(a)}~the endpoint used
+    throughout this paper. \textbf{(b)}~GraFT's own filament matched coverage,
+    on the identical predictions, which reverses the order at high density.
+    Its vertical axis is truncated to the range the values occupy; that of
+    \textbf{(a)} is not.}
+  \label{fig:regime}
+\end{figure}
+
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
 each method\'s own computation only (Table~\ref{tab:plecta-comparators};
 \RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded \RuntimeBudgetSeconds{}~s

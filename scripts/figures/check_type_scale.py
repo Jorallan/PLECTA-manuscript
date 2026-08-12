@@ -45,15 +45,16 @@ from matplotlib.text import Text
 import _style
 from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 
-#: The seven figures the manuscript includes, in the order it includes them.
+#: The eight figures the manuscript includes, in the order it includes them.
 SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
     ("fig_plecta_exact_matching", 3),
     ("fig_plecta_density", 4),
     ("fig_comparators", 5),
-    ("fig_plecta_examples", 6),
-    ("fig_plecta_sensitivity", 7),
+    ("fig_graft_regime", 6),
+    ("fig_plecta_examples", 7),
+    ("fig_plecta_sensitivity", 8),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was
