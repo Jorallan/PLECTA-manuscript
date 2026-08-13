@@ -56,6 +56,7 @@ SHIPPED = [
     ("fig_metric_panels", 4),
     ("fig_plecta_examples", 6),
     ("fig_real_sem", 7),
+    ("fig_real_sem_axis", 8),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was
@@ -66,7 +67,10 @@ SHIPPED = [
 #: text, the second of them a null; fig_comparators_density carried a third of
 #: what fig_comparators carried; fig_plecta_control and fig_plecta_performance
 #: both drew the width negative control; fig_plecta_task predates
-#: fig_common_fragment_metric.  They are still rendered and still gated, so a
+#: fig_common_fragment_metric; and fig_real_sem_overlay is the three-panel
+#: centreline variant of fig_real_sem_axis, keeping the annotation beside the
+#: two reconstructions, which at this size is near-indistinguishable from
+#: PLECTA on the manual-derived axis.  They are still rendered and still gated, so a
 #: shared-style change cannot quietly break one of them, but they are numbered
 #: apart so the table above never suggests the manuscript has fifteen figures.
 SUPERSEDED = [
@@ -80,6 +84,7 @@ SUPERSEDED = [
     ("fig_graft_regime", 107),
     ("fig_plecta_density", 108),
     ("fig_plecta_sensitivity", 109),
+    ("fig_real_sem_overlay", 110),
 ]
 
 MODULES = SHIPPED + SUPERSEDED

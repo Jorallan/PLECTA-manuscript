@@ -40,6 +40,7 @@ STUDY = Path(r"C:\Repos\comparisons\real_sem_study")
 
 for path in (Path(r"C:\Repos\comparisons\graft_regime\scripts"),
              Path(r"C:\Repos\comparisons\metrics_study\scripts"),
+             Path(r"C:\Repos\comparisons\real_sem_study\scripts"),
              Path(r"C:\Repos\filaments_quantification\eval")):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
@@ -48,11 +49,20 @@ import _local as L                                            # noqa: E402
 import metrics_lib as ML                                      # noqa: E402
 import common_metric as CM                                    # noqa: E402
 import instance_io as IIO                                     # noqa: E402
+#  PLECTA's own optional image layer, driven rather than reimplemented: it
+#  measures a width per instance by FWHM across the centreline and stamps a
+#  ribbon. This is the Section 2.5 rendering, and it runs after the grouping is
+#  fixed, so it cannot move a pixel from one instance to another.
+import width_render as WR                                     # noqa: E402
 
 FIELD = "b58_110"
 AXES = (("manual", "skel"), ("unet", "nnunet"))
-CROP = 512
-STRIDE = 128
+#: The window is wider than tall because the figure puts two panels side by side
+#: across \linewidth: each is then ~3.1 in wide, and a square crop would make the
+#: figure 3.3 in tall for content that is a texture and reads just as well at
+#: 3:2. That is worth about a fifth of a page on a 22-page budget.
+CROP_H, CROP_W = 344, 512
+STRIDE = 88
 TOL = 2                       # the placement tolerance used throughout
 MIN_REFERENCE = 25            # a window with almost nothing in it is not typical
 OUT = REPO / "results" / "figure_assets" / "real_sem_crop.npz"
@@ -107,7 +117,7 @@ def fragments_inside(frag: np.ndarray, counts_all: np.ndarray,
     the window edge is scored by neither the crop nor the deviation that chose
     it.
     """
-    window = frag[r0:r0 + CROP, c0:c0 + CROP]
+    window = frag[r0:r0 + CROP_H, c0:c0 + CROP_W]
     counts_win = np.bincount(window.ravel(), minlength=counts_all.size)
     ids = np.flatnonzero(counts_win)
     return {int(f) for f in ids if f and counts_win[f] == counts_all[f]}
@@ -142,12 +152,21 @@ def main() -> int:
         pred_assign = CM.assign_fragments(frag, centrelines, 0.3, 6.0)
         match = greedy_match(reference.masks, centrelines.masks, mask.shape)
 
+        #  The same instances re-drawn at the width the SEM says each filament
+        #  is. Run on the whole field, like the grouping, and cropped after.
+        widths, width_record = WR.render_all(scene, mask, prediction.masks)
+        print("[extract]   width: %d/%d instances measured, scene median %s px"
+              % (width_record["n_measured"], width_record["n_instances"],
+                 width_record["scene_median_width_px"]))
+
         per_axis[key] = {
             "mask": mask, "frag": frag,
             "counts": np.bincount(frag.ravel()),
             "ref_assign": ref_assign, "pred_assign": pred_assign,
             "field_f1": scores["f1"],
             "labels": label_image(centrelines.masks, mask.shape, match),
+            "width_labels": label_image(widths, mask.shape, match),
+            "width_record": width_record,
             "reference": reference,
         }
         if sem is None:
@@ -156,19 +175,23 @@ def main() -> int:
         print("[extract] %s %-6s field F1 %.4f, %d instances, %d matched"
               % (FIELD, key, scores["f1"], len(centrelines.masks), len(match)))
 
-    #  The reference axis drawn in panel (b) is the skeleton of the manual
-    #  annotation -- which is exactly the manual-derived input axis -- so the
-    #  three instance panels are all one-pixel centrelines and comparable.
+    #  Two renderings of the annotation, because the two figures compare against
+    #  different things. Its skeleton is exactly the manual-derived input axis,
+    #  and is what the centreline panels are comparable with; its stored form is
+    #  already painted at the width the annotator drew, which is what the
+    #  width-rendered panels are comparable with. Neither is invented.
     from skimage.morphology import skeletonize
     reference = per_axis["manual"]["reference"]
+    shape = per_axis["manual"]["mask"].shape
     ref_labels = label_image(
         {i: skeletonize(np.asarray(m, bool)) for i, m in reference.masks.items()},
-        per_axis["manual"]["mask"].shape)
+        shape)
+    ref_width_labels = label_image(reference.masks, shape)
 
     height, width = per_axis["manual"]["mask"].shape
     best = None
-    for r0 in range(0, height - CROP + 1, STRIDE):
-        for c0 in range(0, width - CROP + 1, STRIDE):
+    for r0 in range(0, height - CROP_H + 1, STRIDE):
+        for c0 in range(0, width - CROP_W + 1, STRIDE):
             deviation, local, n_ref = 0.0, {}, 0
             for key in per_axis:
                 axis = per_axis[key]
@@ -192,25 +215,30 @@ def main() -> int:
     deviation, r0, c0, local, n_ref = best
     print("[extract] crop at row %d col %d (%dx%d): local F1 %s, "
           "total deviation %.4f over %d reference filaments"
-          % (r0, c0, CROP, CROP,
+          % (r0, c0, CROP_W, CROP_H,
              ", ".join("%s %.4f" % kv for kv in sorted(local.items())),
              deviation, n_ref))
 
-    sl = (slice(r0, r0 + CROP), slice(c0, c0 + CROP))
+    sl = (slice(r0, r0 + CROP_H), slice(c0, c0 + CROP_W))
     payload = {
         "sem": sem[sl].astype(np.uint8),
         "reference": ref_labels[sl].astype(np.int32),
+        "reference_width": ref_width_labels[sl].astype(np.int32),
         "manual": per_axis["manual"]["labels"][sl].astype(np.int32),
         "unet": per_axis["unet"]["labels"][sl].astype(np.int32),
+        "manual_width": per_axis["manual"]["width_labels"][sl].astype(np.int32),
+        "unet_width": per_axis["unet"]["width_labels"][sl].astype(np.int32),
         #  Stored as a plain string so the asset loads without allow_pickle.
         "meta": np.array(json.dumps({
             "field": FIELD,
-            "crop_row": r0, "crop_col": c0, "crop_px": CROP,
+            "crop_row": r0, "crop_col": c0,
+            "crop_h": CROP_H, "crop_w": CROP_W,
             "stride_px": STRIDE, "tolerance_px": TOL,
             "field_f1": {k: per_axis[k]["field_f1"] for k in per_axis},
             "local_f1": local,
             "n_reference_in_crop": int(n_ref),
             "unmatched_label": -1,
+            "width_render": {k: per_axis[k]["width_record"] for k in per_axis},
             "selection": ("window whose local pairwise F1 is jointly closest "
                           "to the whole-field value on both axes"),
             "held_out": True,

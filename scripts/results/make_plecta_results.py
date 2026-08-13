@@ -703,6 +703,10 @@ def graft_regime_macros(regime: dict) -> list[str]:
                       ("dnai", "DNAi")):
         b = regime["overall"][key]
         lines.extend([
+            #  Pooled over the whole ladder, so the Conclusions can state what
+            #  the method scores on a generator that is not ours in one number
+            #  rather than as the two ends of a range.
+            macro(f"PlectaRegimeOverall{stem}FOne", fmt(b["f1"])),
             macro(f"PlectaRegimeOverall{stem}ARI", fmt(b["adjusted_rand_index"])),
             macro(f"PlectaRegimeOverall{stem}VISplit", fmt(b["vi_split_bits"])),
             macro(f"PlectaRegimeOverall{stem}VIMerge", fmt(b["vi_merge_bits"])),
@@ -812,23 +816,21 @@ def greedy_table(greedy: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def comparator_table(audit: dict, greedy: dict,
-                     runtime: dict | None = None) -> str:
+def comparator_table(audit: dict, runtime: dict | None = None) -> str:
     """One table for all four methods on the degraded masks.
 
     Supersedes greedy_table(), which compared two methods on six measures and
     restated most of them in the prose above it. Methods are columns because
     there are four of them against eight measures, and because a reader compares
     methods down a column of like-scaled numbers more easily than across a row.
-    That orientation is also the cheaper one on a page that is exactly 20 pages
-    long: each measure costs one row, and the paired-difference column costs
-    nothing at all.
 
-    The last column keeps the paired difference against the greedy continuation
-    with its interval, which is what the earlier table uniquely carried: that
-    comparator tests the paper's central claim, and prose cannot hold six
-    intervals compactly. It is free here, being a column on a page where only
-    rows cost anything.
+    There is no paired-difference column. It carried PLECTA minus the greedy
+    continuation on every row, and the greedy continuation is reported as a
+    floor rather than as a claim under test -- a reader takes that difference
+    off the two columns beside each other. The one interval worth stating is the
+    headline pairwise difference, which Section 3.3 gives in prose from
+    \\PlectaGreedySwept* macros, and the claim that does need intervals -- the
+    matcher-only arm -- keeps all of its own in the text.
 
     Variation of information is reported as the total, never as the split
     component alone: split alone is one-sided, since a method that merges
@@ -843,33 +845,20 @@ def comparator_table(audit: dict, greedy: dict,
     says so.
     """
     means = audit["methods"]["degraded"]
-    paired = greedy["conditions"]["degraded"]["summary"]["metrics"]
     junction = audit["junction_resolution"]["degraded"]
-    jr_paired = audit["paired_differences"]["degraded"]["plecta_minus_greedy_swept"]
     columns = ("plecta", "greedy_swept", "dnai", "graft")
 
-    def interval(mean: float, lo: float, hi: float) -> str:
-        return f"{mean:+.3f} [{lo:+.3f}, {hi:+.3f}]"
-
-    def from_greedy_record(key: str) -> str:
-        stats = paired[key]["paired"]
-        return interval(stats["mean_difference"], stats["ci_low"],
-                        stats["ci_high"])
-
-    body: list[tuple[str, list[str], str]] = []
+    body: list[tuple[str, list[str]]] = []
     for label, key in (("Common-fragment $F_1$", "f1"),
                        ("Precision", "precision"),
                        ("Recall", "recall"),
                        ("Reference-instance recovery",
                         "fragment_recovery_recovery_rate"),
                        ("Adjusted Rand index", "adjusted_rand_index")):
-        body.append((label,
-                     [fmt(means[c]["overall"][key]) for c in columns],
-                     from_greedy_record(key)))
+        body.append((label, [fmt(means[c]["overall"][key]) for c in columns]))
 
     body.append(("Variation of information~$\\downarrow$",
-                 [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns],
-                 from_greedy_record("vi_total_bits")))
+                 [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns]))
 
     #  One crossing row, not two.  The chance-corrected resolution index used
     #  to sit under this one; over the real-field rows it correlates with the
@@ -878,10 +867,7 @@ def comparator_table(audit: dict, greedy: dict,
     #  of the reference rather than of any method.
     resolution = [
         ("Crossing Fidelity",
-         [fmt(junction[c]["overall"]["exact_rate"]) for c in columns],
-         interval(jr_paired["jr_exact_rate"]["mean"],
-                  jr_paired["jr_exact_rate"]["ci_lo"],
-                  jr_paired["jr_exact_rate"]["ci_hi"])),
+         [fmt(junction[c]["overall"]["exact_rate"]) for c in columns]),
     ]
 
     # Median seconds per scene at the two ends of the density range. One row
@@ -898,22 +884,19 @@ def comparator_table(audit: dict, greedy: dict,
             return f"{block['cov20']:.2f}--{block['cov60']:.1f}"
 
         timing = [("Median s per scene, 20/60\\%",
-                   [span("plecta"), "---", span("dnai"), span("graft")],
-                   "---")]
+                   [span("plecta"), "---", span("dnai"), span("graft")])]
 
     lines = ["% Generated by scripts/results/make_plecta_results.py; do not edit.",
-             "\\begin{tabular}{lrrrrr}", "\\toprule",
-             "Measure & PLECTA & Greedy & DNAi & GraFT & "
-             "PLECTA $-$ greedy \\\\",
+             "\\begin{tabular}{lrrrr}", "\\toprule",
+             "Measure & PLECTA & Greedy & DNAi & GraFT \\\\",
              "\\midrule"]
     for group in (body, resolution, timing):
         if not group:
             continue
         if group is not body:
             lines.append("\\addlinespace")
-        for label, values, difference in group:
-            lines.append(f"{label} & " + " & ".join(values)
-                         + f" & {difference} \\\\")
+        for label, values in group:
+            lines.append(f"{label} & " + " & ".join(values) + " \\\\")
     lines.extend(["\\bottomrule", "\\end{tabular}"])
     return "\n".join(lines) + "\n"
 
@@ -1246,7 +1229,7 @@ def main() -> None:
         greedy_table(greedy), encoding="utf-8"
     )
     (RESULTS / "plecta_comparator_table.tex").write_text(
-        comparator_table(audit, greedy, runtime), encoding="utf-8"
+        comparator_table(audit, runtime), encoding="utf-8"
     )
     (RESULTS / "plecta_factorial_table.tex").write_text(
         factorial_table(factorial), encoding="utf-8"

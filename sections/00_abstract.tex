@@ -9,9 +9,15 @@ evidence from the assembled chains, so that a crossing pixel may belong to more
 than one output instance. What is new is narrow and specific: each junction of
 any degree is solved as one exact maximum-weight \emph{partial} matching in
 which leaving an arm unmatched is priced rather than left over, so a filament
-can end instead of having a continuation invented for it. Skeleton graphs,
-continuation angles, distance gates, optimisation and overlapping output are
-prior art. The method draws on no random number generator and its configuration
+can end instead of having a continuation invented for it. What makes that
+decidable at all is bending stiffness: the evidence is entirely directional,
+tangent and curvature continuity read over tens of pixels of arclength either
+side of the discontinuity, so the method applies to rod-like filaments whose
+direction persists across a crossing --- the semiflexible regime that
+nanotube bundles, cytoskeletal filaments and synthetic fibres occupy --- and
+not to freely flexible chains, where no local direction survives the junction
+to be matched. Skeleton graphs, continuation angles, distance gates,
+optimisation and overlapping output are prior art. The method draws on no random number generator and its configuration
 is published, so a mask yields the same instances on every run.
 
 Evaluation used a method-independent partition of each input skeleton into
@@ -26,7 +32,7 @@ Rand index \PlectaHeldoutARIMean{}, with no failed scenes, falling from
 \PlectaDensitySixZeroFOneMean{} at 60\% and identifying dense crossings as the
 main remaining regime of error. Against a greedy minimum-turning-angle
 continuation rule on identical masks it gained \PlectaGreedySweptDeltaFOne{}
-\Fone{} [\PlectaGreedyDeltaCILow{}, \PlectaGreedyDeltaCIHigh{}] over
+\Fone{} [\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] over
 \PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} and
 \PlectaGraFTDeltaFOne{} over two released implementations run from their own
 sources; it leads at every coverage on this generator under all three reported

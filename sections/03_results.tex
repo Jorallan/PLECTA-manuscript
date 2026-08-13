@@ -103,8 +103,13 @@ ours, not a reimplementation of any particular paper but of the pairing
 principle SIFNE, GraFT's path cover and the continuity baseline of Wegmayr et
 al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} share,
 and it is reported as the transparent floor the claim of
-Section~\ref{sec:intro} is made against, never as an external result
-(Table~\ref{tab:plecta-comparators}, final column).
+Section~\ref{sec:intro} is made against, never as an external result. PLECTA
+leads it by \PlectaGreedySweptDeltaFOne{} \Fone{}
+[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
+the \PlectaGreedySceneCount{} scenes, and by
+\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
+\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
+artefact of mask degradation.
 
 \begin{table}[!htbp]
     \centering
@@ -114,9 +119,8 @@ Section~\ref{sec:intro} is made against, never as an external result
     \PlectaGraFTSceneCount{} it completed. Variation of information is in bits
     and lower is better; higher is better for the rest. Crossing Fidelity is
     defined in Appendix~\ref{app:measures}, and leaving every arm unpaired
-    scores \PlectaJunctionChance{} on it here. The final column is the paired
-    difference against the greedy continuation, density-stratified 95\%
-    bootstrap; the other paired differences are in the text.}
+    scores \PlectaJunctionChance{} on it here. Paired differences with their
+    intervals are in the text.}
     \label{tab:plecta-comparators}
     \small
     \input{results/plecta_comparator_table}
@@ -406,31 +410,46 @@ annotation and once on the nnU-Net axis, with the annotation as the reference in
 both cases, so the two conditions differ only in the mask. The first is an
 oracle-like input condition and not an end-to-end result --- it asks what the
 grouping can do when the axis evidence is curated --- and only the second says
-what an automatic mask allows. Figure~\ref{fig:real-sem} shows both on one
-field.
+what an automatic mask allows. Figures~\ref{fig:real-sem}
+and~\ref{fig:real-sem-axis} show both on one field, at width and as the
+centrelines the scores are computed on.
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{PLECTA on one real SEM field, B58\_110, which is held out of the
-    nnU-Net run that produced its axis. \textbf{(a)}~the micrograph;
-    \textbf{(b)}~the manual annotation, skeletonised, which is both the
-    reference and the manual-derived input axis; \textbf{(c)}~and
-    \textbf{(d)}~PLECTA's instances from the manual-derived and the nnU-Net
-    axis respectively --- the same method and the same parameters, differing
-    only in the mask they were handed. Instance colours correspond across the
-    three panels: a predicted instance is drawn in the colour of the annotated
-    filament it was matched to, and an instance matched to no annotated
-    filament is drawn in crimson. Adjacent filaments are given different
-    colours, which carry identity within the figure and nothing else. PLECTA
-    emits one-pixel centrelines; every instance is dilated by one pixel for
-    legibility at this size, which changes no geometry. The $512\times512$\,px
-    crop is the window whose local pairwise \Fone{} is jointly closest to the
-    whole field's on both axes, so it is typical of the field rather than
-    selected from it. Scores are in
-    Table~\ref{tab:plecta-real-masks}; what (d) shows is the mask breaking
-    filaments, not the grouping fusing them.}
+    \caption{Reconstructed bundles on one real SEM field, B58\_110, which is
+    held out of the nnU-Net run that produced its axis. \textbf{(a)}~the manual
+    annotation; \textbf{(b)}~PLECTA from the manual-derived axis;
+    \textbf{(c)}~PLECTA from the nnU-Net axis --- the same method and the same
+    parameters, differing only in the mask they were handed. All three are
+    drawn at width so that they are the same kind of object: the annotation as
+    the annotator painted it, and the two reconstructions through the optional
+    image layer of Section~\ref{sec:mm-stage4}, which measures a width per
+    instance across the centreline and renders a ribbon. That layer runs after
+    the grouping is fixed and cannot move a pixel from one instance to another,
+    so no score in this paper depends on it; the centreline form every number
+    is computed on is Figure~\ref{fig:real-sem-axis}. Instance colours
+    correspond across the panels --- a predicted instance takes the colour of
+    the annotated filament it was matched to, one matched to none is crimson,
+    and adjacent filaments are given different colours, which carry identity
+    within the figure and nothing else.}
     \label{fig:real-sem}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
+    \caption{The same field and the same crop as
+    Figure~\ref{fig:real-sem}, as the one-pixel centrelines every number in
+    Table~\ref{tab:plecta-real-masks} is computed on, from
+    \textbf{(a)}~the manual-derived axis and \textbf{(b)}~the nnU-Net axis. The
+    bright ridge under each trace is the filament that trace claims to be.
+    Instances are dilated by one pixel for legibility at this size, which
+    changes no geometry. The $512\times344$\,px crop is the window whose local
+    pairwise \Fone{} is jointly closest to the whole field's on both axes, so it
+    is typical of the field rather than selected from it. What (b) shows is the
+    mask breaking filaments into more pieces, not the grouping fusing them.}
+    \label{fig:real-sem-axis}
 \end{figure}
 
 \textbf{Which fields are held out, and what the exception costs.} B58\_110 and
