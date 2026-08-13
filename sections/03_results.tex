@@ -123,8 +123,9 @@ it is not an artefact of mask degradation.
     one scorer. $n=\PlectaGreedySceneCount{}$ scenes and
     \PlectaJunctionCount{} reference crossings, except GraFT, over the
     \PlectaGraFTSceneCount{} it completed. Variation of information is in bits
-    and lower is better; higher is better for the rest. The last two rows are
-    defined in Section~\ref{sec:res-overlap}. The final column is the paired
+    and lower is better; higher is better for the rest. Crossing Fidelity is
+    defined in Section~\ref{sec:mm-metrics}, and leaving every arm unpaired
+    scores \PlectaJunctionChance{} on it here. The final column is the paired
     difference against the greedy continuation, density-stratified 95\%
     bootstrap; the other paired differences are in the text.}
     \label{tab:plecta-comparators}
@@ -179,24 +180,21 @@ a pooled value would flatter any method at 60\% coverage.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels_degraded.pdf}
-  \caption{The three published methods on the degraded input masks, by coverage
-    stratum, under the three measures of Section~\ref{sec:mm-metrics}.
-    \textbf{(a)}~pairwise \Fone{}, which counts pairs of fragments and so sees
-    an identity swap at a crossing; \textbf{(b)}~detection \Fone{} at DNAi's own
-    IoU threshold of 0.1 with the \PlectaPlacementTolerance{}\,px placement
-    tolerance, which counts whole objects and is blind to that swap;
-    \textbf{(c)}~the chance-corrected resolution index, which counts crossings
-    and is the only one of the three that separates declining to join from
-    joining wrongly. The three panels share one 0--1 scale and the tick labels
-    are written once, on (a). The numbers inside (a) are each method's
-    variation-of-information total in bits at the two ends of the range, for
-    which lower is better; that measure has no panel because PLECTA's whole
-    trajectory lies under 0.9 bits against DNAi's 2.9 and a shared axis crushes
-    it. Points are plain means of $n=10$ scenes; no interval is drawn and none
-    is claimed, the aggregate paired differences and their intervals being in
-    Table~\ref{tab:plecta-comparators}. GraFT exceeded its per-scene wall-clock
-    budget on three of the densest degraded scenes, which are the hardest of the
-    set, so its rightmost point is a mean of seven and is optimistic.}
+  \caption{The three methods on the degraded input masks, by coverage stratum,
+    under three of the measures of Section~\ref{sec:mm-metrics}: \textbf{(a)}
+    pairwise \Fone{}, which counts pairs of fragments; \textbf{(b)} detection
+    \Fone{} at IoU \PlectaDetectionIoU{} with the
+    \PlectaPlacementTolerance{}\,px placement tolerance, which counts objects;
+    \textbf{(c)} Crossing Fidelity, which counts crossings, against the
+    fidelity of leaving every arm unpaired (dashed). The panels share one
+    0--1 scale, with tick labels written once. The numbers inside (a) are each
+    method's variation-of-information total in bits at the two ends; that
+    measure has no panel because PLECTA's whole trajectory lies under 0.9 bits
+    against DNAi's 2.9 and a shared axis crushes it. Points are plain means of
+    $n=10$ scenes, no interval drawn and none claimed; the paired differences
+    are in Table~\ref{tab:plecta-comparators}. GraFT exceeded its wall-clock
+    budget on three of the densest scenes, the hardest of the set, so its
+    rightmost point is a mean of seven and is optimistic in all three panels.}
   \label{fig:panels-degraded}
 \end{figure}
 
@@ -231,13 +229,11 @@ from \PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
 [\PlectaDNAiRestrictedCleanDeltaCILow{},
 \PlectaDNAiRestrictedCleanDeltaCIHigh{}], still favouring PLECTA in
 \PlectaDNAiRestrictedCleanWinCount{} of \PlectaDNAiCleanSceneCount{} scenes and
-at every coverage level. DNAi gains far more from the restriction than PLECTA
-does, which is what shows the restriction genuinely removes its handicap. So
-roughly \PlectaDNAiCoverageShareClean{}\,\% of the margin is coverage of cases
-the comparator cannot attempt and \PlectaDNAiDecisionShareClean{}\,\% is the
-outcome of decisions both methods make. Consistent with that, after its
-clustering is repaired DNAi's remaining errors are dominated by division, a
-third of them at junctions of degree four, which it does attempt.
+at every coverage level, DNAi gaining far more from the restriction than PLECTA
+does. Roughly \PlectaDNAiCoverageShareClean{}\,\% of the margin is therefore
+coverage of cases the comparator cannot attempt and
+\PlectaDNAiDecisionShareClean{}\,\% is the outcome of decisions both methods
+make.
 
 \textbf{GraFT.} GraFT builds a graph on a skeleton, derives an angle threshold
 per component, and traces filaments by constrained depth-first search followed
@@ -264,24 +260,22 @@ the set, so that exclusion flatters GraFT. Neither released method establishes a
 general ranking, and Section~\ref{sec:limitations} states what these comparisons
 leave untested.
 
-\textbf{One frame that is not ours.} Every scene above comes from one generator,
-which Section~\ref{sec:limitations} names as this paper's principal limitation,
-so it is worth reporting that GraFT's repository bundles a single
+\textbf{One frame that is not ours.} Every scene above comes from one
+generator, which Section~\ref{sec:limitations} names as this paper's principal
+limitation, so it is worth reporting that GraFT's repository bundles a single
 \PlectaGraFTFrameSide{}$\times$\PlectaGraFTFrameSide{}~px synthetic frame with
-per-filament ground truth, and that the ordering survives it. Scored through the
-identical pipeline, PLECTA reached \Fone{}=\PlectaGraFTFramePlectaFOne{} against
+per-filament ground truth and that the ordering survives it: through the
+identical pipeline PLECTA reached \Fone{}=\PlectaGraFTFramePlectaFOne{} against
 \PlectaGraFTFrameGreedyFOne{} for the greedy baseline,
 \PlectaGraFTFrameGraFTNativeFOne{} for GraFT run end to end on its own noisy
 image and \PlectaGraFTFrameGraFTInjectedFOne{} for GraFT with the mask injected
-as it is elsewhere here; the rasterisation of that reference reproduces the
-vendor's own noise-free image at \PlectaGraFTFrameReferenceAgreement{}. This is
-one frame with no interval and it is not a benchmark. Its instructive detail is
-that GraFT resolved \PlectaGraFTFrameGraFTInjectedSolved{} of the frame's
+as it is elsewhere here. This is one frame with no interval and it is not a
+benchmark. Its instructive detail is that GraFT resolved
+\PlectaGraFTFrameGraFTInjectedSolved{} of the frame's
 \PlectaGraFTFrameCrossingCount{} crossings exactly while scoring
 \PlectaGraFTFrameGraFTInjectedFOne{}, where PLECTA resolved
-\PlectaGraFTFramePlectaSolved{}: crossing accuracy and pairwise agreement
-answer to different failures, which is why Section~\ref{sec:res-overlap} reports
-both.
+\PlectaGraFTFramePlectaSolved{}: its errors there lie along filaments, not at
+crossings, which is why the two measures are reported together.
 
 \textbf{A ladder on GraFT's own ground.} One frame is an anecdote, so the same
 question was put to GraFT's own generator, run unmodified at its published
@@ -301,19 +295,16 @@ field-standard measures order them identically over the whole ladder, adjusted
 Rand index \PlectaRegimeOverallPlectaARI{}, \PlectaRegimeOverallGraFTARI{} and
 \PlectaRegimeOverallDNAiARI{} against variation of information
 \PlectaRegimeOverallPlectaVITotal{}, \PlectaRegimeOverallGraFTVITotal{} and
-\PlectaRegimeOverallDNAiVITotal{} bits, and its two components separate what
-the totals cannot. PLECTA's errors lean mildly to fusion,
-\PlectaRegimeOverallPlectaVISplit{} split against
-\PlectaRegimeOverallPlectaVIMerge{} merge; both comparators divide more than
+\PlectaRegimeOverallDNAiVITotal{} bits, and the split and merge components
+separate what the totals cannot: PLECTA's errors lean mildly to fusion,
+\PlectaRegimeOverallPlectaVISplit{} against
+\PlectaRegimeOverallPlectaVIMerge{}, while both comparators divide far more than
 they fuse, \PlectaRegimeOverallGraFTVISplit{} against
 \PlectaRegimeOverallGraFTVIMerge{} for GraFT and
 \PlectaRegimeOverallDNAiVISplit{} against \PlectaRegimeOverallDNAiVIMerge{} for
-DNAi, at every density above the sparsest. Neither component is quoted alone
-because a method that fuses everything never splits anything and would score
-near zero on the first. GraFT was also
-run end to end on the noisy images with its own front end, which on this data
-is inside its design envelope rather than degenerate as it is on ours; that arm
-scored \PlectaRegimeLowGraFTNativeFOne{} and
+DNAi. GraFT was also run end to end on the noisy images with its own front end,
+which on this data is inside its design envelope rather than degenerate as it is
+on ours; that arm scored \PlectaRegimeLowGraFTNativeFOne{} and
 \PlectaRegimeHighGraFTNativeFOne{} at the two ends, below the injected arm
 almost everywhere, so injecting the mask continues to favour it.
 
@@ -322,20 +313,42 @@ coverage, which asks whether each reference filament was matched one-to-one to
 some detection, and the disagreement is worth stating rather than resolving. At
 the densest stratum it reads \PlectaRegimeHighGraFTMatched{} for GraFT,
 \PlectaRegimeHighDNAiMatched{} for DNAi and \PlectaRegimeHighPlectaMatched{} for
-PLECTA --- the reverse order --- because it counts objects and the matching is
-one-to-one, so a method emitting more objects than the scene contains has a
-spare for every filament. Across the whole ladder each method's matched coverage
-is the smaller of one and its emission ratio to within
-\PlectaRegimeCoverageCountResidual{}, and exactly so for every PLECTA scene.
-Requiring in addition that a detection cover half the axis of the filament it
-claims, and changing nothing else, restores the order at the densest stratum:
-\PlectaRegimeHighPlectaMatchedHalf{} for PLECTA against
-\PlectaRegimeHighGraFTMatchedHalf{} and \PlectaRegimeHighDNAiMatchedHalf{}. The
-measure is not wrong; it asks whether each filament was found, and a method that
-severs every filament at its crossings still offers a distinct detection for
-each one. It is reported here because a reader from that literature looks for
-it, and it is not adopted as an endpoint for the reason
-Section~\ref{sec:mm-metrics} gives.
+PLECTA --- the reverse order --- because it counts objects, so a method emitting
+more objects than the scene contains has a spare for every filament: across the
+whole ladder each method's matched coverage is the smaller of one and its
+emission ratio to within \PlectaRegimeCoverageCountResidual{}. Requiring in
+addition that a detection cover half the axis it claims, and changing nothing
+else, restores the order: \PlectaRegimeHighPlectaMatchedHalf{} for PLECTA
+against \PlectaRegimeHighGraFTMatchedHalf{} and
+\PlectaRegimeHighDNAiMatchedHalf{}. The measure is not wrong; it asks whether
+each filament was found, and a method that severs every filament at its
+crossings still offers a distinct detection for each one.
+
+\textbf{Crossings resolved.} Panel~(c) of Figures~\ref{fig:panels-degraded}
+and~\ref{fig:panels-clean} states the contribution directly, and pooled over the
+\PlectaJunctionCount{} reference crossings of the degraded set PLECTA
+partitions \PlectaJunctionPlectaRate{} of them exactly against
+\PlectaJunctionGreedyRate{} for the greedy baseline,
+\PlectaJunctionGraFTRate{} for GraFT and \PlectaJunctionDNAiRate{} for DNAi;
+paired, PLECTA's margins are \PlectaJunctionGreedyDelta{}
+[\PlectaJunctionGreedyDeltaCILow{}, \PlectaJunctionGreedyDeltaCIHigh{}],
+\PlectaJunctionGraFTDelta{} [\PlectaJunctionGraFTDeltaCILow{},
+\PlectaJunctionGraFTDeltaCIHigh{}] and \PlectaJunctionDNAiDelta{}
+[\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}]. Clean axes
+order them the same way, PLECTA at \PlectaJunctionCleanPlectaRate{}. Leaving
+every arm unpaired resolves \PlectaJunctionChance{} of these crossings, which
+is the chance level the rate is read against. Two things about it should be
+stated rather than left to be found. It is much less discriminative than the
+pairwise score --- at 60\,\% coverage it spans
+\PlectaJunctionSpreadHigh{} between best and worst method where pairwise
+\Fone{} spans \PlectaPairwiseSpreadHigh{} --- so it is used to say what was
+solved and not to rank. And it shares its assignment thresholds with the
+common-fragment metric, so it is a sharper view of the same evidence rather
+than independent confirmation of it. Everyone is poor at the busiest nodes:
+above degree four PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no
+comparator does better, while DNAi collapses to
+\PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four cap
+predicts.
 
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
 each method\'s own computation only (Table~\ref{tab:plecta-comparators};
@@ -347,36 +360,17 @@ scaling, and the log--log exponents against foreground pixels are
 \RuntimeGraftScalingExponent{}. PLECTA grows fastest, but only GraFT is
 heavy-tailed.
 
-\subsection{Crossing resolution and crossing representation}
+\subsection{Crossing representation, and where it over-marks}
 \label{sec:res-overlap}
 
-Two distinct things are meant by an overlap-aware result, and the metric treats
-them differently. The first is whether a crossing is \emph{resolved} correctly:
-of the arms meeting at a junction, which continues into which. That is the
-difficult decision, and it is what the common-fragment metric measures
-(Section~\ref{sec:mm-metrics}), so every score in this paper rewards getting it
-right. The last two rows of Table~\ref{tab:plecta-comparators} measure it directly:
-over the \PlectaJunctionCount{} reference crossings of the degraded set, the
-fraction whose incident arms a method partitions exactly as the reference does.
-It orders the methods as the
-grouping scores do, PLECTA's paired margins over the greedy baseline, GraFT and
-DNAi being \PlectaJunctionGreedyDelta{} [\PlectaJunctionGreedyDeltaCILow{},
-\PlectaJunctionGreedyDeltaCIHigh{}], \PlectaJunctionGraFTDelta{}
-[\PlectaJunctionGraFTDeltaCILow{}, \PlectaJunctionGraFTDeltaCIHigh{}] and
-\PlectaJunctionDNAiDelta{} [\PlectaJunctionDNAiDeltaCILow{},
-\PlectaJunctionDNAiDeltaCIHigh{}]; clean axes order them the same way, PLECTA at
-\PlectaJunctionCleanPlectaRate{}. Chance is high here, since leaving every arm
-unpaired already resolves \PlectaJunctionChance{} of crossings, so the
-chance-corrected resolution index accompanies the raw rate in the table and
-never replaces it. The measure shares its assignment thresholds with the
-common-fragment metric, so it is a sharper view of the same evidence rather
-than independent confirmation of it.
-
-The second is whether the emitted raster \emph{represents} a crossing pixel as
-belonging to both filaments. That is a property of the output format, not of
-the grouping decision, and the metric cannot see it. Flattening either method's layers to a single label image accordingly
-changes \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002
-for GraFT.
+Resolving a crossing and representing one are different things, and only the
+first is what the scores above measure. Whether a crossing is \emph{resolved}
+correctly --- of the arms meeting at a junction, which continues into which ---
+is the difficult decision, and every score in this paper rewards getting it
+right. Whether the emitted raster \emph{represents} a crossing pixel as
+belonging to both filaments is a property of the output format, and the metric
+cannot see it: flattening either method's layers to a single label image changes
+\Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002 for GraFT.
 
 The representation is instead verifiable directly: on the
 comparison set, reference instances share \PlectaOverlapReferenceLow{}\,\% of
@@ -482,16 +476,10 @@ membership. Enabling the separate 0.6 silhouette-absorption rule reduced
 merge identities it remained disabled. None of these topology measurements
 validates apparent width.
 
-The negative control of Section~\ref{sec:res-factorial} holds scene by scene and
-not only on average: in every one of the \PlectaFactorialGeometryCount{}
-geometries, widening the bundles moves realised areal coverage by up to a factor
-of \PlectaFactorialMaxCoverageRatio{} while \Fone{} moves by
-\PlectaFactorialMaxFOneRange{}, which is small against the
-\PlectaFactorialFOneSpread{} spread between geometries that is the scale it
-should be read at. PLECTA's errors are also two-sided, where a fragment
-\Fone{} can be reached one-sidedly: it sits on the precision--recall diagonal,
-whereas the connected-component floor recovers \PlectaCCFloorRecall{} of
-same-filament pairs at a precision of only \PlectaCCFloorPrecision{}.
+PLECTA's errors are two-sided, where a fragment \Fone{} can be reached
+one-sidedly: it sits on the precision--recall diagonal, whereas the
+connected-component floor recovers \PlectaCCFloorRecall{} of same-filament
+pairs at a precision of only \PlectaCCFloorPrecision{}.
 
 \subsection{An example of CNT SEM decomposition}
 \label{sec:res-real}
@@ -515,23 +503,22 @@ both cases, so the two conditions differ only in the mask.
 B58\_300 are absent from the training set of the inference run used here,
 verified by image content rather than by filename at tile correlations of 0.10
 and 0.15, so both are genuine held-out observations of mask transfer.
-B58\_100's image is present in every training run available at a correlation of
-0.9999 or above and cannot be made otherwise; its U-Net row is an upper bound
-and is marked as such in Table~\ref{tab:plecta-real-masks}. That is a
-disclosure, not a caveat left vague: running
-\PlectaContaminationModelCount{} nnU-Net models over all three fields measures
-what training on a field is worth directly, because two of the models held
-B58\_110 and B58\_300 out and one did not. On B58\_110 the two clean models
-score \PlectaContaminationBFiveEightOneOneZeroCleanLow{} and
-\PlectaContaminationBFiveEightOneOneZeroCleanHigh{} where the trained-on model
-scores \PlectaContaminationBFiveEightOneOneZeroTrained{}, and on B58\_300
+B58\_100's image is present in every available training run at 0.9999 or above
+and cannot be made otherwise; its U-Net row is an upper bound and is marked as
+such in Table~\ref{tab:plecta-real-masks}. What that costs is measured rather
+than left vague. Running \PlectaContaminationModelCount{} nnU-Net models over
+all three fields scores the same field under models that held it out and one
+that did not: on B58\_110 the two clean models give
+\PlectaContaminationBFiveEightOneOneZeroCleanLow{} and
+\PlectaContaminationBFiveEightOneOneZeroCleanHigh{} against
+\PlectaContaminationBFiveEightOneOneZeroTrained{}, on B58\_300
 \PlectaContaminationBFiveEightThreeZeroZeroCleanLow{} and
 \PlectaContaminationBFiveEightThreeZeroZeroCleanHigh{} against
-\PlectaContaminationBFiveEightThreeZeroZeroTrained{}: between
-\PlectaContaminationDeltaLow{} and \PlectaContaminationDeltaHigh{} pairwise
-\Fone{}, with the trained-on model predicting a third more foreground, which is
-the mechanism. On B58\_100, where every model trained on the field, the three
-agree and there is no gap to see, which is the control.
+\PlectaContaminationBFiveEightThreeZeroZeroTrained{}. Training on a field is
+worth \PlectaContaminationDeltaLow{} to \PlectaContaminationDeltaHigh{} pairwise
+\Fone{}, the trained-on model predicting about a third more foreground, which is
+the mechanism. On B58\_100 every model trained on the field, the three agree,
+and there is no gap to see: that is the control.
 
 \begin{table}[htbp]
     \centering

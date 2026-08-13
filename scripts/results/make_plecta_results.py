@@ -620,6 +620,16 @@ def metric_panels_macros(panels: dict) -> list[str]:
               for method in ("plecta", "graft", "dnai")
               for cell in panels["panels"][condition][method].values())
     lines.append(macro("PlectaPanelARIMaxGap", fmt(gap)))
+
+    #: How far apart the three methods lie at the densest stratum, under the
+    #: measure that ranks them and under the one that states the claim.  The
+    #: second is the argument for not ranking by the second.
+    dense = str(panels["densities"][-1])
+    for key, name in (("crossing_fidelity", "PlectaJunctionSpreadHigh"),
+                      ("f1", "PlectaPairwiseSpreadHigh")):
+        values = [panels["panels"]["degraded"][m][dense][key]
+                  for m in ("plecta", "graft", "dnai")]
+        lines.append(macro(name, fmt(max(values) - min(values))))
     return lines
 
 
@@ -861,15 +871,17 @@ def comparator_table(audit: dict, greedy: dict,
                  [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns],
                  from_greedy_record("vi_total_bits")))
 
+    #  One crossing row, not two.  The chance-corrected resolution index used
+    #  to sit under this one; over the real-field rows it correlates with the
+    #  exact rate at Pearson 0.997 and never went negative, so it restated the
+    #  row above it.  The chance level belongs in the caption, being a property
+    #  of the reference rather than of any method.
     resolution = [
-        ("Crossings resolved exactly",
+        ("Crossing Fidelity",
          [fmt(junction[c]["overall"]["exact_rate"]) for c in columns],
          interval(jr_paired["jr_exact_rate"]["mean"],
                   jr_paired["jr_exact_rate"]["ci_lo"],
                   jr_paired["jr_exact_rate"]["ci_hi"])),
-        ("Resolution index",
-         [fmt(junction[c]["overall"]["resolution_index"]) for c in columns],
-         "---"),
     ]
 
     # Median seconds per scene at the two ends of the density range. One row
@@ -1109,10 +1121,20 @@ def ablation_table(payload: dict) -> str:
         if row["ablation"] not in selected:
             continue
         delta = float(row["f1"]) - float(base["f1"])
+        #  Spelled out rather than title-cased from the ablation key: "No
+        #  Join\_Px" printed a parameter name at a reader, which is a draft
+        #  artefact.  join_px is the length below which an arm joining two
+        #  crossings makes them one node (graph.py, line 326).
         display_labels = {
             "frozen": "Fixed configuration",
-            "tangent term only": "No Junction Chord-Turn",
-            "no crossing merging at all": "No Junction-Cluster Consolidation",
+            "tangent term only": "No junction chord-turn term",
+            "no crossing merging at all": "No junction-cluster consolidation",
+            "no join_px": "No short-connector node merging",
+            "no gap bridging": "No gap bridging",
+            "single round": "Single round",
+            "no chain-extended frames": "No chain-extended frames",
+            "no annealing": "No round schedule",
+            "no curvature term": "No curvature term",
         }
         label = display_labels.get(row["ablation"], row["ablation"].title())
         lines.append(

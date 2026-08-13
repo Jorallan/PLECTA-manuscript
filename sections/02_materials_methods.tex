@@ -67,38 +67,45 @@ was fixed.
 \subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
 
-Two manually annotated CNT-sheet SEM fields were available for exploratory
-analysis: B58\_100 ($1024\times1536$ px, 280 filaments) and B58\_110
-($1024\times1536$ px, 430 filaments). The nominal horizontal field width is
-$1.66~\um$; project metadata associate it with 1536 px, or approximately
-$1.08~\mathrm{nm\,px^{-1}}$. The annotation is one human interpretation of
-projected, locally ambiguous crossings, and both fields informed development.
+\PlectaRealFieldCount{} manually annotated CNT-sheet SEM fields were available
+for exploratory analysis, each $1536\times1024$ px:
+B58\_100 (\PlectaBFiveEightOneZeroZeroReferenceCount{} filaments), B58\_110
+(\PlectaBFiveEightOneOneZeroReferenceCount{}) and B58\_300
+(\PlectaBFiveEightThreeZeroZeroReferenceCount{}). The nominal horizontal field
+width is $1.66~\um$ across the long, 1536-px axis of the stored images, which is
+$1.08~\mathrm{nm\,px^{-1}}$. Each annotation is one human interpretation of
+projected, locally ambiguous crossings, and B58\_100 and B58\_110 informed
+development.
 
-Two inputs were derived per field. The first was the skeleton of the manual
-instance annotation. The second came from Pipeline~A: an nnU-Net trained on
-paired synthetic images and masks, with CycleGAN translation as the route from
-procedural masks to SEM-like training images
-\citep{ruehle2021workflow,allan2026cntsem}. Together the two conditions separate
-what grouping can do from what the mask allows it to do. B58\_100 appeared in
-that model's training data, whereas B58\_110 was verified absent from the
-relevant training set, so only B58\_110 provides a training-clean observation of
-mask transfer, and $n=2$ precludes inference.
+Two inputs were derived per field. The first is the skeleton of the manual
+instance annotation, an oracle-like condition that asks what the grouping can do
+when the axis evidence is curated. The second is the output of Pipeline~A, which
+asks what an automatic mask allows it to do. Pipeline~A adapts the open
+CycleGAN/U-Net particle-segmentation workflow of Rühle et al.\
+\citep{ruehle2021workflow}: the procedural generator of
+Section~\ref{sec:mm-synth} draws a binary mask, a CycleGAN translates it into an
+SEM-like image so that image and mask are paired without an annotator, and a
+2-D nnU-Net \citep{isensee2021nnunet} is trained on that paired corpus with the
+residual-encoder XL configuration and its heavy-augmentation trainer, all folds,
+best checkpoint. Its prediction is registered into the annotation grid and
+thresholded to give the axis mask PLECTA is handed. Pipeline~A is a separate
+contribution with its own evaluation and its full configuration
+\citep{allan2026cntsem}; what matters here is only that its output is a binary
+mask produced without seeing any annotation.
 
-\needed{A fuller account of Pipeline~A belongs here, to be written by the
-author: the CycleGAN configuration used to translate procedural masks into
-SEM-like images, the paired synthetic corpus it produced, the nnU-Net variant
-and training split trained on that corpus, the optimisation settings, and how
-the predicted masks were selected and post-processed before entering PLECTA.
-Take these from the model archive rather than reconstructing them.}
-
-Mask quality was compared after skeletonisation with a symmetric 3-px
-tolerance, which avoids rewarding mask thickness, and reconstruction scores were
-computed within each mask's own visible common-fragment population.
+Which fields that model had seen is a property of the (model, field) pair and
+was verified by image content rather than by filename. B58\_110 and B58\_300 are
+absent from the training set of the run used here; B58\_100 is present in every
+available run and its U-Net condition is therefore an upper bound throughout.
+Section~\ref{sec:res-real} measures what that contamination is worth rather than
+leaving it as a caveat. Mask quality was compared after skeletonisation with the
+symmetric \PlectaPlacementTolerance{}-px tolerance used throughout, which avoids
+rewarding mask thickness, and reconstruction scores were computed within each
+mask's own visible common-fragment population.
 
 \needed{Author metadata: SEM instrument and detector, accelerating voltage,
-working distance, specimen preparation, CNT material identity, annotation
-protocol, and confirmation of the 1536-pixel calibration against the stored
-image dimensions.}
+working distance, specimen preparation, CNT material identity, and the
+annotation protocol.}
 
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
@@ -254,18 +261,26 @@ but are not painted into the fixed centreline output. All effective parameters,
 including values previously inherited as code defaults, are materialised in the
 fixed JSON configuration.
 
-\subsection{Optional SEM characterisation and ribbon rendering}
+\subsection{Image-informed width reconstruction, optional}
 \label{sec:mm-stage4}
 
-Two optional stages act after grouping, both off by default and both governed by
-limits recorded in the fixed configuration. Perpendicular SEM profiles, sampled
-along each ordered chain away from junctions, attach apparent width, brightness,
-uncertainty, and a quality flag to an existing instance without altering its arm
-membership. Ribbon rendering then interpolates accepted gaps, resamples and
-smooths the centreline, and draws the chain at its fitted width, excluding
-junction blobs. Silhouette absorption, which would union rendered instances, has
-threshold zero by default; neither it nor any post-hoc continuation merge is
-part of the evaluated algorithm or contributed to the held-out result.
+The grouping above reads the mask alone and is what this paper evaluates. Where
+a grayscale image of the same field exists, two further stages can use it to
+give each instance a width, and both are off by default and governed by limits
+recorded in the fixed configuration. Neither is specific to SEM: they take
+whatever image accompanies the mask, and SEM is simply the case demonstrated
+here.
+
+Perpendicular intensity profiles, sampled along each ordered chain away from
+junctions, attach an apparent width, a brightness, an uncertainty and a quality
+flag to an existing instance without altering its arm membership. Ribbon
+rendering then interpolates accepted gaps, resamples and smooths the centreline,
+and draws the chain at its fitted width, excluding junction blobs. Silhouette
+absorption, which would union rendered instances, has threshold zero by default;
+neither it nor any post-hoc continuation merge is part of the evaluated
+algorithm or contributed to the held-out result. Because the grouping is fixed
+before either stage runs, no width measurement can move a pixel from one
+instance to another, and no identity score in this paper depends on one.
 
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
@@ -299,14 +314,105 @@ Section~\ref{sec:res-overlap} separates the two and measures the first directly.
 This is a clustering metric related to the Rand family
 \citep{rand1971objective,argandacarreras2015crowdsourcing}. It scores grouping
 rather than rendered width, and weights filaments with many fragments more
-strongly because their pair count is quadratic, so we also report adjusted Rand
-index \citep{hubert1985comparing}, variation of information split and merge
-components \citep{meila2007comparing}, and the fraction of reference filaments
-recovered by one dominant predicted instance at 0.8 purity and coverage.
+strongly because their pair count is quadratic.
+
+\subsubsection*{Why more than one measure}
+
+No single number answers the questions this paper asks, and the disagreements
+between measures are informative rather than inconvenient. The distinction that
+resolves most of them is that \emph{pairwise scores relationships between
+pieces, detection scores the existence of objects}: a filament delivered in $n$
+pieces contributes $\binom{n}{2}$ pairs but one object. So pairwise \Fone{} is
+quadratic in fragmentation and a broken mask is charged many times over for one
+missed join, while object detection is blind to an arm swap at a crossing,
+scoring an inverted reconstruction 1.000 where pairwise scores 0.000; and
+neither states how many crossings were solved. Each measure below is therefore
+quoted with the others rather than alone.
+
+\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
+as \Fone{}, corrected for chance. With a hundred or more filaments per scene
+almost every pair genuinely belongs to different filaments, so the uncorrected
+index sits near 1 for any prediction. It is field-standard, and over the
+comparison set it never departs from pairwise \Fone{} by more than
+\PlectaPanelARIMaxGap{}, so it confirms rather than adds.
+
+\textbf{Variation of information} \citep{meila2007comparing}, in bits, lower
+better, splits into $\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid
+\text{reference})$, lost by cutting one filament into several, and
+$\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$, lost by
+fusing several into one. The two are reported together or as their total and
+never singly: a method that merges everything never splits anything and scores a
+perfect zero on the split component while being useless.
+
+\textbf{Detection \Fone{}}, the measure DNAi reports, matches predicted and
+reference \emph{objects} greedily by highest intersection over union, stopping
+below a threshold, and takes precision and recall over objects. The threshold is
+\PlectaDetectionIoU{}, DNAi's own shipped value; at 0.5 the same predictions read
+a fragmented mask more than twice as harshly as the pairwise score, which
+defeats the purpose of carrying an object measure beside it. Counting objects
+makes it the most forgiving reading of a fragmented mask, the least
+discriminative of the three, and the one that cannot see an arm swap. It is
+computed with a symmetric \PlectaPlacementTolerance{}\,px placement tolerance,
+under which a reference pixel counts as found when the prediction passes within
+it, because two independently read one-pixel centrelines two pixels apart
+intersect in \emph{nothing} and a strict IoU between them measures placement
+rather than shape --- a problem the thin-structure benchmark FISBe states as a
+design rationale \citep{mais2024fisbe}. The control that makes this a correction
+and not an inflation is in Section~\ref{sec:res-real}: on the manual-derived
+axis, where the input mask is a skeleton of the annotation itself, the tolerance
+moves detection \Fone{} by 0.000.
+
+\textbf{Crossing Fidelity} states the contribution directly. At every junction
+node the reference induces a partition of the incident arms --- two arms are
+together exactly when the reference gives them the same filament --- and so
+does the prediction; Crossing Fidelity is the fraction of crossings at which
+the two partitions are identical. Only nodes the reference itself treats as a
+crossing are scored, meaning those whose incident arms carry at least two
+distinct reference filaments; a node where every arm belongs to one filament is
+a skeletonisation artefact and scoring it would reward doing nothing. It is
+computed on the same skeleton, the same spur pruning and the same
+fragment-to-instance assignment as the pairwise score, so it is a sharper view
+of the same evidence and not independent confirmation of it. This is an
+in-house diagnostic rather than an established metric, and it is used to state
+what was solved rather than to rank. Measures that score correctness at branch
+points rather than per pixel are an established family --- the DIADEM metric
+matches bifurcations and their topology when comparing neuron reconstructions
+\citep{gillette2011diademmetric} --- but no other paper reports this particular
+quantity, and it is always printed beside its own chance level, the fidelity of
+leaving every arm unpaired.
+
+\textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
+where the two mask sources fragment differently. A decision is a pair of
+fragment ends the input mask brings within the \PlectaRealJoinReach{}\,px this
+method will bridge: near enough that PLECTA could have joined them. The
+reference says join or do not, and so does the prediction. It is linear rather
+than quadratic in fragmentation, it is conditioned on the mask, so two mask
+sources are asked comparably hard questions, and it reports its own difficulty
+through the number of decisions each mask posed. It is always quoted with that
+count.
+
+\textbf{Also reported} is the fraction of reference filaments recovered by one
+dominant predicted instance at 0.8 purity and coverage, and, for the input masks
+rather than the reconstructions, the tolerant completeness/correctness/quality
+triple standard for thin structures at the same
+\PlectaPlacementTolerance{}\,px tolerance. GraFT's filament matched coverage was
+also computed on these predictions and is not an endpoint here: it counts
+whether each reference filament found a distinct partner, so it measures
+existence rather than correctness, and Section~\ref{sec:res-comparators} shows
+it reduces to the ratio of objects emitted to filaments present. It is reported
+where a reader from that literature looks for it, with the reason it is not
+carried.
+
+\subsubsection*{Statistical analysis}
 
 Held-out means and density strata are accompanied by 95\% nonparametric
 bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
 stratification by density; the clean-minus-degraded analysis resamples paired
-scene differences within density. Active-component ablations are one-at-a-time
-development experiments on all \PlectaDevelopmentSceneCount{} development
-scenes and do not reuse the held-out set.
+scene differences within density. Per-coverage points in the comparison figures
+are plain means of ten scenes with no interval drawn and none claimed. The real
+SEM fields are exploratory, \PlectaRealFieldCount{} fields, and no inference is
+made from them; the crossing measures there are the only quantities with a
+sample size worth quoting, \PlectaRealCrossingTotal{} reference crossings.
+Active-component ablations are one-at-a-time development experiments on all
+\PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
+set.
