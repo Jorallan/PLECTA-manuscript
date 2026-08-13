@@ -99,7 +99,7 @@ def main() -> int:
     ax.legend(frameon=False, loc="lower left", fontsize=PT_LEGEND,
               handlelength=2.6, labelspacing=0.5, borderpad=0.2)
 
-    save_fig(fig, "fig_plecta_density", bbox_inches=None)
+    save_fig(fig, "fig_plecta_density", subdir="archive", bbox_inches=None)
     plt.close(fig)
 
     factorial = json.loads(

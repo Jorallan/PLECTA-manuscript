@@ -30,27 +30,15 @@ Performance decreased with scene density: mean \Fone{} fell from
 [\PlectaDensityTwoZeroFOneCILow{}, \PlectaDensityTwoZeroFOneCIHigh{}] at 20\%
 coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
-monotonically through the intermediate strata. The same decline appears on the paired
-robustness set (Figure~\ref{fig:density}): the two curves separate at low
-coverage and meet at 50--60\%, degradation costing least exactly where the score
-is lowest, because there the tangles rather than the gaps set the difficulty.
+monotonically through the intermediate strata. The same decline appears on the
+paired robustness set of Section~\ref{sec:res-mask}, where the clean and the
+degraded curves separate at low coverage and meet at 50--60\,\%: degradation
+costs least exactly where the score is lowest, because there the tangles rather
+than the gaps set the difficulty.
 Per-scene runtime had mean \PlectaHeldoutRuntimeMean{}~s, median
 \PlectaHeldoutRuntimeMedian{}~s, 90th percentile
 \PlectaHeldoutRuntimePNinety{}~s, and maximum \PlectaHeldoutRuntimeMaximum{}~s;
 these timings are hardware-specific.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_density.pdf}
-    \caption{Coverage response on the \PlectaRobustnessSceneCount{} paired
-    scenes, ten per coverage level, each scored twice: from the degraded 1\,px
-    axis mask that the paper evaluates, and from the generator's undegraded
-    axis. Lines are means of per-scene common-fragment $F_1$; bands are 95\,\%
-    percentile bootstrap intervals for the mean, resampled within coverage
-    stratum (20\,000 replicates, seed 20260811). Target areal coverage is the
-    generator setting used to dial in centreline density.}
-    \label{fig:density}
-\end{figure}
 
 \subsection{Which density axis matters}
 \label{sec:res-factorial}
@@ -182,23 +170,46 @@ configuration DNAi scored \PlectaDNAiFOne{}, a paired difference of
 \PlectaDNAiDeltaFOne{} [\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}] over
 \PlectaDNAiSceneCount{} scenes, and \PlectaDNAiCleanDeltaFOne{}
 [\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}] on clean axes,
-the gap widening monotonically with density (Figure~\ref{fig:comparators}).
+the gap widening monotonically with density
+(Figures~\ref{fig:panels-degraded} and~\ref{fig:panels-clean}).
 Both methods must be read against the one-instance-per-connected-component floor
 at their own density, since that floor is itself strongly density-dependent and
 a pooled value would flatter any method at 60\% coverage.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{figures/fig_comparators.pdf}
-  \caption{The comparison of Table~\ref{tab:plecta-comparators} by coverage
-    stratum. \textbf{(a)}~degraded and \textbf{(b)}~clean input mask: mean
-    common-fragment \Fone{}, $n=10$ scenes per point
-    except where labelled otherwise; plain means, no interval is drawn and none
-    is claimed. The aggregate paired differences and their intervals are in the
-    table. GraFT exceeded its per-scene wall-clock budget on 3 of the 50
-    degraded scenes and 1 of the clean ones, the hardest of the densest
-    stratum, so its curve is optimistic.}
-  \label{fig:comparators}
+  \includegraphics[width=\linewidth]{figures/fig_metric_panels_degraded.pdf}
+  \caption{The three published methods on the degraded input masks, by coverage
+    stratum, under the three measures of Section~\ref{sec:mm-metrics}.
+    \textbf{(a)}~pairwise \Fone{}, which counts pairs of fragments and so sees
+    an identity swap at a crossing; \textbf{(b)}~detection \Fone{} at DNAi's own
+    IoU threshold of 0.1 with the \PlectaPlacementTolerance{}\,px placement
+    tolerance, which counts whole objects and is blind to that swap;
+    \textbf{(c)}~the chance-corrected resolution index, which counts crossings
+    and is the only one of the three that separates declining to join from
+    joining wrongly. The three panels share one 0--1 scale and the tick labels
+    are written once, on (a). The numbers inside (a) are each method's
+    variation-of-information total in bits at the two ends of the range, for
+    which lower is better; that measure has no panel because PLECTA's whole
+    trajectory lies under 0.9 bits against DNAi's 2.9 and a shared axis crushes
+    it. Points are plain means of $n=10$ scenes; no interval is drawn and none
+    is claimed, the aggregate paired differences and their intervals being in
+    Table~\ref{tab:plecta-comparators}. GraFT exceeded its per-scene wall-clock
+    budget on three of the densest degraded scenes, which are the hardest of the
+    set, so its rightmost point is a mean of seven and is optimistic.}
+  \label{fig:panels-degraded}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_metric_panels_clean.pdf}
+  \caption{The same three methods, the same scenes, the same scorer and the
+    same panels as Figure~\ref{fig:panels-degraded}, from the generator's
+    undegraded axis masks instead of the degraded ones. Every method scores
+    higher and the order does not change at any coverage under any of the three
+    measures. One of GraFT's densest scenes was censored here rather than
+    three.}
+  \label{fig:panels-clean}
 \end{figure}
 
 That margin is a limitation of domain and density, not a general ranking. DNAi
@@ -275,8 +286,7 @@ both.
 \textbf{A ladder on GraFT's own ground.} One frame is an anecdote, so the same
 question was put to GraFT's own generator, run unmodified at its published
 settings, over \PlectaRegimeSceneCount{} scenes in
-\PlectaRegimeStratumCount{} density strata
-(Figure~\ref{fig:regime}). The ladder spans
+\PlectaRegimeStratumCount{} density strata. The ladder spans
 \PlectaRegimeDensityLow{} to \PlectaRegimeDensityHigh{} centreline pixels per
 image pixel: GraFT's published comparison reaches
 \PlectaRegimeDensityPublished{}, so its whole range is the lower half of this
@@ -307,46 +317,25 @@ scored \PlectaRegimeLowGraFTNativeFOne{} and
 \PlectaRegimeHighGraFTNativeFOne{} at the two ends, below the injected arm
 almost everywhere, so injecting the mask continues to favour it.
 
-The same predictions score differently under GraFT's own measure, and the
-disagreement is worth stating rather than resolving. Filament matched coverage
-asks whether each reference filament was matched one-to-one to some detection.
-At the densest stratum it reads \PlectaRegimeHighGraFTMatched{} for GraFT,
-\PlectaRegimeHighDNAiMatched{} for DNAi and \PlectaRegimeHighPlectaMatched{}
-for PLECTA --- the reverse order. What it is counting is objects. Because the
-matching is one-to-one, a method emitting more objects than the scene contains
-has a spare for every filament while one emitting fewer cannot match them all:
-of the \PlectaRegimeHighTrueCount{} filaments in a densest-stratum scene GraFT
-emits \PlectaRegimeHighGraFTCount{}, DNAi \PlectaRegimeHighDNAiCount{} and
-PLECTA \PlectaRegimeHighPlectaCount{}, and across the whole ladder each method's
-matched coverage is the smaller of one and its emission ratio to within
-\PlectaRegimeCoverageCountResidual{} --- exactly, for every PLECTA scene. The
-condition it never imposes is that a matched detection resemble what it claims.
-Adding it, so a detection may take a filament only when it covers half that
-filament's axis and nothing else in the matching changes, restores the order at
-the densest stratum: \PlectaRegimeHighPlectaMatchedHalf{} for PLECTA against
-\PlectaRegimeHighGraFTMatchedHalf{} for GraFT and
-\PlectaRegimeHighDNAiMatchedHalf{} for DNAi. The measure is not wrong. It asks
-whether each filament was found, and a method that severs every filament at its
-crossings still offers a distinct detection for each one; it cannot ask whether
-the pieces were then put together correctly, which is what the pairwise score
-asks and what this paper is about. Both are reported here for that reason.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth]{figures/fig_graft_regime.pdf}
-  \caption{Three methods on GraFT's own generator, at its published settings,
-    over \PlectaRegimeSceneCount{} scenes; means of five scenes per stratum,
-    no interval drawn and none claimed. Dashed line: the density at which
-    GraFT's published comparison ends. \textbf{(a)}~the endpoint used
-    throughout this paper. \textbf{(b)}~GraFT's own filament matched coverage,
-    on the identical predictions, which reverses the order at high density
-    (solid). Dashed: the identical matching with one edge condition added, that
-    a detection may claim a filament only when it covers half that filament's
-    axis. PLECTA's two lines nearly coincide; the other two separate. The inset
-    magnifies the boxed window, the three sparsest strata under the published
-    measure alone, where all three curves lie above 0.84 and cross.}
-  \label{fig:regime}
-\end{figure}
+The same predictions score differently under GraFT's own filament matched
+coverage, which asks whether each reference filament was matched one-to-one to
+some detection, and the disagreement is worth stating rather than resolving. At
+the densest stratum it reads \PlectaRegimeHighGraFTMatched{} for GraFT,
+\PlectaRegimeHighDNAiMatched{} for DNAi and \PlectaRegimeHighPlectaMatched{} for
+PLECTA --- the reverse order --- because it counts objects and the matching is
+one-to-one, so a method emitting more objects than the scene contains has a
+spare for every filament. Across the whole ladder each method's matched coverage
+is the smaller of one and its emission ratio to within
+\PlectaRegimeCoverageCountResidual{}, and exactly so for every PLECTA scene.
+Requiring in addition that a detection cover half the axis of the filament it
+claims, and changing nothing else, restores the order at the densest stratum:
+\PlectaRegimeHighPlectaMatchedHalf{} for PLECTA against
+\PlectaRegimeHighGraFTMatchedHalf{} and \PlectaRegimeHighDNAiMatchedHalf{}. The
+measure is not wrong; it asks whether each filament was found, and a method that
+severs every filament at its crossings still offers a distinct detection for
+each one. It is reported here because a reader from that literature looks for
+it, and it is not adopted as an endpoint for the reason
+Section~\ref{sec:mm-metrics} gives.
 
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
 each method\'s own computation only (Table~\ref{tab:plecta-comparators};
@@ -438,24 +427,21 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
-Mask thickness costs more (Figure~\ref{fig:sensitivity}), which matters because
-it is the upstream segmenter, not the method, that fixes that thickness. Each
-width variant is scored against common fragments rebuilt from its own input
-mask, so the question is how well the method groups the skeleton it is handed;
-the decline with width is a thicker mask skeletonising into a messier graph,
-not a change in the grouping problem.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_sensitivity.pdf}
-    \caption{How PLECTA responds to the input mask it is handed, on
-    development scenes. (a)~Nominal binary axis-mask width. (b)~The degraded
-    1\,px axis against the generator's undegraded axis. Lines are means over the
-    four development scenes at each coverage level; bands are the min--max
-    range, a description of spread and not an interval. Exploratory, $n=4$
-    scenes per point, no inference.}
-    \label{fig:sensitivity}
-\end{figure}
+The thickness of the axis mask costs more, and it matters because it is the
+upstream segmenter, not the method, that fixes it: over
+\PlectaSensitivityWidthSceneCount{} development scenes a nominal
+\PlectaSensitivityWidthHigh{}\,px axis mask scored
+\PlectaSensitivityWidthDeltaFOne{} \Fone{}
+[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
+against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
+variant is scored against common fragments rebuilt from its own input mask, so
+the question asked is how well the method groups the skeleton it is handed, and
+the decline with width is a thicker mask skeletonising into a messier graph
+rather than a change in the grouping problem. This is the one density axis that
+does move the score. The rendered silhouette does not, causally and scene by
+scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
+geometry of its axis and not by how much of the frame its bundles fill.
 
 \subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
@@ -507,98 +493,145 @@ should be read at. PLECTA's errors are also two-sided, where a fragment
 whereas the connected-component floor recovers \PlectaCCFloorRecall{} of
 same-filament pairs at a precision of only \PlectaCCFloorPrecision{}.
 
-\subsection{Two-field CNT SEM mask-source case}
+\subsection{An example of CNT SEM decomposition}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
-The two real SEM fields are the proof of concept for the whole route, and are
-exploratory development cases. From the manual-derived axis, an oracle-input
-condition, PLECTA reached \Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{} on
-B58\_100 and \PlectaBFiveEightOneOneZeroManualFOne{} on B58\_110; the U-Net
-condition, and the agreement of those axes with the manual skeleton, are in
-Table~\ref{tab:plecta-real-masks}. The distance between the conditions is
-the practical dependence on upstream mask quality. These values
-are descriptive and do not estimate real-image generalisation, for the reasons
-set out in Section~\ref{sec:limitations}.
+Reaching a real micrograph takes both pipelines, and the order matters because
+every number below depends on which stage produced what. Pipeline~A runs
+procedural mask $\rightarrow$ CycleGAN $\rightarrow$ paired synthetic corpus
+$\rightarrow$ nnU-Net $\rightarrow$ binary filament-axis mask: a generator draws
+a mask, a CycleGAN translates it into an SEM-like image so that image and mask
+are paired without an annotator, an nnU-Net trained on those pairs segments a
+real micrograph, and its output is a binary axis mask
+\citep{ruehle2021workflow,allan2026cntsem}. Pipeline~B is PLECTA, and it is the
+only stage evaluated here. Three manually annotated CNT-sheet fields separate
+the last two: PLECTA is run once on the skeleton of the manual annotation, an
+oracle-input condition asking what the grouping can do, and once on the nnU-Net
+axis, asking what the mask allows it to do. The annotation is the reference in
+both cases, so the two conditions differ only in the mask.
+
+\textbf{Which fields are held out, and what the exception costs.} B58\_110 and
+B58\_300 are absent from the training set of the inference run used here,
+verified by image content rather than by filename at tile correlations of 0.10
+and 0.15, so both are genuine held-out observations of mask transfer.
+B58\_100's image is present in every training run available at a correlation of
+0.9999 or above and cannot be made otherwise; its U-Net row is an upper bound
+and is marked as such in Table~\ref{tab:plecta-real-masks}. That is a
+disclosure, not a caveat left vague: running
+\PlectaContaminationModelCount{} nnU-Net models over all three fields measures
+what training on a field is worth directly, because two of the models held
+B58\_110 and B58\_300 out and one did not. On B58\_110 the two clean models
+score \PlectaContaminationBFiveEightOneOneZeroCleanLow{} and
+\PlectaContaminationBFiveEightOneOneZeroCleanHigh{} where the trained-on model
+scores \PlectaContaminationBFiveEightOneOneZeroTrained{}, and on B58\_300
+\PlectaContaminationBFiveEightThreeZeroZeroCleanLow{} and
+\PlectaContaminationBFiveEightThreeZeroZeroCleanHigh{} against
+\PlectaContaminationBFiveEightThreeZeroZeroTrained{}: between
+\PlectaContaminationDeltaLow{} and \PlectaContaminationDeltaHigh{} pairwise
+\Fone{}, with the trained-on model predicting a third more foreground, which is
+the mechanism. On B58\_100, where every model trained on the field, the three
+agree and there is no gap to see, which is the control.
 
 \begin{table}[htbp]
     \centering
-    \caption{Exploratory reconstruction from manual-derived and U-Net
-    axes in two CNT SEM fields. Axis recall and precision compare the U-Net
-    skeleton with the manual-derived skeleton using a symmetric
-    \PlectaMaskQualityTolerance{}-px tolerance.}
+    \caption{Reconstruction from the manual-derived and the nnU-Net axis in
+    three CNT SEM fields, under the measures of
+    Section~\ref{sec:mm-metrics}. \emph{Held out} is whether the nnU-Net run
+    that produced the axis excluded that field from training; B58\_100 could
+    not be held out by any available run, so its U-Net row is an upper bound.
+    \emph{CF} is Crossing Fidelity and \emph{Chance} the fidelity of leaving
+    every arm unpaired on that field. \emph{Cross.} is the number of reference
+    crossings scored. Detection \Fone{} is at IoU
+    \PlectaDetectionIoU{} with the \PlectaPlacementTolerance{}\,px placement
+    tolerance. Exploratory, \PlectaRealFieldCount{} fields, no inference.}
     \label{tab:plecta-real-masks}
-    \small
+    \footnotesize
     \input{results/plecta_real_masks_table}
 \end{table}
 
-Those two agreement figures are, under their usual names, the completeness and
-correctness of the tolerant completeness/correctness/quality triple standard for
-thin structures; its third member, quality, is the tolerant Jaccard, and is also
-GraFT's published Jaccard index in its intended reading, so it is what lets a
-reader from that literature place these masks. At the same
-\PlectaMaskQualityTolerance{}-px tolerance it is
-\PlectaMaskQualityBFiveEightOneZeroZeroQualityThree{} on B58\_100 and
-\PlectaMaskQualityBFiveEightOneOneZeroQualityThree{} on B58\_110. This measures
-binary segmentation and not grouping: no reconstruction is opened to compute it,
-and it characterises the input PLECTA is handed rather than anything PLECTA
-does.
+\textbf{What the three fields say.} From the manual-derived axis PLECTA reached
+\Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{},
+\PlectaBFiveEightOneOneZeroManualFOne{} and
+\PlectaBFiveEightThreeZeroZeroManualFOne{}, and resolved
+\PlectaFidelityBFiveEightOneZeroZeroManual{},
+\PlectaFidelityBFiveEightOneOneZeroManual{} and
+\PlectaFidelityBFiveEightThreeZeroZeroManual{} of the reference crossings
+exactly against a chance level of \PlectaFidelityBFiveEightThreeZeroZeroManualChance{}
+to \PlectaFidelityBFiveEightOneOneZeroManualChance{}. From the nnU-Net axis the
+same predictions read \PlectaBFiveEightOneOneZeroUNetFOne{} and
+\PlectaBFiveEightThreeZeroZeroUNetFOne{} on the two held-out fields, with
+Crossing Fidelity \PlectaFidelityBFiveEightOneOneZeroUNet{} and
+\PlectaFidelityBFiveEightThreeZeroZeroUNet{} and join \Fone{}
+\PlectaJoinBFiveEightOneOneZeroUNetFOne{} and
+\PlectaJoinBFiveEightThreeZeroZeroUNetFOne{}. The two clean fields agree with
+each other to within 0.03 on every measure, which is the substantive gain over
+the single clean field the study previously had; \PlectaRealFieldCount{} fields
+still cannot estimate a population, and the crossing measures are the only ones
+here with a sample size worth quoting, \PlectaRealCrossingTotal{} reference
+crossings across the six conditions.
 
-The tolerance is not a formality here, and reporting the triple without saying
-so would mislead. Quality falls to
-\PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{} and
-\PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} at 1\,px, because the manual
-annotation and the U-Net output are two independent readings of the same
-filaments and disagree in placement almost everywhere. On the synthetic degraded
-axis, where the evaluated mask is derived from the reference rather than read
-from the image a second time, the same measure is nearly flat above 1\,px
-(\PlectaMaskQualitySyntheticOne{} against
+\textbf{Most of the distance between the two conditions is the mask.} The axis
+each field hands PLECTA is characterised in Table~\ref{tab:plecta-real-axis} by
+the tolerant completeness/correctness/quality triple standard for thin
+structures, whose third member is also GraFT's published Jaccard index in its
+intended reading. No reconstruction is opened to compute it: it describes the
+input. The tolerance is not a formality, and reporting the triple without
+saying so would mislead. Quality falls to
+\PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{},
+\PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} and
+\PlectaMaskQualityBFiveEightThreeZeroZeroQualityOne{} at 1\,px, because the
+manual annotation and the nnU-Net output are two independent readings of the
+same filaments and disagree in placement almost everywhere. On the synthetic
+degraded axis, where the evaluated mask is derived from the reference rather
+than read from the image a second time, the same measure is nearly flat above
+1\,px (\PlectaMaskQualitySyntheticOne{} against
 \PlectaMaskQualitySyntheticThree{} over
 \PlectaMaskQualitySyntheticSceneCount{} scenes) and collapses to
 \PlectaMaskQualitySyntheticZero{} at zero tolerance, where it reports raster
-placement rather than geometry. The real masks are the looser input by a margin
-this makes explicit, and that, rather than anything about the reconstruction, is
-most of the distance between the two conditions of
-Table~\ref{tab:plecta-real-masks}.
+placement rather than geometry.
 
-Two object-level readings of the same predictions say how much of the remaining
-distance between the two conditions is the measure. DNAi's detection \Fone{},
-which pairs whole predicted objects with whole reference objects by overlap,
-reads \PlectaDetectionBFiveEightOneZeroZeroManualStrict{} and
-\PlectaDetectionBFiveEightOneOneZeroManualStrict{} from the manual-derived axes
-but \PlectaDetectionBFiveEightOneZeroZeroUNetStrict{} and
-\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} from the U-Net ones, because
-two one-pixel centrelines two pixels apart intersect in nothing. Allowed the
-same \PlectaMaskQualityTolerance{}-px placement tolerance as the triple above,
-they read \PlectaDetectionBFiveEightOneZeroZeroUNetTolerant{} and
-\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{}, while the manual-derived
-figures do not move at all, there being nothing displaced there to forgive.
-Centreline Dice \citep{shit2021cldice}, which the thin-structure benchmark of
-\citet{mais2024fisbe} substitutes for overlap in this exact situation, does not
-avoid the problem: it tests each side's skeleton against the other's
+\begin{table}[htbp]
+    \centering
+    \caption{The nnU-Net axis of each field against its manual-derived
+    skeleton, at the \PlectaPlacementTolerance{}\,px symmetric placement
+    tolerance used throughout. Completeness is tolerant recall of the manual
+    axis, correctness tolerant precision of the nnU-Net axis, quality the
+    tolerant Jaccard. This characterises the input, not the reconstruction.}
+    \label{tab:plecta-real-axis}
+    \small
+    \input{results/plecta_real_axis_table}
+\end{table}
+
+\textbf{The placement tolerance is a correction, and the control says so.}
+Detection \Fone{} pairs whole predicted objects with whole reference objects by
+overlap, and two independently read one-pixel centrelines two pixels apart
+intersect in nothing: at zero tolerance it reads
+\PlectaDetectionBFiveEightOneZeroZeroUNetStrict{} and
+\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} on the nnU-Net axes, against
+\PlectaDetectionBFiveEightOneZeroZeroUNetTolerant{} and
+\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} at
+\PlectaPlacementTolerance{}\,px. On the manual-derived axes, where the input
+mask is a skeleton of the annotation itself, the tolerance moves the same
+measure by 0.000 --- there is nothing displaced there to forgive, and that is
+what makes this a correction rather than an inflation. Centreline Dice
+\citep{shit2021cldice}, which the thin-structure benchmark of
+\citet{mais2024fisbe} substitutes for overlap in exactly this situation, does
+not avoid the problem: it tests each side's skeleton against the other's
 \emph{volume}, and a centreline grouping has none, so it falls the same way
 (\PlectaClDiceBFiveEightOneZeroZeroUNetStrict{} against
 \PlectaClDiceBFiveEightOneZeroZeroManualStrict{}) and needs the same width
-allowance to recover. The
-pairwise score is separately quadratic in fragments, so a filament the U-Net
-mask breaks into several pieces carries every one of its pairs; counting
-instead one decision per pair of fragment ends the mask brings within the
-\PlectaRealJoinReach{}\,px this method will bridge gives
-\PlectaJoinBFiveEightOneZeroZeroManualFOne{} against
-\PlectaJoinBFiveEightOneZeroZeroUNetFOne{} on B58\_100, over
-\PlectaJoinBFiveEightOneZeroZeroManualDecisions{} decisions against
-\PlectaJoinBFiveEightOneZeroZeroUNetDecisions{}. Neither reading closes the
-gap, and the second says what the rest of it is: a join precision of
-\PlectaJoinBFiveEightOneZeroZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneZeroZeroUNetRecall{} is a method declining joins, not
-fusing filaments. Under a looser mask it fails by conservatism.
+allowance to recover.
 
-Three other published measures were examined against these data and not
-adopted, the evidence being recorded with the comparison study: GraFT's
-Jaccard as published scores an unthinned prediction and so charges a mask for
-its own thickness (\PlectaMaskQualityGraFTAsPublished{} where the corrected
-form on the same masks is \PlectaMaskQualitySyntheticThree{}); its false-flag
-ratio divides by the reference and is therefore unbounded above, with no
-reading as a rate; and its one-to-one filament-matching count scores existence
-rather than correctness, as Section~\ref{sec:res-comparators} measures
-directly.
+\textbf{Under a looser mask the method fails by conservatism.} The pairwise
+score is quadratic in fragments, so a filament the nnU-Net mask breaks into
+several pieces carries every one of its pairs. Join \Fone{} counts one decision
+per pair of fragment ends the mask brings within the
+\PlectaRealJoinReach{}\,px this method will bridge, and reports how many
+decisions each mask posed:
+\PlectaJoinBFiveEightOneOneZeroManualDecisions{} on B58\_110's manual axis
+against \PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one. It
+narrows the gap without closing it, and its decomposition says what the rest is:
+a join precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a
+recall of \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining
+joins, not fusing filaments.

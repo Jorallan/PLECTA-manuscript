@@ -186,7 +186,7 @@ def main() -> int:
                bbox_to_anchor=(0.5, 0.005), fontsize=PT_LEGEND,
                handlelength=2.0, columnspacing=1.6, handletextpad=0.45)
 
-    save_fig(fig, "fig_graft_regime", bbox_inches=None)
+    save_fig(fig, "fig_graft_regime", subdir="archive", bbox_inches=None)
     plt.close(fig)
     for s in strata:
         print("density %.4f  " % s["density_mean"] + "  ".join(

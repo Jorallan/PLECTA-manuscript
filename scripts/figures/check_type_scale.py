@@ -45,26 +45,29 @@ from matplotlib.text import Text
 import _style
 from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 
-#: The eight figures the manuscript includes, in the order it includes them.
+#: The figures the manuscript includes, in the order it includes them.
+#: ``fig_metric_panels`` writes two of them -- the degraded and the clean mask
+#: condition -- from one generator, so the pair cannot drift apart; both appear
+#: in the table below under that generator's number.
 SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
     ("fig_plecta_exact_matching", 3),
-    ("fig_plecta_density", 4),
-    ("fig_comparators", 5),
-    ("fig_graft_regime", 6),
-    ("fig_plecta_examples", 7),
-    ("fig_plecta_sensitivity", 8),
+    ("fig_metric_panels", 4),
+    ("fig_plecta_examples", 6),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was
-#: once a figure and may be wanted again: fig_comparators_density carried a
-#: third of what fig_comparators now carries; fig_plecta_control and
-#: fig_plecta_performance both drew the width negative control, which is a null
-#: and is now reported in the text; fig_plecta_task predates
+#: once a figure and may be wanted again: fig_comparators drew pairwise F1
+#: alone, which fig_metric_panels now draws beside the other two measures, and
+#: fig_graft_regime a second generator under two of them; fig_plecta_density and
+#: fig_plecta_sensitivity both drew a coverage response now reported in the
+#: text, the second of them a null; fig_comparators_density carried a third of
+#: what fig_comparators carried; fig_plecta_control and fig_plecta_performance
+#: both drew the width negative control; fig_plecta_task predates
 #: fig_common_fragment_metric.  They are still rendered and still gated, so a
 #: shared-style change cannot quietly break one of them, but they are numbered
-#: apart so the table above never suggests the manuscript has thirteen figures.
+#: apart so the table above never suggests the manuscript has fifteen figures.
 SUPERSEDED = [
     ("fig_common_fragment_metric", 100),
     ("fig_plecta_gates", 105),
@@ -72,6 +75,10 @@ SUPERSEDED = [
     ("fig_comparators_density", 102),
     ("fig_plecta_performance", 103),
     ("fig_plecta_control", 104),
+    ("fig_comparators", 106),
+    ("fig_graft_regime", 107),
+    ("fig_plecta_density", 108),
+    ("fig_plecta_sensitivity", 109),
 ]
 
 MODULES = SHIPPED + SUPERSEDED

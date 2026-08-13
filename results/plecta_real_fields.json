@@ -1,0 +1,387 @@
+{
+  "role": "PLECTA on three manually annotated CNT SEM fields, from the manual-derived axis and from the upstream nnU-Net axis, under the four measures of Section 2.6",
+  "crossing_fidelity": "the fraction of reference crossings whose incident arms the prediction partitions exactly as the reference does. Its chance level is the do-nothing prediction that leaves every arm unpaired, measured per field per axis; it is not the 0.709 the manuscript used to print, which is the chance level of pair accuracy",
+  "discipline": "exploratory, 3 fields, no inference",
+  "tolerance_px": 2,
+  "held_out": "B58_110 and B58_300 are absent from the ds202 training set, verified by image content at tile correlations of 0.10 and 0.15; B58_100's image is present in every available run at 0.9999 or above and cannot be made a held-out condition, so its U-Net row is an upper bound",
+  "annotation_revision": "B58_100's annotation was revised from 280 to 307 reference filaments after the two-field study; its manual-derived pairwise F1 moves from 0.882 to 0.887",
+  "axis_triple": "tolerant completeness / correctness / quality of the nnU-Net axis against the manual-derived skeleton; it characterises the mask PLECTA is handed and opens no reconstruction",
+  "parity": {
+    "what": "every reconstruction measure is reproduced independently by the three-model study, which rebuilds and rescores from scratch; and the axis triple reproduces the published two-field values for B58_110, whose masks are byte-identical to the published build",
+    "manual_axis_tolerance": 1e-09,
+    "manual_axis_max_deviation": 0.0,
+    "unet_axis_tolerance": 0.01,
+    "unet_axis_max_deviation": 0.00520833333333337,
+    "why_the_unet_axis_is_not_exact": "the two studies register the same nnU-Net prediction into the annotation grid independently, and the two registrations disagree on 51 to 113 pixels of about 190,000, an intersection over union of 0.9994 or better; a handful of pixels can join or break a skeleton branch, so a measure computed on that skeleton moves by a few thousandths"
+  },
+  "source_record": {
+    "study": "C:/Repos/comparisons/real_sem_study",
+    "scores": {
+      "file": "results_v2.json",
+      "sha256": "a4f73c85f4c55c55ccc95eeb57c03fef3cb1cb972a000b21cadf4a03f94c3e7c"
+    },
+    "axis": {
+      "file": "results_axis_ccq_v2.json",
+      "sha256": "72e01af0c460c9c7b95ea6cfd0468c1c3acdb84460842a778c651cdd772e7005"
+    },
+    "models": {
+      "file": "nnunet_study/results.json",
+      "sha256": "fb35cf08ce32abdff818c89899ce94e3f2080717375c36eedff333222811a876"
+    },
+    "chance": {
+      "file": "results_crossing_fidelity_chance.json",
+      "sha256": "ab1edfb4e927f4ba4699c486937139336c881d20e242fbca52b774e16db54c3c"
+    },
+    "provenance": "NNUNET_PROVENANCE.md"
+  },
+  "fields": [
+    {
+      "image": "B58_100",
+      "n_reference": 307,
+      "unet_held_out": false,
+      "axis_triple": {
+        "reported_tolerance_px": 2,
+        "completeness": 0.6706822566040707,
+        "correctness": 0.670536523830173,
+        "quality": 0.5042541207162339,
+        "by_tolerance": [
+          {
+            "tol_px": 0,
+            "n_ref_px": 50802,
+            "n_test_px": 50734,
+            "completeness": 0.13804574623046337,
+            "correctness": 0.13823077226317657,
+            "quality": 0.07419358251430869,
+            "tp_ref": 7013,
+            "tp_test": 7013,
+            "fp": 43721,
+            "fn": 43789
+          },
+          {
+            "tol_px": 1,
+            "n_ref_px": 50802,
+            "n_test_px": 50734,
+            "completeness": 0.4592929412227865,
+            "correctness": 0.4619387393069736,
+            "quality": 0.29875800256081947,
+            "tp_ref": 23333,
+            "tp_test": 23436,
+            "fp": 27298,
+            "fn": 27469
+          },
+          {
+            "tol_px": 2,
+            "n_ref_px": 50802,
+            "n_test_px": 50734,
+            "completeness": 0.6706822566040707,
+            "correctness": 0.670536523830173,
+            "quality": 0.5042541207162339,
+            "tp_ref": 34072,
+            "tp_test": 34019,
+            "fp": 16715,
+            "fn": 16730
+          },
+          {
+            "tol_px": 3,
+            "n_ref_px": 50802,
+            "n_test_px": 50734,
+            "completeness": 0.7844179363017204,
+            "correctness": 0.7845626207277171,
+            "quality": 0.6452679700418247,
+            "tp_ref": 39850,
+            "tp_test": 39804,
+            "fp": 10930,
+            "fn": 10952
+          }
+        ]
+      },
+      "conditions": {
+        "manual": {
+          "pairwise_f1": 0.8870417732310316,
+          "pairwise_precision": 0.8546201232032854,
+          "pairwise_recall": 0.9220203810367745,
+          "join_f1": 0.9287531806615776,
+          "join_precision": 0.9224936815501263,
+          "join_recall": 0.9350982066609735,
+          "n_decisions": 13234,
+          "detection_f1": 0.9405772495755518,
+          "n_crossings": 371,
+          "crossing_fidelity": 0.921832884097035,
+          "crossing_fidelity_chance": 0.013477088948787063
+        },
+        "unet": {
+          "pairwise_f1": 0.45700022691173137,
+          "pairwise_precision": 0.5605343723907598,
+          "pairwise_recall": 0.3857498563493584,
+          "join_f1": 0.5586649550706033,
+          "join_precision": 0.6903553299492385,
+          "join_recall": 0.4691677447175507,
+          "n_decisions": 17282,
+          "detection_f1": 0.6326836581709145,
+          "n_crossings": 384,
+          "crossing_fidelity": 0.6171875,
+          "crossing_fidelity_chance": 0.1015625
+        }
+      }
+    },
+    {
+      "image": "B58_110",
+      "n_reference": 430,
+      "unet_held_out": true,
+      "axis_triple": {
+        "reported_tolerance_px": 2,
+        "completeness": 0.650969349775059,
+        "correctness": 0.8096950578338591,
+        "quality": 0.5570329002575306,
+        "by_tolerance": [
+          {
+            "tol_px": 0,
+            "n_ref_px": 61794,
+            "n_test_px": 47550,
+            "completeness": 0.16334919247823412,
+            "correctness": 0.21228180862250262,
+            "quality": 0.10170277078085642,
+            "tp_ref": 10094,
+            "tp_test": 10094,
+            "fp": 37456,
+            "fn": 51700
+          },
+          {
+            "tol_px": 1,
+            "n_ref_px": 61794,
+            "n_test_px": 47550,
+            "completeness": 0.48923843738874323,
+            "correctness": 0.6247318611987381,
+            "quality": 0.37549297198907877,
+            "tp_ref": 30232,
+            "tp_test": 29706,
+            "fp": 17844,
+            "fn": 31562
+          },
+          {
+            "tol_px": 2,
+            "n_ref_px": 61794,
+            "n_test_px": 47550,
+            "completeness": 0.650969349775059,
+            "correctness": 0.8096950578338591,
+            "quality": 0.5570329002575306,
+            "tp_ref": 40226,
+            "tp_test": 38501,
+            "fp": 9049,
+            "fn": 21568
+          },
+          {
+            "tol_px": 3,
+            "n_ref_px": 61794,
+            "n_test_px": 47550,
+            "completeness": 0.727950933747613,
+            "correctness": 0.8866876971608832,
+            "quality": 0.6550861546588773,
+            "tp_ref": 44983,
+            "tp_test": 42162,
+            "fp": 5388,
+            "fn": 16811
+          }
+        ]
+      },
+      "conditions": {
+        "manual": {
+          "pairwise_f1": 0.8367144977733795,
+          "pairwise_precision": 0.7900023359028264,
+          "pairwise_recall": 0.8892979226926111,
+          "join_f1": 0.9107598164201939,
+          "join_precision": 0.9006555723651034,
+          "join_recall": 0.9210933470861269,
+          "n_decisions": 24870,
+          "detection_f1": 0.9300613496932515,
+          "n_crossings": 599,
+          "crossing_fidelity": 0.9198664440734557,
+          "crossing_fidelity_chance": 0.02337228714524207
+        },
+        "unet": {
+          "pairwise_f1": 0.4519171113041321,
+          "pairwise_precision": 0.545863309352518,
+          "pairwise_recall": 0.38556002540757994,
+          "join_f1": 0.5928694652098907,
+          "join_precision": 0.6805280528052805,
+          "join_recall": 0.5252165053489557,
+          "n_decisions": 16134,
+          "detection_f1": 0.602203182374541,
+          "n_crossings": 290,
+          "crossing_fidelity": 0.6137931034482759,
+          "crossing_fidelity_chance": 0.04827586206896552
+        }
+      }
+    },
+    {
+      "image": "B58_300",
+      "n_reference": 325,
+      "unet_held_out": true,
+      "axis_triple": {
+        "reported_tolerance_px": 2,
+        "completeness": 0.6187918573038923,
+        "correctness": 0.7580533873819484,
+        "quality": 0.5067748724305936,
+        "by_tolerance": [
+          {
+            "tol_px": 0,
+            "n_ref_px": 60324,
+            "n_test_px": 46378,
+            "completeness": 0.13513692725946555,
+            "correctness": 0.1757729958169822,
+            "quality": 0.08271943176052765,
+            "tp_ref": 8152,
+            "tp_test": 8152,
+            "fp": 38226,
+            "fn": 52172
+          },
+          {
+            "tol_px": 1,
+            "n_ref_px": 60324,
+            "n_test_px": 46378,
+            "completeness": 0.44236124925402825,
+            "correctness": 0.5613868644615981,
+            "quality": 0.3253808565679793,
+            "tp_ref": 26685,
+            "tp_test": 26036,
+            "fp": 20342,
+            "fn": 33639
+          },
+          {
+            "tol_px": 2,
+            "n_ref_px": 60324,
+            "n_test_px": 46378,
+            "completeness": 0.6187918573038923,
+            "correctness": 0.7580533873819484,
+            "quality": 0.5067748724305936,
+            "tp_ref": 37328,
+            "tp_test": 35157,
+            "fp": 11221,
+            "fn": 22996
+          },
+          {
+            "tol_px": 3,
+            "n_ref_px": 60324,
+            "n_test_px": 46378,
+            "completeness": 0.7103806113652941,
+            "correctness": 0.8464358100823667,
+            "quality": 0.6148256041598146,
+            "tp_ref": 42853,
+            "tp_test": 39256,
+            "fp": 7122,
+            "fn": 17471
+          }
+        ]
+      },
+      "conditions": {
+        "manual": {
+          "pairwise_f1": 0.9471739313009155,
+          "pairwise_precision": 0.9251845775225594,
+          "pairwise_recall": 0.9702339986235375,
+          "join_f1": 0.9590619214153467,
+          "join_precision": 0.9576828266228431,
+          "join_recall": 0.9604449938195303,
+          "n_decisions": 28224,
+          "detection_f1": 0.9589905362776024,
+          "n_crossings": 611,
+          "crossing_fidelity": 0.955810147299509,
+          "crossing_fidelity_chance": 0.011456628477905073
+        },
+        "unet": {
+          "pairwise_f1": 0.46565264936872447,
+          "pairwise_precision": 0.5703848027277155,
+          "pairwise_recall": 0.39341508483117754,
+          "join_f1": 0.6154259607632357,
+          "join_precision": 0.7219419924337958,
+          "join_recall": 0.5362997658079626,
+          "n_decisions": 16729,
+          "detection_f1": 0.5766016713091922,
+          "n_crossings": 311,
+          "crossing_fidelity": 0.617363344051447,
+          "crossing_fidelity_chance": 0.04823151125401929
+        }
+      }
+    }
+  ],
+  "contamination": {
+    "what": "three nnU-Net models on three fields, PLECTA scored identically throughout; the same field is scored under a model that trained on it and under models that did not",
+    "control": "on B58_100 every model trained on the field, the three agree to within 0.008 pairwise F1, and there is no gap to see; the effect appears only where a clean comparison exists",
+    "mechanism": "the trained-on model predicts far more foreground, which is what raises the score",
+    "delta_pairwise_f1_min": 0.060468656415844035,
+    "delta_pairwise_f1_max": 0.07070050817027451,
+    "delta_pairwise_f1_mean": 0.06558458229305927,
+    "per_field": [
+      {
+        "field": "B58_100",
+        "held_out_models": [],
+        "trained_on_models": [
+          "ds202",
+          "ds203",
+          "ds204"
+        ],
+        "held_out_pairwise_f1": [],
+        "trained_on_pairwise_f1": [
+          0.4585553917677741,
+          0.46281547952888397,
+          0.4551116221136342
+        ],
+        "held_out_mask_foreground_px": [],
+        "trained_on_mask_foreground_px": [
+          210242,
+          211973,
+          233223
+        ]
+      },
+      {
+        "field": "B58_110",
+        "held_out_models": [
+          "ds202",
+          "ds203"
+        ],
+        "trained_on_models": [
+          "ds204"
+        ],
+        "held_out_pairwise_f1": [
+          0.4505684626791893,
+          0.45324622294814204
+        ],
+        "trained_on_pairwise_f1": [
+          0.5123759992295097
+        ],
+        "held_out_mask_foreground_px": [
+          188046,
+          174311
+        ],
+        "trained_on_mask_foreground_px": [
+          253265
+        ],
+        "delta_pairwise_f1": 0.060468656415844035
+      },
+      {
+        "field": "B58_300",
+        "held_out_models": [
+          "ds202",
+          "ds203"
+        ],
+        "trained_on_models": [
+          "ds204"
+        ],
+        "held_out_pairwise_f1": [
+          0.4639287481444829,
+          0.46835953244659406
+        ],
+        "trained_on_pairwise_f1": [
+          0.536844648465813
+        ],
+        "held_out_mask_foreground_px": [
+          185931,
+          168095
+        ],
+        "trained_on_mask_foreground_px": [
+          245736
+        ],
+        "delta_pairwise_f1": 0.07070050817027451
+      }
+    ]
+  }
+}

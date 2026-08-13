@@ -97,7 +97,7 @@ def main() -> int:
                title="Target areal coverage", title_fontsize=PT_LEGEND,
                handlelength=2.2, columnspacing=1.9, handletextpad=0.55)
 
-    save_fig(fig, "fig_plecta_sensitivity", bbox_inches=None)
+    save_fig(fig, "fig_plecta_sensitivity", subdir="archive", bbox_inches=None)
     plt.close(fig)
     for density in sorted(table):
         print(density, {v: round(float(np.mean(table[density][v])), 4)

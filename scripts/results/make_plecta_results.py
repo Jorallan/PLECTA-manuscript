@@ -35,6 +35,11 @@ METRICS_SUPPLEMENT = RESULTS / "plecta_metrics_supplement.json"
 MASK_QUALITY = RESULTS / "plecta_mask_quality.json"
 GRAFT_REGIME = RESULTS / "plecta_graft_regime.json"
 REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
+REAL_FIELDS = RESULTS / "plecta_real_fields.json"
+METRIC_PANELS = RESULTS / "plecta_metric_panels.json"
+SENSITIVITY = RESULTS / "development_sensitivity.json"
+CROSSING_CHANCE = Path(
+    "C:/Repos/comparisons/metrics_study/results/crossing_fidelity_chance.json")
 N_BOOT = 20_000
 SEED = 20_260_810
 
@@ -335,16 +340,28 @@ def matcher_ablation_macros(audit: dict) -> list[str]:
     return lines
 
 
-def junction_resolution_macros(audit: dict) -> list[str]:
-    """Macros for the direct junction-resolution measurement.
+def junction_resolution_macros(audit: dict, chance: dict) -> list[str]:
+    """Macros for Crossing Fidelity, the measure that states the claim.
 
     At every reference crossing the partition of incident arms induced by the
-    prediction is compared with the reference's. The exact rate is the fraction
-    of crossings resolved identically; the resolution index is the pair accuracy
-    corrected for the do-nothing prediction that keeps every arm apart, whose
-    accuracy is far from zero and is emitted alongside. Pooled over crossings,
-    never averaged over per-scene ratios, because a dense scene carries several
-    times as many crossing decisions as a sparse one.
+    prediction is compared with the reference's; Crossing Fidelity is the
+    fraction resolved identically. Pooled over crossings, never averaged over
+    per-scene ratios, because a dense scene carries several times as many
+    crossing decisions as a sparse one.
+
+    **The chance level is measured, not inherited.** An earlier draft printed
+    ``null_pair_accuracy`` here -- 0.709 -- beside the sentence "leaving every
+    arm unpaired already resolves this fraction of crossings". That is the
+    chance level of *pair accuracy*, which is a different statistic and is no
+    longer reported. The do-nothing prediction's own exact rate was measured by
+    running the stored scorer with an empty prediction, and it is 0.088 on the
+    degraded set and 0.080 on the clean one -- an order of magnitude lower, so
+    the earlier number understated the result rather than flattering it.
+
+    The chance-corrected resolution index is not emitted. Over the real-field
+    rows it correlates with the exact rate at Pearson 0.997 and never went
+    negative, so it restated a reported number and its one distinguishing
+    property never fired.
     """
     names = {"plecta": "Plecta", "greedy_swept": "Greedy",
              "dnai": "DNAi", "graft": "GraFT"}
@@ -356,7 +373,7 @@ def junction_resolution_macros(audit: dict) -> list[str]:
         lines.extend([
             macro(f"PlectaJunction{tag}Count", str(total)),
             macro(f"PlectaJunction{tag}Chance",
-                  fmt(block["plecta"]["overall"]["null_pair_accuracy"])),
+                  fmt(chance["summary"][variant]["null_exact_rate_pooled"])),
             macro(f"PlectaJunction{tag}DegreeFourShare",
                   f"{int(degrees['4']) / total * 100:.0f}"),
         ])
@@ -364,8 +381,6 @@ def junction_resolution_macros(audit: dict) -> list[str]:
             overall = block[key]["overall"]
             lines.extend([
                 macro(f"PlectaJunction{tag}{stem}Rate", fmt(overall["exact_rate"])),
-                macro(f"PlectaJunction{tag}{stem}Index",
-                      fmt(overall["resolution_index"])),
                 macro(f"PlectaJunction{tag}{stem}DegreeFour",
                       fmt(block[key]["by_degree"]["4"]["exact_rate"])),
                 macro(f"PlectaJunction{tag}{stem}DegreeFivePlus",
@@ -443,21 +458,13 @@ TOL_WORDS = {0: "Zero", 1: "One", 2: "Two", 3: "Three"}
 def mask_quality_macros(quality: dict) -> list[str]:
     """Macros for the tolerant completeness / correctness / quality triple.
 
-    Only ``quality`` is emitted per field: completeness and correctness are the
-    axis recall and precision the real-mask table already prints, and a second
-    macro carrying the same value is how two copies of a number drift apart.
-    Every tolerance in the sweep gets its own macro, because the section's point
-    is that on real fields the answer depends on the tolerance and on synthetic
-    ones it does not.
+    Only the synthetic reference arm is emitted here.  The per-field triple
+    moved to ``real_fields_macros`` when the third annotated field arrived,
+    because the three fields have to be built by one path or the two-field and
+    three-field numbers drift apart; this record now covers the synthetic
+    comparison alone, which is what the section uses it for.
     """
-    lines = [macro("PlectaMaskQualityTolerance",
-                   str(quality["reported_tolerance_px"]))]
-    for image in quality["images"]:
-        stem = image["image"].replace("_", "")
-        for row in image["by_tolerance"]:
-            word = TOL_WORDS[row["tol_px"]]
-            lines.append(macro(f"PlectaMaskQuality{stem}Quality{word}",
-                               fmt(row["quality"])))
+    lines = []
     synthetic = quality["synthetic_reference"]
     for row in synthetic["by_tolerance"]:
         word = TOL_WORDS[row["tol_px"]]
@@ -472,18 +479,20 @@ def mask_quality_macros(quality: dict) -> list[str]:
     return lines
 
 
-def real_field_metrics_macros(metrics: dict) -> list[str]:
-    """Macros for the two gentler readings of the two real fields.
+def real_field_metrics_macros(metrics: dict, tolerance: int) -> list[str]:
+    """The tolerance control, and the centreline-Dice arm that was rejected.
 
-    Both exist to answer an objection to the pairwise number rather than to
-    replace it, so both are emitted with the value they are being compared
-    against close by. The detection score is emitted at 0 px and at the
-    section's own 3-px tolerance for both axes, because the argument for
-    quoting the tolerant figure is precisely that the manual-derived one does
-    not move: a tolerance that raised every number would prove nothing.
+    What survives here after the three-field rebuild is the evidence that the
+    placement tolerance is a correction and not an inflation: the detection
+    score is emitted at 0 px and at the manuscript's own tolerance for *both*
+    axes, and the manual-derived pair is identical, because on that axis the
+    input mask is a skeleton of the annotation itself and there is nothing
+    displaced to forgive. A tolerance that raised every number would prove
+    nothing. The reconstruction scores themselves come from
+    ``plecta_real_fields.json``, which covers all three fields; this record
+    covers the two it was written for, which is all the control needs.
     """
-    lines = [macro("PlectaRealJoinReach",
-                   "%.0f" % metrics["join_reach_px"])]
+    lines = [macro("PlectaRealJoinReach", "%.0f" % metrics["join_reach_px"])]
     for c in metrics["conditions"]:
         stem = c["image"].replace("_", "")
         axis = "Manual" if c["input_axis"] == "manual-derived" else "UNet"
@@ -491,16 +500,145 @@ def real_field_metrics_macros(metrics: dict) -> list[str]:
             macro(f"PlectaDetection{stem}{axis}Strict",
                   fmt(c["detection_f1_strict"])),
             macro(f"PlectaDetection{stem}{axis}Tolerant",
-                  fmt(c["detection_f1_tolerant"])),
+                  fmt(c["detection_by_tolerance"][str(tolerance)])),
             macro(f"PlectaClDice{stem}{axis}Strict", fmt(c["cldice_f1_strict"])),
             macro(f"PlectaClDice{stem}{axis}Widened",
                   fmt(c["cldice_f1_widened"])),
-            macro(f"PlectaJoin{stem}{axis}FOne", fmt(c["join_f1"])),
-            macro(f"PlectaJoin{stem}{axis}Precision", fmt(c["join_precision"])),
-            macro(f"PlectaJoin{stem}{axis}Recall", fmt(c["join_recall"])),
-            macro(f"PlectaJoin{stem}{axis}Decisions", "%d" % c["n_decisions"]),
         ])
     return lines
+
+
+def real_fields_macros(payload: dict) -> list[str]:
+    """The three annotated fields under the five reported measures.
+
+    One placement tolerance is emitted, ``PlectaPlacementTolerance``, and every
+    tolerance-bearing number in the manuscript reads it. There were two before
+    the third field arrived -- 3 px for the axis triple and 2 px for the
+    detection score -- for no reason beyond the order the two studies were
+    written in, and a reader has no way to tell that from the page.
+    """
+    tolerance = payload["fields"][0]["axis_triple"]["reported_tolerance_px"]
+    lines = [macro("PlectaPlacementTolerance", str(tolerance)),
+             macro("PlectaRealFieldCount", str(len(payload["fields"])))]
+    held_out = [f["image"] for f in payload["fields"] if f["unet_held_out"]]
+    lines.append(macro("PlectaRealHeldOutCount", str(len(held_out))))
+
+    total_crossings = 0
+    for field in payload["fields"]:
+        stem = field["image"].replace("_", "")
+        triple = field["axis_triple"]
+        lines.extend([
+            macro(f"Plecta{stem}ReferenceCount", str(field["n_reference"])),
+            macro(f"Plecta{stem}AxisRecall", fmt(triple["completeness"])),
+            macro(f"Plecta{stem}AxisPrecision", fmt(triple["correctness"])),
+        ])
+        for row in triple["by_tolerance"]:
+            word = TOL_WORDS[row["tol_px"]]
+            lines.append(macro(f"PlectaMaskQuality{stem}Quality{word}",
+                               fmt(row["quality"])))
+        for key, axis in (("manual", "Manual"), ("unet", "UNet")):
+            c = field["conditions"][key]
+            total_crossings += c["n_crossings"]
+            lines.extend([
+                macro(f"Plecta{stem}{axis}FOne", fmt(c["pairwise_f1"])),
+                macro(f"Plecta{stem}{axis}Precision",
+                      fmt(c["pairwise_precision"])),
+                macro(f"Plecta{stem}{axis}Recall", fmt(c["pairwise_recall"])),
+                macro(f"PlectaJoin{stem}{axis}FOne", fmt(c["join_f1"])),
+                macro(f"PlectaJoin{stem}{axis}Precision",
+                      fmt(c["join_precision"])),
+                macro(f"PlectaJoin{stem}{axis}Recall", fmt(c["join_recall"])),
+                macro(f"PlectaJoin{stem}{axis}Decisions",
+                      "%d" % c["n_decisions"]),
+                macro(f"PlectaDetectionF{stem}{axis}", fmt(c["detection_f1"])),
+                macro(f"PlectaFidelity{stem}{axis}",
+                      fmt(c["crossing_fidelity"])),
+                macro(f"PlectaFidelity{stem}{axis}Chance",
+                      fmt(c["crossing_fidelity_chance"])),
+                macro(f"PlectaCrossingCount{stem}{axis}",
+                      "%d" % c["n_crossings"]),
+            ])
+    lines.append(macro("PlectaRealCrossingTotal", "%d" % total_crossings))
+
+    #  What training on the field is worth, measured where a clean comparison
+    #  exists rather than argued.  It is why B58_100's U-Net row is an upper
+    #  bound and not a result.
+    contamination = payload["contamination"]
+    lines.extend([
+        macro("PlectaContaminationDeltaLow",
+              fmt(contamination["delta_pairwise_f1_min"])),
+        macro("PlectaContaminationDeltaHigh",
+              fmt(contamination["delta_pairwise_f1_max"])),
+        macro("PlectaContaminationModelCount",
+              str(len(contamination["per_field"][0]["held_out_models"])
+                  + len(contamination["per_field"][0]["trained_on_models"]))),
+    ])
+    for entry in contamination["per_field"]:
+        stem = entry["field"].replace("_", "")
+        if "delta_pairwise_f1" not in entry:
+            continue
+        clean = entry["held_out_pairwise_f1"]
+        lines.extend([
+            macro(f"PlectaContamination{stem}CleanLow", fmt(min(clean))),
+            macro(f"PlectaContamination{stem}CleanHigh", fmt(max(clean))),
+            macro(f"PlectaContamination{stem}Trained",
+                  fmt(max(entry["trained_on_pairwise_f1"]))),
+        ])
+    return lines
+
+
+def metric_panels_macros(panels: dict) -> list[str]:
+    """The two ends of each comparison curve, so the prose can cite the figure.
+
+    Only the sparsest and densest strata are emitted. The intermediate points
+    are on the page already, in the figures, and a macro for every cell would
+    be thirty numbers nobody cites.
+    """
+    lines = [macro("PlectaDetectionIoU", "%.1f" % panels["iou_threshold"]),
+             macro("PlectaPanelCrossingChance",
+                   fmt(panels["chance"]["degraded"]["pooled"])),
+             macro("PlectaPanelCleanCrossingChance",
+                   fmt(panels["chance"]["clean"]["pooled"]))]
+    words = {"f1": "FOne", "detection_f1": "Detection",
+             "crossing_fidelity": "Fidelity", "vi_total_bits": "VITotal",
+             "ari": "ARI"}
+    ends = (("Low", str(panels["densities"][0])),
+            ("High", str(panels["densities"][-1])))
+    for condition in ("degraded", "clean"):
+        stem = condition.title()
+        for method, name in (("plecta", "Plecta"), ("graft", "GraFT"),
+                             ("dnai", "DNAi")):
+            for end, density in ends:
+                cell = panels["panels"][condition][method][density]
+                for key, word in words.items():
+                    lines.append(macro(f"PlectaPanel{stem}{name}{end}{word}",
+                                       fmt(cell[key])))
+    #: The empirical case for reporting ARI in one sentence rather than in
+    #: every table: it never leaves pairwise F1 by more than this.
+    gap = max(abs(cell["ari"] - cell["f1"])
+              for condition in ("degraded", "clean")
+              for method in ("plecta", "graft", "dnai")
+              for cell in panels["panels"][condition][method].values())
+    lines.append(macro("PlectaPanelARIMaxGap", fmt(gap)))
+    return lines
+
+
+def sensitivity_macros(sensitivity: dict) -> list[str]:
+    """What the thickness of the input axis mask costs, on development scenes.
+
+    This replaces a retired figure. It is the one density axis that moves the
+    score: the rendered silhouette does not (Section 3.2, causally, on
+    byte-identical masks), and this does.
+    """
+    paired = sensitivity["paired"]["w3_minus_w1"]
+    return [
+        macro("PlectaSensitivityWidthSceneCount", str(paired["n"])),
+        macro("PlectaSensitivityWidthLow", "1"),
+        macro("PlectaSensitivityWidthHigh", "3"),
+        macro("PlectaSensitivityWidthDeltaFOne", "%+.3f" % paired["mean"]),
+        macro("PlectaSensitivityWidthDeltaCILow", fmt(paired["ci_lo"])),
+        macro("PlectaSensitivityWidthDeltaCIHigh", fmt(paired["ci_hi"])),
+    ]
 
 
 def graft_regime_macros(regime: dict) -> list[str]:
@@ -775,7 +913,9 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 analysis: dict, swept: dict,
                 graft: dict, audit: dict, supplement: dict,
                 mask_quality: dict, graft_regime: dict,
-                real_field_metrics: dict) -> str:
+                real_field_metrics: dict, real_fields: dict,
+                metric_panels: dict, sensitivity: dict,
+                crossing_chance: dict) -> str:
     rows = [r for r in held["per_scene"] if r.get("status") == "ok"]
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
@@ -901,44 +1041,45 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *comparator_analysis_macros(analysis, swept),
             *graft_macros(graft),
             *matcher_ablation_macros(audit),
-            *junction_resolution_macros(audit),
+            *junction_resolution_macros(audit, crossing_chance),
             *graft_frame_macros(audit, supplement),
             *shared_ownership_macros(audit, supplement),
             *mask_quality_macros(mask_quality),
             *graft_regime_macros(graft_regime),
-            *real_field_metrics_macros(real_field_metrics),
+            *real_fields_macros(real_fields),
+            *real_field_metrics_macros(
+                real_field_metrics,
+                real_fields["fields"][0]["axis_triple"]
+                ["reported_tolerance_px"]),
+            *metric_panels_macros(metric_panels),
+            *sensitivity_macros(sensitivity),
         ]
     )
-
-    for image in real_masks["images"]:
-        stem = image["image"].replace("_", "")
-        lines.extend(
-            [
-                macro(f"Plecta{stem}AxisRecall", fmt(image["axis_recall"], 3)),
-                macro(f"Plecta{stem}AxisPrecision", fmt(image["axis_precision"], 3)),
-                macro(f"Plecta{stem}ManualFOne", fmt(image["plecta_manual_axis"]["f1"], 3)),
-                macro(f"Plecta{stem}UNetFOne", fmt(image["plecta_unet_axis"]["f1"], 3)),
-            ]
-        )
     return "\n".join(lines) + "\n"
 
 
 def heldout_table(held: dict) -> str:
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
-        r"\begin{tabular}{lrrrrrrrr}",
+        r"\begin{tabular}{lrrrrrrrrr}",
         r"\toprule",
-        r"Group & $n$ & $F_1$ & Precision & Recall & Recovery & ARI & VI split & VI merge \\",
+        r"Group & $n$ & $F_1$ & Precision & Recall & Recovery & ARI & "
+        r"VI split & VI merge & VI total \\",
         r"\midrule",
     ]
+    #  VI total is printed beside its two components, not instead of them: a
+    #  method that fuses everything never splits anything and scores a perfect
+    #  0.000 on the split column alone, so the split column must never be the
+    #  one a reader ranks by.  The total is what the comparison figures quote.
     for key, label in (("all", "All"), ("cov20", r"20\%"), ("cov30", r"30\%"),
                        ("cov40", r"40\%"), ("cov60", r"60\%")):
         row = held["summary"][key]
+        total = float(row["vi_split_bits"]) + float(row["vi_merge_bits"])
         lines.append(
             f"{label} & {row['n_scored']} & {fmt(row['f1'])} & {fmt(row['precision'])} & "
             f"{fmt(row['recall'])} & {fmt(row['fragment_recovery_recovery_rate'])} & "
             f"{fmt(row['adjusted_rand_index'])} & {fmt(row['vi_split_bits'])} & "
-            f"{fmt(row['vi_merge_bits'])} \\\\"
+            f"{fmt(row['vi_merge_bits'])} & {fmt(total)} \\\\"
         )
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
@@ -982,25 +1123,63 @@ def ablation_table(payload: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def real_masks_table(payload: dict) -> str:
+def real_fields_table(payload: dict) -> str:
+    """Three fields, two mask sources, the five measures of Section 2.6.
+
+    The held-out column is the first thing in the table because it is the first
+    thing a reader has to know: one of the three U-Net rows is an upper bound
+    and cannot be made otherwise.
+    """
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
-        r"\begin{tabular}{llrrrr}",
+        r"\begin{tabular}{llcrrrrrrr}",
         r"\toprule",
-        r"Field & Input mask & Axis recall & Axis precision & $F_1$ & ARI \\",
+        r" & & Held & \multicolumn{3}{c}{Grouping} & "
+        r"\multicolumn{3}{c}{Objects and crossings} & \\",
+        r"\cmidrule(lr){4-6}\cmidrule(lr){7-9}",
+        r"Field & Input axis & out & $F_1$ & Join $F_1$ & Decisions & "
+        r"Det.\ $F_1$ & CF & Chance & Cross. \\",
         r"\midrule",
     ]
-    for image in payload["images"]:
-        for label, key in (("Manual-derived", "plecta_manual_axis"),
-                           ("U-Net", "plecta_unet_axis")):
-            values = image[key]
-            axis_recall = "--" if key == "plecta_manual_axis" else fmt(image["axis_recall"])
-            axis_precision = "--" if key == "plecta_manual_axis" else fmt(image["axis_precision"])
+    for field in payload["fields"]:
+        for key, label in (("manual", "Manual-derived"), ("unet", "U-Net")):
+            c = field["conditions"][key]
+            if key == "manual":
+                held = "--"
+            else:
+                held = "yes" if field["unet_held_out"] else "no"
             lines.append(
-                f"{tex_escape(image['image'])} & {label} & {axis_recall} & "
-                f"{axis_precision} & {fmt(values['f1'])} & {fmt(values['ari'])} \\\\"
+                f"{tex_escape(field['image'])} & {label} & {held} & "
+                f"{fmt(c['pairwise_f1'])} & {fmt(c['join_f1'])} & "
+                f"{c['n_decisions']:,} & {fmt(c['detection_f1'])} & "
+                f"{fmt(c['crossing_fidelity'])} & "
+                f"{fmt(c['crossing_fidelity_chance'])} & "
+                f"{c['n_crossings']} \\\\".replace(",", r"\,")
             )
     lines.extend([r"\bottomrule", r"\end{tabular}"])
+    return "\n".join(lines) + "\n"
+
+
+def real_axis_table(payload: dict) -> str:
+    """What each field's U-Net axis is, as an input, before anything runs."""
+    tolerance = payload["fields"][0]["axis_triple"]["reported_tolerance_px"]
+    lines = [
+        "% Generated by scripts/results/make_plecta_results.py; do not edit.",
+        r"\begin{tabular}{lrrrr}",
+        r"\toprule",
+        r"Field & Reference filaments & Completeness & Correctness & Quality"
+        r" \\",
+        r"\midrule",
+    ]
+    for field in payload["fields"]:
+        triple = field["axis_triple"]
+        lines.append(
+            f"{tex_escape(field['image'])} & {field['n_reference']} & "
+            f"{fmt(triple['completeness'])} & {fmt(triple['correctness'])} & "
+            f"{fmt(triple['quality'])} \\\\"
+        )
+    lines.extend([r"\bottomrule", r"\end{tabular}"])
+    assert tolerance  # the caption cites \PlectaPlacementTolerance
     return "\n".join(lines) + "\n"
 
 
@@ -1024,6 +1203,11 @@ def main() -> None:
     graft_regime = json.loads(GRAFT_REGIME.read_text(encoding="utf-8"))
     real_field_metrics = json.loads(
         REAL_FIELD_METRICS.read_text(encoding="utf-8"))
+    real_fields = json.loads(REAL_FIELDS.read_text(encoding="utf-8"))
+    metric_panels = json.loads(METRIC_PANELS.read_text(encoding="utf-8"))
+    sensitivity = json.loads(SENSITIVITY.read_text(encoding="utf-8"))
+    crossing_chance = json.loads(
+        CROSSING_CHANCE.read_text(encoding="utf-8"))
     with ROBUSTNESS.open(newline="", encoding="utf-8-sig") as handle:
         robustness = list(csv.DictReader(handle))
     (RESULTS / "plecta_results.tex").write_text(
@@ -1031,7 +1215,8 @@ def main() -> None:
             held, robustness, ablation, stage4, real_masks, cc_baseline,
             width_validation, greedy, factorial, dnai, analysis, swept,
             graft, audit, supplement, mask_quality, graft_regime,
-            real_field_metrics,
+            real_field_metrics, real_fields, metric_panels, sensitivity,
+            crossing_chance,
         ),
         encoding="utf-8",
     )
@@ -1051,7 +1236,10 @@ def main() -> None:
         ablation_table(ablation), encoding="utf-8"
     )
     (RESULTS / "plecta_real_masks_table.tex").write_text(
-        real_masks_table(real_masks), encoding="utf-8"
+        real_fields_table(real_fields), encoding="utf-8"
+    )
+    (RESULTS / "plecta_real_axis_table.tex").write_text(
+        real_axis_table(real_fields), encoding="utf-8"
     )
 
 

@@ -246,9 +246,32 @@ PT_TINY = PT_ANNOT
 #  Modern body: a wide, heavy sans on a page of narrow, light serif, which is
 #  what made the figures read as pasted in from somewhere else.  They are now
 #  set in Latin Modern Roman itself -- literally ``lmodern``, the family
-#  ``main.tex`` loads -- at the optical size cut for 8 pt rather than the 10 pt
-#  cut scaled down, because a Computer Modern design shrunk from 10 to 7.5 pt
-#  goes spindly and the 8 pt cut is drawn with sturdier stems for exactly this.
+#  ``main.tex`` loads.
+#
+#  WHICH OPTICAL CUT, and why it changed.  The set was drawn in the 8 pt cut,
+#  on the argument that a Computer Modern design shrunk from 10 to 7.5 pt goes
+#  spindly and the 8 pt cut is drawn with sturdier stems for exactly that.  The
+#  argument is sound in isolation and wrong in context: it is the reason the
+#  figures read as horizontally stretched beside the page.  Measured, at one
+#  set size, on the strings this set actually prints:
+#
+#      lmroman8-regular   +6.2 % wider than lmroman10-regular
+#      lmroman10-bold    +15.3 % wider than lmroman10-regular
+#      lmroman8-bold     +22.8 % wider than lmroman10-regular
+#
+#  Latin Modern's small optical sizes are drawn wider per unit height, which is
+#  what makes them hold up at 7 pt -- and the body of this manuscript is set at
+#  11 pt, which ``lmodern`` serves from the *12 pt* design, and its captions at
+#  10 pt from the 10 pt design.  So a figure label in the 8 pt cut sits beside a
+#  caption whose letterforms are 6 % narrower, and a *bold* figure label sits
+#  beside body text 23 % narrower.  Nothing is stretched; two different optical
+#  designs are being compared, and the eye reads the difference as stretching.
+#
+#  The set therefore uses the 10 pt cut, the one the captions beside it use, and
+#  panel titles are set in the regular weight with only the (a)/(b) tag bold.
+#  That removes both terms.  The cost is real and small: at 7.5 pt the 10 pt
+#  design has finer stems than the 8 pt design would, which is visible on
+#  screen at low zoom and not in print.
 #
 #  Maths moves with it: ``mathtext.fontset`` is ``cm``, so θ, φ, κ and the
 #  subscripts are Computer Modern, the design Latin Modern extends.  One glyph
@@ -277,10 +300,11 @@ PT_TINY = PT_ANNOT
 # ---------------------------------------------------------------------------
 BODY_FAMILY = "Latin Modern Roman"
 
-#: The optical size cut for 8 pt, regular and bold.  No italic: nothing in the
-#: set is italic in the body face -- the italic notes are mathtext.
-BODY_FACES = (("lmroman8-regular.otf", "LMRoman8-Regular.ttf"),
-              ("lmroman8-bold.otf", "LMRoman8-Bold.ttf"))
+#: The optical size cut for 10 pt, regular and bold -- the cut the manuscript's
+#: own captions are set in.  No italic: nothing in the set is italic in the body
+#: face -- the italic notes are mathtext.
+BODY_FACES = (("lmroman10-regular.otf", "LMRoman10-Regular.ttf"),
+              ("lmroman10-bold.otf", "LMRoman10-Bold.ttf"))
 
 _FONT_STATE = {"resolved": None}
 
@@ -518,6 +542,19 @@ def panel_tag(ax, letter, dx=0.0, dy=1.0, **kw):
 def panel_title(ax, text, dx=0.055, dy=1.0, **kw):
     ax.text(dx, dy, text, transform=ax.transAxes, ha="left", va="bottom",
             fontsize=PT_TITLE, fontweight="bold", color=INK, **kw)
+
+
+def tagged_title(ax, letter, text, dy=1.0, gap=0.030, **kw):
+    """``(a)`` bold, the title itself in the regular weight beside it.
+
+    Latin Modern bold sets 15 % wider than its regular, so a whole title in
+    bold reads as horizontally stretched next to body text that is not.  The
+    tag carries the hierarchy on its own; the words do not need to.
+    """
+    ax.text(0.0, dy, f"({letter})", transform=ax.transAxes, ha="left",
+            va="bottom", fontsize=PT_TITLE, fontweight="bold", color=INK, **kw)
+    ax.text(gap, dy, text, transform=ax.transAxes, ha="left", va="bottom",
+            fontsize=PT_TITLE, color=INK, **kw)
 
 
 # ── page layout ────────────────────────────────────────────────────────────

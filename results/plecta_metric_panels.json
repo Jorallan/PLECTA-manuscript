@@ -1,0 +1,436 @@
+{
+  "role": "the three reported measures against target areal coverage, for the two comparison figures of Section 3.3; one mask condition each",
+  "scenes": "50 scenes, ten at each of 20, 30, 40, 50 and 60 % target areal coverage, identical input masks for every method, one scorer",
+  "aggregation": "plain mean of per-scene values in every panel; no interval is drawn and none is claimed",
+  "detection_metric": "DNAi's greedy-IoU object detection F1 at its shipped IoU threshold of 0.1, with a 2 px symmetric placement tolerance; without the tolerance an object IoU between two independently read one-pixel centrelines measures placement rather than shape",
+  "crossing_fidelity": "the fraction of reference crossings whose incident arms the prediction partitions exactly as the reference does, per scene, then averaged. Only junctions the reference itself treats as a crossing are scored: a node whose arms all belong to one filament is a skeletonisation artefact and scoring it would reward doing nothing",
+  "crossing_fidelity_chance": "the do-nothing prediction that leaves every arm unpaired, scored through the same code; it is not the 0.709 the manuscript used to print, which is the chance level of pair accuracy, a different statistic",
+  "censoring": "GraFT exceeded its per-scene wall-clock budget on 3 of the 50 degraded scenes and 1 of the clean ones, all in the densest stratum; they are excluded from its means, they are the hardest scenes of the set, and so its curve is optimistic",
+  "iou_threshold": 0.1,
+  "tolerance_px": 2,
+  "densities": [
+    20,
+    30,
+    40,
+    50,
+    60
+  ],
+  "parity": "reproduces every per-density mean already printed in results/plecta_dnai_comparison.json and results/plecta_graft_comparison.json, both conditions, within 1e-05, including GraFT's censored counts",
+  "source_record": {
+    "study": "C:/Repos/comparisons/metrics_study",
+    "per_scene": {
+      "file": "results/per_scene_methods.csv",
+      "sha256": "b7ed332c759f3cd2d4804503b74aaffd88ad7ce05a9313d680c8af7a5f8d4bfc"
+    },
+    "detection": {
+      "file": "results/detection_tolerance_sweep.csv",
+      "sha256": "8154b818c533015a81495363b2ff2ce442965113676db107ed0bc9b5f750ba8c"
+    },
+    "chance": {
+      "file": "results/crossing_fidelity_chance.json",
+      "sha256": "d3d56567013cbb1b2b8795bb1393cf6af6fa5d01206442cbc47bf4124d9ee72e"
+    }
+  },
+  "chance": {
+    "degraded": {
+      "pooled": 0.0879604178119846,
+      "n_crossings": 3638,
+      "by_density": {
+        "20": 0.017241379310344827,
+        "30": 0.03550295857988166,
+        "40": 0.056666666666666664,
+        "50": 0.0966824644549763,
+        "60": 0.11488783140720599
+      }
+    },
+    "clean": {
+      "pooled": 0.07983112646325081,
+      "n_crossings": 5211,
+      "by_density": {
+        "20": 0.01834862385321101,
+        "30": 0.04081632653061224,
+        "40": 0.053927315357561546,
+        "50": 0.0745466756212223,
+        "60": 0.10874595094863489
+      }
+    }
+  },
+  "panels": {
+    "degraded": {
+      "plecta": {
+        "20": {
+          "f1": 0.8943495623470898,
+          "detection_f1": 0.942317587372477,
+          "crossing_fidelity": 0.9043788072055673,
+          "ari": 0.8890160374858009,
+          "vi_split_bits": 0.160581090504314,
+          "vi_merge_bits": 0.11017381296639928,
+          "vi_total_bits": 0.27075490347071324,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.8573308864698284,
+          "detection_f1": 0.9380981718884825,
+          "crossing_fidelity": 0.8431809929160645,
+          "ari": 0.8529186051680812,
+          "vi_split_bits": 0.20636717185371248,
+          "vi_merge_bits": 0.21328519651490657,
+          "vi_total_bits": 0.419652368368619,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.8074841623196585,
+          "detection_f1": 0.9357854857826181,
+          "crossing_fidelity": 0.8545460494100228,
+          "ari": 0.8030247067248562,
+          "vi_split_bits": 0.30457937132857993,
+          "vi_merge_bits": 0.27681398575197286,
+          "vi_total_bits": 0.5813933570805527,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.7964380082199698,
+          "detection_f1": 0.9420684598763565,
+          "crossing_fidelity": 0.8182236830859615,
+          "ari": 0.7926724497230044,
+          "vi_split_bits": 0.3594291104378342,
+          "vi_merge_bits": 0.3381048517935611,
+          "vi_total_bits": 0.6975339622313953,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.7532243737713957,
+          "detection_f1": 0.899475217816842,
+          "crossing_fidelity": 0.774826255546356,
+          "ari": 0.7498151420574382,
+          "vi_split_bits": 0.47673703259795824,
+          "vi_merge_bits": 0.41670382340888146,
+          "vi_total_bits": 0.8934408560068396,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      },
+      "graft": {
+        "20": {
+          "f1": 0.6340075038371212,
+          "detection_f1": 0.7917866658205504,
+          "crossing_fidelity": 0.8210045057941814,
+          "ari": 0.6205164110588506,
+          "vi_split_bits": 0.6905056514464857,
+          "vi_merge_bits": 0.19305210427588698,
+          "vi_total_bits": 0.8835577557223727,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.49581863568691,
+          "detection_f1": 0.7067148259441055,
+          "crossing_fidelity": 0.7042787028137113,
+          "ari": 0.48285819907961897,
+          "vi_split_bits": 1.0788043458749863,
+          "vi_merge_bits": 0.4243670892474527,
+          "vi_total_bits": 1.503171435122439,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.4595256862000614,
+          "detection_f1": 0.6901847494753197,
+          "crossing_fidelity": 0.7388303639466709,
+          "ari": 0.44893152145546633,
+          "vi_split_bits": 1.1619027236091388,
+          "vi_merge_bits": 0.4862377276795743,
+          "vi_total_bits": 1.6481404512887132,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.4189212677645104,
+          "detection_f1": 0.5694653032861727,
+          "crossing_fidelity": 0.6712662951821791,
+          "ari": 0.41018798953978236,
+          "vi_split_bits": 1.4666345337661866,
+          "vi_merge_bits": 0.5151201848719593,
+          "vi_total_bits": 1.9817547186381461,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.4177553648345818,
+          "detection_f1": 0.515921192077787,
+          "crossing_fidelity": 0.6474929222851975,
+          "ari": 0.4129139323502752,
+          "vi_split_bits": 1.5457713363632337,
+          "vi_merge_bits": 0.31767584736294835,
+          "vi_total_bits": 1.863447183726182,
+          "n": 7,
+          "n_attempted": 10,
+          "n_detection": 7
+        }
+      },
+      "dnai": {
+        "20": {
+          "f1": 0.5035812372192521,
+          "detection_f1": 0.7308923790093654,
+          "crossing_fidelity": 0.7868126420413067,
+          "ari": 0.48465318723973605,
+          "vi_split_bits": 0.8683546346457767,
+          "vi_merge_bits": 0.34517988949881984,
+          "vi_total_bits": 1.2135345241445967,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.40626350315977733,
+          "detection_f1": 0.6614930863239346,
+          "crossing_fidelity": 0.7243531739457938,
+          "ari": 0.3928766720225096,
+          "vi_split_bits": 1.2173047240106243,
+          "vi_merge_bits": 0.48338170870069996,
+          "vi_total_bits": 1.7006864327113242,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.33423581622089127,
+          "detection_f1": 0.618634151498837,
+          "crossing_fidelity": 0.6524046062327833,
+          "ari": 0.32151364805902366,
+          "vi_split_bits": 1.4303743963645172,
+          "vi_merge_bits": 0.6532521762839727,
+          "vi_total_bits": 2.0836265726484897,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.2553790638679946,
+          "detection_f1": 0.5729880320178385,
+          "crossing_fidelity": 0.5915938300017205,
+          "ari": 0.24449587387699712,
+          "vi_split_bits": 1.780572209706857,
+          "vi_merge_bits": 0.8479835883472319,
+          "vi_total_bits": 2.628555798054089,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.2174614481858134,
+          "detection_f1": 0.5380415887693621,
+          "crossing_fidelity": 0.5155498231430953,
+          "ari": 0.20946999694048735,
+          "vi_split_bits": 1.9500389900359458,
+          "vi_merge_bits": 0.9583332776373183,
+          "vi_total_bits": 2.908372267673264,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      }
+    },
+    "clean": {
+      "plecta": {
+        "20": {
+          "f1": 0.9390631989329282,
+          "detection_f1": 0.9867296123315843,
+          "crossing_fidelity": 0.9580302396878484,
+          "ari": 0.935955870801906,
+          "vi_split_bits": 0.09691346029703968,
+          "vi_merge_bits": 0.0769689712854504,
+          "vi_total_bits": 0.1738824315824901,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.8978007788701994,
+          "detection_f1": 0.976145446113058,
+          "crossing_fidelity": 0.8875373312676331,
+          "ari": 0.8945721435266805,
+          "vi_split_bits": 0.14793345140431613,
+          "vi_merge_bits": 0.15975221724513097,
+          "vi_total_bits": 0.30768566864944713,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.82593835685113,
+          "detection_f1": 0.9671658612572844,
+          "crossing_fidelity": 0.8523490295936329,
+          "ari": 0.8218141472049296,
+          "vi_split_bits": 0.2689808251734274,
+          "vi_merge_bits": 0.2853046401067866,
+          "vi_total_bits": 0.554285465280214,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.7974658437103596,
+          "detection_f1": 0.9584071511689103,
+          "crossing_fidelity": 0.8402148765124933,
+          "ari": 0.7937415525927772,
+          "vi_split_bits": 0.36655294864738225,
+          "vi_merge_bits": 0.3477536532308294,
+          "vi_total_bits": 0.7143066018782116,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.7607813250787849,
+          "detection_f1": 0.9314575903804876,
+          "crossing_fidelity": 0.7818517409822883,
+          "ari": 0.7574635934537288,
+          "vi_split_bits": 0.4692344508685955,
+          "vi_merge_bits": 0.43003396572856706,
+          "vi_total_bits": 0.8992684165971625,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      },
+      "graft": {
+        "20": {
+          "f1": 0.8460412309902965,
+          "detection_f1": 0.9020215732686602,
+          "crossing_fidelity": 0.8714479526228247,
+          "ari": 0.8384497491188437,
+          "vi_split_bits": 0.2645286910736492,
+          "vi_merge_bits": 0.16612498410427426,
+          "vi_total_bits": 0.4306536751779234,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.5344922346190294,
+          "detection_f1": 0.7870781581082945,
+          "crossing_fidelity": 0.622811248791618,
+          "ari": 0.5178383674939709,
+          "vi_split_bits": 0.837215040240522,
+          "vi_merge_bits": 0.7104782805877139,
+          "vi_total_bits": 1.5476933208282357,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.5012437829537219,
+          "detection_f1": 0.724199596340088,
+          "crossing_fidelity": 0.6213986800064617,
+          "ari": 0.4877342332956792,
+          "vi_split_bits": 0.9916965623740749,
+          "vi_merge_bits": 0.7976817046385374,
+          "vi_total_bits": 1.7893782670126122,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.4832951503053066,
+          "detection_f1": 0.6195341011587737,
+          "crossing_fidelity": 0.6549495151396905,
+          "ari": 0.47361672239460645,
+          "vi_split_bits": 1.2590386791438422,
+          "vi_merge_bits": 0.7097225255383022,
+          "vi_total_bits": 1.9687612046821443,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.48287412984905154,
+          "detection_f1": 0.5294303578278637,
+          "crossing_fidelity": 0.6042906789396093,
+          "ari": 0.47745598114810295,
+          "vi_split_bits": 1.4282307095448432,
+          "vi_merge_bits": 0.48066766655882964,
+          "vi_total_bits": 1.9088983761036726,
+          "n": 9,
+          "n_attempted": 10,
+          "n_detection": 9
+        }
+      },
+      "dnai": {
+        "20": {
+          "f1": 0.6602211170189484,
+          "detection_f1": 0.8872662239749282,
+          "crossing_fidelity": 0.8460958244653897,
+          "ari": 0.6435335096900638,
+          "vi_split_bits": 0.529292610355938,
+          "vi_merge_bits": 0.32316322478030235,
+          "vi_total_bits": 0.8524558351362403,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.5272469099539631,
+          "detection_f1": 0.7833829247576487,
+          "crossing_fidelity": 0.7335646328057563,
+          "ari": 0.5135851174549363,
+          "vi_split_bits": 0.8606218567995342,
+          "vi_merge_bits": 0.5297652661006566,
+          "vi_total_bits": 1.3903871229001905,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.4321016319662327,
+          "detection_f1": 0.7103613831240035,
+          "crossing_fidelity": 0.6627191846652798,
+          "ari": 0.4208610124881682,
+          "vi_split_bits": 1.2249225197205638,
+          "vi_merge_bits": 0.6404551263307527,
+          "vi_total_bits": 1.8653776460513165,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.30949422769017976,
+          "detection_f1": 0.6259721200065702,
+          "crossing_fidelity": 0.5797464389781312,
+          "ari": 0.30054667099165067,
+          "vi_split_bits": 1.7260483631465562,
+          "vi_merge_bits": 0.7544584221053541,
+          "vi_total_bits": 2.4805067852519103,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.22392124422341145,
+          "detection_f1": 0.5801574080187805,
+          "crossing_fidelity": 0.4948048299331839,
+          "ari": 0.21673706269456733,
+          "vi_split_bits": 2.0578207197549814,
+          "vi_merge_bits": 0.9413448191741731,
+          "vi_total_bits": 2.9991655389291543,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      }
+    }
+  }
+}
