@@ -17,14 +17,16 @@ Pipeline~B, which this paper evaluates, is PLECTA. Its five geometric steps read
 mask geometry alone, and the two matching steps are re-made over eight rounds
 against frames re-fitted along the chains assembled so far.
 
-\begin{figure}[htb]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
     \caption{Where PLECTA sits. Pipeline~A is the upstream binary segmentation
-    of SEM micrographs; Pipeline~B is PLECTA, and the held-out result measures
-    the dashed green box only. The mask entering Pipeline~B came from
-    Pipeline~A for the SEM fields and from the procedural generator in every
-    synthetic experiment. Colours: blue, a learned component; green, a PLECTA
+    of SEM micrographs, which carries its own evaluation; Pipeline~B is PLECTA,
+    and every result in this paper measures the dashed green box only. The mask
+    entering Pipeline~B came from Pipeline~A for the SEM fields and from the
+    procedural generator in every synthetic experiment. Steps~3 and~4 are the
+    only decisions the method makes and are drawn heavier for it; everything
+    else is bookkeeping. Colours: blue, a learned component; green, a PLECTA
     geometric step; orange, a dependency on the grayscale image; dark, a data
     artefact.}
     \label{fig:scope}
@@ -147,7 +149,7 @@ as the tips approach rather than letting an unstable angle dominate. The
 constant 30 places curvature, in px$^{-1}$, on the scale of the angular terms;
 the weights, $\ell_0$ and $d_0$ are fixed in the public configuration.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_frame_cost.pdf}
     \caption{The stub frame and the terms of the pairing cost. (a)~The
@@ -224,7 +226,7 @@ the frames the next is scored against, a cheap early choice propagates and the
 difference is no longer confined to dense nodes
 (Section~\ref{sec:res-comparators}).
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
     \caption{Every decision the linker can make, on the nodes it made them at.
@@ -289,14 +291,14 @@ The primary endpoint is common-fragment pairwise \Fone{}. Fragments are built
 from the input mask alone: the mask is skeletonised, spurs of at most 3\,px are
 pruned, skeleton pixels with three or more 8-neighbours are deleted, the
 remaining 8-connected pieces are labelled, and pieces shorter than 6\,px are
-discarded, so one fragment is one unambiguous arm between crossings. Because
-that partition reads neither the reference nor any prediction, every method
-compared is cut into the same fragments; each fragment then receives a
-procedural reference identity and a predicted instance identity by majority
-overlap against each instance's full mask, so an overlapping instance keeps its
-pixels. A pair of fragments is a true positive when it shares
-both identities, a false positive when it joins different reference filaments,
-and a false negative when it separates fragments of one. Thus
+discarded, so one fragment is one unambiguous arm between crossings. That
+partition reads neither the reference nor any prediction, so every method
+compared is cut into the same fragments; each fragment then takes a reference
+identity and a predicted identity by majority overlap against each instance's
+full mask, so an overlapping instance keeps its pixels. A pair of fragments is a
+true positive when it shares both identities, a false positive when it joins
+different reference filaments, and a false negative when it separates fragments
+of one. Thus
 
 \begin{equation}
     P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
@@ -307,38 +309,35 @@ and a false negative when it separates fragments of one. Thus
 
 Deleting the junction pixels has a consequence that matters for what follows: no
 fragment contains one, so the score cannot see whether an emitted crossing pixel
-is given one owner or two. What it does see is whether the arms meeting there
-are grouped as the reference groups them, which is the difficult decision.
+is given one owner or two, only whether the arms meeting there are grouped as
+the reference groups them, which is the difficult decision.
 Section~\ref{sec:res-overlap} separates the two and measures the first directly.
-
 This is a clustering metric related to the Rand family
-\citep{rand1971objective,argandacarreras2015crowdsourcing}. It scores grouping
+\citep{rand1971objective,argandacarreras2015crowdsourcing}: it scores grouping
 rather than rendered width, and weights filaments with many fragments more
 strongly because their pair count is quadratic.
 
 \subsubsection*{Why more than one measure}
 
-No single number answers the questions this paper asks, and the disagreements
-between measures are informative rather than inconvenient. The distinction that
-resolves most of them is that \emph{pairwise scores relationships between
-pieces, detection scores the existence of objects}: a filament delivered in $n$
-pieces contributes $\binom{n}{2}$ pairs but one object. So pairwise \Fone{} is
-quadratic in fragmentation and a broken mask is charged many times over for one
-missed join, while object detection is blind to an arm swap at a crossing,
-scoring an inverted reconstruction 1.000 where pairwise scores 0.000; and
-neither states how many crossings were solved. Each measure below is therefore
-quoted with the others rather than alone.
+The distinction that resolves most of the disagreements between measures is that
+\emph{pairwise scores relationships between pieces, detection scores the
+existence of objects}: a filament delivered in $n$ pieces contributes
+$\binom{n}{2}$ pairs but one object. So pairwise \Fone{} is quadratic in
+fragmentation and a broken mask is charged many times over for one missed join,
+while object detection is blind to an arm swap at a crossing, scoring an
+inverted reconstruction 1.000 where pairwise scores 0.000; and neither states
+how many crossings were solved. Each measure below is therefore quoted with the
+others rather than alone.
 
-\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
-as \Fone{}, corrected for chance. With a hundred or more filaments per scene
-almost every pair genuinely belongs to different filaments, so the uncorrected
-index sits near 1 for any prediction. It is field-standard, and over the
-comparison set it never departs from pairwise \Fone{} by more than
-\PlectaPanelARIMaxGap{}, so it confirms rather than adds.
-
-\textbf{Variation of information} \citep{meila2007comparing}, in bits, lower
-better, splits into $\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid
-\text{reference})$, lost by cutting one filament into several, and
+\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs,
+corrected for chance, which matters because with a hundred filaments per scene
+almost every pair genuinely belongs to different filaments and the uncorrected
+index sits near 1 for any prediction. Over the comparison set it never departs
+from pairwise \Fone{} by more than \PlectaPanelARIMaxGap{}, so it confirms
+rather than adds. \textbf{Variation of information} \citep{meila2007comparing},
+in bits, lower better, splits into
+$\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$, lost by
+cutting one filament into several, and
 $\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$, lost by
 fusing several into one. The two are reported together or as their total and
 never singly: a method that merges everything never splits anything and scores a
@@ -362,46 +361,40 @@ and not an inflation is in Section~\ref{sec:res-real}: on the manual-derived
 axis, where the input mask is a skeleton of the annotation itself, the tolerance
 moves detection \Fone{} by 0.000.
 
-\textbf{Crossing Fidelity} states the contribution directly. At every junction
-node the reference induces a partition of the incident arms --- two arms are
-together exactly when the reference gives them the same filament --- and so
-does the prediction; Crossing Fidelity is the fraction of crossings at which
-the two partitions are identical. Only nodes the reference itself treats as a
-crossing are scored, meaning those whose incident arms carry at least two
-distinct reference filaments; a node where every arm belongs to one filament is
-a skeletonisation artefact and scoring it would reward doing nothing. It is
-computed on the same skeleton, the same spur pruning and the same
-fragment-to-instance assignment as the pairwise score, so it is a sharper view
-of the same evidence and not independent confirmation of it. This is an
-in-house diagnostic rather than an established metric, and it is used to state
-what was solved rather than to rank. Measures that score correctness at branch
-points rather than per pixel are an established family --- the DIADEM metric
-matches bifurcations and their topology when comparing neuron reconstructions
-\citep{gillette2011diademmetric} --- but no other paper reports this particular
-quantity, and it is always printed beside its own chance level, the fidelity of
-leaving every arm unpaired.
+\textbf{Crossing Fidelity} states the contribution directly: at every junction
+node the reference induces a partition of the incident arms, two being together
+exactly when the reference gives them the same filament, and so does the
+prediction, and Crossing Fidelity is the fraction of crossings at which the two
+partitions are identical. Only nodes whose incident arms carry at least two
+distinct reference filaments are scored --- a node where every arm belongs to
+one filament is a skeletonisation artefact, and scoring it would reward doing
+nothing. It uses the same skeleton, spur pruning and fragment-to-instance
+assignment as the pairwise score, so it is a sharper view of the same evidence
+rather than independent confirmation of it. It is an in-house diagnostic, not an
+established metric: measures that score correctness at branch points rather than
+per pixel are an established family, the DIADEM metric matching bifurcations and
+their topology when comparing neuron reconstructions
+\citep{gillette2011diademmetric}, but no other paper reports this particular
+quantity. It is used to say what was solved rather than to rank, and is always
+printed beside its own chance level, the fidelity of leaving every arm unpaired.
 
 \textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
 where the two mask sources fragment differently. A decision is a pair of
 fragment ends the input mask brings within the \PlectaRealJoinReach{}\,px this
-method will bridge: near enough that PLECTA could have joined them. The
-reference says join or do not, and so does the prediction. It is linear rather
-than quadratic in fragmentation, it is conditioned on the mask, so two mask
-sources are asked comparably hard questions, and it reports its own difficulty
-through the number of decisions each mask posed. It is always quoted with that
-count.
+method will bridge; the reference says join or do not, and so does the
+prediction. It is linear rather than quadratic in fragmentation and conditioned
+on the mask, so two mask sources are asked comparably hard questions, and it
+reports its own difficulty through the number of decisions each mask posed,
+with which it is always quoted.
 
 \textbf{Also reported} is the fraction of reference filaments recovered by one
 dominant predicted instance at 0.8 purity and coverage, and, for the input masks
 rather than the reconstructions, the tolerant completeness/correctness/quality
 triple standard for thin structures at the same
-\PlectaPlacementTolerance{}\,px tolerance. GraFT's filament matched coverage was
-also computed on these predictions and is not an endpoint here: it counts
-whether each reference filament found a distinct partner, so it measures
-existence rather than correctness, and Section~\ref{sec:res-comparators} shows
-it reduces to the ratio of objects emitted to filaments present. It is reported
-where a reader from that literature looks for it, with the reason it is not
-carried.
+\PlectaPlacementTolerance{}\,px tolerance. GraFT's filament matched coverage is
+reported in Section~\ref{sec:res-comparators}, where a reader from that
+literature will look for it, and is not an endpoint here for the reason given
+there.
 
 \subsubsection*{Statistical analysis}
 
@@ -410,9 +403,9 @@ bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
 stratification by density; the clean-minus-degraded analysis resamples paired
 scene differences within density. Per-coverage points in the comparison figures
 are plain means of ten scenes with no interval drawn and none claimed. The real
-SEM fields are exploratory, \PlectaRealFieldCount{} fields, and no inference is
-made from them; the crossing measures there are the only quantities with a
-sample size worth quoting, \PlectaRealCrossingTotal{} reference crossings.
+SEM work is exploratory, \PlectaRealFieldCount{} fields, and no inference is
+made from it; the crossing measures there are the only quantities with a sample
+size worth quoting, \PlectaRealCrossingTotal{} reference crossings.
 Active-component ablations are one-at-a-time development experiments on all
 \PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
 set.

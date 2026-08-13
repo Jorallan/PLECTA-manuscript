@@ -15,7 +15,7 @@ procedural generator as development data, so this is same-generator
 generalisation and not distribution transfer
 (Section~\ref{sec:limitations}).
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{Held-out reconstruction scores overall and by target areal
     coverage. VI denotes variation of information, for which lower is better;
@@ -67,7 +67,7 @@ densities also overlap, so coverage does not identify a difficulty level on its
 own. Density strata reported by target areal coverage should therefore be read
 as a proxy for the length density accompanying them under this generator.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{Bundle width against centreline length density,
     \PlectaFactorialSceneCount{} development scenes. Within each row the three
@@ -117,7 +117,7 @@ difference was \PlectaGreedySweptCleanDeltaFOne{}
 [\PlectaGreedySweptCleanDeltaCILow{}, \PlectaGreedySweptCleanDeltaCIHigh{}], so
 it is not an artefact of mask degradation.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{All four methods on the degraded masks, identical input masks and
     one scorer. $n=\PlectaGreedySceneCount{}$ scenes and
@@ -161,13 +161,11 @@ At its released defaults it scored \Fone{}=\PlectaDNAiShippedFOne{} on the
 degraded masks, which is not a fair measure of it: its single-linkage clustering
 of junction pixels at 10~px chains together crossings that lie closer than that,
 and at 60\% coverage the largest cluster spans 89~px and is replaced by one
-small erasure disk, leaving the crossings along it unseparated and the whole
-tangle a single instance. Reducing that distance to 2~px on development scenes
-raised development \Fone{} from 0.211 to 0.378 and cut variation-of-information
-merge from 2.07 to 0.66, confirming the mechanism; dilating the input to a
-thicker mask was also tested across 41 development configurations and made DNAi
-worse at every setting, so it was not used. At its best development-selected
-configuration DNAi scored \PlectaDNAiFOne{}, a paired difference of
+small erasure disk, leaving the whole tangle a single instance. Reducing that
+distance to 2~px on development scenes raised development \Fone{} from 0.211 to
+0.378 and cut variation-of-information merge from 2.07 to 0.66, confirming the
+mechanism. At its best development-selected configuration DNAi scored
+\PlectaDNAiFOne{}, a paired difference of
 \PlectaDNAiDeltaFOne{} [\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}] over
 \PlectaDNAiSceneCount{} scenes, and \PlectaDNAiCleanDeltaFOne{}
 [\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}] on clean axes,
@@ -177,7 +175,7 @@ Both methods must be read against the one-instance-per-connected-component floor
 at their own density, since that floor is itself strongly density-dependent and
 a pooled value would flatter any method at 60\% coverage.
 
-\begin{figure}[t]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels_degraded.pdf}
   \caption{The three methods on the degraded input masks, by coverage stratum,
@@ -198,7 +196,7 @@ a pooled value would flatter any method at 60\% coverage.
   \label{fig:panels-degraded}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels_clean.pdf}
   \caption{The same three methods, the same scenes, the same scorer and the
@@ -260,26 +258,20 @@ the set, so that exclusion flatters GraFT. Neither released method establishes a
 general ranking, and Section~\ref{sec:limitations} states what these comparisons
 leave untested.
 
-\textbf{One frame that is not ours.} Every scene above comes from one
-generator, which Section~\ref{sec:limitations} names as this paper's principal
-limitation, so it is worth reporting that GraFT's repository bundles a single
+\textbf{On GraFT's own ground.} Every scene above comes from one generator,
+which Section~\ref{sec:limitations} names as this paper's principal limitation,
+so the same question was put to GraFT's own. Its repository bundles a single
 \PlectaGraFTFrameSide{}$\times$\PlectaGraFTFrameSide{}~px synthetic frame with
-per-filament ground truth and that the ordering survives it: through the
-identical pipeline PLECTA reached \Fone{}=\PlectaGraFTFramePlectaFOne{} against
-\PlectaGraFTFrameGreedyFOne{} for the greedy baseline,
+per-filament ground truth, and through the identical pipeline PLECTA reached
+\Fone{}=\PlectaGraFTFramePlectaFOne{} on it against
 \PlectaGraFTFrameGraFTNativeFOne{} for GraFT run end to end on its own noisy
-image and \PlectaGraFTFrameGraFTInjectedFOne{} for GraFT with the mask injected
-as it is elsewhere here. This is one frame with no interval and it is not a
-benchmark. Its instructive detail is that GraFT resolved
+image; the instructive detail is that GraFT resolved
 \PlectaGraFTFrameGraFTInjectedSolved{} of the frame's
 \PlectaGraFTFrameCrossingCount{} crossings exactly while scoring
-\PlectaGraFTFrameGraFTInjectedFOne{}, where PLECTA resolved
-\PlectaGraFTFramePlectaSolved{}: its errors there lie along filaments, not at
-crossings, which is why the two measures are reported together.
-
-\textbf{A ladder on GraFT's own ground.} One frame is an anecdote, so the same
-question was put to GraFT's own generator, run unmodified at its published
-settings, over \PlectaRegimeSceneCount{} scenes in
+\Fone{}=\PlectaGraFTFrameGraFTInjectedFOne{}, so its errors there lie along
+filaments rather than at crossings, which is why the two measures are reported
+together. One frame is an anecdote, so GraFT's generator was then run unmodified
+at its published settings over \PlectaRegimeSceneCount{} scenes in
 \PlectaRegimeStratumCount{} density strata. The ladder spans
 \PlectaRegimeDensityLow{} to \PlectaRegimeDensityHigh{} centreline pixels per
 image pixel: GraFT's published comparison reaches
@@ -372,31 +364,26 @@ belonging to both filaments is a property of the output format, and the metric
 cannot see it: flattening either method's layers to a single label image changes
 \Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002 for GraFT.
 
-The representation is instead verifiable directly: on the
-comparison set, reference instances share \PlectaOverlapReferenceLow{}\,\% of
-their pixels with another instance at 20\% coverage, rising to
-\PlectaOverlapReferenceHigh{}\,\% at 60\%. PLECTA emits
-\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\% shared pixels;
-GraFT, whose output is close to a hard partition, about
-\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering:
+The representation is instead verifiable directly: on the comparison set,
+reference instances share \PlectaOverlapReferenceLow{}\,\% of their pixels with
+another instance at 20\% coverage, rising to
+\PlectaOverlapReferenceHigh{}\,\% at 60\%; PLECTA emits
+\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\%, and GraFT,
+whose output is close to a hard partition, about
+\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
 PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
-than one instance, the only method here that recovers most of them, at a
-precision of \PlectaSharedPrecision{}, marking
+than one instance, the only method here that recovers most of them, but at a
+precision of \PlectaSharedPrecision{}: it marks
 \PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
 the reference contains, because a chain is painted with every pixel of every
 junction cluster it touches --- a property of the rendering, not of the
-grouping. Neither that output nor GraFT's near-hard partition, a real
-structural limitation, is anything the \Fone{} rewards or penalises;
-Section~\ref{sec:limitations} takes up what that means for the comparison.
+grouping, and one the \Fone{} neither rewards nor penalises.
 
 Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
 taking at three coverage levels the scene whose \Fone{} is closest to the
-median, so the rows are typical rather than selected. Its instances are drawn
-at their fitted widths, because the comparison with the reference is only
-legible once they are; the \Fone{} beside each row is the score of the
-centreline grouping those widths are drawn onto.
+median, so the rows are typical rather than selected.
 
-\begin{figure}[htb]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
     \caption{Reconstruction at three coverage levels, each the scene closest to
@@ -451,7 +438,7 @@ consolidation (\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}); every other
 component, chain-extended frames and the round schedule included, mattered
 less. These are development values, not held-out effect estimates.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{One-at-a-time component ablations on the
     \PlectaDevelopmentSceneCount{}-scene development set. Negative $\Delta F_1$
@@ -520,7 +507,7 @@ worth \PlectaContaminationDeltaLow{} to \PlectaContaminationDeltaHigh{} pairwise
 the mechanism. On B58\_100 every model trained on the field, the three agree,
 and there is no gap to see: that is the control.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{Reconstruction from the manual-derived and the nnU-Net axis in
     three CNT SEM fields, under the measures of
@@ -559,12 +546,21 @@ here with a sample size worth quoting, \PlectaRealCrossingTotal{} reference
 crossings across the six conditions.
 
 \textbf{Most of the distance between the two conditions is the mask.} The axis
-each field hands PLECTA is characterised in Table~\ref{tab:plecta-real-axis} by
-the tolerant completeness/correctness/quality triple standard for thin
-structures, whose third member is also GraFT's published Jaccard index in its
-intended reading. No reconstruction is opened to compute it: it describes the
-input. The tolerance is not a formality, and reporting the triple without
-saying so would mislead. Quality falls to
+each field hands PLECTA is characterised by the tolerant
+completeness/correctness/quality triple standard for thin structures, whose
+third member is also GraFT's published Jaccard index in its intended reading. At
+the \PlectaPlacementTolerance{}\,px tolerance used throughout, quality is
+\PlectaMaskQualityBFiveEightOneZeroZeroQualityTwo{},
+\PlectaMaskQualityBFiveEightOneOneZeroQualityTwo{} and
+\PlectaMaskQualityBFiveEightThreeZeroZeroQualityTwo{}, over completeness
+\PlectaBFiveEightOneZeroZeroAxisRecall{},
+\PlectaBFiveEightOneOneZeroAxisRecall{} and
+\PlectaBFiveEightThreeZeroZeroAxisRecall{} and correctness
+\PlectaBFiveEightOneZeroZeroAxisPrecision{},
+\PlectaBFiveEightOneOneZeroAxisPrecision{} and
+\PlectaBFiveEightThreeZeroZeroAxisPrecision{}. No reconstruction is opened to
+compute any of them: they describe the input. The tolerance is not a formality,
+and reporting the triple without saying so would mislead. Quality falls to
 \PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{},
 \PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} and
 \PlectaMaskQualityBFiveEightThreeZeroZeroQualityOne{} at 1\,px, because the
@@ -577,18 +573,6 @@ than read from the image a second time, the same measure is nearly flat above
 \PlectaMaskQualitySyntheticSceneCount{} scenes) and collapses to
 \PlectaMaskQualitySyntheticZero{} at zero tolerance, where it reports raster
 placement rather than geometry.
-
-\begin{table}[htbp]
-    \centering
-    \caption{The nnU-Net axis of each field against its manual-derived
-    skeleton, at the \PlectaPlacementTolerance{}\,px symmetric placement
-    tolerance used throughout. Completeness is tolerant recall of the manual
-    axis, correctness tolerant precision of the nnU-Net axis, quality the
-    tolerant Jaccard. This characterises the input, not the reconstruction.}
-    \label{tab:plecta-real-axis}
-    \small
-    \input{results/plecta_real_axis_table}
-\end{table}
 
 \textbf{The placement tolerance is a correction, and the control says so.}
 Detection \Fone{} pairs whole predicted objects with whole reference objects by

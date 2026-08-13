@@ -4,7 +4,7 @@
 PLECTA addresses a narrow problem: assigning fragments of a binary
 filament-axis mask to overlapping projected instances. Explicit geometry
 recovers substantial identity there with no instance-labelled training data and
-no SEM intensity, and what recovers it is the combination of local and
+no image intensity, and what recovers it is the combination of local and
 accumulated evidence, neither of which suffices alone: a junction is resolved by
 mutual compatibility rather than by the cheapest available continuation, and the
 evidence for that judgement is re-read along the chains as they assemble. The
@@ -13,24 +13,20 @@ the two large losses correspond to the two kinds of discontinuity, the junction
 and the missing mask segment, while accumulated context is worth distinctly less
 than either.
 
-\subsection{Density, masks, and optional rendering}
-
 Difficulty follows the density of centrelines rather than the amount of ink, so
 what costs the score is the number of locally plausible alternatives at a
-crossing. The rest of the sensitivity belongs to the upstream segmenter, which fixes the
-thickness of the mask and therefore how clean a skeleton PLECTA is given. PLECTA
-can bridge a short omission, but it cannot infer a filament absent from the
-mask, nor reliably reject a false axis introduced upstream. Supplying identical
-masks isolates grouping in an algorithmic comparison; it does not establish
-end-to-end SEM performance, which is why the two-field case is a demonstration
-of the joined pipelines rather than a measurement of them.
-
-Ribbon rendering, being downstream of grouping, buys connectivity rather than
-identity, because the core paints arms and junction clusters but not the gap
-links that carry identity across a break. Silhouette absorption differs in kind,
-since it changes the partition itself, and so stays optional; width and
-brightness can be reported for characterised instances, but their physical
-accuracy requires separate references.
+crossing. The rest of the sensitivity belongs to the upstream segmenter, which
+fixes the thickness of the mask and therefore how clean a skeleton PLECTA is
+given. PLECTA can bridge a short omission, but it cannot infer a filament absent
+from the mask, nor reliably reject a false axis introduced upstream. Supplying
+identical masks isolates grouping in an algorithmic comparison; it does not
+establish end-to-end SEM performance, which is why the three-field case is a
+demonstration of the joined pipelines rather than a measurement of them. Ribbon
+rendering, being downstream of grouping, buys connectivity rather than identity,
+because the core paints arms and junction clusters but not the gap links that
+carry identity across a break; width and brightness can be reported for
+characterised instances, but their physical accuracy requires separate
+references.
 
 \subsection{Evidence boundary}
 \label{sec:limitations}
@@ -42,16 +38,18 @@ transfer to another simulator, specimen, microscope, or segmentation pipeline.
 The ablation and rendering studies are development-only and remain secondary to
 the fixed held-out result.
 
-The real SEM study is deliberately a case study with two fields, not a
-population validation. Manual-derived masks are an oracle-like input condition:
-they test grouping when the axis evidence is curated, not automatic
-SEM-to-instance performance. B58\_100 is training-contaminated for the U-Net
-condition and B58\_110 documented as training-clean, so only the latter
-illustrates an unseen upstream mask, and one field cannot estimate
-generalisation. The two mask sources also generate different fragment universes,
-so their $F_1$ values describe performance under each input condition rather
-than comparing identical objects. More independent fields, sealed before
-configuration, and multi-reader annotations are required.
+The real SEM study is deliberately a case study with
+\PlectaRealFieldCount{} fields, not a population validation. Manual-derived
+masks are an oracle-like input condition: they test grouping when the axis
+evidence is curated, not automatic SEM-to-instance performance. B58\_100 is
+training-contaminated for the U-Net condition and cannot be made otherwise, so
+its row there is an upper bound; B58\_110 and B58\_300 are held out, and two
+fields that agree closely are a stronger statement than the one the study
+previously had, but they still cannot estimate generalisation. The two mask
+sources also generate different fragment universes, so their $F_1$ values
+describe performance under each input condition rather than comparing identical
+objects. More independent fields, sealed before configuration, and multi-reader
+annotations are required.
 
 One caveat from the comparisons must be separated from the claim it seems to
 threaten. The comparators lose on how a crossing is \emph{resolved}, which the
@@ -68,7 +66,7 @@ metric evaluates ownership of centreline fragments, which is not a validation of
 rendered width; quantitative diameter claims require matched physical
 measurements across the relevant scale, contrast, and specimen ranges. Pairwise
 fragment scores also emphasise instances with many fragments, which is why
-recovery and ARI are reported alongside.
+recovery and the adjusted Rand index are reported alongside.
 
 The comparisons themselves are bounded. The greedy rule is our reimplementation
 of a principle rather than of any particular paper, and DNAi was run outside the
@@ -77,14 +75,7 @@ masks do not have. What the results support is narrow and mechanical: pairing
 endpoints greedily, or committing to a pairing with no option to decline, loses
 identity in dense crossings. They do not support a claim that PLECTA is
 generally superior; that would need several released implementations run in
-their own regimes by their own authors.
-
-An independent procedural benchmark is the practical next test. The
-\texttt{merged\_lines} generator in the CNT\_SEM pipeline can export
-overlap-aware whole-bundle references from a different implementation and
-morphology model, but its field-of-view preset is calibrated to a narrow
-coverage regime, so it must supplement rather than replace the current
-generator, once that calibration is fixed and its seeds separated from any
-configuration work. No result from it is included here. Broader validation
-should extend to independent real masks and other filament domains, with input
-fragments and scoring rules held fixed.
+their own regimes by their own authors. An independent procedural benchmark is
+the practical next test, and broader validation should extend to independent
+real masks and other filament domains, with input fragments and scoring rules
+held fixed.

@@ -1,36 +1,45 @@
 Dense filament networks resist instance segmentation because their two failure
 modes pull in opposite directions: crossings join distinct objects into one
 connected component, while gaps in the segmentation divide a single object into
-several. We present PLECTA, a deterministic method that converts a binary
-filament-axis mask into overlap-aware two-dimensional instances. It decomposes
-the skeletonised mask into arms and junctions, alternates exact per-junction
-continuation matching with globally gated gap matching, and re-estimates
-tangent, chord, and curvature evidence from the assembled chains, so that a
-crossing pixel may belong to more than one output instance.
+several. We present PLECTA, which converts a binary filament-axis mask into
+overlap-aware two-dimensional instances. It decomposes the skeletonised mask
+into arms and junctions, alternates exact per-junction continuation matching
+with globally gated gap matching, and re-estimates tangent, chord, and curvature
+evidence from the assembled chains, so that a crossing pixel may belong to more
+than one output instance. What is new is narrow and specific: each junction of
+any degree is solved as one exact maximum-weight \emph{partial} matching in
+which leaving an arm unmatched is priced rather than left over, so a filament
+can end instead of having a continuation invented for it. Skeleton graphs,
+continuation angles, distance gates, optimisation and overlapping output are
+prior art. The method draws on no random number generator and its configuration
+is published, so a mask yields the same instances on every run.
 
 Evaluation used a method-independent partition of each input skeleton into
-common fragments. On \PlectaHeldoutSceneCount{} independently seeded held-out
-scenes from the same procedural generator, PLECTA achieved mean pairwise
-\Fone{}=\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
+common fragments, and reports pairwise \Fone{} with the adjusted Rand index and
+variation of information beside it. On \PlectaHeldoutSceneCount{} independently
+seeded held-out scenes from the same procedural generator, PLECTA achieved mean
+pairwise \Fone{}=\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]), precision
-\PlectaHeldoutPrecisionMean{}, recall \PlectaHeldoutRecallMean{}, recovery
-\PlectaHeldoutRecoveryMean{}, and adjusted Rand index
-\PlectaHeldoutARIMean{}, with no failed scenes. Mean \Fone{} decreased from
+\PlectaHeldoutPrecisionMean{}, recall \PlectaHeldoutRecallMean{} and adjusted
+Rand index \PlectaHeldoutARIMean{}, with no failed scenes, falling from
 \PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
-\PlectaDensitySixZeroFOneMean{} at 60\%, identifying dense crossings as the main
-remaining regime of error. Against a greedy minimum-turning-angle continuation
-rule on identical masks, PLECTA gained \PlectaGreedySweptDeltaFOne{} \Fone{}
-[\PlectaGreedyDeltaCILow{}, \PlectaGreedyDeltaCIHigh{}] over
-\PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} over a released
-implementation run from its own source at a development-selected configuration.
-Development-only ablations showed that
-chord-turn evidence, gap bridging, and junction-topology consolidation made the
-largest contributions.
+\PlectaDensitySixZeroFOneMean{} at 60\% and identifying dense crossings as the
+main remaining regime of error. Against a greedy minimum-turning-angle
+continuation rule on identical masks it gained \PlectaGreedySweptDeltaFOne{}
+\Fone{} [\PlectaGreedyDeltaCILow{}, \PlectaGreedyDeltaCIHigh{}] over
+\PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} and
+\PlectaGraFTDeltaFOne{} over two released implementations run from their own
+sources; it leads at every coverage on this generator under all three reported
+measures, which establishes a ranking on this material and not a general one.
+Of the \PlectaJunctionCount{} reference crossings it partitions the incident
+arms exactly as the reference does at \PlectaJunctionPlectaRate{} of them,
+against \PlectaJunctionChance{} for leaving every arm unpaired.
 
 CNT-sheet scanning electron microscopy is the proof-of-concept application: an
 upstream synthetic-data-driven CycleGAN/U-Net route prepares the binary masks
-that let the method run on real micrographs, while SEM width measurement and
-ribbon rendering are downstream stages that leave the grouping fixed. The
-evidence supports same-generator synthetic generalisation and a two-field
-demonstration on real SEM data, not general real-image or three-dimensional
-reconstruction claims.
+that let the method run on real micrographs, while image-informed width
+measurement and ribbon rendering are downstream stages that leave the grouping
+fixed. The evidence supports same-generator synthetic generalisation and a
+demonstration on \PlectaRealFieldCount{} annotated SEM fields, two of them held
+out from the upstream segmenter, and not general real-image or
+three-dimensional reconstruction claims.

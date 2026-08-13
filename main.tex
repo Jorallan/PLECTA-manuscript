@@ -28,7 +28,11 @@
 \usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
-\usepackage{parskip}
+%  Paragraphs are indented rather than separated by a blank line. The draft used
+%  `parskip`, which spends about a line of vertical space on every one of ~130
+%  paragraphs; indenting instead is the target format's own convention and is
+%  worth a page and a half at this length. Typographic only: no text changes.
+\setlength{\parindent}{1.2em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
@@ -186,10 +190,7 @@ not infer or preassign a DOI.}
 
 \section*{Acknowledgements}
 The authors thank the maintainers of NumPy, SciPy, scikit-image, NetworkX,
-and Matplotlib. Pipeline~A, the upstream synthetic-data-driven mask workflow
-that supplies the masks for the SEM demonstration, adapts the open CycleGAN/U-Net
-particle-segmentation workflow of Rühle et al.~\citep{ruehle2021workflow} and
-carries its own evaluation elsewhere.
+and Matplotlib.
 
 %  The reference list is set compactly: no glue between entries, and two sizes
 %  down, as Elsevier's own styles do. This is typographic only; no reference is

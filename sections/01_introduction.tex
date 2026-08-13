@@ -79,47 +79,51 @@ orientation-aware terminus pairing \citep{liu2019intersection}, FibeR-CNN, and
 recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.
 
 Two of those methods are compared against directly here, so what each was built
-for matters. DNAi is an end-to-end tool for DNA fibre spreading assays, in which
-immunofluorescence images of replicating DNA carry two nucleoside-analogue
-labels and the quantity wanted is the length ratio of the two tracts; it matches
-trained human annotators on that task and is released with both its models and
-its annotated data \citep{playout2026dnai}. GraFT traces and tracks filamentous
-structures through time in confocal series of the plant actin cytoskeleton, and
-the temporal dimension it handles is outside the scope of this work
-\citep{osterlund2026graft}. Both are strong in their own domains, and both make
-design choices those domains license: DNAi commits to a pairing at every
-junction of degree two to four and attempts none above that, while GraFT's
-greedy longest-first path cover cannot revise an early commitment. Such choices
-cost little where filaments are sparse and well separated, which is the regime
-each was validated in, and more where filaments are dense and crossings are
-frequent. Section~\ref{sec:res-comparators} runs both from their own released
-sources, on identical input masks and through one scorer, and reports what that
-costs.
+for matters, because neither was built for this. DNAi is an end-to-end tool for
+DNA fibre spreading assays, in which immunofluorescence images of replicating
+DNA carry two nucleoside-analogue labels and the quantity wanted is the length
+ratio of the two tracts; it matches trained human annotators on that task and is
+released with both its models and its annotated data \citep{playout2026dnai}.
+GraFT traces and tracks filamentous structures through time in confocal series
+of the plant actin cytoskeleton, and the temporal dimension it handles is
+outside the scope of this work \citep{osterlund2026graft}. Both are strong in
+their own domains, and both make design choices those domains license: DNAi
+commits to a pairing at every junction of degree two to four and attempts none
+above that, while GraFT's greedy longest-first path cover cannot revise an early
+commitment. Such choices cost little where filaments are sparse and well
+separated, which is the regime each was validated in, and more where filaments
+are dense and crossings are frequent. Section~\ref{sec:res-comparators} runs
+both from their own released sources, on identical input masks and through one
+scorer, and reports what that costs on this material.
 
 Skeleton graphs, junction excision, continuation angles, distance gates,
 combinatorial optimisation, iterative refitting and overlapping filament output
-are therefore all prior art, and none is claimed here. Two distinctions are
-narrower and survive checking against the sources. First, the methods above
-either pair endpoints greedily in priority order
+are therefore all prior art, and none is claimed here. What is new is narrower.
+The methods above either pair endpoints greedily in priority order
 \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} or enumerate
-the pairings of a junction only up to degree four
-\citep{playout2026dnai}; PLECTA instead solves each junction of any degree as
-one maximum-weight matching in which leaving an arm unmatched is an explicit
-option at a fixed price, rather than a parity leftover. Second, the methods that
-optimise globally require intensity evidence or a pre-extracted weighted graph
+the pairings of a junction only up to degree four \citep{playout2026dnai};
+PLECTA instead solves each junction of any degree as one exact maximum-weight
+\emph{partial} matching, in which leaving an arm unmatched is an explicit option
+at a fixed price rather than a parity leftover. Those two properties together
+--- degree-general, and pricing the decision not to join --- are the claim, and
+the second is what lets a filament genuinely end instead of having a
+continuation invented for it. Separately, the methods that optimise globally
+require intensity evidence or a pre-extracted weighted graph
 \citep{basu2015extraction,breuer2015define}, whereas PLECTA reads a binary mask
 alone. The closest single prior method is that of Liu et al., which likewise
 works from a mask, reconnects across gaps and permits overlapping output, but
 pairs termini greedily and depends on a trained orientation network
 \citep{liu2019intersection}.
 
-We introduce PLECTA, a deterministic graph-matching method for dense filament
-networks, named after the Latin \emph{plecta}, a braid. PLECTA decomposes a
-skeleton into arms, endpoint stubs, and merged junction nodes. It then
-alternates exact per-node continuation matching with globally gated gap
-matching while tangent and curvature estimates expand from local arms to
-assembled chains. Its output is a set of projected 2-D instance layers in which
-crossing pixels may be shared.
+We introduce PLECTA, a graph-matching method for dense filament networks, named
+after the Latin \emph{plecta}, a braid. PLECTA decomposes a skeleton into arms,
+endpoint stubs, and merged junction nodes. It then alternates exact per-node
+continuation matching with globally gated gap matching while tangent and
+curvature estimates expand from local arms to assembled chains. Its output is a
+set of projected 2-D instance layers in which crossing pixels may be shared.
+Every parameter is fixed in a published configuration and the implementation
+draws on no random number generator, so a given mask yields the same instances
+on every run; that is the only sense in which it is called deterministic here.
 
 Reaching real micrographs takes one more component. A complete CNT workflow
 combines semantic segmentation with algorithmic tracing and transverse intensity
@@ -134,4 +138,5 @@ cannot move an identity score. Pipeline~A carries its own evaluation
 \citep{allan2026cntsem} and is not re-evaluated here. We evaluate PLECTA on
 \PlectaHeldoutSceneCount{} unseen scenes from the development generator and on
 \PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate
-the two pipelines together on two annotated CNT-sheet SEM fields.
+the two pipelines together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
+fields, \PlectaRealHeldOutCount{} of them held out from the upstream segmenter.
