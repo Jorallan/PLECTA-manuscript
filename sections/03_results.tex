@@ -31,7 +31,7 @@ Performance decreased with scene density: mean \Fone{} fell from
 coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
 monotonically through the intermediate strata. The same decline appears on the
-paired robustness set of Section~\ref{sec:res-mask}, where the clean and the
+paired clean-against-degraded set of Section~\ref{sec:res-mask}, where the clean and the
 degraded curves separate at low coverage and meet at 50--60\,\%: degradation
 costs least exactly where the score is lowest, because there the tangles rather
 than the gaps set the difficulty.
@@ -361,8 +361,9 @@ correctly --- of the arms meeting at a junction, which continues into which ---
 is the difficult decision, and every score in this paper rewards getting it
 right. Whether the emitted raster \emph{represents} a crossing pixel as
 belonging to both filaments is a property of the output format, and the metric
-cannot see it: flattening either method's layers to a single label image changes
-\Fone{} by at most \PlectaOverlapFlattenCost{} for PLECTA and 0.002 for GraFT.
+cannot see it: flattening the emitted layers to a single label image leaves
+PLECTA's \Fone{} unchanged to four decimal places
+(\PlectaOverlapFlattenCost{}) and moves GraFT's by 0.002.
 
 The representation is instead verifiable directly: on the comparison set,
 reference instances share \PlectaOverlapReferenceLow{}\,\% of their pixels with
@@ -398,7 +399,7 @@ median, so the rows are typical rather than selected.
     \label{fig:examples}
 \end{figure}
 
-\subsection{Input-mask robustness}
+\subsection{Response to the input mask}
 \label{sec:res-mask}
 
 On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
@@ -452,9 +453,9 @@ The core output is a grouping, not a set of connected curves: accepted gap
 links establish identity but are not painted, so on the development set
 \PlectaCoreDisconnected{} of core instances arrive as more than one disjoint
 pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
-that assumes one connected curve per instance must account for this. Default
-Stage~4 ribbon rendering scored
-development \Fone{}=\PlectaStageFourFOne{}, a change of
+that assumes one connected curve per instance must account for this. The
+optional ribbon rendering of Section~\ref{sec:mm-stage4}, at its defaults,
+scored development \Fone{}=\PlectaStageFourFOne{}, a change of
 \PlectaStageFourDeltaFOne{}, and reduced those fractions to
 \PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}, so rendering buys
 connectivity at a small cost in the identity score without changing chain

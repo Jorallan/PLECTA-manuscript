@@ -46,16 +46,12 @@
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
-%  \rev{...} marked revised passages in cyan. Nearly the whole manuscript ended
-%  up inside it, so the colour stopped carrying information and the draft is now
-%  restructured as plain text. The macro is kept as a no-op so any stray call
-%  still typesets normally; set the body to \textcolor{revisioncyan}{#1} to turn
-%  marking back on.
-\definecolor{revisioncyan}{HTML}{00A6C8}
-\newcommand{\rev}[1]{#1}
-\newcommand{\supervisorcomment}[1]{\par\smallskip\noindent%
-  \textcolor{purple!75!black}{\textbf{Supervisor comment:} #1}\par\smallskip}
-
+%  Retired with this revision, having no remaining call anywhere in the
+%  manuscript: \rev{} (revision marking, which had grown to cover nearly the
+%  whole text and so carried no information), \supervisorcomment{},
+%  \note{}/\reviewnote{}, \aq{}, \missinginfo{} and the four over/under-merge
+%  wrappers. They are gone rather than kept as no-ops, so that what survives in
+%  this preamble is what the manuscript actually uses.
 %------------------------------------------------------------------------------
 %  \Igor{...} - supervisor comments, carried over verbatim from the Overleaf
 %  project (branch overleaf-2026-08-11-0842). Overleaf rendered these through
@@ -87,33 +83,22 @@
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
-\newcommand{\overmerge}{\textit{over-merge}}
-\newcommand{\undermerge}{\textit{under-merge}}
-\newcommand{\Overmerge}{\textit{Over-merge}}
-\newcommand{\Undermerge}{\textit{Under-merge}}
 
 %------------------------------------------------------------------------------
-%  \todo{...} - a short reminder to ourselves about something still to be
-%  settled or added before submission. Set \aqfalse to hide them all and produce
-%  a clean PDF.
+%  The two markers that still have live calls, and both are author-supplied
+%  submission metadata rather than open questions about the work:
+%
+%    \todo{...}    ORCIDs, CRediT roles, the archival DOI. Set \aqfalse to hide
+%                  them all and produce a clean PDF.
+%    \needed{...}  instrument and specimen metadata, which cannot be inferred
+%                  from anything in this repository. Deliberately independent of
+%                  the switch above, so it stays visible.
+%
+%  Every other open question the draft carried has been resolved into the text.
 %------------------------------------------------------------------------------
 \newif\ifaq \aqtrue
 \newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
-\newcommand{\aq}[1]{\todo{#1}}          % older name, kept so both still work
-
-%------------------------------------------------------------------------------
-%  \needed{...} - information we do not yet have and cannot submit without.
-%  Deliberately independent of the switch above so it stays visible.
-%------------------------------------------------------------------------------
 \newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed before submission: #1]}}}
-\newcommand{\missinginfo}[1]{\needed{#1}}   % older name, kept so both still work
-
-%------------------------------------------------------------------------------
-%  \note{...} - a point to discuss between co-authors, or a section still
-%  condensed that we intend to expand.
-%------------------------------------------------------------------------------
-\newcommand{\note}[1]{\par\smallskip\noindent\textcolor{red}{\textbf{Note:} #1}\par\smallskip}
-\newcommand{\reviewnote}[1]{\note{#1}}      % older name, kept so both still work
 
 %------------------------------------------------------------------------------
 %  Generated numerical results.
