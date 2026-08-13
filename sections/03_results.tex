@@ -292,11 +292,15 @@ Rand index \PlectaRegimeOverallPlectaARI{}, \PlectaRegimeOverallGraFTARI{} and
 \PlectaRegimeOverallDNAiARI{} against variation of information
 \PlectaRegimeOverallPlectaVITotal{}, \PlectaRegimeOverallGraFTVITotal{} and
 \PlectaRegimeOverallDNAiVITotal{} bits, and its two components separate what
-the totals cannot: PLECTA's errors are mildly fusion-leaning
-(\PlectaRegimeOverallPlectaVISplit{} split against
-\PlectaRegimeOverallPlectaVIMerge{} merge) where both comparators divide more
-than they fuse at every density above the sparsest
-(Figure~\ref{fig:regime}c). GraFT was also
+the totals cannot. PLECTA's errors lean mildly to fusion,
+\PlectaRegimeOverallPlectaVISplit{} split against
+\PlectaRegimeOverallPlectaVIMerge{} merge; both comparators divide more than
+they fuse, \PlectaRegimeOverallGraFTVISplit{} against
+\PlectaRegimeOverallGraFTVIMerge{} for GraFT and
+\PlectaRegimeOverallDNAiVISplit{} against \PlectaRegimeOverallDNAiVIMerge{} for
+DNAi, at every density above the sparsest. Neither component is quoted alone
+because a method that fuses everything never splits anything and would score
+near zero on the first. GraFT was also
 run end to end on the noisy images with its own front end, which on this data
 is inside its design envelope rather than degenerate as it is on ours; that arm
 scored \PlectaRegimeLowGraFTNativeFOne{} and
@@ -338,11 +342,9 @@ asks and what this paper is about. Both are reported here for that reason.
     on the identical predictions, which reverses the order at high density
     (solid). Dashed: the identical matching with one edge condition added, that
     a detection may claim a filament only when it covers half that filament's
-    axis. PLECTA's two lines nearly coincide; the other two separate.
-    \textbf{(c)}~the variation-of-information decomposition of the same
-    predictions, splitting against fusing, both in bits with the origin best,
-    each method traced across the density ladder. The diagonal marks equal
-    split and merge error, which is why neither component is quoted alone.}
+    axis. PLECTA's two lines nearly coincide; the other two separate. The inset
+    magnifies the boxed window, the three sparsest strata under the published
+    measure alone, where all three curves lie above 0.84 and cross.}
   \label{fig:regime}
 \end{figure}
 
