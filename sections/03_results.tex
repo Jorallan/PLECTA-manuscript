@@ -149,7 +149,7 @@ the loop, a bias in that matcher's favour.
 \textbf{DNAi.} Its segmentation network was bypassed and only its
 instance-forming stage used, so grouping is not confounded with segmentation
 quality, and it was run at a development-selected configuration rather than at
-its released defaults --- an adaptation worth a great deal to it, since at those
+its released defaults. That adaptation is worth a great deal to it: at those
 defaults it scores \Fone{}=\PlectaDNAiShippedFOne{} on these masks against
 \PlectaDNAiFOne{} tuned. Tuned, the paired difference is \PlectaDNAiDeltaFOne{}
 [\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}] over
@@ -261,9 +261,9 @@ paired, PLECTA's margins are \PlectaJunctionGreedyDelta{}
 order them the same way, PLECTA at \PlectaJunctionCleanPlectaRate{}. Leaving
 every arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is
 the chance level the rate is read against. It is much less discriminative than
-the pairwise score --- at 60\,\% coverage it spans \PlectaJunctionSpreadHigh{}
-between best and worst method where pairwise \Fone{} spans
-\PlectaPairwiseSpreadHigh{} --- so it is used to say what was solved and not to
+the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
+method at 60\,\% coverage where pairwise \Fone{} spans
+\PlectaPairwiseSpreadHigh{}, so it is used to say what was solved and not to
 rank. Everyone is poor at the busiest nodes: above degree four PLECTA resolves
 \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does better, while DNAi
 collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four
@@ -302,8 +302,8 @@ than one instance, the only method here that recovers most of them, but at a
 precision of \PlectaSharedPrecision{}: it marks
 \PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
 the reference contains, because a chain is painted with every pixel of every
-junction cluster it touches --- a property of the rendering, not of the
-grouping, and one the \Fone{} neither rewards nor penalises.
+junction cluster it touches. That is a property of the rendering rather than of
+the grouping, and one the \Fone{} neither rewards nor penalises.
 
 Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
 taking at three coverage levels the scene whose \Fone{} is closest to the
@@ -408,48 +408,52 @@ only stage evaluated here. \PlectaRealFieldCount{} manually annotated CNT-sheet
 fields separate the two: PLECTA is run once on the skeleton of the manual
 annotation and once on the nnU-Net axis, with the annotation as the reference in
 both cases, so the two conditions differ only in the mask. The first is an
-oracle-like input condition and not an end-to-end result --- it asks what the
-grouping can do when the axis evidence is curated --- and only the second says
-what an automatic mask allows. Figures~\ref{fig:real-sem}
+oracle-like input condition rather than an end-to-end result, asking what the
+grouping can do when the axis evidence is curated; only the second says what an
+automatic mask allows. Figures~\ref{fig:real-sem}
 and~\ref{fig:real-sem-axis} show both on one field, at width and as the
 centrelines the scores are computed on.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{Reconstructed bundles on one real SEM field, B58\_110, which is
-    held out of the nnU-Net run that produced its axis. \textbf{(a)}~the manual
-    annotation; \textbf{(b)}~PLECTA from the manual-derived axis;
-    \textbf{(c)}~PLECTA from the nnU-Net axis --- the same method and the same
-    parameters, differing only in the mask they were handed. All three are
-    drawn at width so that they are the same kind of object: the annotation as
-    the annotator painted it, and the two reconstructions through the optional
-    image layer of Section~\ref{sec:mm-stage4}, which measures a width per
-    instance across the centreline and renders a ribbon. That layer runs after
-    the grouping is fixed and cannot move a pixel from one instance to another,
-    so no score in this paper depends on it; the centreline form every number
-    is computed on is Figure~\ref{fig:real-sem-axis}. Instance colours
-    correspond across the panels --- a predicted instance takes the colour of
-    the annotated filament it was matched to, one matched to none is crimson,
-    and adjacent filaments are given different colours, which carry identity
-    within the figure and nothing else.}
-    \label{fig:real-sem}
+    \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
+    \caption{The two input axes of field B58\_110, drawn over the micrograph
+    they were read from: \textbf{(a)}~the skeleton of the manual annotation and
+    \textbf{(b)}~the output of Pipeline~A. These are the binary masks
+    themselves, before any reconstruction, so there is nothing to tell apart
+    within a panel and one colour is sufficient; the comparison the figure
+    makes is between them. Everything separating the two conditions of
+    Table~\ref{tab:plecta-real-masks} is visible here: the same filaments, read
+    a second time by a network rather than by a person, arrive thicker, broken
+    into more pieces, and displaced by a pixel or two almost everywhere. The
+    axis is dilated by one pixel for legibility at this size, which changes no
+    geometry. B58\_300 behaves the same way, as its mask-quality triple in the
+    text records.}
+    \label{fig:real-sem-axis}
 \end{figure}
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
-    \caption{The same field and the same crop as
-    Figure~\ref{fig:real-sem}, as the one-pixel centrelines every number in
-    Table~\ref{tab:plecta-real-masks} is computed on, from
-    \textbf{(a)}~the manual-derived axis and \textbf{(b)}~the nnU-Net axis. The
-    bright ridge under each trace is the filament that trace claims to be.
-    Instances are dilated by one pixel for legibility at this size, which
-    changes no geometry. The $512\times344$\,px crop is the window whose local
-    pairwise \Fone{} is jointly closest to the whole field's on both axes, so it
-    is typical of the field rather than selected from it. What (b) shows is the
-    mask breaking filaments into more pieces, not the grouping fusing them.}
-    \label{fig:real-sem-axis}
+    \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
+    \caption{Reconstructed bundles on the two SEM fields held out of the
+    nnU-Net run that produced their axes, one field per row.
+    \textbf{(a)}~the manual annotation; \textbf{(b)}~PLECTA from the
+    manual-derived axis; \textbf{(c)}~PLECTA from the nnU-Net axis of
+    Figure~\ref{fig:real-sem-axis}b, the same method and the same parameters,
+    differing only in the mask. All three are drawn at width so that they are
+    the same kind of object: the annotation as the annotator painted it, and
+    the two reconstructions through the optional image layer of
+    Section~\ref{sec:mm-stage4}, which measures a width per instance across the
+    centreline and renders a ribbon. That layer runs after the grouping is
+    fixed and cannot move a pixel from one instance to another, so no score in
+    this paper depends on it. Instance colours correspond across the panels of
+    a row: a predicted instance takes the colour of the annotated filament it
+    was matched to, one matched to none is crimson, and adjacent filaments are
+    given different colours, which carry identity within the row and nothing
+    else. Each crop is the window whose local pairwise \Fone{} is jointly
+    closest to that field's whole-field value on both axes, so it is typical of
+    the field rather than selected from it.}
+    \label{fig:real-sem}
 \end{figure}
 
 \textbf{Which fields are held out, and what the exception costs.} B58\_110 and
@@ -540,5 +544,6 @@ B58\_110's manual axis against
 \PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one. It narrows
 the gap without closing it, and its decomposition says what the rest is: a join
 precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins, not
-fusing filaments --- which is what Figure~\ref{fig:real-sem}(d) shows.
+\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
+than fusing filaments, which is what panel~(c) of Figure~\ref{fig:real-sem}
+shows.

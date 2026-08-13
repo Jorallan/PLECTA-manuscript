@@ -288,7 +288,7 @@ instance to another, and no identity score in this paper depends on one.
 \label{sec:mm-metrics}
 
 The primary endpoint is common-fragment pairwise \Fone{}. The input mask is cut
-into fragments --- one unambiguous arm between crossings --- by a rule that
+into fragments, each one unambiguous arm between crossings, by a rule that
 reads neither the reference nor any prediction, so every method compared is cut
 into the same pieces; each fragment takes a reference identity and a predicted
 identity by majority overlap, and the score counts the pairs of fragments the
@@ -309,9 +309,9 @@ neither states how many crossings were solved. So the adjusted Rand index and
 variation of information \citep{hubert1985comparing,meila2007comparing} are
 quoted beside the pairwise score, detection \Fone{} beside them, join \Fone{}
 where two mask sources fragment differently, and reference-instance recovery to
-weight every filament equally rather than by its pair count. Crossing Fidelity
---- the fraction of reference crossings at which the predicted grouping of the
-incident arms matches the reference partition exactly --- says how many
+weight every filament equally rather than by its pair count. Crossing Fidelity,
+the fraction of reference crossings at which the predicted grouping of the
+incident arms matches the reference partition exactly, says how many
 crossings were solved, and is an in-house diagnostic rather than an established
 metric, in the tradition of measures that score correctness at branch points
 rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}; it is

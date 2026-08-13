@@ -22,29 +22,39 @@ import matplotlib.pyplot as plt                                   # noqa: E402
 import numpy as np                                                # noqa: E402
 
 from _style import plecta_style, save_fig                         # noqa: E402
-from fig_real_sem import (ASSET, DRAW_DILATION,                   # noqa: E402
-                          colour_of_reference, panel_row)
+from fig_real_sem import (ASSET, DRAW_DILATION, colour_of_reference,  # noqa: E402
+                          field_label, label_image, panel_grid, unpack)
 
 
 def main() -> int:
     plecta_style()
     data = np.load(ASSET)
     meta = json.loads(str(data["meta"]))
+    fields = list(meta["fields"])
+
+    rows = []
+    for field in fields:
+        sem = data[f"{field}__sem"]
+        reference = unpack(data, field, "reference")
+        rows.append((
+            field_label(field), sem,
+            colour_of_reference(label_image(sem.shape[:2], *reference)),
+            (("a", "Manual annotation", reference),
+             ("b", "PLECTA, manual-derived axis", unpack(data, field, "manual")),
+             ("c", "PLECTA, nnU-Net axis", unpack(data, field, "unet"))),
+        ))
 
     fig = plt.figure()
-    panel_row(fig, data["sem"],
-              (("a", "Manual annotation", data["reference"]),
-               ("b", "PLECTA, manual-derived axis", data["manual"]),
-               ("c", "PLECTA, nnU-Net axis", data["unet"])),
-              colour_of_reference(data["reference"]),
-              int(meta["unmatched_label"]),
-              dilation=DRAW_DILATION, gap_frac=0.118)
+    panel_grid(fig, rows, int(meta["unmatched_label"]),
+               dilation=DRAW_DILATION, gap_frac=0.118, label_frac=0.016)
 
     save_fig(fig, "fig_real_sem_overlay", subdir="archive")
     plt.close(fig)
-    print("[fig_real_sem_overlay] %s crop at row %d col %d, %dx%d px"
-          % (meta["field"], meta["crop_row"], meta["crop_col"],
-             meta["crop_w"], meta["crop_h"]))
+    for field in fields:
+        block = meta["per_field"][field]
+        print("[fig_real_sem_overlay] %s crop row %d col %d, %dx%d px"
+              % (field, block["crop_row"], block["crop_col"],
+                 block["crop_w"], block["crop_h"]))
     return 0
 
 

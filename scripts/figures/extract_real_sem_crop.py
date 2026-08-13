@@ -8,15 +8,16 @@ ones there, and only then cuts out the crop that is drawn.  Running it on the
 crop instead would change the reconstruction at the crop boundary and the
 picture would no longer be of the run the numbers come from.
 
-**Which field.**  B58_110.  It is one of the two fields held out of the nnU-Net
-training run used here, and it is the weaker of those two on the manual-derived
-axis, so it is not the flattering choice among the held-out fields.  B58_100 is
-training-contaminated and is deliberately not drawn.
+**Which fields.**  B58_110 and B58_300, which are both held out of the nnU-Net
+training run used here.  B58_100 is training-contaminated under every available
+run and is deliberately not drawn: a picture of a field the network memorised
+would show a quality of mask transfer that does not exist.  Two fields also let
+the figure show that the result is not one lucky field.
 
 **Which crop.**  Chosen, not picked: over a grid of windows, the one whose local
-pairwise F1 is jointly closest to the whole-field value on *both* axes, so the
-crop is typical of the field rather than selected from it.  This is the rule
-``fig_plecta_examples`` already uses at scene level ("the scene whose F1 is
+pairwise F1 is jointly closest to that field's whole-field value on *both* axes,
+so the crop is typical of the field rather than selected from it.  This is the
+rule ``fig_plecta_examples`` already uses at scene level ("the scene whose F1 is
 closest to the median").  Local F1 is computed by restricting the common
 fragments to those lying wholly inside the window and rescoring; nothing is
 re-run.
@@ -55,7 +56,11 @@ import instance_io as IIO                                     # noqa: E402
 #  fixed, so it cannot move a pixel from one instance to another.
 import width_render as WR                                     # noqa: E402
 
-FIELD = "b58_110"
+#: Both fields that the nnU-Net run used here held out of training. B58_100 is
+#: contaminated under every available run and is deliberately not drawn: a
+#: picture of a field the network memorised would show mask transfer that does
+#: not exist.
+FIELDS = ("b58_110", "b58_300")
 AXES = (("manual", "skel"), ("unet", "nnunet"))
 #: The window is wider than tall because the figure puts two panels side by side
 #: across \linewidth: each is then ~3.1 in wide, and a square crop would make the
@@ -100,13 +105,51 @@ def greedy_match(gt: dict, pred: dict, shape) -> dict:
     return out
 
 
-def label_image(masks: dict, shape, ident_of=None, unmatched=-1) -> np.ndarray:
-    """Paint instances into one label image, later ids winning an overlap."""
-    out = np.zeros(shape, np.int32)
-    for ident, mask in masks.items():
-        value = ident if ident_of is None else ident_of.get(ident, unmatched)
-        out[np.asarray(mask, bool)] = value
-    return out
+def pack_instances(masks: dict, shape, ident_of=None, unmatched=-1) -> dict:
+    """Keep every instance separately, as flat pixel indices over the field.
+
+    Not a label image.  Flattening instances into one label array makes the last
+    one painted win at every crossing, which is exactly where PLECTA's output is
+    interesting: a crossing pixel legitimately belongs to two filaments, and the
+    method is overlap-aware precisely so it can say so.  A label image throws
+    that away and the picture then shows an arbitrary winner.  Instances are
+    therefore carried through separately and blended at draw time.
+
+    ``ident_of`` maps an instance id to the reference filament it was matched
+    to, which is what the colour is keyed on; the instances stay distinct even
+    when several are unmatched and share the ``unmatched`` colour.
+    """
+    order = sorted(masks)
+    colours = np.array([(ident_of.get(k, unmatched) if ident_of is not None
+                         else k) for k in order], dtype=np.int32)
+    flat = [np.flatnonzero(np.asarray(masks[k], bool).ravel()) for k in order]
+    return {"colour_ids": colours, "pixels": flat, "shape": shape}
+
+
+def crop_pack(pack: dict, r0: int, c0: int) -> dict:
+    """Restrict a packed instance set to a window, as CSR over crop-local ids.
+
+    Instances left with no pixel inside the window are dropped.  Storing the
+    survivors as ``(colour_ids, indptr, indices)`` is the same shape the study's
+    own ``gt_multilabel.npz`` uses, so the asset needs no bespoke reader.
+    """
+    height, width = pack["shape"]
+    keep_ids, runs = [], []
+    for colour, flat in zip(pack["colour_ids"], pack["pixels"]):
+        rows, cols = np.divmod(flat, width)
+        inside = ((rows >= r0) & (rows < r0 + CROP_H)
+                  & (cols >= c0) & (cols < c0 + CROP_W))
+        if not inside.any():
+            continue
+        local = (rows[inside] - r0) * CROP_W + (cols[inside] - c0)
+        keep_ids.append(int(colour))
+        runs.append(local.astype(np.int32))
+    indptr = np.zeros(len(runs) + 1, dtype=np.int64)
+    np.cumsum([len(r) for r in runs], out=indptr[1:])
+    indices = (np.concatenate(runs) if runs
+               else np.zeros(0, dtype=np.int32)).astype(np.int32)
+    return {"colour_ids": np.array(keep_ids, dtype=np.int32),
+            "indptr": indptr, "indices": indices}
 
 
 def fragments_inside(frag: np.ndarray, counts_all: np.ndarray,
@@ -123,13 +166,12 @@ def fragments_inside(frag: np.ndarray, counts_all: np.ndarray,
     return {int(f) for f in ids if f and counts_win[f] == counts_all[f]}
 
 
-def main() -> int:
-    stored = {row["field"] + "|" + row["axis"]: row for row in
-              json.loads((STUDY / "results_v2.json").read_text())["rows"]}
+def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
+    """Run both axes of one field, choose its crop, return arrays and metadata."""
     per_axis, sem = {}, None
 
     for key, variant in AXES:
-        scene = STUDY / "scenes_v2" / FIELD / variant
+        scene = STUDY / "scenes_v2" / field / variant
         mask = L.read_mask(scene / "mask.png")
         prediction = L.plecta_predict(mask)
         centrelines = L.centerline_instances(prediction)
@@ -140,12 +182,12 @@ def main() -> int:
         #  Parity first: this must reproduce the stored row exactly, or the
         #  picture is not of the run the manuscript reports.
         scores = L.score_prediction(scene, prediction, "mask.png")
-        want = stored[FIELD + "|" + ("manual-skel" if key == "manual"
+        want = stored[field + "|" + ("manual-skel" if key == "manual"
                                      else "nnU-Net")]
         if abs(scores["f1"] - want["pairwise_f1"]) > 1e-12:
             raise SystemExit(
                 "parity failed on %s %s: got %.17g, stored %.17g"
-                % (FIELD, key, scores["f1"], want["pairwise_f1"]))
+                % (field, key, scores["f1"], want["pairwise_f1"]))
 
         frag = CM.common_fragments(mask)
         ref_assign = CM.assign_fragments(frag, reference, 0.3, 6.0)
@@ -164,8 +206,8 @@ def main() -> int:
             "counts": np.bincount(frag.ravel()),
             "ref_assign": ref_assign, "pred_assign": pred_assign,
             "field_f1": scores["f1"],
-            "labels": label_image(centrelines.masks, mask.shape, match),
-            "width_labels": label_image(widths, mask.shape, match),
+            "centre_pack": pack_instances(centrelines.masks, mask.shape, match),
+            "width_pack": pack_instances(widths, mask.shape, match),
             "width_record": width_record,
             "reference": reference,
         }
@@ -173,7 +215,7 @@ def main() -> int:
             from PIL import Image
             sem = np.array(Image.open(scene / "sem.png").convert("L"))
         print("[extract] %s %-6s field F1 %.4f, %d instances, %d matched"
-              % (FIELD, key, scores["f1"], len(centrelines.masks), len(match)))
+              % (field, key, scores["f1"], len(centrelines.masks), len(match)))
 
     #  Two renderings of the annotation, because the two figures compare against
     #  different things. Its skeleton is exactly the manual-derived input axis,
@@ -183,10 +225,10 @@ def main() -> int:
     from skimage.morphology import skeletonize
     reference = per_axis["manual"]["reference"]
     shape = per_axis["manual"]["mask"].shape
-    ref_labels = label_image(
+    ref_centre_pack = pack_instances(
         {i: skeletonize(np.asarray(m, bool)) for i, m in reference.masks.items()},
         shape)
-    ref_width_labels = label_image(reference.masks, shape)
+    ref_width_pack = pack_instances(reference.masks, shape)
 
     height, width = per_axis["manual"]["mask"].shape
     best = None
@@ -211,39 +253,65 @@ def main() -> int:
                 best = (deviation, r0, c0, dict(local), n_ref)
 
     if best is None:
-        raise SystemExit("no candidate window met the criteria")
+        raise SystemExit("no candidate window met the criteria on " + field)
     deviation, r0, c0, local, n_ref = best
-    print("[extract] crop at row %d col %d (%dx%d): local F1 %s, "
+    print("[extract] %s crop at row %d col %d (%dx%d): local F1 %s, "
           "total deviation %.4f over %d reference filaments"
-          % (r0, c0, CROP_W, CROP_H,
+          % (field, r0, c0, CROP_W, CROP_H,
              ", ".join("%s %.4f" % kv for kv in sorted(local.items())),
              deviation, n_ref))
 
     sl = (slice(r0, r0 + CROP_H), slice(c0, c0 + CROP_W))
-    payload = {
+    arrays = {
         "sem": sem[sl].astype(np.uint8),
-        "reference": ref_labels[sl].astype(np.int32),
-        "reference_width": ref_width_labels[sl].astype(np.int32),
-        "manual": per_axis["manual"]["labels"][sl].astype(np.int32),
-        "unet": per_axis["unet"]["labels"][sl].astype(np.int32),
-        "manual_width": per_axis["manual"]["width_labels"][sl].astype(np.int32),
-        "unet_width": per_axis["unet"]["width_labels"][sl].astype(np.int32),
-        #  Stored as a plain string so the asset loads without allow_pickle.
-        "meta": np.array(json.dumps({
-            "field": FIELD,
-            "crop_row": r0, "crop_col": c0,
-            "crop_h": CROP_H, "crop_w": CROP_W,
-            "stride_px": STRIDE, "tolerance_px": TOL,
-            "field_f1": {k: per_axis[k]["field_f1"] for k in per_axis},
-            "local_f1": local,
-            "n_reference_in_crop": int(n_ref),
-            "unmatched_label": -1,
-            "width_render": {k: per_axis[k]["width_record"] for k in per_axis},
-            "selection": ("window whose local pairwise F1 is jointly closest "
-                          "to the whole-field value on both axes"),
-            "held_out": True,
-        })),
+        #  The input axes themselves, as the binary masks PLECTA was handed.
+        #  The axis figure shows these rather than any reconstruction: what
+        #  separates the two conditions is the mask, and this is the mask.
+        "mask_manual": per_axis["manual"]["mask"][sl].astype(bool),
+        "mask_unet": per_axis["unet"]["mask"][sl].astype(bool),
     }
+    for name, pack in (("reference", ref_centre_pack),
+                       ("reference_width", ref_width_pack),
+                       ("manual", per_axis["manual"]["centre_pack"]),
+                       ("unet", per_axis["unet"]["centre_pack"]),
+                       ("manual_width", per_axis["manual"]["width_pack"]),
+                       ("unet_width", per_axis["unet"]["width_pack"])):
+        cropped = crop_pack(pack, r0, c0)
+        for part, array in cropped.items():
+            arrays[f"{name}__{part}"] = array
+    meta = {
+        "crop_row": r0, "crop_col": c0,
+        "crop_h": CROP_H, "crop_w": CROP_W,
+        "field_f1": {k: per_axis[k]["field_f1"] for k in per_axis},
+        "local_f1": local,
+        "n_reference_in_crop": int(n_ref),
+        "width_render": {k: per_axis[k]["width_record"] for k in per_axis},
+    }
+    return arrays, meta
+
+
+def main() -> int:
+    stored = {row["field"] + "|" + row["axis"]: row for row in
+              json.loads((STUDY / "results_v2.json").read_text())["rows"]}
+
+    payload: dict = {}
+    meta: dict = {
+        "fields": list(FIELDS),
+        "stride_px": STRIDE, "tolerance_px": TOL,
+        "unmatched_label": -1,
+        "selection": ("per field, the window whose local pairwise F1 is jointly "
+                      "closest to that field's whole-field value on both axes"),
+        "held_out": {f: True for f in FIELDS},
+        "per_field": {},
+    }
+    for field in FIELDS:
+        arrays, field_meta = extract_field(field, stored)
+        for name, array in arrays.items():
+            payload[f"{field}__{name}"] = array
+        meta["per_field"][field] = field_meta
+
+    #  Stored as a plain string so the asset loads without allow_pickle.
+    payload["meta"] = np.array(json.dumps(meta))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(OUT, **payload)
     print("[extract] wrote %s (%.0f kB)" % (OUT, OUT.stat().st_size / 1024))

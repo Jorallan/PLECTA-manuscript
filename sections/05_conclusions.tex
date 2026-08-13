@@ -5,17 +5,18 @@ PLECTA reconstructs overlapping filament instances from a binary axis mask by
 alternating exact junction matching with gated gap matching as local arm
 geometry expands into chain-level evidence. Its evidence is directional
 throughout, so it addresses rod-like filaments whose bending stiffness makes
-direction persist across a crossing --- the regime of nanotube bundles and of
-the cytoskeletal and synthetic-fibre networks comparable methods target --- and
-not freely flexible chains, where the projection retains nothing local to match. The fixed method achieved
+direction persist across a crossing. That is the regime of nanotube bundles and
+of the cytoskeletal and synthetic-fibre networks comparable methods target, and
+not that of freely flexible chains, where the projection retains nothing local
+to match. The fixed method achieved
 common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on
 \PlectaHeldoutSceneCount{} independently seeded held-out scenes from the same
 procedural generator, with performance declining as network density increased,
 and partitioned \PlectaJunctionPlectaRate{} of the comparison set's reference
-crossings exactly as the reference does. On a generator that is not ours ---
+crossings exactly as the reference does. On a generator that is not ours, being
 GraFT's own, run unmodified at its published settings over
-\PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density strata
---- it reached $F_1=\PlectaRegimeOverallPlectaFOne{}$ against
+\PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density strata,
+it reached $F_1=\PlectaRegimeOverallPlectaFOne{}$ against
 \PlectaRegimeOverallGraFTFOne{} and \PlectaRegimeOverallDNAiFOne{} for the two
 released comparators, so the ordering does not rest on the generator that
 produced the held-out set. On identical masks it gained
