@@ -287,114 +287,40 @@ instance to another, and no identity score in this paper depends on one.
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 
-The primary endpoint is common-fragment pairwise \Fone{}. Fragments are built
-from the input mask alone: the mask is skeletonised, spurs of at most 3\,px are
-pruned, skeleton pixels with three or more 8-neighbours are deleted, the
-remaining 8-connected pieces are labelled, and pieces shorter than 6\,px are
-discarded, so one fragment is one unambiguous arm between crossings. That
-partition reads neither the reference nor any prediction, so every method
-compared is cut into the same fragments; each fragment then takes a reference
-identity and a predicted identity by majority overlap against each instance's
-full mask, so an overlapping instance keeps its pixels. A pair of fragments is a
-true positive when it shares both identities, a false positive when it joins
-different reference filaments, and a false negative when it separates fragments
-of one. Thus
-
-\begin{equation}
-    P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
-    R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\qquad
-    \Fone{}=\frac{2PR}{P+R}.
-    \label{eq:pairwise-f1}
-\end{equation}
-
-Deleting the junction pixels has a consequence that matters for what follows: no
-fragment contains one, so the score cannot see whether an emitted crossing pixel
+The primary endpoint is common-fragment pairwise \Fone{}. The input mask is cut
+into fragments --- one unambiguous arm between crossings --- by a rule that
+reads neither the reference nor any prediction, so every method compared is cut
+into the same pieces; each fragment takes a reference identity and a predicted
+identity by majority overlap, and the score counts the pairs of fragments the
+prediction groups as the reference does. Because junction pixels are deleted
+before fragments are labelled, it cannot see whether an emitted crossing pixel
 is given one owner or two, only whether the arms meeting there are grouped as
-the reference groups them, which is the difficult decision.
+the reference groups them, which is the difficult decision;
 Section~\ref{sec:res-overlap} separates the two and measures the first directly.
-This is a clustering metric related to the Rand family
-\citep{rand1971objective,argandacarreras2015crowdsourcing}: it scores grouping
-rather than rendered width, and weights filaments with many fragments more
-strongly because their pair count is quadratic.
 
-\subsubsection*{Why more than one measure}
-
-The distinction that resolves most of the disagreements between measures is that
-\emph{pairwise scores relationships between pieces, detection scores the
-existence of objects}: a filament delivered in $n$ pieces contributes
-$\binom{n}{2}$ pairs but one object. So pairwise \Fone{} is quadratic in
-fragmentation and a broken mask is charged many times over for one missed join,
-while object detection is blind to an arm swap at a crossing, scoring an
-inverted reconstruction 1.000 where pairwise scores 0.000; and neither states
-how many crossings were solved. Each measure below is therefore quoted with the
-others rather than alone.
-
-\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs,
-corrected for chance, which matters because with a hundred filaments per scene
-almost every pair genuinely belongs to different filaments and the uncorrected
-index sits near 1 for any prediction. Over the comparison set it never departs
-from pairwise \Fone{} by more than \PlectaPanelARIMaxGap{}, so it confirms
-rather than adds. \textbf{Variation of information} \citep{meila2007comparing},
-in bits, lower better, splits into
-$\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$, lost by
-cutting one filament into several, and
-$\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$, lost by
-fusing several into one. The two are reported together or as their total and
-never singly: a method that merges everything never splits anything and scores a
-perfect zero on the split component while being useless.
-
-\textbf{Detection \Fone{}}, the measure DNAi reports, matches predicted and
-reference \emph{objects} greedily by highest intersection over union, stopping
-below a threshold, and takes precision and recall over objects. The threshold is
-\PlectaDetectionIoU{}, DNAi's own shipped value; at 0.5 the same predictions read
-a fragmented mask more than twice as harshly as the pairwise score, which
-defeats the purpose of carrying an object measure beside it. Counting objects
-makes it the most forgiving reading of a fragmented mask, the least
-discriminative of the three, and the one that cannot see an arm swap. It is
-computed with a symmetric \PlectaPlacementTolerance{}\,px placement tolerance,
-under which a reference pixel counts as found when the prediction passes within
-it, because two independently read one-pixel centrelines two pixels apart
-intersect in \emph{nothing} and a strict IoU between them measures placement
-rather than shape --- a problem the thin-structure benchmark FISBe states as a
-design rationale \citep{mais2024fisbe}. The control that makes this a correction
-and not an inflation is in Section~\ref{sec:res-real}: on the manual-derived
-axis, where the input mask is a skeleton of the annotation itself, the tolerance
-moves detection \Fone{} by 0.000.
-
-\textbf{Crossing Fidelity} states the contribution directly: at every junction
-node the reference induces a partition of the incident arms, two being together
-exactly when the reference gives them the same filament, and so does the
-prediction, and Crossing Fidelity is the fraction of crossings at which the two
-partitions are identical. Only nodes whose incident arms carry at least two
-distinct reference filaments are scored --- a node where every arm belongs to
-one filament is a skeletonisation artefact, and scoring it would reward doing
-nothing. It uses the same skeleton, spur pruning and fragment-to-instance
-assignment as the pairwise score, so it is a sharper view of the same evidence
-rather than independent confirmation of it. It is an in-house diagnostic, not an
-established metric: measures that score correctness at branch points rather than
-per pixel are an established family, the DIADEM metric matching bifurcations and
-their topology when comparing neuron reconstructions
-\citep{gillette2011diademmetric}, but no other paper reports this particular
-quantity. It is used to say what was solved rather than to rank, and is always
-printed beside its own chance level, the fidelity of leaving every arm unpaired.
-
-\textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
-where the two mask sources fragment differently. A decision is a pair of
-fragment ends the input mask brings within the \PlectaRealJoinReach{}\,px this
-method will bridge; the reference says join or do not, and so does the
-prediction. It is linear rather than quadratic in fragmentation and conditioned
-on the mask, so two mask sources are asked comparably hard questions, and it
-reports its own difficulty through the number of decisions each mask posed,
-with which it is always quoted.
-
-\textbf{Also reported} is the fraction of reference filaments recovered by one
-dominant predicted instance at 0.8 purity and coverage, and, for the input masks
-rather than the reconstructions, the tolerant completeness/correctness/quality
-triple standard for thin structures at the same
-\PlectaPlacementTolerance{}\,px tolerance. GraFT's filament matched coverage is
-reported in Section~\ref{sec:res-comparators}, where a reader from that
-literature will look for it, and is not an endpoint here for the reason given
-there.
+Several measures accompany it, and the reason for carrying more than one is a
+single distinction: \emph{pairwise scores relationships between pieces,
+detection scores the existence of objects}. A filament delivered in $n$ pieces
+contributes $\binom{n}{2}$ pairs but one object, so pairwise \Fone{} is
+quadratic in fragmentation and a broken mask is charged many times over for one
+missed join, while object detection is blind to an arm swap at a crossing,
+scoring an inverted reconstruction 1.000 where pairwise scores 0.000; and
+neither states how many crossings were solved. So the adjusted Rand index and
+variation of information \citep{hubert1985comparing,meila2007comparing} are
+quoted beside the pairwise score, detection \Fone{} beside them, join \Fone{}
+where two mask sources fragment differently, and reference-instance recovery to
+weight every filament equally rather than by its pair count. Crossing Fidelity
+--- the fraction of reference crossings at which the predicted grouping of the
+incident arms matches the reference partition exactly --- says how many
+crossings were solved, and is an in-house diagnostic rather than an established
+metric, in the tradition of measures that score correctness at branch points
+rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}; it is
+always printed beside its own chance level, the fidelity of leaving every arm
+unpaired. The input masks themselves, as distinct from the reconstructions, are
+characterised by the tolerant completeness/correctness/quality triple standard
+for thin structures. Appendix~\ref{app:measures} defines each measure in full,
+with its equation, what it rewards and what it cannot see; every one is quoted
+with the others rather than alone.
 
 \subsubsection*{Statistical analysis}
 

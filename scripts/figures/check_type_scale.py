@@ -55,6 +55,7 @@ SHIPPED = [
     ("fig_plecta_exact_matching", 3),
     ("fig_metric_panels", 4),
     ("fig_plecta_examples", 6),
+    ("fig_real_sem", 7),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was

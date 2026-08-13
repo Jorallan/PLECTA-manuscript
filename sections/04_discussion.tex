@@ -31,12 +31,18 @@ references.
 \subsection{Evidence boundary}
 \label{sec:limitations}
 
-The principal limitation is distributional. The held-out scenes use independent
-seeds but the same procedural generator family used for development. Their
-confidence intervals quantify sampling variation within that family, not
-transfer to another simulator, specimen, microscope, or segmentation pipeline.
-The ablation and rendering studies are development-only and remain secondary to
-the fixed held-out result.
+The principal limitation is distributional, and it is narrower than a
+one-generator study. The held-out scenes use independent seeds but the same
+procedural generator family used for development, so their confidence intervals
+quantify sampling variation within that family and not transfer to another
+simulator, specimen, microscope, or segmentation pipeline. The \emph{ranking},
+however, does not rest on that family: GraFT's own generator was run unmodified
+at its published settings over \PlectaRegimeSceneCount{} scenes in
+\PlectaRegimeStratumCount{} density strata, and its bundled frame separately,
+and the ordering held on both (Section~\ref{sec:res-comparators}). What is
+untested is transfer of the held-out \emph{level} to a third generator, not of
+the comparison. The ablation and rendering studies are development-only and
+remain secondary to the fixed held-out result.
 
 The real SEM study is deliberately a case study with
 \PlectaRealFieldCount{} fields, not a population validation. Manual-derived
@@ -75,7 +81,6 @@ masks do not have. What the results support is narrow and mechanical: pairing
 endpoints greedily, or committing to a pairing with no option to decline, loses
 identity in dense crossings. They do not support a claim that PLECTA is
 generally superior; that would need several released implementations run in
-their own regimes by their own authors. An independent procedural benchmark is
-the practical next test, and broader validation should extend to independent
-real masks and other filament domains, with input fragments and scoring rules
-held fixed.
+their own regimes by their own authors. Broader validation should extend to
+independent real masks and other filament domains, with input fragments and
+scoring rules held fixed.

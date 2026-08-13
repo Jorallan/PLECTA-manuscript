@@ -1,0 +1,195 @@
+\appendix
+%  The appendix is set at the size of the reference list immediately above it.
+%  It is back matter, consulted one definition at a time rather than read
+%  through, and at this length the step is worth about a page and a half against
+%  the body size -- which is what keeps eleven full definitions inside the page
+%  budget instead of forcing four of them out. Typographic only: nothing is
+%  shortened to achieve it.
+\footnotesize
+
+\section{Measures}
+\label{app:measures}
+
+Every measure this paper reports is defined here, with what it rewards and its
+blind spot; none reads the rendered width of an instance.
+
+\textbf{The common-fragment set}, shared by the first five measures below. The
+mask is skeletonised, spurs of at most 3\,px are pruned, skeleton pixels with
+three or more 8-neighbours are deleted, the remaining 8-connected pieces are
+labelled, and pieces shorter than 6\,px are discarded, so one fragment is one
+unambiguous arm between crossings. The partition reads neither the reference nor
+any prediction, so every method compared is cut into the same fragments; each
+then takes a reference and a predicted identity by majority overlap against each
+instance's full mask, so an instance that overlaps another keeps its pixels.
+Because junction pixels are deleted first, no fragment contains one: none of
+these measures can see whether an emitted crossing pixel is given one owner or
+two, only whether the arms meeting there are grouped as the reference groups
+them.
+
+\textbf{Common-fragment pairwise \Fone{}}, the primary endpoint. A pair of
+fragments is a true positive when it shares both identities, a false positive
+when the prediction joins fragments of different reference filaments, a false
+negative when it separates fragments of one:
+\begin{equation}
+    P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
+    R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\qquad
+    \Fone{}=\frac{2PR}{P+R}.
+    \label{eq:pairwise-f1}
+\end{equation}
+A clustering measure of the Rand family
+\citep{rand1971objective,argandacarreras2015crowdsourcing}, permutation-invariant
+in the instance labels. It rewards holding a filament together across every
+crossing and gap it passes. Blind spots: it is quadratic in fragmentation, so a
+filament arriving in $n$ pieces carries $\binom{n}{2}$ pairs and a broken mask is
+charged many times over for one missed join; and it weights long, much-crossed
+filaments far above short ones.
+
+\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
+corrected for chance, which matters because with a hundred filaments per scene
+almost every pair genuinely belongs to different filaments and the uncorrected
+index sits near 1 for anything. Blind spot: redundancy --- over the comparison
+set it never departs from pairwise \Fone{} by more than
+\PlectaPanelARIMaxGap{}, so it confirms rather than adds.
+
+\textbf{Variation of information} \citep{meila2007comparing}, in bits, lower
+better, is the conditional-entropy distance between the two partitions:
+$\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$ is paid
+for cutting one filament into several and
+$\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$ for
+fusing several into one. Reporting both is what separates a method that divides
+from one that fuses. Blind spot: each component alone is degenerate, so neither
+is ever quoted singly --- a method that merges everything never splits anything
+and scores a perfect zero on the split component while being useless.
+
+\textbf{Detection \Fone{}}, the measure DNAi reports, matches predicted to
+reference \emph{objects} greedily by highest intersection over union, stopping
+below \PlectaDetectionIoU{}, DNAi's own shipped threshold, and takes precision
+over predicted and recall over reference objects. At 0.5 the same predictions
+read a fragmented mask more than twice as harshly as the pairwise score, which
+defeats the purpose of carrying an object measure beside it. It uses a symmetric
+\PlectaPlacementTolerance{}\,px placement tolerance --- a reference pixel counts
+as found when the prediction passes within it and vice versa, the intersection
+being the smaller of the two counts --- because two independently read one-pixel
+centrelines two pixels apart intersect in \emph{nothing}, so a strict overlap
+reports placement rather than shape, a problem the thin-structure benchmark
+FISBe states as a design rationale \citep{mais2024fisbe}. Counting objects makes
+it the most forgiving reading of a fragmented mask and the least discriminative
+measure here. Blind spot: an arm swap, which it scores 1.000 where the pairwise
+score gives 0.000.
+
+\textbf{Crossing Fidelity} states the contribution directly. At every junction
+node the reference induces a partition of the incident arms, two together
+exactly when the reference gives them the same filament, and so does the
+prediction; Crossing Fidelity is the fraction of crossings at which the two
+partitions are identical. Nodes are the junction clusters of the same pruned
+skeleton, and a node's arms are the fragments 8-adjacent to it. Only nodes whose
+arms carry at least two distinct reference filaments are scored: a node where
+every arm belongs to one filament is a skeletonisation artefact, and scoring it
+would reward doing nothing. It is an in-house diagnostic and not an established
+metric, in the tradition Section~\ref{sec:mm-metrics} places it in.
+Blind spots, and both govern its use: it is far less
+discriminative than the pairwise score, so it is quoted to say what was solved
+and never as a ranking axis; and crossings carry no information about
+\emph{gaps}, so it is silent on the cost the pairwise score pays for bridging
+them. Sharing its skeleton and assignment with the pairwise score makes it a
+sharper view of the same evidence, not independent confirmation, and it is
+always printed beside its chance level, the fidelity of leaving every arm
+unpaired.
+
+\textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
+where the two mask sources fragment differently. A \emph{decision} is a pair of
+distinct fragments whose endpoints come within \PlectaRealJoinReach{}\,px, the
+gap this method will bridge; the reference says join or not, so does the
+prediction, and precision, recall and their harmonic mean are taken over
+decisions. Being linear rather than quadratic in fragmentation, and conditioned
+on the mask, it asks two mask sources comparably hard questions, and splitting
+and merging appear separately as low recall and low precision. Blind spot: a
+fragment pair the mask never brought within reach counts against nobody, so it
+cannot see a filament the mask lost entirely --- hence it is always quoted with
+the number of decisions each mask posed.
+
+\textbf{Reference-instance recovery} is the fraction of reference filaments
+recovered whole by one predicted instance. The dominant predicted instance of a
+filament is the one owning most of its fragments; coverage is that count over
+the filament's fragment count, purity the same count over every fragment that
+instance owns anywhere. A filament counts as recovered when the dominance is
+\emph{mutual} and coverage and purity both reach 0.8. Purity is what stops a
+method that merges everything from scoring 1.0. It weights every filament
+equally, long or short, complementing the pairwise score's quadratic weighting.
+Blind spot: the two thresholds, which make it insensitive to how badly a
+filament that fails them was reconstructed.
+
+\textbf{Completeness, correctness and quality} characterise the input
+\emph{mask}: no reconstruction is opened to compute them and no method can
+change them. Both the reference axis and the mask under test are skeletonised
+and each tested against the other dilated by the tolerance. Completeness is
+tolerant recall of the reference axis, correctness tolerant precision of the
+test axis, quality the tolerant Jaccard index
+$\mathrm{TP}/(\mathrm{TP}+\mathrm{FP}+\mathrm{FN})$ with $\mathrm{TP}$ the
+smaller of the two matched counts, so quality cannot exceed either component.
+Quality is also GraFT's published Jaccard index in its intended reading. Blind
+spot: the tolerance carries the measure --- at zero tolerance it reports raster
+placement rather than geometry, which is why it is never quoted without one.
+
+\textbf{Shared-pixel precision and recall} are precision and recall over the
+pixels the reference gives to more than one instance, computed on the raw
+instance masks. They exist because the pairwise measure discards junction pixels
+and cannot see whether a crossing pixel was marked as jointly owned at all. Only
+a method emitting overlapping layers can score above zero on the recall; one
+emitting a hard partition scores exactly zero by construction, which is the
+point of measuring it. Blind spot: neither component distinguishes a pixel
+shared for the right reason from one shared because a chain was painted with a
+whole junction cluster --- the over-marking Section~\ref{sec:res-overlap}
+reports.
+
+\textbf{The runtime scaling exponent} is the slope of an ordinary least-squares
+fit of log seconds on log foreground pixels, so an exponent $b$ means cost grows
+as the $b$-th power of the amount of ink. It is reported instead of absolute
+time because these are independently optimised codebases, where absolute time
+measures implementation as much as algorithm. Blind spot: it describes a median
+trend and says nothing about the tail, so it is quoted beside the per-density
+medians and the censored-scene count; censoring biases it downwards for any
+method whose slowest scenes did not finish, which is why GraFT's is a lower
+bound.
+
+\textbf{Two measures were computed and are not endpoints.} GraFT's
+\emph{filament matched coverage} asks whether each reference filament was
+matched one-to-one to some detection, and PLECTA ranks \emph{below} both
+comparators on it --- at the densest stratum of GraFT's own generator,
+\PlectaRegimeHighPlectaMatched{} against \PlectaRegimeHighGraFTMatched{} for
+GraFT and \PlectaRegimeHighDNAiMatched{} for DNAi. It is not an endpoint here
+because it counts existence rather than correctness: a method emitting more
+objects than the scene contains has a spare for every filament, and across the
+ladder each method's matched coverage is the smaller of one and its emission
+ratio to within \PlectaRegimeCoverageCountResidual{}, and also requiring a
+detection to cover half the axis it claims restores the order.
+\emph{Centreline Dice} \citep{shit2021cldice} was tried as an alternative
+matching criterion for detection \Fone{} and not adopted: it tests each side's
+skeleton against the other's \emph{volume}, and a centreline grouping has none,
+so it degenerates into the placement test the tolerance exists to correct. No
+clDice result is reported in this paper.
+
+\section{Comparator configuration}
+\label{app:comparators}
+
+Section~\ref{sec:res-comparators} states each adaptation and its cost; this is
+the mechanism behind it, for a reader checking that the comparison was run
+fairly. \textbf{DNAi} clusters junction pixels by single linkage and erases a
+disk at each cluster. At its released 10\,px linkage distance, crossings closer
+than that chain into one cluster, which at 60\,\% coverage reaches 89\,px across
+and is replaced by a single small erasure disk, leaving a whole tangle as one
+instance --- which is why its shipped default is not a fair measure of it.
+Reducing the distance to 2\,px on development scenes raised development \Fone{}
+and cut variation-of-information merge by about a factor of three, confirming
+the mechanism; the tuned configuration is the one reported. Two structural
+choices account for the residual difference: it commits to a pairing at every
+junction of degree two to four with no cost threshold, so it cannot decline a
+continuation the way a priced unmatched option can, and it attempts no junction
+above degree four, resolving \PlectaJunctionDNAiDegreeFivePlus{} of the
+crossings above it --- about a tenth of the crossings, but they carry
+\PlectaEvidenceHighDegree{}\,\% of same-filament fragment pairs on the degraded
+masks, one such junction severing every pair that spans it. \textbf{GraFT}'s
+errors are divisions rather than merges (variation-of-information split
+\PlectaGraFTVISplit{} against merge \PlectaGraFTVIMerge{}), which follows from a
+greedy longest-first path cover that cannot revise an early commitment once the
+scene collapses into one connected graph, as it does above 30\,\% coverage.
