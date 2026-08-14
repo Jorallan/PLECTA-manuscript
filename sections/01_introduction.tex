@@ -98,39 +98,49 @@ scorer, and reports what that costs on this material.
 
 Skeleton graphs, junction excision, continuation angles, distance gates,
 combinatorial optimisation, iterative refitting and overlapping filament output
-are therefore all prior art, and none is claimed here. What is new is narrower.
-The methods above either pair endpoints greedily in priority order
+are therefore all prior art, and none is claimed here. What is new is narrower,
+and it is a combination rather than any single element: from a binary mask
+alone, PLECTA solves each junction of any degree as one exact maximum-weight
+\emph{partial} matching in which leaving an arm unmatched is an explicit option
+at a fixed price rather than a parity leftover, alternates that junction
+matching with globally gated gap matching, re-fits its tangent and curvature
+frames along the chains as they assemble, and emits overlapping instances.
+Each element exists somewhere in the catalogue above; no method there combines
+them. The methods that optimise globally consume intensity evidence or a
+pre-extracted weighted graph rather than a mask, and Basu et al.\ recombine
+chains of at most three segments \citep{basu2015extraction,breuer2015define};
+the mask-reading methods pair endpoints greedily in priority order
 \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} or enumerate
-the pairings of a junction only up to degree four \citep{playout2026dnai};
-PLECTA instead solves each junction of any degree as one exact maximum-weight
-\emph{partial} matching, in which leaving an arm unmatched is an explicit option
-at a fixed price rather than a parity leftover. Those two properties together, being
-degree-general and pricing the decision not to join, are the claim; the second
-is what lets a filament genuinely end instead of having a continuation invented
-for it.
+the pairings of a junction only up to degree four \citep{playout2026dnai}.
+Degree-general exact matching with a priced refusal is what lets a filament
+genuinely end instead of having a continuation invented for it.
 
 That claim carries a condition, and it is worth stating as scope rather than
 leaving to be inferred. The only evidence PLECTA has at a crossing is
 directional: the reversal angle between two outward tangents, the turns onto the
 chord between them, and the continuity of signed curvature, each estimated over
-tens of pixels of arclength on either side. That evidence exists only where a
-filament is stiff enough for its direction to persist across the junction, which
-is the semiflexible regime, in which the persistence length is long against the
-width of a crossing. Carbon-nanotube bundles sit there, and so do the actin, collagen
-and synthetic-fibre networks the methods above were built for. A freely flexible
-chain does not: its tangent decorrelates within the junction, no continuation is
-more plausible than another, and no amount of matching recovers what the image
-no longer distinguishes. Bending stiffness is therefore not incidental to the
-method; it is the property that makes a crossing decidable at all. Separately, the methods that optimise globally
-require intensity evidence or a pre-extracted weighted graph
-\citep{basu2015extraction,breuer2015define}, whereas PLECTA reads a binary mask
-alone. The closest single prior method is that of Liu et al., which likewise
-works from a mask, reconnects across gaps and permits overlapping output, but
-pairs termini greedily and depends on a trained orientation network
-\citep{liu2019intersection}.
+the 24 to 55\,px of arclength the frames are fitted on. The working condition
+is therefore a property of the image: tangent and curvature must persist
+across the junction at the scale of that support, or the continuation is not
+decidable from geometry at all. Bending stiffness is the material property
+that most directly produces such persistence, which is why the semiflexible
+regime, where the persistence length is long against the width of a crossing,
+is the method's home ground; carbon-nanotube bundles sit there, and so do the
+actin, collagen and synthetic-fibre networks the methods above were built for.
+But stiffness contributes to the condition rather than uniquely causing it:
+tension, adhesion, confinement or bundling can hold a projected direction just
+as straight, and a stiff filament can still be ambiguous at a symmetric
+crossing. Where the condition fails, as for a freely flexible chain whose
+tangent decorrelates within the junction, no continuation is more plausible
+than another, and no amount of matching recovers what the image no longer
+distinguishes. The closest single prior method is that of Liu et al., which
+likewise works from a mask, reconnects across gaps and permits overlapping
+output, but pairs termini greedily and depends on a trained orientation
+network \citep{liu2019intersection}.
 
-We introduce PLECTA, a graph-matching method for dense filament networks, named
-after the Latin \emph{plecta}, a braid. PLECTA decomposes a skeleton into arms,
+We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents and
+Assignment; the name is also the Latin \emph{plecta}, a braid), a
+graph-matching method for dense filament networks. PLECTA decomposes a skeleton into arms,
 endpoint stubs, and merged junction nodes. It then alternates exact per-node
 continuation matching with globally gated gap matching while tangent and
 curvature estimates expand from local arms to assembled chains. Its output is a
@@ -139,11 +149,24 @@ Every parameter is fixed in a published configuration and the implementation
 draws on no random number generator, so a given mask yields the same instances
 on every run; that is the only sense in which it is called deterministic here.
 
-Reaching real micrographs takes one more component. A complete CNT workflow
-combines semantic segmentation with algorithmic tracing and transverse intensity
-profiles \citep{peters2026fibre}, and we divide that workflow in two:
+Reaching real micrographs takes one more component, and the closest complete
+workflow is that of Peters et al., who join a U-Net-like semantic segmentation,
+trained on more than a thousand annotated SEM micrographs, to algorithms that
+search, trace and refine fibre-shaped segments through intersections, and
+validate the result against human evaluators on fibre number, length and width
+over six CNT materials \citep{peters2026fibre}. That work and this one divide
+the task at the same joint, semantic foreground first and instances second,
+and differ in what the instance step is asked to prove: their tracer is
+validated as a substitute for human counting and measurement, morphological
+statistics on materials of graded complexity, while PLECTA is isolated behind
+a binary-mask contract and scored on identity through crossings against
+overlap-aware references in which every pairing is known. The two are
+complementary rather than competing readings of the same architecture, and the
+grouping stage evaluated here could in principle serve behind their front end
+as behind ours. We divide the workflow in two:
 Pipeline~A turns a raw SEM micrograph into a binary filament-axis mask by a
-synthetic-data-driven CycleGAN/U-Net route
+synthetic-data-driven CycleGAN/U-Net route whose training pairs are
+synthesised rather than annotated
 \citep{ruehle2021workflow,allan2026cntsem}, and Pipeline~B is PLECTA. Without
 Pipeline~A the method could only ever be exercised on masks drawn by hand or
 emitted by a generator; with the division, grouping can be measured on its own

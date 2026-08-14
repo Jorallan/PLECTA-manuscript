@@ -55,7 +55,7 @@ build/
 preview/
 *.tmp
 title_preview*
-
+slides/
 # ---------------------------------------------------------------------------
 # Internal working documents. These are kept in the local paper/ working folder
 # but are deliberately NOT published in this repository: author-query trackers,
@@ -67,6 +67,20 @@ REAL_CROP_FACTS.md
 EVALUATION_LOCK.md
 filaseg_comprehensive_next_actions.md
 filaseg_todolist.md
+comparator_study_brief.md
+filaseg_lowdensity_brief.md
+filaseg_lowdensity_prompt.md
+docs/internal/handover_prompt.md
+CLAUDE.md
+docs
+# ---------------------------------------------------------------------------
+# Exploratory studies. Self-contained investigations that inform decisions but
+# are not part of the manuscript: raw comparator outputs, downloaded third-party
+# binaries, sweep scratch and per-study figures/tables. Each study folder keeps
+# its own README and memo, which are the parts a human reads; nothing here is
+# cited by main.tex and none of it is a build input.
+# ---------------------------------------------------------------------------
+exploration/
 
 # ---------------------------------------------------------------------------
 # Raw data must never enter the manuscript repository.

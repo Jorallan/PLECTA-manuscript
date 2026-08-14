@@ -14,10 +14,14 @@ INPUT MASK and nothing else -- not the reference, not any method's output:
 
 Because the fragment set is a function of the input alone, the reference and
 every method being compared are cut into the *same* fragments.  Each fragment is
-then assigned to one reference instance and one predicted instance by majority
-overlap against each instance's full mask (so an overlapping instance keeps its
-pixels), and the score is counted over fragment PAIRS: a pair agrees when the
-two fragments are together on both sides, or apart on both sides.
+then assigned to one reference instance and one predicted instance by the rule
+of ``common_metric.assign_fragments``: the highest-overlap instance, voting
+against each instance's full mask (so an overlapping instance keeps its
+pixels), provided the overlap covers at least 30 % of the fragment; otherwise
+the modal nearest instance label within 6 px; otherwise unassigned, scored as
+its own singleton cluster.  The score is counted over fragment PAIRS: a pair
+agrees when the two fragments are together on both sides, or apart on both
+sides.
 
 Row 2 is the point.  No fragment contains a junction pixel, so the metric never
 counts the crossing raster itself.  It scores how a crossing is RESOLVED --

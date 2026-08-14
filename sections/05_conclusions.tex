@@ -4,11 +4,12 @@
 PLECTA reconstructs overlapping filament instances from a binary axis mask by
 alternating exact junction matching with gated gap matching as local arm
 geometry expands into chain-level evidence. Its evidence is directional
-throughout, so it addresses rod-like filaments whose bending stiffness makes
-direction persist across a crossing. That is the regime of nanotube bundles and
-of the cytoskeletal and synthetic-fibre networks comparable methods target, and
-not that of freely flexible chains, where the projection retains nothing local
-to match. The fixed method achieved
+throughout, so it requires tangent and curvature to persist across a crossing
+at the scale of its fitting support, a condition bending stiffness contributes
+to and rod-like filaments commonly meet. That is the regime of nanotube
+bundles and of the cytoskeletal and synthetic-fibre networks comparable
+methods target, and not that of freely flexible chains, where the projection
+retains nothing local to match. The fixed method achieved
 common-fragment $F_1=\PlectaHeldoutFOneMean{}$ on
 \PlectaHeldoutSceneCount{} independently seeded held-out scenes from the same
 procedural generator, with performance declining as network density increased,
@@ -36,8 +37,10 @@ upstream synthetic-data-driven segmenter prepares the mask, and PLECTA resolves
 it into instances, demonstrated on \PlectaRealFieldCount{} annotated SEM fields
 under manual-derived and nnU-Net masks, two of them held out from that
 segmenter, without establishing population generalisation or width accuracy.
-The method therefore offers an inspectable route to projected filament identity
-that draws on no random number generator and no training data; broader claims
+The method therefore offers an inspectable route to projected filament
+identity that draws on no random number generator and, in its grouping core,
+no training data; the demonstrated SEM route is not training-free, since the
+mask it consumes comes from a trained CycleGAN and nnU-Net upstream. Broader claims
 require independent real fields, validated physical widths, further released
 implementations run in a matched comparison, and an external-generator
 benchmark with sealed seeds.

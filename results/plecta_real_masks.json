@@ -1,5 +1,5 @@
 {
-  "role": "two-image exploratory mask-source study; no inference",
+  "role": "SUPERSEDED two-image exploratory mask-source study; no inference. Superseded 2026-08-14 by plecta_real_fields.json (three fields; B58_100 reference count revised 280 -> 307). Kept because make_real_field_metrics_record.py and make_mask_quality_record.py cite it as a parity anchor; no manuscript macro reads it.",
   "source_record": {
     "study": "C:/Repos/comparisons/real_sem_study",
     "scores": {

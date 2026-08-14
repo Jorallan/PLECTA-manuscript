@@ -20,11 +20,12 @@ side by side precisely so that the agreement is visible rather than asserted:
       does.  It states the paper's claim directly, it is the only one of the
       three whose sample size is crossings rather than scenes, and it is
       mechanistically distinct from the other two because a crossing carries no
-      information about a *gap*.  Its chance level -- the do-nothing prediction
-      that leaves every arm unpaired -- is drawn as a rule, because a fidelity
-      quoted without one is not readable.  That level is 0.088 and 0.080, not
-      the 0.709 the manuscript used to print: 0.709 is the chance level of pair
-      accuracy, a different statistic and one this figure no longer carries.
+      information about a *gap*.  Its all-unpaired baseline -- the
+      deterministic do-nothing policy that leaves every arm unpaired, not a
+      chance level -- is drawn as a rule, because a fidelity quoted without one
+      is not readable.  That baseline is 0.088 and 0.080, not the 0.709 the
+      manuscript used to print: 0.709 was the chance level of pair accuracy, a
+      different statistic and one this figure no longer carries.
 
 Two figures rather than six panels in one, because the mask condition is the
 thing a reader compares across and stacking six panels would put the comparison
@@ -92,7 +93,7 @@ def read():
 def panel(ax, cells, key, densities, full_n, chance=None, label_n=False):
     if chance is not None:
         ax.axhline(chance, color=INK, lw=0.8, ls=(0, (3, 2)), zorder=2)
-        ax.text(densities[0] - 2.2, chance + 0.025, "chance", ha="left",
+        ax.text(densities[0] - 2.2, chance + 0.025, "unpaired", ha="left",
                 va="bottom", fontsize=PT_MIN, color=INK, zorder=6)
     for name, label, colour, marker in SERIES:
         xs = list(densities)

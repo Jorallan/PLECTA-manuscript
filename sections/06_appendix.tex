@@ -18,13 +18,22 @@ mask is skeletonised, spurs of at most 3\,px are pruned, skeleton pixels with
 three or more 8-neighbours are deleted, the remaining 8-connected pieces are
 labelled, and pieces shorter than 6\,px are discarded, so one fragment is one
 unambiguous arm between crossings. The partition reads neither the reference nor
-any prediction, so every method compared is cut into the same fragments; each
-then takes a reference and a predicted identity by majority overlap against each
-instance's full mask, so an instance that overlaps another keeps its pixels.
-Because junction pixels are deleted first, no fragment contains one: none of
-these measures can see whether an emitted crossing pixel is given one owner or
-two, only whether the arms meeting there are grouped as the reference groups
-them.
+any prediction, so every method compared is cut into the same fragments. Each
+then takes a reference and a predicted identity by one rule, applied to both
+sides alike: the fragment is assigned to the instance whose mask overlaps the
+largest number of its pixels, the vote counted against each instance's full
+mask rather than a flattened label image, so an instance that overlaps another
+keeps its pixels, provided that the winning overlap covers at least 30\,\% of
+the fragment; failing that, it falls back to the most frequent nearest
+instance label within 6\,px of the fragment, read from a deterministically
+flattened field; failing both, it stays unassigned and is scored as its own
+singleton cluster, on the reference side and the prediction side equally, so
+every fragment enters the scored partition. Ties at any step resolve to the
+lowest instance id, and the flattening order is fixed, so the assignment is
+deterministic. Because junction pixels are deleted first, no fragment contains
+one: none of these measures can see whether an emitted crossing pixel is given
+one owner or two, only whether the arms meeting there are grouped as the
+reference groups them.
 
 \textbf{Common-fragment pairwise \Fone{}}, the primary endpoint. A pair of
 fragments is a true positive when it shares both identities, a false positive
@@ -37,8 +46,8 @@ negative when it separates fragments of one:
     \label{eq:pairwise-f1}
 \end{equation}
 A clustering measure of the Rand family
-\citep{rand1971objective,argandacarreras2015crowdsourcing}, permutation-invariant
-in the instance labels. It rewards holding a filament together across every
+\citep{rand1971objective,amigo2009comparison,argandacarreras2015crowdsourcing},
+permutation-invariant in the instance labels. It rewards holding a filament together across every
 crossing and gap it passes. Blind spots: it is quadratic in fragmentation, so a
 filament arriving in $n$ pieces carries $\binom{n}{2}$ pairs and a broken mask is
 charged many times over for one missed join; and it weights long, much-crossed
@@ -94,8 +103,8 @@ and never as a ranking axis; and crossings carry no information about
 \emph{gaps}, so it is silent on the cost the pairwise score pays for bridging
 them. Sharing its skeleton and assignment with the pairwise score makes it a
 sharper view of the same evidence, not independent confirmation, and it is
-always printed beside its chance level, the fidelity of leaving every arm
-unpaired.
+always printed beside its all-unpaired baseline, the fidelity of the
+deterministic do-nothing policy that leaves every arm unpaired.
 
 \textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
 where the two mask sources fragment differently. A \emph{decision} is a pair of

@@ -71,13 +71,53 @@ was fixed.
 
 \PlectaRealFieldCount{} manually annotated CNT-sheet SEM fields were available
 for exploratory analysis, each $1536\times1024$ px:
-B58\_100 (\PlectaBFiveEightOneZeroZeroReferenceCount{} filaments), B58\_110
-(\PlectaBFiveEightOneOneZeroReferenceCount{}) and B58\_300
-(\PlectaBFiveEightThreeZeroZeroReferenceCount{}). The nominal horizontal field
+B58\_100 (\PlectaBFiveEightOneZeroZeroReferenceCount{} visible CNT bundles),
+B58\_110 (\PlectaBFiveEightOneOneZeroReferenceCount{}) and B58\_300
+(\PlectaBFiveEightThreeZeroZeroReferenceCount{}). The annotated instance is
+the visible bundle, not the individual nanotube, which SEM does not resolve at
+this magnification. The nominal horizontal field
 width is $1.66~\um$ across the long, 1536-px axis of the stored images, which is
 $1.08~\mathrm{nm\,px^{-1}}$. Each annotation is one human interpretation of
 projected, locally ambiguous crossings, and B58\_100 and B58\_110 informed
 development.
+
+The reference annotations were drawn with an in-house interactive
+instance-segmentation tool for greyscale SEM of thin, crossing filaments,
+whose data model is per-instance masks rather than a flat label image, so a
+pixel may belong to several instances at once; that is what makes the
+reference overlap-aware and comparable with PLECTA's output at all. Its
+primary artefact, a compressed sparse per-instance pixel set, is the identical
+file the evaluation loads as its reference, so provenance is end to end. The
+annotator paints each visible bundle as its own instance, and the tool
+assists without deciding: strokes may snap onto the local intensity ridge,
+with polarity calibrated from the existing annotation, and may be re-rendered
+through a smoothing-spline fit whose centreline is shifted onto the measured
+intensity crest only where that crest is consistent and by at most about
+8\,px; widths come from perpendicular full-width-at-half-maximum profiles
+referenced to the local minima either side of the peak and reported as twice
+the nearer half-width, so a crossing filament fusing into the profile does not
+bias the measurement wide. Candidate gap bridges, collinear endpoint pairs of
+different instances, are suggested but never applied automatically; each is
+accepted or rejected by the annotator, so identity through every crossing is
+a human decision, machine-assisted but not machine-made. The tool keeps an
+audit log of every mutating action alongside the saved annotation, and an
+advisory per-instance plausibility score, computed from profile support, peak
+contrast and width plausibility, was used as quality control while
+annotating; the score is advisory only and is not part of the saved
+reference.
+
+The protocol's limits are stated rather than implied. There was one
+annotator, who is an author of this paper and also configured PLECTA; there
+is no second reader, no blinding and no inter-reader agreement estimate, so
+differences smaller than plausible annotation variation should not be read as
+real, and the annotations are manual reference annotations, not ground truth.
+One assumption is also shared across the divide: the annotator's width
+measurement and PLECTA's optional width layer of Section~\ref{sec:mm-stage4}
+both read perpendicular FWHM profiles across a centreline. That does not
+touch the grouping scores, which are computed on centreline fragments, but it
+does mean the two are not independent about width; nothing in this paper
+compares the two widths, and no such comparison should be made without
+restating this.
 
 Two inputs were derived per field. The first is the skeleton of the manual
 instance annotation, an oracle-like condition that asks what the grouping can do
@@ -106,8 +146,7 @@ rewarding mask thickness, and reconstruction scores were computed within each
 mask's own visible common-fragment population.
 
 \needed{Author metadata: SEM instrument and detector, accelerating voltage,
-working distance, specimen preparation, CNT material identity, and the
-annotation protocol.}
+working distance, specimen preparation, and CNT material identity.}
 
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
@@ -174,16 +213,23 @@ Leaving a stub unmatched is priced rather than forbidden, and the price $p_i$
 also fixes admissibility: an edge is offered only when $C_{ij}<p_i+p_j$. Exact
 maximum-weight partial matching then maximises $\sum(p_i+p_j-C_{ij})$ over
 disjoint pairs, which minimises the total link cost plus $p_i$ for every stub
-left free. At full strictness junction stubs carry $p_i=0.62$, so a junction
-edge needs $C<1.24$; gap edges need $C<0.60$ and must in addition satisfy
-$d\le85$~px, $\theta\le0.40$~rad and $\varphi\le0.28$~rad at each end. Gap gates
-are the tighter set because a gap link asserts a continuation across evidence
-that is missing rather than merely ambiguous; the values themselves were fixed
-on development scenes, and the complete set is recorded in the public
-configuration. Rounds $r=0,\ldots,7$ apply strictness $\alpha_r=0.85+0.15\,r/7$, scaling the
-unmatched prices and the two gap angle limits and nothing else, so early rounds
-commit only to pairings that survive a loose fallback; the eighth round,
-$\alpha=1$, is the only fully strict one and is the one returned. In full:
+left free. At the configured prices junction stubs carry $p_i=0.62$, so a
+junction edge needs $C<1.24$; gap edges need $C<0.60$ and must in addition
+satisfy $d\le85$~px, $\theta\le0.40$~rad and $\varphi\le0.28$~rad at each end.
+Gap gates are the tighter set because a gap link asserts a continuation across
+evidence that is missing rather than merely ambiguous; the values themselves
+were fixed on development scenes, and the complete set is recorded in the
+public configuration. Rounds $r=0,\ldots,7$ apply a schedule fraction
+$\alpha_r=0.85+0.15\,r/7$ that scales the unmatched prices and the two gap
+angle limits and nothing else. Scaling a price \emph{down} admits fewer edges,
+admissibility being $C_{ij}<p_i+p_j$, and scaling an angle limit down narrows
+the gap gates, so early rounds are the conservative ones, deliberately
+under-linked: while the frames are at their least reliable, only pairings that
+survive the reduced prices and narrowed gates are committed, and the
+constraints relax towards their configured values as the chains assembled so
+far sharpen the frames. The final
+round, $\alpha_7=1$, is the only one run at the configured parameters and is
+the one returned. In full:
 
 \begin{enumerate}[nosep,leftmargin=1.5em,label=\arabic*.]
   \item Skeletonise $M$, prune spurs, merge junction clusters into nodes, and
@@ -202,6 +248,13 @@ $\alpha=1$, is the only fully strict one and is the one returned. In full:
   \end{enumerate}
   \item Return the links of round $r=7$.
 \end{enumerate}
+
+Instances are assumed to be open projected curves, and a guard enforces it:
+after each of the two matchings, any matched component whose links close a
+ring has its longest link removed. On the \PlectaDevelopmentSceneCount{}
+development scenes the guard never fired, zero links removed, so it protects
+against a configuration the data did not produce rather than shaping the
+result; closed or looping filaments are outside the scope of this paper.
 
 Every stub is therefore either paired or pays the unmatched price, and there is
 no third possibility. The priced option is what lets a filament genuinely end,
@@ -290,9 +343,19 @@ instance to another, and no identity score in this paper depends on one.
 The primary endpoint is common-fragment pairwise \Fone{}. The input mask is cut
 into fragments, each one unambiguous arm between crossings, by a rule that
 reads neither the reference nor any prediction, so every method compared is cut
-into the same pieces; each fragment takes a reference identity and a predicted
-identity by majority overlap, and the score counts the pairs of fragments the
-prediction groups as the reference does. Because junction pixels are deleted
+into the same pieces. Each fragment then takes a reference identity and a
+predicted identity by one rule, applied to both sides alike: it is assigned to
+the instance that overlaps most of its pixels, provided that overlap covers at
+least 30\,\% of the fragment; failing that, to the most frequent nearest
+instance label within 6\,px; failing both, it stays unassigned and enters the
+score as its own singleton cluster, so every fragment is in the scored
+partition and unattached evidence is penalised rather than dropped. The score
+counts the pairs of fragments the prediction groups as the reference does. The
+scorer's preprocessing shares two constants with the method itself: both prune
+skeleton spurs of at most 3\,px, and the scorer's 6\,px minimum fragment length
+and assignment fallback distance coincide with the 6\,px below which PLECTA
+omits an isolated component, so method and endpoint rest on a shared
+preprocessing assumption rather than independent ones. Because junction pixels are deleted
 before fragments are labelled, it cannot see whether an emitted crossing pixel
 is given one owner or two, only whether the arms meeting there are grouped as
 the reference groups them, which is the difficult decision;
@@ -315,8 +378,8 @@ incident arms matches the reference partition exactly, says how many
 crossings were solved, and is an in-house diagnostic rather than an established
 metric, in the tradition of measures that score correctness at branch points
 rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}; it is
-always printed beside its own chance level, the fidelity of leaving every arm
-unpaired. The input masks themselves, as distinct from the reconstructions, are
+always printed beside its own all-unpaired baseline, the fidelity of the
+deterministic do-nothing policy that leaves every arm unpaired. The input masks themselves, as distinct from the reconstructions, are
 characterised by the tolerant completeness/correctness/quality triple standard
 for thin structures. Appendix~\ref{app:measures} defines each measure in full,
 with its equation, what it rewards and what it cannot see; every one is quoted
@@ -330,8 +393,10 @@ stratification by density; the clean-minus-degraded analysis resamples paired
 scene differences within density. Per-coverage points in the comparison figures
 are plain means of ten scenes with no interval drawn and none claimed. The real
 SEM work is exploratory, \PlectaRealFieldCount{} fields, and no inference is
-made from it; the crossing measures there are the only quantities with a sample
-size worth quoting, \PlectaRealCrossingTotal{} reference crossings.
+made from it; the inferential unit there is the field, and the
+\PlectaRealCrossingTotal{} reference crossings entering the crossing measures
+are a count pooled over six condition-specific evaluations of the three
+fields, not a sample size.
 Active-component ablations are one-at-a-time development experiments on all
 \PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
 set.

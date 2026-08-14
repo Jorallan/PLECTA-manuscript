@@ -38,8 +38,10 @@ REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
 REAL_FIELDS = RESULTS / "plecta_real_fields.json"
 METRIC_PANELS = RESULTS / "plecta_metric_panels.json"
 SENSITIVITY = RESULTS / "development_sensitivity.json"
-CROSSING_CHANCE = Path(
-    "C:/Repos/comparisons/metrics_study/results/crossing_fidelity_chance.json")
+# The comparator studies live in a sibling repository; the default assumes
+# the standard side-by-side checkout layout and --comparisons-root overrides it.
+DEFAULT_COMPARISONS_ROOT = ROOT.parent / "comparisons"
+CROSSING_CHANCE_RELATIVE = Path("metrics_study/results/crossing_fidelity_chance.json")
 N_BOOT = 20_000
 SEED = 20_260_810
 
@@ -435,9 +437,12 @@ def shared_ownership_macros(audit: dict, supplement: dict) -> list[str]:
     """Macros for how the shared-pixel representation is drawn.
 
     Reported because the paper presents overlap-aware output as a property of
-    the method: PLECTA recovers most of the reference's jointly-owned pixels and
-    marks several times more of them than the reference contains, the latter
-    being a rendering choice rather than a grouping error.
+    the method: PLECTA recovers just under half of the reference's
+    jointly-owned pixels -- the largest such recall among the compared methods,
+    not a majority -- at low precision, marking several times more of them than
+    the reference contains, the latter being a rendering choice rather than a
+    grouping error. The comparator recalls are emitted so the prose can rank
+    without hand-writing a number.
     """
     lines = []
     for variant, tag in (("degraded", ""), ("clean", "Clean")):
@@ -449,6 +454,10 @@ def shared_ownership_macros(audit: dict, supplement: dict) -> list[str]:
             macro(f"PlectaShared{tag}Excess",
                   f"{pixels['predicted_over_reference']:.1f}"),
         ])
+    for method, stem in (("graft", "GraFT"), ("dnai", "DNAi")):
+        overall = audit["methods"]["degraded"][method]["overall"]
+        lines.append(
+            macro(f"PlectaShared{stem}Recall", fmt(overall["shared_recall"])))
     return lines
 
 
@@ -1143,7 +1152,7 @@ def real_fields_table(payload: dict) -> str:
         r"\multicolumn{3}{c}{Objects and crossings} & \\",
         r"\cmidrule(lr){4-6}\cmidrule(lr){7-9}",
         r"Field & Input axis & out & $F_1$ & Join $F_1$ & Decisions & "
-        r"Det.\ $F_1$ & CF & Chance & Cross. \\",
+        r"Det.\ $F_1$ & CF & Unpaired & Cross. \\",
         r"\midrule",
     ]
     for field in payload["fields"]:
@@ -1189,6 +1198,16 @@ def real_axis_table(payload: dict) -> str:
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--comparisons-root", type=Path, default=DEFAULT_COMPARISONS_ROOT,
+        help="root of the comparisons checkout (default: the 'comparisons' "
+             "directory beside this repository)")
+    args = parser.parse_args()
+    crossing_chance_path = args.comparisons_root / CROSSING_CHANCE_RELATIVE
+
     held = json.loads(HELDOUT.read_text(encoding="utf-8"))
     ablation = json.loads(ABLATION.read_text(encoding="utf-8"))
     stage4 = json.loads(STAGE4.read_text(encoding="utf-8"))
@@ -1212,7 +1231,7 @@ def main() -> None:
     metric_panels = json.loads(METRIC_PANELS.read_text(encoding="utf-8"))
     sensitivity = json.loads(SENSITIVITY.read_text(encoding="utf-8"))
     crossing_chance = json.loads(
-        CROSSING_CHANCE.read_text(encoding="utf-8"))
+        crossing_chance_path.read_text(encoding="utf-8"))
     with ROBUSTNESS.open(newline="", encoding="utf-8-sig") as handle:
         robustness = list(csv.DictReader(handle))
     (RESULTS / "plecta_results.tex").write_text(

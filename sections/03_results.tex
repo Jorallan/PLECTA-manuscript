@@ -260,7 +260,8 @@ paired, PLECTA's margins are \PlectaJunctionGreedyDelta{}
 [\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}]. Clean axes
 order them the same way, PLECTA at \PlectaJunctionCleanPlectaRate{}. Leaving
 every arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is
-the chance level the rate is read against. It is much less discriminative than
+the all-unpaired baseline the rate is read against; it is a deterministic
+do-nothing policy rather than a chance level. It is much less discriminative than
 the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
 method at 60\,\% coverage where pairwise \Fone{} spans
 \PlectaPairwiseSpreadHigh{}, so it is used to say what was solved and not to
@@ -270,14 +271,15 @@ collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four
 cap predicts.
 
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
-each method\'s own computation only (Table~\ref{tab:plecta-comparators};
+each method's own computation only (Table~\ref{tab:plecta-comparators};
 \RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded \RuntimeBudgetSeconds{}~s
 and are censored). These are independently optimised codebases, so absolute
 times measure implementation as much as algorithm; the transferable quantity is
 scaling, and the log--log exponents against foreground pixels are
 \RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
-\RuntimeGraftScalingExponent{}. PLECTA grows fastest, but only GraFT is
-heavy-tailed.
+\RuntimeGraftScalingExponent{}. PLECTA has the largest uncensored exponent;
+GraFT's is a lower bound, because the scenes its fit lost to censoring are the
+slowest ones, and only GraFT is heavy-tailed.
 
 \subsection{Crossing representation, and where it over-marks}
 \label{sec:res-overlap}
@@ -298,8 +300,10 @@ another instance at 20\% coverage, rising to
 whose output is close to a hard partition, about
 \PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
 PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
-than one instance, the only method here that recovers most of them, but at a
-precision of \PlectaSharedPrecision{}: it marks
+than one instance, less than half, though the largest such recall here, against
+\PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
+while the greedy baseline, a hard partition, scores zero by construction. It
+does so at a precision of \PlectaSharedPrecision{}, marking
 \PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
 the reference contains, because a chain is painted with every pixel of every
 junction cluster it touches. That is a property of the rendering rather than of
@@ -484,8 +488,9 @@ and there is no gap to see: that is the control.
     Section~\ref{sec:mm-metrics}. \emph{Held out} is whether the nnU-Net run
     that produced the axis excluded that field from training; B58\_100 could
     not be held out by any available run, so its U-Net row is an upper bound.
-    \emph{CF} is Crossing Fidelity and \emph{Chance} the fidelity of leaving
-    every arm unpaired on that field. \emph{Cross.} is the number of reference
+    \emph{CF} is Crossing Fidelity and \emph{Unpaired} the fidelity of the
+    all-unpaired baseline, the do-nothing policy that leaves every arm
+    unpaired on that field. \emph{Cross.} is the number of reference
     crossings scored. Detection \Fone{} is at IoU
     \PlectaDetectionIoU{} with the \PlectaPlacementTolerance{}\,px placement
     tolerance. Exploratory, \PlectaRealFieldCount{} fields, no inference.}
@@ -501,7 +506,8 @@ and there is no gap to see: that is the control.
 \PlectaFidelityBFiveEightOneZeroZeroManual{},
 \PlectaFidelityBFiveEightOneOneZeroManual{} and
 \PlectaFidelityBFiveEightThreeZeroZeroManual{} of the reference crossings
-exactly against a chance level of \PlectaFidelityBFiveEightThreeZeroZeroManualChance{}
+exactly against an all-unpaired baseline of
+\PlectaFidelityBFiveEightThreeZeroZeroManualChance{}
 to \PlectaFidelityBFiveEightOneOneZeroManualChance{}. From the nnU-Net axis the
 same predictions read \PlectaBFiveEightOneOneZeroUNetFOne{} and
 \PlectaBFiveEightThreeZeroZeroUNetFOne{} on the two held-out fields, with
@@ -511,9 +517,10 @@ Crossing Fidelity \PlectaFidelityBFiveEightOneOneZeroUNet{} and
 \PlectaJoinBFiveEightThreeZeroZeroUNetFOne{}. The two clean fields agree with
 each other to within 0.03 on every measure, which is the substantive gain over
 the single clean field the study previously had; \PlectaRealFieldCount{} fields
-still cannot estimate a population, and the crossing measures are the only ones
-here with a sample size worth quoting, \PlectaRealCrossingTotal{} reference
-crossings across the six conditions.
+still cannot estimate a population, and the inferential unit is the field: the
+\PlectaRealCrossingTotal{} reference crossings the crossing measures rest on
+are pooled over six condition-specific evaluations of these three fields, a
+pooled count and not a sample size.
 
 \textbf{Most of the distance between the two conditions is the mask, and the
 method fails by conservatism rather than by fusing.} The axis each field hands
