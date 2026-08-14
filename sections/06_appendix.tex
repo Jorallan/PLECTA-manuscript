@@ -35,6 +35,36 @@ one: none of these measures can see whether an emitted crossing pixel is given
 one owner or two, only whether the arms meeting there are grouped as the
 reference groups them.
 
+\textbf{Sensitivity to the scorer's constants.} Because the four constants
+above are shared with the method (Section~\ref{sec:mm-metrics}), the stored
+predictions of all four methods were re-scored under one-at-a-time
+perturbations of each constant, with the grid frozen in writing before any
+result was computed: spur pruning 2--4\,px, minimum fragment length
+4--8\,px, overlap threshold 0.20--0.50, fallback distance 3--9\,px. Nothing
+was re-run and no configuration was changed in response.
+Table~\ref{tab:scorer-sensitivity} reports PLECTA's mean \Fone{} and its
+plain paired margins over each comparator at every perturbation, over the
+\PlectaGreedySceneCount{} degraded comparison scenes. Across the
+\PlectaScorerSensitivityComboCount{} combinations PLECTA's mean \Fone{}
+spans \PlectaScorerSensitivityFOneLow{}--\PlectaScorerSensitivityFOneHigh{},
+and the smallest paired margin over any comparator under any perturbation is
+\PlectaScorerSensitivityMarginMin{}. The level moves only with the minimum
+fragment length, and in the same direction for every method, because
+admitting shorter fragments adds hard, low-evidence units for everyone; the
+other three constants move the mean by less than 0.002, and no perturbation
+changes the ordering of the four methods.
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Scorer-constant sensitivity. Stored predictions re-scored under
+    one-at-a-time perturbations of the four common-fragment constants;
+    $\Delta$ columns are plain paired mean margins, PLECTA minus comparator,
+    over the scenes both methods completed. Sensitivity reporting only, no
+    inference, and the published constants were not changed in response.}
+    \label{tab:scorer-sensitivity}
+    \input{results/plecta_scorer_sensitivity_table}
+\end{table}
+
 \textbf{Common-fragment pairwise \Fone{}}, the primary endpoint. A pair of
 fragments is a true positive when it shares both identities, a false positive
 when the prediction joins fragments of different reference filaments, a false

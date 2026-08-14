@@ -355,7 +355,10 @@ scorer's preprocessing shares two constants with the method itself: both prune
 skeleton spurs of at most 3\,px, and the scorer's 6\,px minimum fragment length
 and assignment fallback distance coincide with the 6\,px below which PLECTA
 omits an isolated component, so method and endpoint rest on a shared
-preprocessing assumption rather than independent ones. Because junction pixels are deleted
+preprocessing assumption rather than independent ones. A prespecified
+one-at-a-time sensitivity sweep of the four constants, re-scoring the stored
+predictions with the grid frozen before any result was seen, is reported in
+Appendix~\ref{app:measures}. Because junction pixels are deleted
 before fragments are labelled, it cannot see whether an emitted crossing pixel
 is given one owner or two, only whether the arms meeting there are grouped as
 the reference groups them, which is the difficult decision;
