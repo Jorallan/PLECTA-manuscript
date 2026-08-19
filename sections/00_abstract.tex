@@ -36,7 +36,13 @@ continuation rule on identical masks it gained \PlectaGreedySweptDeltaFOne{}
 \PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} and
 \PlectaGraFTDeltaFOne{} over two released implementations run from their own
 sources; it leads at every coverage on this generator under all three reported
-measures, which establishes a ranking on this material and not a general one.
+measures. To test whether that ranking is an artefact of our own scenes, the
+comparison was repeated on a comparator's generator: GraFT's own, vendored
+unmodified at its published settings, over \PlectaRegimeSceneCount{} scenes in
+\PlectaRegimeStratumCount{} density strata. PLECTA led at every stratum with no
+crossover, including inside GraFT's published range, at overall \Fone{}
+\PlectaRegimeOverallPlectaFOne{} against \PlectaRegimeOverallGraFTFOne{} and
+\PlectaRegimeOverallDNAiFOne{}.
 Of the \PlectaJunctionCount{} reference crossings it partitions the incident
 arms exactly as the reference does at \PlectaJunctionPlectaRate{} of them,
 against \PlectaJunctionChance{} for leaving every arm unpaired.
@@ -45,7 +51,10 @@ CNT-sheet scanning electron microscopy is the proof-of-concept application: an
 upstream synthetic-data-driven CycleGAN/U-Net route prepares the binary masks
 that let the method run on real micrographs, while image-informed width
 measurement and ribbon rendering are downstream stages that leave the grouping
-fixed. The evidence supports same-generator synthetic generalisation and a
-demonstration on \PlectaRealFieldCount{} annotated SEM fields, two of them held
-out from the upstream segmenter, and not general real-image or
-three-dimensional reconstruction claims.
+fixed. The evidence supports same-generator synthetic generalisation, a
+comparative ranking that survives transfer to a generator built by a
+comparator, and a demonstration on \PlectaRealFieldCount{} annotated SEM
+fields, two of them held out from the upstream segmenter; it does not support
+general real-image or three-dimensional reconstruction claims. On
+\PlectaInterReaderFieldCount{} fields annotated independently by a second
+reader, cross-reader agreement bounds what any real-image score can show.

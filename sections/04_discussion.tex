@@ -63,8 +63,42 @@ fields that agree closely are a stronger statement than the one the study
 previously had, but they still cannot estimate generalisation. The two mask
 sources also generate different fragment universes, so their $F_1$ values
 describe performance under each input condition rather than comparing identical
-objects. More independent fields, sealed before configuration, and multi-reader
-annotations are required.
+objects. More independent fields, sealed before configuration, are still
+required.
+
+Multi-reader annotation is no longer outstanding, and the result reframes the
+limitation above rather than softening it. A second reader independently
+annotated \PlectaInterReaderFieldCount{} of these fields. Judged against the
+reader whose skeleton it was given, PLECTA scores
+\PlectaInterReaderSameFLow{}--\PlectaInterReaderSameFHigh{}; judged against the
+other reader, \PlectaInterReaderCrossFLow{}--\PlectaInterReaderCrossFHigh{}.
+That collapse is not the method degrading. The two readers agree with each
+other at \PlectaInterReaderAgreeFLow{}--\PlectaInterReaderAgreeFHigh{} by the
+same measure with no method in the loop, so the cross-reader scores sit at
+roughly the ceiling human agreement allows. The disagreement is systematic and
+not noise: the second reader exports
+\PlectaInterReaderObjectRatioLow{}--\PlectaInterReaderObjectRatioHigh{} times as
+many objects, shorter, with
+\PlectaInterReaderComponentRatioLow{}--\PlectaInterReaderComponentRatioHigh{}
+times as many components in the per-instance-skeleton union, and the
+directional variation of information is split-dominant one way and
+merge-dominant the other. That is two different answers to what an instance
+\emph{is} -- a whole physical filament, or a locally visible segment -- not one
+reader being wrong. For the same reason the automatic-mask condition, at
+\PlectaInterReaderNetFLow{}--\PlectaInterReaderNetFHigh{} against either
+reader, cannot be separated from reader disagreement on this evidence.
+
+This is also the strongest available argument for evaluating on a generator at
+all. Instance identity through an occlusion is precisely the quantity manual
+annotation cannot fix: on real fields the reference is a reading, and two
+competent readings of the same micrograph differ by more than most of the
+method gaps this paper reports. A procedural scene is the only condition in
+which the answer is defined rather than adjudicated, because identity is
+assigned before rendering rather than recovered after it. The synthetic
+evaluation is therefore not a convenience standing in for real ground truth;
+it is the only place an unambiguous instance definition exists, and the real
+fields are correctly read as a case study of behaviour under a stated
+annotation protocol.
 
 One caveat from the comparisons must be separated from the claim it seems to
 threaten. The comparators lose on how a crossing is \emph{resolved}, which the

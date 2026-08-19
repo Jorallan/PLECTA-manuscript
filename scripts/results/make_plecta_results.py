@@ -37,6 +37,7 @@ MASK_QUALITY = RESULTS / "plecta_mask_quality.json"
 GRAFT_REGIME = RESULTS / "plecta_graft_regime.json"
 REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
 REAL_FIELDS = RESULTS / "plecta_real_fields.json"
+INTERANNOTATOR = RESULTS / "plecta_interannotator.json"
 METRIC_PANELS = RESULTS / "plecta_metric_panels.json"
 SENSITIVITY = RESULTS / "development_sensitivity.json"
 SCORER_SENSITIVITY = RESULTS / "plecta_scorer_sensitivity.json"
@@ -519,6 +520,39 @@ def real_field_metrics_macros(metrics: dict, tolerance: int) -> list[str]:
     return lines
 
 
+def interannotator_macros(payload: dict) -> list[str]:
+    """The two-reader study, as ranges over the three paired fields.
+
+    Every cross-reader number is emitted beside the reader-versus-reader
+    agreement it must be read against. Quoting the collapse without the
+    ceiling would misattribute a disagreement between two humans about what
+    an instance *is* to a failure of the method, and the pairing here is what
+    stops the prose doing that.
+    """
+    spans = payload["spans"]
+
+    def pair(name: str, low_key: str, high_key: str) -> list[str]:
+        return [macro(f"PlectaInterReader{name}Low", fmt(spans[low_key]["min"])),
+                macro(f"PlectaInterReader{name}High", fmt(spans[high_key]["max"]))]
+
+    lines = [macro("PlectaInterReaderFieldCount", str(payload["n_paired_fields"]))]
+    lines += pair("SameF", "same_reader_f1", "same_reader_f1_high")
+    lines += pair("CrossF", "cross_reader_f1", "cross_reader_f1_high")
+    lines += pair("AgreeF", "reader_partition_f1", "reader_partition_f1_high")
+    lines += pair("NetF", "nnunet_f1", "nnunet_f1_high")
+    lines += [
+        macro("PlectaInterReaderObjectRatioLow",
+              fmt(spans["object_ratio"]["min"], 2)),
+        macro("PlectaInterReaderObjectRatioHigh",
+              fmt(spans["object_ratio"]["max"], 2)),
+        macro("PlectaInterReaderComponentRatioLow",
+              "%.0f" % spans["component_ratio"]["min"]),
+        macro("PlectaInterReaderComponentRatioHigh",
+              "%.0f" % spans["component_ratio"]["max"]),
+    ]
+    return lines
+
+
 def real_fields_macros(payload: dict) -> list[str]:
     """The three annotated fields under the five reported measures.
 
@@ -920,6 +954,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 graft: dict, audit: dict, supplement: dict,
                 mask_quality: dict, graft_regime: dict,
                 real_field_metrics: dict, real_fields: dict,
+                interannotator: dict,
                 metric_panels: dict, sensitivity: dict,
                 scorer_sensitivity: dict,
                 crossing_chance: dict) -> str:
@@ -1055,6 +1090,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *mask_quality_macros(mask_quality),
             *graft_regime_macros(graft_regime),
             *real_fields_macros(real_fields),
+            *interannotator_macros(interannotator),
             *real_field_metrics_macros(
                 real_field_metrics,
                 real_fields["fields"][0]["axis_triple"]
@@ -1284,6 +1320,8 @@ def main() -> None:
     real_field_metrics = json.loads(
         REAL_FIELD_METRICS.read_text(encoding="utf-8"))
     real_fields = json.loads(REAL_FIELDS.read_text(encoding="utf-8"))
+    interannotator = json.loads(
+        INTERANNOTATOR.read_text(encoding="utf-8"))
     metric_panels = json.loads(METRIC_PANELS.read_text(encoding="utf-8"))
     sensitivity = json.loads(SENSITIVITY.read_text(encoding="utf-8"))
     scorer_sensitivity = json.loads(
@@ -1297,7 +1335,8 @@ def main() -> None:
             held, robustness, ablation, stage4, cc_baseline,
             width_validation, greedy, factorial, dnai, analysis, swept,
             graft, audit, supplement, mask_quality, graft_regime,
-            real_field_metrics, real_fields, metric_panels, sensitivity,
+            real_field_metrics, real_fields, interannotator,
+            metric_panels, sensitivity,
             scorer_sensitivity, crossing_chance,
         ),
         encoding="utf-8",

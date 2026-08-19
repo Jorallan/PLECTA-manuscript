@@ -1,0 +1,141 @@
+{
+  "role": "PLECTA and two independent human readers on three annotated CNT SEM fields, scored through eval/core/common_metric.py",
+  "discipline": "exploratory, 3 paired fields, plain ranges, no inference",
+  "study": "C:\\Repos\\comparisons\\real_sem_study\\interannotator\\allan_vs_zagh_2026-08-14",
+  "excluded": {
+    "b58_s3_010": "ZAGH-only; no ALLAN export exists, so it yields no inter-reader observation and is not counted here"
+  },
+  "ceiling": "cross-reader PLECTA F1 must be read against the direct reader-versus-reader agreement in reader_agreement, not against the same-reader column; the two readers do not implement one instance definition",
+  "n_paired_fields": 3,
+  "spans": {
+    "same_reader_f1": {
+      "min": 0.7861952861952863,
+      "max": 0.8495575221238938
+    },
+    "same_reader_f1_high": {
+      "min": 0.8367144977733795,
+      "max": 0.9471739313009155
+    },
+    "cross_reader_f1": {
+      "min": 0.36961285609934263,
+      "max": 0.3903061224489796
+    },
+    "cross_reader_f1_high": {
+      "min": 0.42657039711191336,
+      "max": 0.510010339317605
+    },
+    "reader_partition_f1": {
+      "min": 0.3605033881897386,
+      "max": 0.3828523468267803
+    },
+    "reader_partition_f1_high": {
+      "min": 0.467194043741275,
+      "max": 0.5349555813055233
+    },
+    "object_ratio": {
+      "min": 1.8511627906976744,
+      "max": 2.830769230769231
+    },
+    "component_ratio": {
+      "min": 8.1875,
+      "max": 16.842105263157894
+    },
+    "nnunet_f1": {
+      "min": 0.38293617730378277,
+      "max": 0.41786958685913395
+    },
+    "nnunet_f1_high": {
+      "min": 0.4519171113041321,
+      "max": 0.46565264936872447
+    }
+  },
+  "fields": [
+    {
+      "field": "b58_s2_100",
+      "display": "B58 S2_100",
+      "n_instances": {
+        "ALLAN": 307,
+        "ZAGH": 707
+      },
+      "object_ratio_zagh_over_allan": 2.3029315960912053,
+      "axis_components_8": {
+        "ALLAN": 48,
+        "ZAGH": 393
+      },
+      "component_ratio_zagh_over_allan": 8.1875,
+      "plecta": {
+        "allan_skel_vs_allan": 0.8870417732310316,
+        "allan_skel_vs_zagh": 0.4864098321909714,
+        "zagh_skel_vs_zagh": 0.8495575221238938,
+        "zagh_skel_vs_allan": 0.36961285609934263,
+        "nnunet_vs_allan": 0.45700022691173137,
+        "nnunet_vs_zagh": 0.4127695323438813
+      },
+      "reader_agreement": {
+        "partition_f1_allan_exam": 0.5220824080927708,
+        "partition_f1_zagh_exam": 0.3605033881897386,
+        "detection_f1": 0.5424063116370809,
+        "detection_recall_of_allan": 0.8957654723127035,
+        "detection_precision_wrt_zagh": 0.38896746817538896
+      }
+    },
+    {
+      "field": "b58_s2_110",
+      "display": "B58 S2_110",
+      "n_instances": {
+        "ALLAN": 430,
+        "ZAGH": 796
+      },
+      "object_ratio_zagh_over_allan": 1.8511627906976744,
+      "axis_components_8": {
+        "ALLAN": 32,
+        "ZAGH": 402
+      },
+      "component_ratio_zagh_over_allan": 12.5625,
+      "plecta": {
+        "allan_skel_vs_allan": 0.8367144977733795,
+        "allan_skel_vs_zagh": 0.42657039711191336,
+        "zagh_skel_vs_zagh": 0.7861952861952863,
+        "zagh_skel_vs_allan": 0.3785158112188145,
+        "nnunet_vs_allan": 0.4519171113041321,
+        "nnunet_vs_zagh": 0.38293617730378277
+      },
+      "reader_agreement": {
+        "partition_f1_allan_exam": 0.467194043741275,
+        "partition_f1_zagh_exam": 0.37393570807993054,
+        "detection_f1": 0.6411092985318108,
+        "detection_recall_of_allan": 0.913953488372093,
+        "detection_precision_wrt_zagh": 0.4937185929648241
+      }
+    },
+    {
+      "field": "b58_s3_100",
+      "display": "B58 S3_100",
+      "n_instances": {
+        "ALLAN": 325,
+        "ZAGH": 920
+      },
+      "object_ratio_zagh_over_allan": 2.830769230769231,
+      "axis_components_8": {
+        "ALLAN": 19,
+        "ZAGH": 320
+      },
+      "component_ratio_zagh_over_allan": 16.842105263157894,
+      "plecta": {
+        "allan_skel_vs_allan": 0.9471739313009155,
+        "allan_skel_vs_zagh": 0.510010339317605,
+        "zagh_skel_vs_zagh": 0.83671388101983,
+        "zagh_skel_vs_allan": 0.3903061224489796,
+        "nnunet_vs_allan": 0.46565264936872447,
+        "nnunet_vs_zagh": 0.41786958685913395
+      },
+      "reader_agreement": {
+        "partition_f1_allan_exam": 0.5349555813055233,
+        "partition_f1_zagh_exam": 0.3828523468267803,
+        "detection_f1": 0.4947791164658635,
+        "detection_recall_of_allan": 0.9476923076923077,
+        "detection_precision_wrt_zagh": 0.3347826086956522
+      }
+    }
+  ]
+}
