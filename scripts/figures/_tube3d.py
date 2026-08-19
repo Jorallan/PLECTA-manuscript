@@ -23,14 +23,35 @@ def z_colour(t):
     return VIRIDIS(0.10 + 0.85 * float(np.clip(t, 0, 1)))[:3]
 
 
+# Instance colours: a muted qualitative ramp. Depth already has a colour
+# meaning (viridis), so an instance-coloured panel must not reuse it, or a
+# reader will read height into a hue that only separates objects.
+_INSTANCE = matplotlib.colormaps["tab20"]
+
+
 def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
                       light=(0.4, -0.45, 0.80), elev=34, azim=-56,
-                      zoom=1.35, z_stretch=0.62):
-    """Draw (verts, faces, z_ref) tubes as lit solids into a 3-D axes."""
+                      zoom=1.35, z_stretch=0.62, colour="depth"):
+    """Draw (verts, faces, z_ref) tubes as lit solids into a 3-D axes.
+
+    ``colour`` selects what a hue means, and the choice is not cosmetic:
+
+    * ``"depth"``  -- viridis by height. Reads height, but on a compressed
+      film every tube lands in nearly the same hue and the panel goes flat.
+    * ``"grey"``   -- one neutral tone, shape carried entirely by the lighting.
+      Closest to how the specimen actually looks.
+    * ``"instance"`` -- a qualitative colour per tube, which separates objects
+      that touch. It says nothing about height and must not be read as if it
+      did.
+
+    ``z_stretch`` is the z box aspect against x and y at 1. Pass
+    ``span / extent`` for a true 1:1 axis, which draws the film at its real
+    flatness instead of spreading the layers apart.
+    """
     light = np.asarray(light, float)
     light = light / np.linalg.norm(light)
     quads, cols = [], []
-    for verts, faces, z_ref in tubes:
+    for idx, (verts, faces, z_ref) in enumerate(tubes):
         if not len(verts):
             continue
         quad = verts[faces]                       # (M, 4, 3)
@@ -40,7 +61,12 @@ def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
         n = n / norm[:, None]
         lam = np.clip(n @ light, 0.0, 1.0)
         shade = 0.42 + 0.58 * lam
-        base = np.asarray(z_colour((z_ref - z_lo) / span))
+        if colour == "grey":
+            base = np.array([0.72, 0.72, 0.74])
+        elif colour == "instance":
+            base = np.asarray(_INSTANCE(idx % 20)[:3])
+        else:
+            base = np.asarray(z_colour((z_ref - z_lo) / span))
         quads.append(quad)
         cols.append(shade[:, None] * base[None, :])
     if quads:

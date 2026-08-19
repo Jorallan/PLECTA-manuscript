@@ -120,7 +120,9 @@ def main():
 
     ax3 = fig.add_subplot(gs[0, 1], projection="3d")
     draw_tubes_shaded(ax3, tubes, z_lo, span,
-                      extent=max(sem.shape), zoom=0.95)
+                      extent=max(sem.shape), zoom=1.55,
+                      elev=20, azim=-62, colour="grey",
+                      z_stretch=span / max(sem.shape))
     ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
 
     ax = fig.add_subplot(gs[0, 2]); bare(ax)

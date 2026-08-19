@@ -122,7 +122,9 @@ def main():
 
         ax3 = fig.add_subplot(gs[r, 1], projection="3d")
         draw_tubes_shaded(ax3, tubes, z_lo, span,
-                          extent=reference.shape[0], zoom=0.95)
+                          extent=reference.shape[0], zoom=1.55,
+                          elev=20, azim=-62, colour="grey",
+                          z_stretch=span / reference.shape[0])
 
         rendered = np.asarray(render_sem.render(result), float)
         ax = fig.add_subplot(gs[r, 2]); bare(ax)
