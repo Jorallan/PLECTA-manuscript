@@ -15,7 +15,7 @@ procedural generator as development data, so this is same-generator
 generalisation and not distribution transfer
 (Section~\ref{sec:limitations}).
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
     \centering
     \caption{Held-out reconstruction scores overall and by target areal
     coverage. VI denotes variation of information, for which lower is better;
@@ -67,7 +67,7 @@ densities also overlap, so coverage does not identify a difficulty level on its
 own. Density strata reported by target areal coverage should therefore be read
 as a proxy for the length density accompanying them under this generator.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
     \centering
     \caption{Bundle width against centreline length density,
     \PlectaFactorialSceneCount{} development scenes. Within each row the three
@@ -109,7 +109,7 @@ the \PlectaGreedySceneCount{} scenes, and by
 \PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
 artefact of mask degradation.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
     \centering
     \caption{All four methods on the degraded masks, identical input masks and
     one scorer. $n=\PlectaGreedySceneCount{}$ scenes and
@@ -311,7 +311,7 @@ Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
 taking at three coverage levels the scene whose \Fone{} is closest to the
 median, so the rows are typical rather than selected.
 
-\begin{figure}[!htb]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
     \caption{Reconstruction at three coverage levels, each the scene closest to
@@ -366,7 +366,7 @@ consolidation (\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}); every other
 component, chain-extended frames and the round schedule included, mattered
 less. These are development values, not held-out effect estimates.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
     \centering
     \caption{One-at-a-time component ablations on the
     \PlectaDevelopmentSceneCount{}-scene development set. Negative $\Delta F_1$
@@ -416,7 +416,7 @@ automatic mask allows. Figures~\ref{fig:real-sem}
 and~\ref{fig:real-sem-axis} show both on one field, at width and as the
 centrelines the scores are computed on.
 
-\begin{figure}[!htb]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
     \caption{The two input axes of field B58\_110, drawn over the micrograph
@@ -434,7 +434,7 @@ centrelines the scores are computed on.
     \label{fig:real-sem-axis}
 \end{figure}
 
-\begin{figure}[!htb]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
     \caption{Reconstructed bundles on the two SEM fields held out of the
@@ -479,7 +479,7 @@ worth \PlectaContaminationDeltaLow{} to \PlectaContaminationDeltaHigh{} pairwise
 the mechanism. On B58\_100 every model trained on the field, the three agree,
 and there is no gap to see: that is the control.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
     \centering
     \caption{Reconstruction from the manual-derived and the nnU-Net axis in
     three CNT SEM fields, under the measures of
@@ -570,7 +570,7 @@ reference 2-D geometry, the depth decision is measured alone; given only the
 binary axis mask, the same stage runs on PLECTA's own reconstruction and
 carries its error. Table~\ref{tab:depth-order} reports both.
 
-\begin{table}[htbp]
+\begin{table}[tbp]
 \centering
 \caption{The depth stage on \PlectaDepthSceneCount{} depth-resolved synthetic
 scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
@@ -604,7 +604,7 @@ coverage doubles while the recovered layer count stays close to the reference:
 the ordering is locally right, so the number of layers is about right, while
 small order errors move instances across layer boundaries.
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
 \caption{The depth stage on one synthetic scene, from each of its two input
@@ -616,7 +616,7 @@ quantity; Table~\ref{tab:depth-order} carries the measurement.}
 \label{fig:resem-synth}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
 \caption{The same chain on a real CNT SEM field, from the manual annotation's
