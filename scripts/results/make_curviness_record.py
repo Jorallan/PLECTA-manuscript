@@ -27,6 +27,7 @@ from statistics import mean, stdev
 
 REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "exploration" / "curviness_regime" / "v2_per_scene.csv"
+SRC_SMOOTH = REPO / "exploration" / "curviness_regime" / "v3_smooth_per_scene.csv"
 OUT = REPO / "results" / "plecta_curviness_sensitivity.json"
 
 DEFAULT = 0.035
@@ -73,6 +74,27 @@ def main() -> int:
                 "spread_exceeds_noise": (max(means) - min(means)) > mean(sds),
             })
 
+    # The wavelength sweep, same pipeline and gates, different swept key.
+    smooth_rows = list(csv.DictReader(SRC_SMOOTH.open(encoding="utf-8")))
+    scells = defaultdict(list)
+    for r in smooth_rows:
+        scells[(r["cov"], r["variant"], float(r["level"]))].append(float(r["f1"]))
+    slevels = sorted({float(r["level"]) for r in smooth_rows})
+    smooth_series = []
+    for cov in sorted({r["cov"] for r in smooth_rows}):
+        for var in sorted({r["variant"] for r in smooth_rows}):
+            means = [mean(scells[(cov, var, lv)]) for lv in slevels]
+            sds = [stdev(scells[(cov, var, lv)]) for lv in slevels]
+            smooth_series.append({
+                "coverage": cov, "mask": var,
+                "per_level": [{"curve_smooth_px": lv, "f1_mean": m, "f1_sd": sd,
+                               "n": len(scells[(cov, var, lv)])}
+                              for lv, m, sd in zip(slevels, means, sds)],
+                "spread_of_level_means": max(means) - min(means),
+                "mean_within_level_sd": mean(sds),
+                "spread_exceeds_noise": (max(means) - min(means)) > mean(sds),
+            })
+
     payload = {
         "role": "sensitivity of frozen PLECTA to the generator's bending "
                 "stiffness (`curviness`), on synth_thick scenes at the "
@@ -92,6 +114,24 @@ def main() -> int:
         "swept_fraction_of_default": [min(levels) / DEFAULT, max(levels) / DEFAULT],
         "geometry": [dict(curviness=k, **v) for k, v in sorted(GEOMETRY.items())],
         "series": series,
+        "wavelength": {
+            "parameter": "curve_smooth_px",
+            "default_px": 20.0,
+            "levels_px": slevels,
+            "series": smooth_series,
+            "headline": {
+                "max_spread_of_level_means":
+                    max(s2["spread_of_level_means"] for s2 in smooth_series),
+                "min_within_level_sd":
+                    min(s2["mean_within_level_sd"] for s2 in smooth_series),
+                "n_series_where_spread_exceeds_noise":
+                    sum(s2["spread_exceeds_noise"] for s2 in smooth_series),
+                "n_series": len(smooth_series),
+            },
+            "caveat": "the one series whose spread exceeds its noise is "
+                      "non-monotonic with its minimum at the default, which "
+                      "has no mechanism and is read as noise",
+        },
         "headline": {
             "max_spread_of_level_means": max(s["spread_of_level_means"] for s in series),
             "min_within_level_sd": min(s["mean_within_level_sd"] for s in series),

@@ -66,10 +66,17 @@ in a 512\,px frame, changes nothing that can be distinguished from noise: over
 conditions, \PlectaCurvinessSceneCount{} scenes each, the largest spread of
 level means is \PlectaCurvinessMaxSpread{} against a smallest scene-to-scene
 standard deviation of \PlectaCurvinessMinSceneSD{}. The headline numbers do not
-depend on this parameter across that band. This is a robustness statement and
-not a scope bound: it locates no breaking point, and the sweep stays well inside
-the stiff regime the paper claims, reaching a 95th-percentile local bend of only
-\PlectaCurvinessBendHigh{}$^\circ$ over 20\,px.
+depend on this parameter across that band. The wavelength over which a bend is
+spread was swept separately, from \PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px
+about a default of \PlectaSmoothDefault{}, with the same result in
+\PlectaSmoothFlatSeries{} of \PlectaSmoothSeriesCount{} series; the fourth
+exceeds its own noise only marginally
+(\PlectaSmoothMaxSpread{} against \PlectaSmoothMinSceneSD{}) and is
+non-monotonic with its minimum at the default, so it is read as noise. This is
+a robustness statement and not a scope bound: it locates no breaking point, and
+the sweep stays well inside the stiff regime the paper claims, reaching a
+95th-percentile local bend of only \PlectaCurvinessBendHigh{}$^\circ$ over
+20\,px.
 
 The real SEM study is deliberately a case study with
 \PlectaRealFieldCount{} fields, not a population validation. Manual-derived
