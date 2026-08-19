@@ -608,19 +608,18 @@ small order errors move instances across layer boundaries.
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
 \caption{The depth stage on one synthetic scene, from each of its two input
-conditions. Left to right: the input as the method receives it, the film it
-reconstructs drawn as shaded solid tubes, that reconstruction pushed back
-through a forward SEM model, and the image the scene was rendered from. The
-re-rendered column is a consistency check on depths and radii, not a scored
-quantity; Table~\ref{tab:depth-order} carries the measurement.}
+conditions. The image the scene was rendered from, that scene re-rendered from
+the reconstruction through a forward SEM model, and the film the reconstruction
+implies. The re-rendered panel is a consistency check on depths and radii, not
+a scored quantity; Table~\ref{tab:depth-order} carries the measurement.}
 \label{fig:resem-synth}
 \end{figure}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same chain on a real CNT SEM field, from the manual annotation's
-axis. \textbf{Nothing here is scored.} No depth ground truth exists for real
+\caption{The same comparison on a real CNT SEM field, reconstructed from the
+manual annotation's axis. \textbf{Nothing here is scored.} No depth ground truth exists for real
 SEM -- the annotation records which pixels belong to which filament, not which
 filament passes in front -- so this shows the stage runs end to end on real
 data and re-renders to something recognisable, not that the depths are right.

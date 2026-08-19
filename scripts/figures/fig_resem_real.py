@@ -111,21 +111,16 @@ def main():
     z_lo, span = min(zs), max(1e-6, max(zs) - min(zs))
 
     plecta_style()
-    fig = plt.figure(figsize=(FIG_W, 0.30 * FIG_W))
-    gs = fig.add_gridspec(1, 4, wspace=0.06)
+    fig = plt.figure(figsize=(FIG_W, 0.38 * FIG_W))
+    gs = fig.add_gridspec(1, 3, wspace=0.06)
 
+    # The micrograph and its re-render sit side by side, because that pair is
+    # the whole claim; the film they imply follows.
     ax = fig.add_subplot(gs[0, 0]); bare(ax)
-    ax.imshow(mask[box], cmap="gray", vmin=0, vmax=1, interpolation="nearest")
-    ax.set_title("manual axis", fontsize=PT_TITLE, pad=3)
+    ax.imshow(sem[box], cmap="gray", interpolation="nearest")
+    ax.set_title("micrograph", fontsize=PT_TITLE, pad=3)
 
-    ax3 = fig.add_subplot(gs[0, 1], projection="3d")
-    draw_tubes_shaded(ax3, tubes, z_lo, span,
-                      extent=max(sem.shape), zoom=1.55,
-                      elev=20, azim=-62, colour="grey",
-                      z_stretch=span / max(sem.shape))
-    ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
-
-    ax = fig.add_subplot(gs[0, 2]); bare(ax)
+    ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered[box], cmap="gray", interpolation="nearest")
     ax.set_title("re-rendered", fontsize=PT_TITLE, pad=3)
     if residual:
@@ -134,9 +129,12 @@ def main():
             ax.set_xlabel(f"{key.upper()} {residual[key]:.3f}",
                           fontsize=PT_ANNOT)
 
-    ax = fig.add_subplot(gs[0, 3]); bare(ax)
-    ax.imshow(sem[box], cmap="gray", interpolation="nearest")
-    ax.set_title("micrograph", fontsize=PT_TITLE, pad=3)
+    ax3 = fig.add_subplot(gs[0, 2], projection="3d")
+    draw_tubes_shaded(ax3, tubes, z_lo, span,
+                      extent=max(sem.shape), zoom=2.05,
+                      elev=20, azim=-62, colour="grey",
+                      z_stretch=span / max(sem.shape))
+    ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
 
     save_fig(fig, "fig_resem_real", bbox_inches="tight")
     print("wrote fig_resem_real")

@@ -91,52 +91,37 @@ def main():
                            float) / 255.0
 
     plecta_style()
-    fig = plt.figure(figsize=(FIG_W, 0.62 * FIG_W))
-    gs = fig.add_gridspec(2, 4, wspace=0.06, hspace=0.12)
+    fig = plt.figure(figsize=(FIG_W, 0.72 * FIG_W))
+    gs = fig.add_gridspec(2, 3, wspace=0.06, hspace=0.10)
 
     for r, (input_name, input_label) in enumerate(ROWS):
         result = Engine().run(Settings(
             scene_path=os.path.join(scene, input_name),
             image_path=os.path.join(scene, "sem.png")))
 
-        if input_name.endswith(".npz"):
-            # Draw the reference instances as their own centrelines, so the
-            # panel shows what was handed in rather than a silhouette.
-            shown = np.zeros_like(reference)
-            for inst in result["instances"]:
-                xy = np.asarray(inst["xy"], float).round().astype(int)
-                ok = ((xy[:, 0] >= 0) & (xy[:, 0] < shown.shape[1])
-                      & (xy[:, 1] >= 0) & (xy[:, 1] < shown.shape[0]))
-                shown[xy[ok, 1], xy[ok, 0]] = 1.0
-        else:
-            shown = np.asarray(Image.open(os.path.join(scene, input_name))
-                               .convert("L"), float) / 255.0
-
         tubes = _tubes(result["instances"])
         zs = [t[2] for t in tubes] or [0.0]
         z_lo, span = min(zs), max(1e-6, max(zs) - min(zs))
+        rendered = np.asarray(render_sem.render(result), float)
 
+        # Reference first, its re-render beside it: the pair a reader compares.
         ax = fig.add_subplot(gs[r, 0]); bare(ax)
-        ax.imshow(shown, cmap="gray", vmin=0, vmax=1, interpolation="nearest")
+        ax.imshow(reference, cmap="gray", interpolation="nearest")
         ax.set_ylabel(input_label, fontsize=PT_ANNOT)
 
-        ax3 = fig.add_subplot(gs[r, 1], projection="3d")
+        ax = fig.add_subplot(gs[r, 1]); bare(ax)
+        ax.imshow(rendered, cmap="gray", interpolation="nearest")
+
+        ax3 = fig.add_subplot(gs[r, 2], projection="3d")
         draw_tubes_shaded(ax3, tubes, z_lo, span,
-                          extent=reference.shape[0], zoom=1.55,
+                          extent=reference.shape[0], zoom=2.05,
                           elev=20, azim=-62, colour="grey",
                           z_stretch=span / reference.shape[0])
 
-        rendered = np.asarray(render_sem.render(result), float)
-        ax = fig.add_subplot(gs[r, 2]); bare(ax)
-        ax.imshow(rendered, cmap="gray", interpolation="nearest")
-
-        ax = fig.add_subplot(gs[r, 3]); bare(ax)
-        ax.imshow(reference, cmap="gray", interpolation="nearest")
-
         if r == 0:
-            for c, title in enumerate(("input", "depth reconstruction",
-                                       "re-rendered", "reference image")):
-                fig.axes[-4 + c].set_title(title, fontsize=PT_TITLE, pad=3)
+            for c, title in enumerate(("reference image", "re-rendered",
+                                       "depth reconstruction")):
+                fig.axes[-3 + c].set_title(title, fontsize=PT_TITLE, pad=3)
 
     save_fig(fig, "fig_resem_synth", bbox_inches="tight")
     print("wrote fig_resem_synth")

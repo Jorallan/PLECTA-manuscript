@@ -55,7 +55,7 @@ from _style import (BLUE, BLUE_TINT, DARK, GRAY, GREEN, GREEN_TINT,
 
 #: Inches, and the axes are drawn in inches too, so a distance means the same
 #: thing horizontally and vertically and nothing is silently stretched.
-FIG_H = 2.35
+FIG_H = 2.86
 
 #: One padding, used by every box. Tight, because the previous version's
 #: problem was that its boxes were mostly padding.
@@ -91,23 +91,28 @@ def fitted_box(ax, xc, yc, text, edge, face="white", fontsize=PT_ANNOT,
                pad_x=PAD_X, pad_y=PAD_Y, min_w=0.0, zorder=3, tag=None):
     """A box sized to its own label, returning its half-width in inches.
 
-    ``tag`` is set inside the box at its top left, so the step number travels
-    with the step instead of floating above it into whatever is there.
+    ``tag`` is drawn as a filled badge on the box's top-left corner. Setting
+    it inside the box instead forced the box taller to make room and left the
+    number sitting in its own patch of empty white, which read as a defect
+    rather than as a step number.
     """
     w, h = measure(ax, text, fontsize, weight)
     w = max(w + 2 * pad_x, min_w)
-    h = h + 2 * pad_y + (0.085 if tag else 0.0)
+    h = h + 2 * pad_y
     ax.add_patch(FancyBboxPatch(
         (xc - w / 2, yc - h / 2), w, h,
         boxstyle="round,pad=0.0,rounding_size=0.045",
         linewidth=lw, linestyle=ls, edgecolor=edge, facecolor=face,
         zorder=zorder))
-    ax.text(xc, yc - (0.042 if tag else 0.0), text, ha="center", va="center",
+    ax.text(xc, yc, text, ha="center", va="center",
             fontsize=fontsize, fontweight=weight, color=fontcolor or DARK,
             zorder=zorder + 1, linespacing=1.28)
     if tag:
-        ax.text(xc - w / 2 + 0.055, yc + h / 2 - 0.055, tag, ha="left",
-                va="top", fontsize=PT_MIN, color=edge, zorder=zorder + 1)
+        bx, by = xc - w / 2, yc + h / 2
+        ax.add_patch(Circle((bx, by), 0.082, facecolor=edge, edgecolor="white",
+                            linewidth=0.9, zorder=zorder + 2))
+        ax.text(bx, by, tag, ha="center", va="center", fontsize=PT_MIN,
+                color="white", zorder=zorder + 3)
     return w / 2, h / 2
 
 
@@ -147,7 +152,7 @@ def main() -> int:
     #    Where the mask comes from is a Results question (Section 3.7), not a
     #    step of the method, and drawing a whole upstream pipeline here
     #    overstated its standing in a figure about what PLECTA does.
-    x_proc, y_up = 0.86, 2.18
+    x_proc, y_up = 0.86, 2.74
     _half_in, half_in_h = fitted_box(
         ax, x_proc, y_up, "Binary axis mask", DARK, lw=1.1)
     ax.text(x_proc + _half_in + 0.18, y_up,
@@ -155,16 +160,16 @@ def main() -> int:
             "(Section 3.7); the method reads nothing else",
             ha="left", va="center", fontsize=PT_MIN, color=GRAY,
             style="italic", zorder=4, linespacing=1.30)
-    y_or = 1.96
+    y_or = 2.52
     ax.plot([x_proc, x_proc], [y_up - half_in_h - 0.02, y_or], color=DARK,
             lw=1.1, zorder=2)
 
     # ── B: the contribution ────────────────────────────────────────────────
-    band(ax, 0.06, 6.18, 0.06, 1.94, GREEN_TINT)
-    ax.text(0.20, 1.83, "PLECTA", ha="left", va="center",
+    band(ax, 0.06, 6.18, 1.02, 2.50, GREEN_TINT)
+    ax.text(0.20, 2.39, "PLECTA", ha="left", va="center",
             fontsize=PT_TITLE, fontweight="bold", color=GREEN, zorder=1)
 
-    ev_l, ev_r, ev_b, ev_t = 0.20, 6.04, 0.56, 1.70
+    ev_l, ev_r, ev_b, ev_t = 0.20, 6.04, 1.12, 2.26
     ax.add_patch(FancyBboxPatch((ev_l, ev_b), ev_r - ev_l, ev_t - ev_b,
                                 boxstyle="round,pad=0.0,rounding_size=0.06",
                                 linewidth=1.0, linestyle=(0, (4, 2.6)),
@@ -174,7 +179,7 @@ def main() -> int:
             bbox=dict(facecolor=GREEN_TINT, edgecolor="none", pad=1.4))
 
     # ── the five steps, each chip as wide as its own words ─────────────────
-    y_chip = 1.36
+    y_chip = 1.92
     widths = [measure(ax, name, PT_ANNOT)[0] + 2 * PAD_X
               for _tag, name, _hi in STEPS]
     gap = (ev_r - ev_l - 0.30 - sum(widths)) / (len(STEPS) - 1)
@@ -210,7 +215,7 @@ def main() -> int:
             bbox=dict(facecolor=GREEN_TINT, edgecolor="none", pad=1.2))
 
     # ── the output, on its own row under the loop ──────────────────────────
-    x_out, y_out = 3.12, 0.76
+    x_out, y_out = 3.12, 1.32
     half_out, half_out_h = fitted_box(
         ax, x_out, y_out,
         "Overlap-aware instance layers: a crossing pixel has two owners",
@@ -221,20 +226,30 @@ def main() -> int:
     harrow(ax, x5, y_out, x_out + half_out + 0.03, y_out, colour=DARK, lw=1.1,
            mscale=8)
 
-    # ── the optional stage, outside the evaluated boundary ─────────────────
-    y_dn = 0.28
-    x_dn = 2.30
-    _half_dn, half_dn_h = fitted_box(
-        ax, x_dn, y_dn,
-        "Optional: depth from the image — over/under per crossing,\n"
-        "one global order, layers, metric $z$",
-        ORANGE, face=ORANGE_TINT, lw=1.0)
-    harrow(ax, x_dn, y_out - half_out_h - 0.02, x_dn, y_dn + half_dn_h + 0.02,
+    # ── the optional depth stage, drawn as its own short workflow ─────────
+    #    A single box saying "depth" told a reader nothing about how a depth is
+    #    arrived at, or that the greyscale is what arrives at it.
+    y_dn = 0.70
+    band(ax, 0.06, 6.18, 0.30, 0.96, ORANGE_TINT)
+    ax.text(0.20, 0.88, "Optional: depth", ha="left", va="center",
+            fontsize=PT_MIN, color=ORANGE, zorder=4)
+    dn_centres, dn_end = chain(
+        ax, 0.96, y_dn,
+        ["Crossings in\nprojection",
+         "Over/under from the\nimage: brightness,\nsharpness",
+         "One global order,\ncycles removed",
+         "Layers, then metric $z$\nwith no interpenetration"],
+        ORANGE, "white", gap=0.13, fontsize=PT_MIN)
+    harrow(ax, x_out - half_out - 0.03, y_out, 0.70, y_out, colour=ORANGE,
+           lw=1.0, mscale=8)
+    ax.plot([0.70, 0.70], [y_out, y_dn], color=ORANGE, lw=1.0, zorder=2)
+    harrow(ax, 0.70, y_dn, dn_centres[0][0] - dn_centres[0][1] - 0.03, y_dn,
            colour=ORANGE, lw=1.0, mscale=8)
-    ax.text(x_dn + _half_dn + 0.16, y_dn,
-            "adds a third dimension —\ndoes not change the identities",
-            ha="left", va="center", fontsize=PT_MIN, color=ORANGE,
-            style="italic", zorder=4, linespacing=1.30)
+    ax.text(dn_centres[1][0], y_dn - 0.28,
+            "with no image every crossing abstains, and the order falls back "
+            "to a tie-break",
+            ha="center", va="center", fontsize=PT_MIN, color=GRAY,
+            style="italic", zorder=4)
 
     save_fig(fig, "fig_pipeline_scope", bbox_inches=None)
     plt.close(fig)
