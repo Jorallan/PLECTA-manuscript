@@ -55,7 +55,7 @@ from _style import (BLUE, BLUE_TINT, DARK, GRAY, GREEN, GREEN_TINT,
 
 #: Inches, and the axes are drawn in inches too, so a distance means the same
 #: thing horizontally and vertically and nothing is silently stretched.
-FIG_H = 3.60
+FIG_H = 2.35
 
 #: One padding, used by every box. Tight, because the previous version's
 #: problem was that its boxes were mostly padding.
@@ -68,7 +68,7 @@ STEPS = (
     ("2", "Frame at\neach stub", False),
     ("3", "Exact matching\nat a junction", True),
     ("4", "Gated bridging\nof mask gaps", True),
-    ("5", "Paint\ninstance layers", False),
+    ("5", "Paint instance layers,\noptionally at width", False),
 )
 
 
@@ -143,47 +143,25 @@ def main() -> int:
     ax.set_aspect("equal")
     ax.axis("off")
 
-    # ── A: upstream, drawn subordinate and to one side ─────────────────────
-    band(ax, 1.72, 6.20, 2.72, 3.54, BLUE_TINT)
-    ax.text(1.86, 3.41, "A   Upstream: a binary mask from an SEM micrograph "
-                        "(evaluated elsewhere)",
-            ha="left", va="center", fontsize=PT_ANNOT, color=BLUE, zorder=1)
-
-    y_up = 3.10
-    centres, _end = chain(
-        ax, 1.86, y_up,
-        ["SEM micrograph", "CycleGAN", "nnU-Net"],
-        BLUE, BLUE_TINT, gap=0.17)
-    ax.text(1.86, 2.83, "trained on SEM-like renders of procedural masks",
+    # ── the input: one binary axis mask, however it was produced ──────────
+    #    Where the mask comes from is a Results question (Section 3.7), not a
+    #    step of the method, and drawing a whole upstream pipeline here
+    #    overstated its standing in a figure about what PLECTA does.
+    x_proc, y_up = 0.86, 2.18
+    _half_in, half_in_h = fitted_box(
+        ax, x_proc, y_up, "Binary axis mask", DARK, lw=1.1)
+    ax.text(x_proc + _half_in + 0.18, y_up,
+            "procedural, or segmented from a micrograph\n"
+            "(Section 3.7); the method reads nothing else",
             ha="left", va="center", fontsize=PT_MIN, color=GRAY,
-            style="italic", zorder=1)
-
-    # ── the two mask sources, each where it is produced ────────────────────
-    x_proc = 0.86
-    fitted_box(ax, x_proc, y_up, "Procedural\naxis mask", GRAY,
-               ls=(0, (3.5, 2)), lw=1.0)
-    x_sem = centres[-1][0]
-    y_mask = 2.44
-    _half_sem, half_h = fitted_box(ax, x_sem, y_mask, "SEM-derived axis mask",
-                                   DARK, lw=1.1)
-    harrow(ax, x_sem, y_up - 0.20, x_sem, y_mask + half_h + 0.02, colour=DARK,
-           lw=1.1, mscale=8)
-
-    # ── either mask is the input, and the choice is drawn as one node ──────
-    y_or = 2.14
-    ax.plot([x_proc, x_proc], [y_up - 0.20, y_or], color=GRAY, lw=1.0,
-            zorder=2)
-    ax.plot([x_sem, x_sem], [y_mask - half_h - 0.02, y_or], color=DARK, lw=1.0,
-            zorder=2)
-    ax.plot([x_proc, x_sem], [y_or, y_or], color=DARK, lw=1.0, zorder=2)
-    ax.add_patch(Circle((x_proc, y_or), 0.105, facecolor="white",
-                        edgecolor=DARK, linewidth=1.0, zorder=5))
-    ax.text(x_proc, y_or, "or", ha="center", va="center", fontsize=PT_MIN,
-            color=DARK, zorder=6)
+            style="italic", zorder=4, linespacing=1.30)
+    y_or = 1.96
+    ax.plot([x_proc, x_proc], [y_up - half_in_h - 0.02, y_or], color=DARK,
+            lw=1.1, zorder=2)
 
     # ── B: the contribution ────────────────────────────────────────────────
     band(ax, 0.06, 6.18, 0.06, 1.94, GREEN_TINT)
-    ax.text(0.20, 1.83, "B   PLECTA", ha="left", va="center",
+    ax.text(0.20, 1.83, "PLECTA", ha="left", va="center",
             fontsize=PT_TITLE, fontweight="bold", color=GREEN, zorder=1)
 
     ev_l, ev_r, ev_b, ev_t = 0.20, 6.04, 0.56, 1.70
@@ -191,7 +169,7 @@ def main() -> int:
                                 boxstyle="round,pad=0.0,rounding_size=0.06",
                                 linewidth=1.0, linestyle=(0, (4, 2.6)),
                                 edgecolor=GREEN, facecolor="none", zorder=1))
-    ax.text(ev_r - 0.12, ev_b, "EVALUATED — either mask in, instances out",
+    ax.text(ev_r - 0.12, ev_b, "EVALUATED — mask in, instances out",
             ha="right", va="center", fontsize=PT_MIN, color=GREEN, zorder=6,
             bbox=dict(facecolor=GREEN_TINT, edgecolor="none", pad=1.4))
 
@@ -245,15 +223,16 @@ def main() -> int:
 
     # ── the optional stage, outside the evaluated boundary ─────────────────
     y_dn = 0.28
-    x_dn = 2.00
+    x_dn = 2.30
     _half_dn, half_dn_h = fitted_box(
         ax, x_dn, y_dn,
-        "Optional: width measured from the image, and ribbon rendering",
+        "Optional: depth from the image — over/under per crossing,\n"
+        "one global order, layers, metric $z$",
         ORANGE, face=ORANGE_TINT, lw=1.0)
     harrow(ax, x_dn, y_out - half_out_h - 0.02, x_dn, y_dn + half_dn_h + 0.02,
            colour=ORANGE, lw=1.0, mscale=8)
     ax.text(x_dn + _half_dn + 0.16, y_dn,
-            "default off — changes the\nrepresentation, not the identities",
+            "adds a third dimension —\ndoes not change the identities",
             ha="left", va="center", fontsize=PT_MIN, color=ORANGE,
             style="italic", zorder=4, linespacing=1.30)
 

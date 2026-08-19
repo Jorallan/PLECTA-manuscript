@@ -11,24 +11,20 @@ possibly belonging to several instances. The evaluated grouping stage uses only
 $M$; a grayscale SEM image is optional downstream input for width and brightness
 measurement and cannot revise the fixed grouping.
 
-Figure~\ref{fig:scope} places the method in the two-pipeline workflow of
-Section~\ref{sec:intro}: Pipeline~A produces the mask from a micrograph, and
-Pipeline~B, which this paper evaluates, is PLECTA. Its five geometric steps read
-mask geometry alone, and the two matching steps are re-made over eight rounds
-against frames re-fitted along the chains assembled so far.
+Figure~\ref{fig:scope} places the method. Its five geometric steps read mask
+geometry alone, and the two matching steps are re-made over eight rounds against
+frames re-fitted along the chains assembled so far. Where the mask itself comes
+from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
-    \caption{Where PLECTA sits. Pipeline~A is the upstream binary segmentation
-    of SEM micrographs, which carries its own evaluation; Pipeline~B is PLECTA,
-    and every result in this paper measures the dashed green box only. The mask
-    entering Pipeline~B came from Pipeline~A for the SEM fields and from the
-    procedural generator in every synthetic experiment. Steps~3 and~4 are the
-    only decisions the method makes and are drawn heavier for it; everything
-    else is bookkeeping. Colours: blue, a learned component; green, a PLECTA
-    geometric step; orange, a dependency on the grayscale image; dark, a data
-    artefact.}
+    \caption{Where PLECTA sits. The method reads one binary axis mask and
+    nothing else; every result in this paper measures the dashed green box.
+    Steps~3 and~4 are the only decisions it makes and are drawn heavier for it,
+    the rest is bookkeeping. The optional depth stage adds a third dimension
+    without revising any identity. Colours: green, a PLECTA geometric step;
+    orange, a dependency on the grayscale image; dark, a data object.}
     \label{fig:scope}
 \end{figure}
 
@@ -112,7 +108,8 @@ no blinding, so differences smaller than plausible annotation variation should
 not be read as real, and the annotations are manual reference annotations, not
 ground truth. A second reader has since annotated
 \PlectaInterReaderFieldCount{} of these fields independently, and
-Section~ef{sec:limitations} reports what that measurement shows: the two
+Section~
+ef{sec:limitations} reports what that measurement shows: the two
 readers do not implement one instance definition, so every real-data score in
 this paper is reported against a named reader and the two are never averaged.
 One assumption is also shared across the divide: the annotator's width
@@ -125,18 +122,11 @@ restating this.
 
 Two inputs were derived per field. The first is the skeleton of the manual
 instance annotation, an oracle-like condition that asks what the grouping can do
-when the axis evidence is curated. The second is the output of Pipeline~A, which
-asks what an automatic mask allows it to do. Pipeline~A adapts the open
-CycleGAN/U-Net particle-segmentation workflow of Rühle et al.\
-\citep{ruehle2021workflow}: the procedural generator of
-Section~\ref{sec:mm-synth} draws a binary mask, a CycleGAN translates it into an
-SEM-like image so that image and mask are paired without an annotator, and a
-2-D nnU-Net \citep{isensee2021nnunet} is trained on that paired corpus with the
-residual-encoder XL configuration and its heavy-augmentation trainer, all folds,
-best checkpoint. Its prediction is registered into the annotation grid and
-thresholded to give the axis mask PLECTA is handed. Pipeline~A is a separate
-contribution with its own evaluation and its full configuration
-\citep{allan2026cntsem}; what matters here is only that its output is a binary
+when the axis evidence is curated. The second is an automatic mask from the
+upstream CycleGAN/nnU-Net segmentation of Section~\ref{sec:res-qualitative}
+\citep{ruehle2021workflow,isensee2021nnunet,allan2026cntsem}, which asks what an
+automatic mask allows it to do. That segmentation is a separate contribution
+with its own evaluation; all that matters here is that its output is a binary
 mask produced without seeing any annotation.
 
 Which fields that model had seen is a property of the (model, field) pair and
