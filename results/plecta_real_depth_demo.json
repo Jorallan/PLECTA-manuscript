@@ -1,0 +1,77 @@
+{
+  "role": "runtime + plumbing demonstration on one real field; NOT a validated depth result (no real-SEM depth ground truth exists) -- report timing and counts, not accuracy",
+  "source_record": {
+    "scene": "C:/Repos/comparisons/real_sem_study/scenes_v2/b58_100/skel",
+    "mask_sha256": "26144a92167bd304af58e330607f8cbb4962966158b7b7a38b8a524ec3bc1dff",
+    "sem_sha256": "5cf372907bad640b30294a2694f9e14a40b78e12a5f81993c5ec8b3b8b567552",
+    "scene_meta": {
+      "scene": "b58_100",
+      "variant": "skel",
+      "shape": [
+        1024,
+        1536
+      ],
+      "n_instances": 307,
+      "excluded_ids": [
+        105,
+        106,
+        107,
+        164,
+        173,
+        180,
+        181,
+        182,
+        192,
+        258,
+        259,
+        260,
+        261,
+        262,
+        263,
+        346
+      ],
+      "source_annotation": "C:\\Repos\\datasets\\real\\manual annotation\\B58-B3-S2_100_Electron_TLD_Custom_1.66_um__manual\\B58-B3-S2_100_Electron_TLD_Custom_1.66_um__manual_multilabel.npz",
+      "mask": "per-instance skeletonize then OR (GT-derived, thin)",
+      "mask_stats": {
+        "coverage": 0.03243827819824219,
+        "components": 48,
+        "thickness_px": 2.0,
+        "foreground_px": 51021
+      },
+      "built_by": "scripts/build_scenes_v2.py",
+      "note": "parallel tree; scenes/ is the superseded build and is left untouched"
+    },
+    "note": "same b58_skel scene as plecta_real_masks.json / plecta_real_field_metrics.json (1. stubmatch, frozen)"
+  },
+  "shape": [
+    1024,
+    1536
+  ],
+  "n_foreground_px": 51021,
+  "timing_s": {
+    "predict_2d": 4.2045,
+    "depth_stage": 23.0683,
+    "total": 27.2728
+  },
+  "n_instances_2d": 282,
+  "n_arms": 1015,
+  "n_nodes": 360,
+  "n_instances_with_centreline": 282,
+  "depth": {
+    "n_crossings": 342,
+    "n_abstained": 23,
+    "n_relations_flipped": 54,
+    "n_precedence_cycles_raw": 4,
+    "n_layers": 8,
+    "metric_z_status": "slsqp_failed_compact_stack_used:Positive directional derivative for linesearch",
+    "z_range_px": [
+      0.0,
+      159.513
+    ],
+    "n_instances_with_diameter": 226,
+    "diameter_range_px": [
+      12.54,
+      33.68
+    ]
+  }
+}
