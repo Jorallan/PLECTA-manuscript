@@ -53,6 +53,24 @@ untested is transfer of the held-out \emph{level} to a third generator, not of
 the comparison. The ablation and rendering studies are development-only and
 remain secondary to the fixed held-out result.
 
+Within that family, one generator setting is worth singling out because the
+method's grouping core is an angle-continuation argument and a reader may
+reasonably suspect the result of resting on it. The generator draws each
+centreline as a correlated-curvature random walk whose bending stiffness is one
+parameter, set to \PlectaCurvinessDefault{} rad per step because CNT bundles are
+stiff. Sweeping it from \PlectaCurvinessSweepLow{}\,\% to
+\PlectaCurvinessSweepHigh{}\,\% of that value, which moves the median radius of
+curvature from \PlectaCurvinessRadiusHigh{} to \PlectaCurvinessRadiusLow{}\,px
+in a 512\,px frame, changes nothing that can be distinguished from noise: over
+\PlectaCurvinessLevelCount{} settings at two coverage targets and both mask
+conditions, \PlectaCurvinessSceneCount{} scenes each, the largest spread of
+level means is \PlectaCurvinessMaxSpread{} against a smallest scene-to-scene
+standard deviation of \PlectaCurvinessMinSceneSD{}. The headline numbers do not
+depend on this parameter across that band. This is a robustness statement and
+not a scope bound: it locates no breaking point, and the sweep stays well inside
+the stiff regime the paper claims, reaching a 95th-percentile local bend of only
+\PlectaCurvinessBendHigh{}$^\circ$ over 20\,px.
+
 The real SEM study is deliberately a case study with
 \PlectaRealFieldCount{} fields, not a population validation. Manual-derived
 masks are an oracle-like input condition: they test grouping when the axis

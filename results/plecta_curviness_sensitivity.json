@@ -1,0 +1,209 @@
+{
+  "role": "sensitivity of frozen PLECTA to the generator's bending stiffness (`curviness`), on synth_thick scenes at the manuscript's own coverage targets",
+  "discipline": "exploratory, 10 scenes per cell, plain means, no inference",
+  "not_paired": "coverage targeting changes the filament count per level, so a shared seed does not give the same scene; the levels are independent samples, not matched counterfactuals",
+  "gates": {
+    "generator": "regenerating testcmp10/cov20/synth_0000 from its stored seed reproduces mask_w1.png byte for byte",
+    "scorer": "frozen PLECTA over testcmp10/cov20 reproduces all ten stored per-scene F1 values at max|delta| = 0.0"
+  },
+  "default_curviness": 0.035,
+  "swept_fraction_of_default": [
+    0.5,
+    1.4999999999999998
+  ],
+  "geometry": [
+    {
+      "curviness": 0.0175,
+      "median_radius_px": 975,
+      "turn_per_100px_deg": 5.7,
+      "p95_local_bend_20px_deg": 3.0
+    },
+    {
+      "curviness": 0.02625,
+      "median_radius_px": 632,
+      "turn_per_100px_deg": 9.1,
+      "p95_local_bend_20px_deg": 4.6
+    },
+    {
+      "curviness": 0.035,
+      "median_radius_px": 496,
+      "turn_per_100px_deg": 11.4,
+      "p95_local_bend_20px_deg": 5.9
+    },
+    {
+      "curviness": 0.04375,
+      "median_radius_px": 383,
+      "turn_per_100px_deg": 15.0,
+      "p95_local_bend_20px_deg": 7.9
+    },
+    {
+      "curviness": 0.0525,
+      "median_radius_px": 308,
+      "turn_per_100px_deg": 16.9,
+      "p95_local_bend_20px_deg": 9.2
+    }
+  ],
+  "series": [
+    {
+      "coverage": "cov20",
+      "mask": "clean",
+      "per_level": [
+        {
+          "curviness": 0.0175,
+          "f1_mean": 0.9093170732901306,
+          "f1_sd": 0.05883671502500255,
+          "n": 10
+        },
+        {
+          "curviness": 0.02625,
+          "f1_mean": 0.9389809400393417,
+          "f1_sd": 0.06609843582041441,
+          "n": 10
+        },
+        {
+          "curviness": 0.035,
+          "f1_mean": 0.9092318882464647,
+          "f1_sd": 0.05059165845056327,
+          "n": 10
+        },
+        {
+          "curviness": 0.04375,
+          "f1_mean": 0.913463686880556,
+          "f1_sd": 0.05789451047405011,
+          "n": 10
+        },
+        {
+          "curviness": 0.0525,
+          "f1_mean": 0.9073114001085093,
+          "f1_sd": 0.0894972432975681,
+          "n": 10
+        }
+      ],
+      "spread_of_level_means": 0.031669539930832435,
+      "mean_within_level_sd": 0.0645837126135197,
+      "spread_exceeds_noise": false
+    },
+    {
+      "coverage": "cov20",
+      "mask": "degraded",
+      "per_level": [
+        {
+          "curviness": 0.0175,
+          "f1_mean": 0.9184943241046573,
+          "f1_sd": 0.06041675959800767,
+          "n": 10
+        },
+        {
+          "curviness": 0.02625,
+          "f1_mean": 0.9260427256644038,
+          "f1_sd": 0.05487493299286557,
+          "n": 10
+        },
+        {
+          "curviness": 0.035,
+          "f1_mean": 0.9029990598206454,
+          "f1_sd": 0.06539458981620894,
+          "n": 10
+        },
+        {
+          "curviness": 0.04375,
+          "f1_mean": 0.8784654620325979,
+          "f1_sd": 0.09739150585977706,
+          "n": 10
+        },
+        {
+          "curviness": 0.0525,
+          "f1_mean": 0.925586660889281,
+          "f1_sd": 0.04827932018973591,
+          "n": 10
+        }
+      ],
+      "spread_of_level_means": 0.04757726363180592,
+      "mean_within_level_sd": 0.06527142169131903,
+      "spread_exceeds_noise": false
+    },
+    {
+      "coverage": "cov40",
+      "mask": "clean",
+      "per_level": [
+        {
+          "curviness": 0.0175,
+          "f1_mean": 0.8663316292654203,
+          "f1_sd": 0.047777505594263234,
+          "n": 10
+        },
+        {
+          "curviness": 0.02625,
+          "f1_mean": 0.866111159138104,
+          "f1_sd": 0.0833399029203313,
+          "n": 10
+        },
+        {
+          "curviness": 0.035,
+          "f1_mean": 0.8497877268571989,
+          "f1_sd": 0.05733751561859573,
+          "n": 10
+        },
+        {
+          "curviness": 0.04375,
+          "f1_mean": 0.8585039419119767,
+          "f1_sd": 0.038643317079371416,
+          "n": 10
+        },
+        {
+          "curviness": 0.0525,
+          "f1_mean": 0.8668021032360351,
+          "f1_sd": 0.03514767650094062,
+          "n": 10
+        }
+      ],
+      "spread_of_level_means": 0.017014376378836182,
+      "mean_within_level_sd": 0.05244918354270046,
+      "spread_exceeds_noise": false
+    },
+    {
+      "coverage": "cov40",
+      "mask": "degraded",
+      "per_level": [
+        {
+          "curviness": 0.0175,
+          "f1_mean": 0.8460348617898337,
+          "f1_sd": 0.05736340861990376,
+          "n": 10
+        },
+        {
+          "curviness": 0.02625,
+          "f1_mean": 0.8643389782320202,
+          "f1_sd": 0.06727974950390611,
+          "n": 10
+        },
+        {
+          "curviness": 0.035,
+          "f1_mean": 0.8522758377518649,
+          "f1_sd": 0.048145193782822594,
+          "n": 10
+        },
+        {
+          "curviness": 0.04375,
+          "f1_mean": 0.8319570687743807,
+          "f1_sd": 0.04479735607247296,
+          "n": 10
+        },
+        {
+          "curviness": 0.0525,
+          "f1_mean": 0.8499351710653963,
+          "f1_sd": 0.03207580957881866,
+          "n": 10
+        }
+      ],
+      "spread_of_level_means": 0.032381909457639524,
+      "mean_within_level_sd": 0.04993230351158482,
+      "spread_exceeds_noise": false
+    }
+  ],
+  "headline": {
+    "max_spread_of_level_means": 0.04757726363180592,
+    "min_within_level_sd": 0.04993230351158482,
+    "any_series_where_spread_exceeds_noise": false
+  }
+}

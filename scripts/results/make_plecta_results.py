@@ -38,6 +38,7 @@ GRAFT_REGIME = RESULTS / "plecta_graft_regime.json"
 REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
 REAL_FIELDS = RESULTS / "plecta_real_fields.json"
 INTERANNOTATOR = RESULTS / "plecta_interannotator.json"
+CURVINESS = RESULTS / "plecta_curviness_sensitivity.json"
 METRIC_PANELS = RESULTS / "plecta_metric_panels.json"
 SENSITIVITY = RESULTS / "development_sensitivity.json"
 SCORER_SENSITIVITY = RESULTS / "plecta_scorer_sensitivity.json"
@@ -553,6 +554,37 @@ def interannotator_macros(payload: dict) -> list[str]:
     return lines
 
 
+def curviness_macros(payload: dict) -> list[str]:
+    """Bending-stiffness sensitivity, as an effect size beside its own noise.
+
+    The two numbers that matter are emitted together and are meant to be
+    quoted together: the largest spread of level means across the sweep, and
+    the smallest scene-to-scene standard deviation within any single level.
+    When the first is below the second there is no trend to report, and
+    printing the spread on its own would invite exactly the reading the sweep
+    was run to rule out.
+    """
+    head = payload["headline"]
+    low, high = payload["swept_fraction_of_default"]
+    geo = {g["curviness"]: g for g in payload["geometry"]}
+    lo_g, hi_g = geo[min(geo)], geo[max(geo)]
+    return [
+        macro("PlectaCurvinessDefault", "%.3f" % payload["default_curviness"]),
+        macro("PlectaCurvinessSweepLow", "%.0f" % (low * 100)),
+        macro("PlectaCurvinessSweepHigh", "%.0f" % (high * 100)),
+        macro("PlectaCurvinessRadiusLow", "%.0f" % hi_g["median_radius_px"]),
+        macro("PlectaCurvinessRadiusHigh", "%.0f" % lo_g["median_radius_px"]),
+        macro("PlectaCurvinessBendHigh",
+              "%.1f" % hi_g["p95_local_bend_20px_deg"]),
+        macro("PlectaCurvinessMaxSpread",
+              fmt(head["max_spread_of_level_means"])),
+        macro("PlectaCurvinessMinSceneSD", fmt(head["min_within_level_sd"])),
+        macro("PlectaCurvinessSceneCount",
+              str(payload["series"][0]["per_level"][0]["n"])),
+        macro("PlectaCurvinessLevelCount", str(len(payload["geometry"]))),
+    ]
+
+
 def real_fields_macros(payload: dict) -> list[str]:
     """The three annotated fields under the five reported measures.
 
@@ -954,7 +986,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 graft: dict, audit: dict, supplement: dict,
                 mask_quality: dict, graft_regime: dict,
                 real_field_metrics: dict, real_fields: dict,
-                interannotator: dict,
+                interannotator: dict, curviness: dict,
                 metric_panels: dict, sensitivity: dict,
                 scorer_sensitivity: dict,
                 crossing_chance: dict) -> str:
@@ -1091,6 +1123,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *graft_regime_macros(graft_regime),
             *real_fields_macros(real_fields),
             *interannotator_macros(interannotator),
+            *curviness_macros(curviness),
             *real_field_metrics_macros(
                 real_field_metrics,
                 real_fields["fields"][0]["axis_triple"]
@@ -1322,6 +1355,7 @@ def main() -> None:
     real_fields = json.loads(REAL_FIELDS.read_text(encoding="utf-8"))
     interannotator = json.loads(
         INTERANNOTATOR.read_text(encoding="utf-8"))
+    curviness = json.loads(CURVINESS.read_text(encoding="utf-8"))
     metric_panels = json.loads(METRIC_PANELS.read_text(encoding="utf-8"))
     sensitivity = json.loads(SENSITIVITY.read_text(encoding="utf-8"))
     scorer_sensitivity = json.loads(
@@ -1335,7 +1369,7 @@ def main() -> None:
             held, robustness, ablation, stage4, cc_baseline,
             width_validation, greedy, factorial, dnai, analysis, swept,
             graft, audit, supplement, mask_quality, graft_regime,
-            real_field_metrics, real_fields, interannotator,
+            real_field_metrics, real_fields, interannotator, curviness,
             metric_panels, sensitivity,
             scorer_sensitivity, crossing_chance,
         ),
