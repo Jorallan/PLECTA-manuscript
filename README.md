@@ -41,7 +41,7 @@ questions and points still to add are marked `[To do: ...]` or with a `Note:`
 paragraph. Names and author order are preserved as Oday Allan, Stefan Luding
 and Igor Ostanin; Igor Ostanin is the corresponding author.
 
-Machine-generated numerical macros live in `results/filaseg_results.tex`.
+Machine-generated numerical macros live in `results/plecta_results.tex`.
 Do not edit that file manually.
 
 ## Build

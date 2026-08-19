@@ -249,8 +249,8 @@ def main(argv=None) -> int:
             entry["comparator"] = pack_labels(comp_layers)
             entry["n_comparator"] = len(comp_layers)
         if args.render:
-            from image_characterization.pipeline import measure_scene
-            from image_characterization.refine import RefineParams, refine_scene
+            from plecta.image.pipeline import measure_scene
+            from plecta.image.refine import RefineParams, refine_scene
             res = measure_scene(scene_dir, mask_name=args.mask_name,
                                 sem_name=args.sem_name, params=params)
             ribbons, _poly, log = refine_scene(res, RefineParams())

@@ -55,6 +55,10 @@ implicit dataclass defaults in the working implementation. Missing parameters
 are not silently accepted. The direct-mask and multi-scene CLI paths both refuse
 the archived `synthetic_locked_v1` set.
 
+[`PARAMETERS.md`](PARAMETERS.md) explains every frozen value, what it affects,
+and which quantities should be rescaled or preferably retained when transferring
+PLECTA to another imaging system.
+
 The matching behavior is otherwise unchanged from the evaluated core. In
 particular, the frozen annealing schedule has only one fully strict round, so the
 last round is returned. That behavior is retained for result parity and is
