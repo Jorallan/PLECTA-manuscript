@@ -1,1 +1,0 @@
-case_type,scene_id,density,variant,status,returncode,config_sha256,run_dir,stdout_path,rejection_log,error,common_f1,common_precision,common_recall,rejection_accepted,rejection_rejected,tip_fit_quality_rejections
