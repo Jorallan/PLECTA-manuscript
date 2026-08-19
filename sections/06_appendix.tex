@@ -234,3 +234,41 @@ errors are divisions rather than merges (variation-of-information split
 \PlectaGraFTVISplit{} against merge \PlectaGraFTVIMerge{}), which follows from a
 greedy longest-first path cover that cannot revise an early commitment once the
 scene collapses into one connected graph, as it does above 30\,\% coverage.
+
+\section{Depth measures}
+\label{sec:app-depth-measures}
+
+The measures of Appendix~\ref{sec:app-measures} score which centreline
+fragments belong to one instance. None of them can see depth: two
+reconstructions that agree on every instance but disagree about which filament
+passes in front at every crossing are indistinguishable to all of them. The
+2.5-D stage is therefore scored by its own family, defined here.
+
+\paragraph{Crossing order accuracy.} Each reference crossing names the instance
+physically in front. The reconstruction either names one or abstains, so three
+quantities are reported and none is quoted alone. \emph{Order accuracy, decided
+only} is the fraction of committed decisions that are correct; taken by itself
+it is not evidence, because a method that abstained on every difficult crossing
+would score $1.000$. \emph{Order accuracy, all crossings} counts an abstention
+as an error and is the headline. The \emph{abstention rate} is reported beside
+both. Chance is exactly $\PlectaDepthChance{}$: the decision is binary and
+symmetric, so only the margin above it carries information. A predicted
+crossing is credited only when it involves the same instance pair as a
+reference crossing and lies within the placement tolerance of it, so a
+reconstruction cannot gain by inventing crossings.
+
+\paragraph{Depth order over instance pairs.} Crossing accuracy is local. The
+global counterpart asks, for two instances, whether the reconstruction places
+the deeper one deeper, and is reported twice. Over \emph{crossing pairs} it
+measures the stack where evidence exists. Over \emph{all pairs} it includes
+instances that never cross and are therefore constrained by no evidence at all,
+whose relative depth is fixed by the solver's tie-break rather than by the
+image; that column measures the tie-break, not the method, and the two are
+never pooled. Both are invariant to any monotone rescaling of depth, so they
+describe the arrangement rather than its units.
+
+\paragraph{Layer structure.} Layers are an ordinal quotient of depth, and a
+reconstruction can order every pair correctly yet cut the film into a different
+number of layers. Layer agreement -- the fraction of instances placed in the
+reference layer -- is therefore reported separately and never merged into the
+order measures.

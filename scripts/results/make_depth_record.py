@@ -1,0 +1,119 @@
+"""Collect the 2.5-D depth-decision study into one machine-readable record.
+
+Source: ``exploration/depth_order_eval/depth_scores.json``, written by that
+study's ``score_depth.py``.
+
+Two input conditions over the same 12 scenes, and the pairing is the point:
+
+* ``oracle`` takes the ground-truth 2-D centrelines, so the 2-D grouping never
+  runs and the depth decision is measured on its own;
+* ``clean`` runs PLECTA's own 2-D reconstruction from the non-degraded binary
+  axis mask, so it carries upstream error.
+
+Both then place z from the same image evidence, brightness and edge sharpness.
+Reporting either alone would misattribute: ``coa_all`` falls sharply between
+them, but ``coa_decided`` does not, and the gap is the crossing match rate.
+The record therefore always carries all three together.
+
+Exploratory: 6 scenes per coverage, plain means, no interval and none claimed.
+"""
+from __future__ import annotations
+
+import json
+from collections import defaultdict
+from pathlib import Path
+from statistics import mean
+
+REPO = Path(__file__).resolve().parents[2]
+SRC = REPO / "exploration" / "depth_order_eval" / "depth_scores.json"
+OUT = REPO / "results" / "plecta_depth_order.json"
+
+# Reported per cell. Chance for every accuracy here is 0.5 -- the over/under
+# decision is binary and symmetric -- so the margin over 0.5 is the evidence.
+FIELDS = ("coa_all", "coa_decided", "abstain_rate", "match_rate",
+          "coa_shallow", "coa_steep", "coa_near_sep", "coa_far_sep",
+          "order_acc_crossing_pairs", "order_acc_all_pairs", "kendall_tau_z",
+          "layer_exact_agreement", "n_layers_pred", "n_layers_gt",
+          "n_gt_crossings")
+
+
+def main() -> int:
+    rows = json.loads(SRC.read_text(encoding="utf-8"))
+    cells = defaultdict(list)
+    for r in rows:
+        cells[(r["condition"], r["coverage"])].append(r)
+
+    conditions = sorted({r["condition"] for r in rows})
+    coverages = sorted({r["coverage"] for r in rows})
+
+    def agg(sub, key):
+        vals = [r[key] for r in sub if r.get(key) is not None]
+        vals = [v for v in vals if v == v]          # drop NaN
+        return mean(vals) if vals else None
+
+    grid = []
+    for cond in conditions:
+        for cov in coverages:
+            sub = cells[(cond, cov)]
+            grid.append({
+                "condition": cond,
+                "coverage": cov,
+                "n_scenes": len(sub),
+                **{k: agg(sub, k) for k in FIELDS},
+            })
+
+    decided = [c["coa_decided"] for c in grid]
+    allc = [c["coa_all"] for c in grid]
+    match = [c["match_rate"] for c in grid]
+
+    payload = {
+        "role": "PLECTA's depth stage: is the instance chosen as `over` at "
+                "each projected crossing the one physically in front?",
+        "discipline": "exploratory, 6 scenes per coverage, plain means, "
+                      "no inference",
+        "scenes": "eval/generators/synth_depth.py --domain semlike, "
+                  "seeds 20530101+, 512 px",
+        "input_mask": "mask_clean.png, the non-degraded axis; measured median "
+                      "thickness 2.00 px. All 2.5-D results use this one mask "
+                      "so conditions differ only in what is being tested",
+        "configuration": "image evidence on, grazing overlaps not cleared, "
+                         "undecided pairs stacked compactly -- the shipped "
+                         "defaults",
+        "chance_level": 0.5,
+        "conditions": {
+            "oracle": "ground-truth 2-D centrelines; the 2-D grouping does not "
+                      "run, so this isolates the depth decision",
+            "clean": "PLECTA's own 2-D reconstruction from the binary axis "
+                     "mask; carries upstream error",
+        },
+        "read_together": "coa_decided is correct/decided and a method that "
+                         "abstained on everything hard would score 1.000, so "
+                         "it is never quoted without coa_all and abstain_rate",
+        "headline": {
+            "coa_decided_min": min(decided),
+            "coa_decided_max": max(decided),
+            "coa_all_min": min(allc),
+            "coa_all_max": max(allc),
+            "match_rate_min": min(match),
+            "match_rate_max": max(match),
+            # The decomposition: the decision holds while recovery does not.
+            "coa_decided_span": max(decided) - min(decided),
+            "coa_all_span": max(allc) - min(allc),
+        },
+        "grid": grid,
+        "per_scene": rows,
+    }
+    OUT.write_text(json.dumps(payload, indent=2, allow_nan=False) + "\n",
+                   encoding="utf-8")
+    print(f"wrote {OUT}")
+    h = payload["headline"]
+    print(f"  coa_decided {h['coa_decided_min']:.3f}-{h['coa_decided_max']:.3f}"
+          f"  (span {h['coa_decided_span']:.3f})")
+    print(f"  coa_all     {h['coa_all_min']:.3f}-{h['coa_all_max']:.3f}"
+          f"  (span {h['coa_all_span']:.3f})")
+    print(f"  match_rate  {h['match_rate_min']:.3f}-{h['match_rate_max']:.3f}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

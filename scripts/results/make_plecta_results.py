@@ -39,6 +39,7 @@ REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
 REAL_FIELDS = RESULTS / "plecta_real_fields.json"
 INTERANNOTATOR = RESULTS / "plecta_interannotator.json"
 CURVINESS = RESULTS / "plecta_curviness_sensitivity.json"
+DEPTH_ORDER = RESULTS / "plecta_depth_order.json"
 METRIC_PANELS = RESULTS / "plecta_metric_panels.json"
 SENSITIVITY = RESULTS / "development_sensitivity.json"
 SCORER_SENSITIVITY = RESULTS / "plecta_scorer_sensitivity.json"
@@ -554,6 +555,77 @@ def interannotator_macros(payload: dict) -> list[str]:
     return lines
 
 
+def depth_order_macros(payload: dict) -> list[str]:
+    """The depth stage, emitted so the decomposition cannot be split up.
+
+    The two spans are the result: the over/under decision barely moves between
+    the oracle and the reconstructed input, while the all-crossings score moves
+    a great deal, and it moves with the crossing match rate. Quoting the second
+    without the first would read as a depth failure when it is a 2-D recovery
+    failure, so both spans and the match rate are emitted together.
+    """
+    h = payload["headline"]
+    cell = {(g["condition"], g["coverage"]): g for g in payload["grid"]}
+    lines = [
+        macro("PlectaDepthChance", "%.1f" % payload["chance_level"]),
+        macro("PlectaDepthSceneCount",
+              str(sum(g["n_scenes"] for g in payload["grid"])
+                  // len({g["condition"] for g in payload["grid"]}))),
+        macro("PlectaDepthDecidedLow", fmt(h["coa_decided_min"])),
+        macro("PlectaDepthDecidedHigh", fmt(h["coa_decided_max"])),
+        macro("PlectaDepthDecidedSpan", fmt(h["coa_decided_span"])),
+        macro("PlectaDepthAllLow", fmt(h["coa_all_min"])),
+        macro("PlectaDepthAllHigh", fmt(h["coa_all_max"])),
+        macro("PlectaDepthAllSpan", fmt(h["coa_all_span"])),
+        macro("PlectaDepthMatchLow", fmt(h["match_rate_min"])),
+        macro("PlectaDepthMatchHigh", fmt(h["match_rate_max"])),
+    ]
+    for (cond, cov), g in cell.items():
+        stem = f"{cond.capitalize()}{cov.replace('cov', 'Cov')}"
+        lines.extend([
+            macro(f"PlectaDepth{stem}All", fmt(g["coa_all"])),
+            macro(f"PlectaDepth{stem}Decided", fmt(g["coa_decided"])),
+            macro(f"PlectaDepth{stem}Match", fmt(g["match_rate"])),
+            macro(f"PlectaDepth{stem}CrossOrder",
+                  fmt(g["order_acc_crossing_pairs"])),
+            macro(f"PlectaDepth{stem}AllOrder", fmt(g["order_acc_all_pairs"])),
+            macro(f"PlectaDepth{stem}Layers", fmt(g["layer_exact_agreement"])),
+        ])
+    return lines
+
+
+def depth_order_table(payload: dict) -> str:
+    """The 2x2 grid, generated so no number is retyped into the source."""
+    cell = {(g["condition"], g["coverage"]): g for g in payload["grid"]}
+    covs = sorted({g["coverage"] for g in payload["grid"]})
+    rows = [
+        ("Projected crossings per scene", "n_gt_crossings", "%.0f"),
+        ("Crossings recovered", "match_rate", "%.3f"),
+        ("Order accuracy, all crossings", "coa_all", "%.3f"),
+        ("Order accuracy, decided only", "coa_decided", "%.3f"),
+        ("Abstained", "abstain_rate", "%.3f"),
+        ("Depth order, crossing pairs", "order_acc_crossing_pairs", "%.3f"),
+        ("Depth order, all pairs", "order_acc_all_pairs", "%.3f"),
+        ("Layer agreement", "layer_exact_agreement", "%.3f"),
+    ]
+    head = " & ".join(c.replace("cov", "") + r"\,\%" for c in covs)
+    out = [
+        r"\begin{tabular}{lcccc}",
+        r"\toprule",
+        r"& \multicolumn{2}{c}{Given 2-D geometry} "
+        r"& \multicolumn{2}{c}{Reconstructed 2-D} \\",
+        r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}",
+        "Areal coverage & " + head + " & " + head + r" \\",
+        r"\midrule",
+    ]
+    for label, key, fmt_s in rows:
+        vals = [fmt_s % cell[(c, cov)][key]
+                for c in ("oracle", "clean") for cov in covs]
+        out.append(label + " & " + " & ".join(vals) + r" \\")
+    out += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(out) + "\n"
+
+
 def curviness_macros(payload: dict) -> list[str]:
     """Bending-stiffness sensitivity, as an effect size beside its own noise.
 
@@ -998,6 +1070,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 mask_quality: dict, graft_regime: dict,
                 real_field_metrics: dict, real_fields: dict,
                 interannotator: dict, curviness: dict,
+                depth_order: dict,
                 metric_panels: dict, sensitivity: dict,
                 scorer_sensitivity: dict,
                 crossing_chance: dict) -> str:
@@ -1135,6 +1208,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *real_fields_macros(real_fields),
             *interannotator_macros(interannotator),
             *curviness_macros(curviness),
+            *depth_order_macros(depth_order),
             *real_field_metrics_macros(
                 real_field_metrics,
                 real_fields["fields"][0]["axis_triple"]
@@ -1367,6 +1441,7 @@ def main() -> None:
     interannotator = json.loads(
         INTERANNOTATOR.read_text(encoding="utf-8"))
     curviness = json.loads(CURVINESS.read_text(encoding="utf-8"))
+    depth_order = json.loads(DEPTH_ORDER.read_text(encoding="utf-8"))
     metric_panels = json.loads(METRIC_PANELS.read_text(encoding="utf-8"))
     sensitivity = json.loads(SENSITIVITY.read_text(encoding="utf-8"))
     scorer_sensitivity = json.loads(
@@ -1381,6 +1456,7 @@ def main() -> None:
             width_validation, greedy, factorial, dnai, analysis, swept,
             graft, audit, supplement, mask_quality, graft_regime,
             real_field_metrics, real_fields, interannotator, curviness,
+            depth_order,
             metric_panels, sensitivity,
             scorer_sensitivity, crossing_chance,
         ),
@@ -1403,6 +1479,9 @@ def main() -> None:
     )
     (RESULTS / "plecta_real_masks_table.tex").write_text(
         real_fields_table(real_fields), encoding="utf-8"
+    )
+    (RESULTS / "plecta_depth_order_table.tex").write_text(
+        depth_order_table(depth_order), encoding="utf-8"
     )
     (RESULTS / "plecta_real_axis_table.tex").write_text(
         real_axis_table(real_fields), encoding="utf-8"

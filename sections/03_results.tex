@@ -82,29 +82,27 @@ as a proxy for the length density accompanying them under this generator.
 \subsection{Four linkers on identical masks}
 \label{sec:res-comparators}
 
-One baseline and two published methods were run on identical input masks with
-one scorer, over \PlectaGreedySceneCount{} scenes generated after every
-configuration was fixed. The published methods are DNAi \citep{playout2026dnai}
-and GraFT \citep{osterlund2026graft}, each executed from its own released
-source. All were scored through the same conversion and metric code as PLECTA,
-and that path was gated on parity: before any comparator number was believed it
-had to reproduce PLECTA's stored \Fone{}, adjusted Rand index and both
-variation-of-information components, because a faulty conversion yields
-plausible rather than obviously wrong scores. Each comparator received a
-parameter translation selected on the same \PlectaDevelopmentSceneCount{}
+One baseline and two published methods -- DNAi \citep{playout2026dnai} and
+GraFT \citep{osterlund2026graft}, each run from its own released source -- were
+scored on identical masks through the same conversion and metric code as
+PLECTA, over \PlectaGreedySceneCount{} scenes generated after every
+configuration was fixed. That path was gated on parity: no comparator number
+was believed until it reproduced PLECTA's stored \Fone{}, adjusted Rand index
+and both variation-of-information components, because a faulty conversion
+yields plausible rather than obviously wrong scores. Each comparator's
+parameter translation was selected on the same \PlectaDevelopmentSceneCount{}
 development scenes PLECTA was configured on, and every adaptation was checked
 and found to favour the comparator; Appendix~\ref{app:comparators} records each
-one, what it was worth, and how each method fails.
+one and how each method fails.
 
 \textbf{Greedy continuation.} The baseline skeletonises the same mask and
-greedily accepts the lowest-turning-angle pairing between branch ends inside a
-distance and a turning-angle gate, both fixed by a development sweep. It is
-ours, not a reimplementation of any particular paper but of the pairing
-principle SIFNE, GraFT's path cover and the continuity baseline of Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} share,
-and it is reported as the transparent floor the claim of
-Section~\ref{sec:intro} is made against, never as an external result. PLECTA
-leads it by \PlectaGreedySweptDeltaFOne{} \Fone{}
+greedily accepts the lowest-turning-angle pairing between branch ends inside
+distance and turning-angle gates fixed by a development sweep. It is ours --
+not a reimplementation of any paper but of the pairing principle shared by
+SIFNE, GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
+is reported as a transparent floor, never as an external result. PLECTA leads
+it by \PlectaGreedySweptDeltaFOne{} \Fone{}
 [\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
 the \PlectaGreedySceneCount{} scenes, and by
 \PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
@@ -554,3 +552,54 @@ precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
 than fusing filaments, which is what panel~(c) of Figure~\ref{fig:real-sem}
 shows.
+
+\subsection{Optional depth decomposition}
+\label{sec:res-depth}
+
+The stages above reconstruct instances in projection. A crossing pixel is
+assigned to both filaments that own it, but nothing so far says which of the
+two passes in front. The optional depth stage answers that from the greyscale
+alone -- brightness and edge sharpness across the crossing -- then imposes one
+globally consistent vertical order and places each instance at a height at
+which nothing interpenetrates. It changes no 2-D instance.
+
+It is evaluated on \PlectaDepthSceneCount{} depth-resolved synthetic scenes at
+two areal coverages, under the measures of
+Appendix~\ref{sec:app-depth-measures}, in two input conditions. Given the
+reference 2-D geometry, the depth decision is measured alone; given only the
+binary axis mask, the same stage runs on PLECTA's own reconstruction and
+carries its error. Table~\ref{tab:depth-order} reports both.
+
+\begin{table}[htbp]
+\centering
+\caption{The depth stage on \PlectaDepthSceneCount{} depth-resolved synthetic
+scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
+six scenes per coverage, plain means, no inference.}
+\label{tab:depth-order}
+\input{results/plecta_depth_order_table.tex}
+\end{table}
+
+The decomposition is the result. Order accuracy over decided crossings spans
+only \PlectaDepthDecidedSpan{}
+(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
+and both densities, while accuracy over all crossings spans
+\PlectaDepthAllSpan{} (\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
+falls by the amount the crossing recovery rate falls,
+\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}. Once a crossing is found,
+the decision is made at close to the same accuracy whether the geometry was
+given or reconstructed, and whether the scene carries the sparser crossing load or roughly five
+times it. What limits
+the depth result is the 2-D stage not recovering every crossing, not the
+ordering of the crossings it does recover.
+
+The global stack is weaker than the local decision, and structurally so. Depth
+order is recovered at \PlectaDepthCleanCovTwoZeroCrossOrder{} over pairs that
+cross but only \PlectaDepthCleanCovTwoZeroAllOrder{} over all pairs, because
+depth propagates solely along chains of crossings: two instances in different
+components of the crossing graph are related by no evidence, and their order is
+a tie-break. Depth claims are therefore scoped to the connected component. Layer
+agreement follows the same pattern, falling from
+\PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
+coverage doubles while the recovered layer count stays close to the reference:
+the ordering is locally right, so the number of layers is about right, while
+small order errors move instances across layer boundaries.
