@@ -32,9 +32,14 @@ OUT = REPO / "results" / "plecta_depth_order.json"
 # decision is binary and symmetric -- so the margin over 0.5 is the evidence.
 FIELDS = ("coa_all", "coa_decided", "abstain_rate", "match_rate",
           "coa_shallow", "coa_steep", "coa_near_sep", "coa_far_sep",
-          "order_acc_crossing_pairs", "order_acc_all_pairs", "kendall_tau_z",
+          "order_acc_crossing_pairs", "order_acc_all_pairs",
+          "frac_pairs_within_component", "n_components",
           "layer_exact_agreement", "n_layers_pred", "n_layers_gt",
           "n_gt_crossings")
+
+# Kendall tau over the same instance pairs is exactly 2*accuracy - 1, so it is
+# not reported: it would be the same measurement printed twice under a second
+# name.
 
 
 def main() -> int:
@@ -61,6 +66,17 @@ def main() -> int:
                 "n_scenes": len(sub),
                 **{k: agg(sub, k) for k in FIELDS},
             })
+
+    # What the global order *could* be, given that only pairs inside one
+    # component carry evidence and the rest are a tie-break. If the measured
+    # all-pairs accuracy sits at this value, the weak global figure is the
+    # crossing graph being disconnected and not the depth decision failing.
+    for c in grid:
+        f = c["frac_pairs_within_component"]
+        c["order_acc_all_pairs_predicted"] = (
+            f * c["order_acc_crossing_pairs"] + (1.0 - f) * 0.5)
+        c["order_acc_all_pairs_residual"] = (
+            c["order_acc_all_pairs"] - c["order_acc_all_pairs_predicted"])
 
     decided = [c["coa_decided"] for c in grid]
     allc = [c["coa_all"] for c in grid]
@@ -99,6 +115,10 @@ def main() -> int:
             # The decomposition: the decision holds while recovery does not.
             "coa_decided_span": max(decided) - min(decided),
             "coa_all_span": max(allc) - min(allc),
+            "frac_within_min": min(c["frac_pairs_within_component"] for c in grid),
+            "frac_within_max": max(c["frac_pairs_within_component"] for c in grid),
+            "order_residual_absmax": max(abs(c["order_acc_all_pairs_residual"])
+                                         for c in grid),
         },
         "grid": grid,
         "per_scene": rows,

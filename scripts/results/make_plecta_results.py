@@ -579,6 +579,9 @@ def depth_order_macros(payload: dict) -> list[str]:
         macro("PlectaDepthAllSpan", fmt(h["coa_all_span"])),
         macro("PlectaDepthMatchLow", fmt(h["match_rate_min"])),
         macro("PlectaDepthMatchHigh", fmt(h["match_rate_max"])),
+        macro("PlectaDepthWithinLow", fmt(h["frac_within_min"])),
+        macro("PlectaDepthWithinHigh", fmt(h["frac_within_max"])),
+        macro("PlectaDepthOrderResidual", fmt(h["order_residual_absmax"])),
     ]
     for (cond, cov), g in cell.items():
         stem = f"{cond.capitalize()}{cov.replace('cov', 'Cov')}"
@@ -589,6 +592,10 @@ def depth_order_macros(payload: dict) -> list[str]:
             macro(f"PlectaDepth{stem}CrossOrder",
                   fmt(g["order_acc_crossing_pairs"])),
             macro(f"PlectaDepth{stem}AllOrder", fmt(g["order_acc_all_pairs"])),
+            macro(f"PlectaDepth{stem}Within",
+                  fmt(g["frac_pairs_within_component"])),
+            macro(f"PlectaDepth{stem}OrderPred",
+                  fmt(g["order_acc_all_pairs_predicted"])),
             macro(f"PlectaDepth{stem}Layers", fmt(g["layer_exact_agreement"])),
         ])
     return lines
@@ -606,6 +613,8 @@ def depth_order_table(payload: dict) -> str:
         ("Abstained", "abstain_rate", "%.3f"),
         ("Depth order, crossing pairs", "order_acc_crossing_pairs", "%.3f"),
         ("Depth order, all pairs", "order_acc_all_pairs", "%.3f"),
+        ("Instance pairs sharing a component", "frac_pairs_within_component",
+         "%.3f"),
         ("Layer agreement", "layer_exact_agreement", "%.3f"),
     ]
     head = " & ".join(c.replace("cov", "") + r"\,\%" for c in covs)
