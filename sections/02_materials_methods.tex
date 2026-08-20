@@ -387,26 +387,21 @@ disjoint from those above because none of them can see depth.
 The primary endpoint is common-fragment pairwise \Fone{}. The input mask is cut
 into fragments, each one unambiguous arm between crossings, by a rule that
 reads neither the reference nor any prediction, so every method compared is cut
-into the same pieces. Each fragment then takes a reference identity and a
-predicted identity by one rule, applied to both sides alike: it is assigned to
-the instance that overlaps most of its pixels, provided that overlap covers at
-least 30\,\% of the fragment; failing that, to the most frequent nearest
-instance label within 6\,px; failing both, it stays unassigned and enters the
-score as its own singleton cluster, so every fragment is in the scored
-partition and unattached evidence is penalised rather than dropped. The score
-counts the pairs of fragments the prediction groups as the reference does. The
-scorer's preprocessing shares two constants with the method itself: both prune
-skeleton spurs of at most 3\,px, and the scorer's 6\,px minimum fragment length
-and assignment fallback distance coincide with the 6\,px below which PLECTA
-omits an isolated component, so method and endpoint rest on a shared
-preprocessing assumption rather than independent ones. A prespecified
-one-at-a-time sensitivity sweep of the four constants, re-scoring the stored
-predictions with the grid frozen before any result was seen, is reported in
-Appendix~\ref{app:measures}. Because junction pixels are deleted
-before fragments are labelled, it cannot see whether an emitted crossing pixel
-is given one owner or two, only whether the arms meeting there are grouped as
-the reference groups them, which is the difficult decision;
-Section~\ref{sec:res-overlap} separates the two and measures the first directly.
+into the same pieces; each fragment then takes a reference and a predicted
+identity by one rule applied to both sides alike, and the score counts the
+pairs of fragments the prediction groups as the reference does.
+Appendix~\ref{app:measures} gives the construction and the assignment rule in
+full. Two points bear on the interpretation. The scorer shares two constants
+with the method --- both prune skeleton spurs of at most 3\,px, and the
+scorer's 6\,px minimum fragment length coincides with the length below which
+PLECTA omits an isolated component --- so endpoint and method rest on a shared
+preprocessing assumption rather than independent ones, and a prespecified
+one-at-a-time sweep of the four constants is reported in
+Appendix~\ref{app:measures}. And because junction pixels are deleted before
+fragments are labelled, the measure cannot see whether an emitted crossing
+pixel is given one owner or two, only whether the arms meeting there are
+grouped as the reference groups them;
+Section~\ref{sec:res-overlap} separates the two.
 
 Several measures accompany it, and the reason for carrying more than one is a
 single distinction: \emph{pairwise scores relationships between pieces,
