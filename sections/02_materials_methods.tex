@@ -331,6 +331,56 @@ algorithm or contributed to the held-out result. Because the grouping is fixed
 before either stage runs, no width measurement can move a pixel from one
 instance to another, and no identity score in this paper depends on one.
 
+\subsection{Depth decomposition, optional}
+\label{sec:mm-depth}
+
+A projected crossing has an owner in each of two instances but no order between
+them. This stage supplies one. It runs after the grouping is fixed, reads the
+greyscale and the instances, and changes no instance membership.
+
+\textbf{Evidence at one crossing.} Where two instance centrelines intersect, a
+short arc of each is taken through the crossing --- the shared \emph{core},
+sized from the two radii --- together with the \emph{flanks} on either side of
+it, kept clear of the other filament's stroke so that they measure one filament
+and not the union. Two channels are read on both: median intensity, and median
+gradient magnitude on the filament's two edges. The physical argument is
+occlusion. Whichever filament lies on top presents the same surface through the
+crossing as it does beside it, so its core matches its own flanks in brightness
+and its edges stay crisp; the lower filament is overwritten there, so both
+channels break. The filament whose flank appearance the core matches better is
+called upper, and the normalised difference between the two channels passes
+through a logistic to give $p$. Where the two filaments genuinely look alike the
+difference is near zero, $p$ sits near $0.5$, and the crossing \emph{abstains}
+rather than being decided by noise.
+
+\textbf{One order for the whole field.} Local decisions need not be mutually
+consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
+$A$, which no assignment of heights satisfies. Each decided crossing therefore
+contributes a directed edge weighted by $\lvert\operatorname{logit}p\rvert$, and
+within each connected component of the crossing graph the orientation that
+maximises total satisfied weight is chosen --- equivalently a minimum-weight
+feedback arc set. Relations that cannot be satisfied are flipped rather than
+discarded, and both the flip and the original local probability are recorded.
+Components small enough are solved exactly by dynamic programming and larger
+ones greedily. Depth propagates only along crossings, so two instances in
+different components are related by no evidence at all and their order is a
+stated tie-break, not a measurement.
+
+\textbf{Layers and height.} The corrected relations form a directed acyclic
+graph whose longest path fixes the smallest number of layers consistent with
+them; filaments that never conflict share a layer, so the layer count follows
+from the ordering rather than from the number of instances. Each instance is
+then placed at a height that respects its order and keeps filaments from
+interpenetrating at their measured radii, with the stack compacted so that the
+film is as thin as those constraints allow.
+
+Without a greyscale image every crossing abstains, the ordering has nothing to
+satisfy, and the output degenerates to the tie-break: the stage requires image
+evidence and reports how much of it was usable.
+Section~\ref{sec:res-depth} evaluates it, and
+Appendix~\ref{sec:app-depth-measures} defines the measures used, which are
+disjoint from those above because none of them can see depth.
+
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 

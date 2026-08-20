@@ -159,3 +159,27 @@ cannot move an identity score. Pipeline~A carries its own evaluation
 \PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate
 the two pipelines together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
 fields, \PlectaRealHeldOutCount{} of them held out from the upstream segmenter.
+
+Beyond the plane, a projected crossing carries a second question the grouping
+does not answer: which of the two filaments passes in front. For nanostructured
+networks that information is normally obtained destructively, by
+focused-ion-beam serial sectioning and tomographic reconstruction
+\citep{gabbett2024fibsem}, because a micrograph's intensities record surface
+topography rather than height. PLECTA answers it optionally and non-destructively
+from the greyscale already in hand. The machinery is deliberately
+conventional: monocular depth ordering has long derived pairwise depth from
+local occlusion evidence, assembled the pairwise relations into a depth-order
+graph, and corrected the contradictions that inevitably arise among them
+\citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
+resolves the layering of intersecting strands in much the same spirit
+\citep{chai2012singleview}. What differs is the evidence available. Those
+methods key on \emph{T}-junctions, where one contour terminates against
+another; two crossing filaments produce no such junction, since both contours
+continue through and the mask is a single blob. The cue used here is instead
+the continuity of a filament's own appearance across the crossing --- the upper
+filament's brightness and edge sharpness run through uninterrupted, while the
+lower filament's are overwritten --- and the stage abstains where that evidence
+does not separate the two. To our knowledge this is the first depth
+decomposition of a filament network from a single micrograph; it is reported as
+a demonstration with a measured accuracy, not as a validated three-dimensional
+reconstruction.
