@@ -45,6 +45,9 @@ from _style import (DARK, FIG_W, FONE, GRAY, INSTANCE_CYCLE, PT_ANNOT,
 REPO = Path(__file__).resolve().parents[2]
 BG = "#101216"
 
+#: Vertical fraction of each square scene that is drawn, centred.
+CROP = 2.0 / 3.0
+
 COLUMNS = (
     ("mask", "Input mask"),
     ("reference", "Reference"),
@@ -93,9 +96,15 @@ def main(argv=None) -> int:
     cell = (right - left) / len(keys)
     side_in = cell * FIG_W
     head_in, foot_in = 0.20, 0.05      # one-line headings now, not two
-    fig_h = len(panels) * side_in + head_in + foot_in
+    # Each scene is square, so nine square panels at full text width force a
+    # figure taller than it is wide and the page it lands on carries almost no
+    # text. A horizontal window of each scene shows the same thing -- these are
+    # qualitative examples, not measurements -- at two thirds the height, and
+    # keeps all three densities and all three columns. The caption says it is
+    # a crop.
+    fig_h = len(panels) * side_in * CROP + head_in + foot_in
     fig = plt.figure(figsize=(FIG_W, fig_h))
-    cell_h = side_in / fig_h
+    cell_h = side_in * CROP / fig_h
     top = 1.0 - head_in / fig_h
 
     for r, panel in enumerate(panels):
@@ -114,10 +123,16 @@ def main(argv=None) -> int:
             if r == 0:
                 ax.set_title(heads[c], fontsize=PT_TITLE, fontweight="bold",
                              color=DARK, pad=3.5, linespacing=1.35)
-        fig.text(left - 0.010, y0 + cell_h / 2.0,
-                 "{0}\ncoverage {1}%\n" + FONE + " = {2:.3f}"
-                 .format(panel["scene"], panel["density"],
-                         panel["plecta_f1"]),
+        #  .format() binds to the last operand of a concatenation, so the
+        #  scene and coverage placeholders were never substituted and the
+        #  figure printed a literal {0} and {1}%. Format the whole label.
+        #  FONE carries braces of its own, so only the parts holding
+        #  placeholders are formatted; formatting the concatenation would
+        #  read those braces as fields.
+        label = ("{0}\ncoverage {1}%\n".format(
+                     panel["scene"], panel["density"])
+                 + FONE + " = " + "{:.3f}".format(panel["plecta_f1"]))
+        fig.text(left - 0.010, y0 + cell_h / 2.0, label,
                  rotation=90, ha="right", va="center", fontsize=PT_ANNOT,
                  color=DARK, linespacing=1.45)
 
