@@ -1,18 +1,20 @@
-"""Synthetic input, depth reconstruction, and the image it re-renders to.
+"""A synthetic scene, its depth reconstruction, and the image it re-renders to.
 
-Two rows, one per input condition, so the columns are directly comparable:
+One row: the image the scene was rendered from, that scene re-rendered from
+PLECTA's reconstruction through a forward SEM model, and the film the
+reconstruction implies. If the depths or radii were wrong the re-render would
+not resemble the image it came from, and the two are set side by side so a
+reader can check rather than take it on trust.
 
-* **binary axis mask** -- the only input PLECTA's grouping ever reads. The 2-D
-  instances are reconstructed from it, then the depth stage places them.
-* **ground-truth instances** -- the same scene with the grouping given, so the
-  row isolates what the depth stage does from what the grouping does.
-
-Columns are: the input as the method sees it, the reconstructed film as shaded
-solid tubes, and the reconstruction re-rendered through the forward SEM model.
-The last column is the honest test of the whole chain: if the depth and radii
-are wrong, the re-render does not look like the micrograph it came from, and
-the reference image is drawn beside it so a reader can check rather than take
-it on trust.
+**Why only the mask condition is drawn.** An earlier version carried a second
+row for the ground-truth-instance condition of Table~3. It was dropped as
+uninformative, and deliberately rather than for space: from the non-degraded
+axis the 2-D reconstruction recovers essentially the reference scene -- 22
+instances against 22 and the same layer count at 20\% coverage -- so the two
+rows differed by a re-render RMSE of 0.037 and looked identical. The gap the
+table reports between those conditions is a gap in *crossing recovery*, and a
+rendered image does not show which crossings were found, so this figure cannot
+display that contrast even in principle. The table carries it.
 
 The re-render comes from PLECTA App's `render_sem`
 (https://github.com/Jorallan/PLECTA_APP), a fourth source tree beyond the three
@@ -42,12 +44,8 @@ DEFAULT_SCENES = os.path.join(REPO, "exploration", "depth_order_eval", "scenes")
 DEFAULT_APP = r"C:\Repos\PLECTA_APP"
 DEFAULT_PLECTA = r"C:\Repos\stubmatch"
 
-# (input file, row label). The NPZ is the reference instance set the scorer
-# itself reads, so the second row is the same ground truth the numbers use.
-ROWS = (
-    ("mask_clean.png", "binary axis mask"),
-    ("gt_multilabel.npz", "ground-truth instances"),
-)
+#: The binary axis mask is the only input PLECTA's grouping reads.
+INPUT_NAME = "mask_clean.png"
 
 
 def _engine(app_dir, plecta_dir):
@@ -91,37 +89,31 @@ def main():
                            float) / 255.0
 
     plecta_style()
-    fig = plt.figure(figsize=(FIG_W, 0.72 * FIG_W))
-    gs = fig.add_gridspec(2, 3, wspace=0.06, hspace=0.10)
+    fig = plt.figure(figsize=(FIG_W, 0.38 * FIG_W))
+    gs = fig.add_gridspec(1, 3, wspace=0.06)
 
-    for r, (input_name, input_label) in enumerate(ROWS):
-        result = Engine().run(Settings(
-            scene_path=os.path.join(scene, input_name),
-            image_path=os.path.join(scene, "sem.png")))
+    result = Engine().run(Settings(
+        scene_path=os.path.join(scene, INPUT_NAME),
+        image_path=os.path.join(scene, "sem.png")))
+    tubes = _tubes(result["instances"])
+    zs = [t[2] for t in tubes] or [0.0]
+    z_lo, span = min(zs), max(1e-6, max(zs) - min(zs))
+    rendered = np.asarray(render_sem.render(result), float)
 
-        tubes = _tubes(result["instances"])
-        zs = [t[2] for t in tubes] or [0.0]
-        z_lo, span = min(zs), max(1e-6, max(zs) - min(zs))
-        rendered = np.asarray(render_sem.render(result), float)
+    ax = fig.add_subplot(gs[0, 0]); bare(ax)
+    ax.imshow(reference, cmap="gray", interpolation="nearest")
+    ax.set_title("reference image", fontsize=PT_TITLE, pad=3)
 
-        # Reference first, its re-render beside it: the pair a reader compares.
-        ax = fig.add_subplot(gs[r, 0]); bare(ax)
-        ax.imshow(reference, cmap="gray", interpolation="nearest")
-        ax.set_ylabel(input_label, fontsize=PT_ANNOT)
+    ax = fig.add_subplot(gs[0, 1]); bare(ax)
+    ax.imshow(rendered, cmap="gray", interpolation="nearest")
+    ax.set_title("re-rendered", fontsize=PT_TITLE, pad=3)
 
-        ax = fig.add_subplot(gs[r, 1]); bare(ax)
-        ax.imshow(rendered, cmap="gray", interpolation="nearest")
-
-        ax3 = fig.add_subplot(gs[r, 2], projection="3d")
-        draw_tubes_shaded(ax3, tubes, z_lo, span,
-                          extent=reference.shape[0], zoom=2.05,
-                          elev=20, azim=-62, colour="grey",
-                          z_stretch=span / reference.shape[0])
-
-        if r == 0:
-            for c, title in enumerate(("reference image", "re-rendered",
-                                       "depth reconstruction")):
-                fig.axes[-3 + c].set_title(title, fontsize=PT_TITLE, pad=3)
+    ax3 = fig.add_subplot(gs[0, 2], projection="3d")
+    draw_tubes_shaded(ax3, tubes, z_lo, span,
+                      extent=reference.shape[0], zoom=2.05,
+                      elev=20, azim=-62, colour="grey",
+                      z_stretch=span / reference.shape[0])
+    ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
 
     save_fig(fig, "fig_resem_synth", bbox_inches="tight")
     print("wrote fig_resem_synth")

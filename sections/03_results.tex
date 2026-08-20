@@ -607,11 +607,13 @@ small order errors move instances across layer boundaries.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
-\caption{The depth stage on one synthetic scene, from each of its two input
-conditions. The image the scene was rendered from, that scene re-rendered from
+\caption{The depth stage on one synthetic scene, reconstructed from the binary
+axis mask. The image the scene was rendered from, that scene re-rendered from
 the reconstruction through a forward SEM model, and the film the reconstruction
 implies. The re-rendered panel is a consistency check on depths and radii, not
-a scored quantity; Table~\ref{tab:depth-order} carries the measurement.}
+a scored quantity: the difference Table~\ref{tab:depth-order} reports between
+input conditions is a difference in which crossings were \emph{found}, which a
+rendered image cannot show. The table carries that measurement.}
 \label{fig:resem-synth}
 \end{figure}
 
