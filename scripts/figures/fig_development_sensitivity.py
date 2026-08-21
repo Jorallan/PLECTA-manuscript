@@ -300,7 +300,7 @@ def _build_standalone_width(values, expected, density_colors):
     ax.set_ylabel("Development common-fragment F$_1$")
     ax.set_title("Input-mask width sensitivity (development scenes)", loc="left")
     _shared_legend(fig, handles, labels, _legend_title(n_by_density), ncol=5)
-    save_fig(fig, "fig_width_sweep", bbox_inches="tight")
+    save_fig(fig, "fig_width_sweep", subdir="archive", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -313,7 +313,7 @@ def _build_standalone_clean(values, expected, density_colors):
     ax.set_ylabel("Development common-fragment F$_1$")
     ax.set_title("Clean vs. degraded input mask (development scenes)", loc="left")
     _shared_legend(fig, handles, labels, _legend_title(n_by_density), ncol=5)
-    save_fig(fig, "fig_clean_vs_degraded", bbox_inches="tight")
+    save_fig(fig, "fig_clean_vs_degraded", subdir="archive", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -335,7 +335,7 @@ def _build_consolidated(values, expected, density_colors):
     ax_b.tick_params(labelleft=False)
 
     _shared_legend(fig, handles, labels, _legend_title(n_by_density), ncol=5)
-    save_fig(fig, "fig_development_sensitivity", bbox_inches="tight")
+    save_fig(fig, "fig_development_sensitivity", subdir="archive", bbox_inches="tight")
     plt.close(fig)
 
 

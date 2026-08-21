@@ -1,5 +1,93 @@
 # Reproducibility record
 
+This file describes two different methods, and the distinction matters.
+
+**The manuscript's numbers do not come from the locked evaluation recorded in
+Part 2.** That run was made on 2026-07-29 against FilaSeg, the predecessor of
+PLECTA, and is kept here as provenance: its checkpoints are hashed and its
+inputs immutable. PLECTA has never been scored on the locked set, which is why
+the manuscript states that the set remains unevaluated. The two statements are
+consistent, because the set is unevaluated *for the method this paper reports*,
+and it stays that way deliberately.
+
+## Part 1: reproducing the current manuscript
+
+Every number in the article and the supplementary is generated. Nothing is
+typed into the prose, so reproducing the paper means re-running the generators
+and rebuilding, in this order.
+
+**1. Machine-readable records.** Each study writes one JSON record under
+`results/` from its own source data, which lives outside this repository:
+
+```text
+python scripts/results/make_<study>_record.py
+```
+
+`scripts/results/` holds one such generator per study. They are independent and
+may be run in any order, but each needs its study's source tree present.
+
+**2. Parameters, from the frozen configuration.**
+
+```text
+python scripts/results/make_parameter_table.py
+```
+
+Reads `plecta/params.json` from the PLECTA checkout, the immutable record of
+the configuration that produced every published number, and writes
+`results/plecta_parameter_table.tex` and `results/plecta_parameters.tex`. Set
+`PLECTA_PARAMS` if the checkout is not at its default location. The values are
+never copied by hand: a parameter retuned in the code would otherwise leave the
+manuscript quoting the old one with no error anywhere.
+
+**3. Macros and tables.**
+
+```text
+python scripts/results/make_plecta_results.py
+```
+
+Reads every record under `results/` and writes `results/plecta_results.tex`,
+the single numerical source of truth, together with the generated tables. Do
+not edit its output.
+
+**4. Figures.**
+
+```text
+python scripts/figures/fig_<name>.py
+python scripts/figures/check_type_scale.py
+```
+
+`figures/` holds exactly the figures the manuscript includes; a generator whose
+output no `\includegraphics` reaches writes to `figures/archive/` instead, and
+stays runnable. `check_type_scale.py` is a gate, not a report: it inflates each
+PDF and reads the type sizes actually written, and must be run after any figure
+change.
+
+**5. Build.**
+
+```text
+latexmk -pdf main.tex
+latexmk -pdf supplementary.tex
+```
+
+The two are separate documents. The article refers to the supplementary by
+name rather than by cross-reference, so either compiles alone.
+
+**Gates that must pass before a number is believed.** Comparator scores are
+gated on reproducing PLECTA's stored values through the same conversion; a
+reference is admitted only if it reproduces itself when scored as its own
+prediction; and the frozen parameter section is asserted against
+`params.json`. These are described where they are used, in the manuscript and
+its supplementary.
+
+## Part 2: historical record, the 2026-07-29 FilaSeg locked evaluation
+
+Superseded, and retained unchanged as provenance. It documents a different
+method under its former name. One command below calls
+`scripts/results/make_result_macros.py`, which no longer exists: it was removed
+once every artifact it wrote had been replaced by `make_plecta_results.py`. The
+command is left as it was run rather than edited, because a record that is
+quietly updated is no longer a record.
+
 Date: 2026-07-29
 
 ## Immutable checkpoints

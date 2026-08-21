@@ -70,7 +70,7 @@ def main():
     fig.suptitle("Thick-bundle / thin-axis synthetic scenes with exact ground truth",
                  fontsize=16.2, fontweight="bold", y=0.99)
     fig.tight_layout(rect=[0, 0, 1, 0.96])
-    save_fig(fig, "fig_synthetic_examples", bbox_inches="tight")
+    save_fig(fig, "fig_synthetic_examples", subdir="archive", bbox_inches="tight")
     print("done")
 
 
