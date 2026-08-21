@@ -4,8 +4,8 @@
 Many materials are networks of long, thin filaments. Sheets of carbon
 nanotubes, the cytoskeleton inside a living cell, paper, felt and synthetic
 fibre mats all consist of slender objects laid over one another in a tangle.
-What such a material does --- how stiff it is, how well it conducts, how it
-tears --- depends less on the filaments themselves than on the geometry of the
+What such a material does (how stiff it is, how well it conducts, how it
+tears) depends less on the filaments themselves than on the geometry of the
 network they form: how long each one is, how thick, which way it runs, how
 sharply it bends, and which others it touches
 \citep{devolder2013cnt,coleman2006small,volkov2010structural,%
@@ -13,8 +13,8 @@ ostanin2013distinct,wittmaack2018mesoscopic}.
 
 A micrograph shows that network directly. Turning the picture into those
 numbers is the hard part. Routine image analysis measures the network in bulk
---- what fraction of the frame is covered, which way the texture points
-\citep{dong2022detecting,imtiaz2023facile} --- and stops there. To measure a
+(what fraction of the frame is covered, which way the texture points
+\citep{dong2022detecting,imtiaz2023facile}) and stops there. To measure a
 distribution of filament lengths, or to ask how often one filament crosses
 another, something more is needed: every filament must be recovered as a
 separate object, addressable from one end to the other.
@@ -31,9 +31,9 @@ reports several objects where there is one. In a binary mask the two look
 identical, and both are repaired by answering one question: at this junction,
 which arm continues into which?
 
-Existing tools answer part of it. Semantic segmentation is mature --- U-Net and
+Existing tools answer part of it. Semantic segmentation is mature, since U-Net and
 its self-configuring descendants reliably separate filament foreground from
-background \citep{ronneberger2015unet,isensee2021nnunet} --- but a foreground
+background \citep{ronneberger2015unet,isensee2021nnunet}, but a foreground
 mask carries no identity, so it inherits both failures rather than resolving
 them. General-purpose instance methods assume the objects are compact: bounded
 blobs, centre-directed flows, star-convex outlines, none of which describes a
@@ -106,7 +106,7 @@ That claim carries a condition, worth stating as scope rather than leaving to
 be inferred. The only evidence PLECTA has at a crossing is directional: the
 angle between two outward tangents, the turns onto the chord between them, and
 the continuity of signed curvature, each read over tens of pixels of arclength.
-The working condition is therefore a property of the image --- direction must
+The working condition is therefore a property of the image: direction must
 persist across the junction at that scale, or the continuation is not decidable
 from geometry at all. Bending stiffness is what most directly produces such
 persistence, which is why the semiflexible regime is the method's home ground:
@@ -164,9 +164,9 @@ resolves the layering of intersecting strands in much the same spirit
 methods key on \emph{T}-junctions, where one contour terminates against
 another; two crossing filaments produce no such junction, since both contours
 continue through and the mask is a single blob. The cue used here is instead
-the continuity of a filament's own appearance across the crossing --- the upper
+the continuity of a filament's own appearance across the crossing, where the upper
 filament's brightness and edge sharpness run through uninterrupted, while the
-lower filament's are overwritten --- and the stage abstains where that evidence
+lower filament's are overwritten, and the stage abstains where that evidence
 does not separate the two. To our knowledge this is the first depth
 decomposition of a filament network from a single micrograph; it is reported as
 a demonstration with a measured accuracy, not as a validated three-dimensional

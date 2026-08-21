@@ -126,7 +126,7 @@ In full:
 Instances are assumed to be open projected curves, and a guard enforces it:
 after each of the two matchings, any matched component whose links close a ring
 has its longest link removed. On the \PlectaDevelopmentSceneCount{} development
-scenes the guard never fired --- zero links removed --- so it protects against
+scenes the guard never fired, with zero links removed, so it protects against
 a configuration the data did not produce rather than shaping the result. Closed
 or looping filaments are outside the scope of this paper.
 
@@ -160,8 +160,8 @@ This section gives the detail behind Section~2.6 of the article.
 \subsection{Sampling geometry at a crossing}
 
 Where two instance centrelines intersect, a short arc of each is taken through
-the crossing --- the shared \emph{core}, whose half-size follows the two radii
-so that it spans both silhouettes --- together with the \emph{flanks} on either
+the crossing (the shared \emph{core}, whose half-size follows the two radii
+so that it spans both silhouettes), together with the \emph{flanks} on either
 side of it. Flank samples are kept clear of the other filament's stroke,
 because a sample taken inside it measures the union of two rods rather than one
 of them. A crossing with too few usable flank samples abstains rather than
@@ -188,7 +188,7 @@ weights.
 Each decided crossing contributes a directed edge weighted by
 $\lvert\operatorname{logit}p\rvert$, oriented toward its locally more likely
 relation. Within each connected component of the crossing graph, the
-orientation maximising total satisfied weight is chosen --- equivalently a
+orientation maximising total satisfied weight is chosen, equivalently a
 minimum-weight feedback arc set. Components up to a configured size are solved
 exactly by dynamic programming and larger ones greedily. Relations that cannot
 be satisfied are flipped rather than discarded, and both the flip and the
@@ -207,8 +207,8 @@ constraints allow.
 
 \subsection{Configuration}
 
-Every tunable quantity of both stages --- the cost weights and gates above, the
+Every tunable quantity of both stages (the cost weights and gates above, the
 core and window sizes, the two channel weights, the abstention band, and the
-exact-solver size limit --- is carried in a single released parameter file,
+exact-solver size limit) is carried in a single released parameter file,
 grouped by the stage it belongs to, with the 2-D grouping section checked
 against the frozen record that produced the published numbers.

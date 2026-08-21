@@ -87,7 +87,7 @@ weights long, much-crossed filaments far above short ones.
 \textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
 corrected for chance, which matters because with a hundred filaments per scene
 almost every pair genuinely belongs to different filaments and the uncorrected
-index sits near 1 for anything. Blind spot: redundancy --- over the comparison
+index sits near 1 for anything. Blind spot: redundancy, since over the comparison
 set it never departs from pairwise \Fone{} by more than
 \PlectaPanelARIMaxGap{}, so it confirms rather than adds.
 
@@ -97,9 +97,8 @@ $\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$ is paid
 for cutting one filament into several,
 $\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$ for
 fusing several into one, and reporting both is what separates a method that
-divides from one that fuses. Blind spot: each component alone is degenerate ---
-a method merging everything never splits anything and scores a perfect zero on
-the split component --- so neither is ever quoted singly.
+divides from one that fuses. Blind spot: each component alone is degenerate, since a method merging everything never splits anything and scores a perfect zero on
+the split component, so neither is ever quoted singly.
 
 \textbf{Detection \Fone{}}, the measure DNAi reports, matches predicted to
 reference \emph{objects} greedily by highest intersection over union, stopping
@@ -116,8 +115,8 @@ a fragmented mask and the least discriminative measure here. Blind spot: an arm
 swap, which it scores 1.000 where the pairwise score gives 0.000.
 
 \textbf{Crossing Fidelity} states the contribution directly. At every junction
-node the reference induces a partition of the incident arms --- two together
-exactly when the reference gives them the same filament --- and so does the
+node the reference induces a partition of the incident arms, two together
+exactly when the reference gives them the same filament, and so does the
 prediction; Crossing Fidelity is the fraction of crossings at which the two
 partitions are identical. Nodes are the junction clusters of the same pruned
 skeleton and a node's arms are the fragments 8-adjacent to it. Only nodes whose
@@ -164,8 +163,8 @@ quality the tolerant Jaccard index
 $\mathrm{TP}/(\mathrm{TP}+\mathrm{FP}+\mathrm{FN})$ with $\mathrm{TP}$ the
 smaller of the two matched counts, so quality cannot exceed either component.
 Quality is also GraFT's published Jaccard index in its intended reading. Blind
-spot: the tolerance carries the measure --- at zero tolerance it reports raster
-placement rather than geometry --- so it is never quoted without one.
+spot: the tolerance carries the measure, since at zero tolerance it reports raster
+placement rather than geometry, so it is never quoted without one.
 
 \textbf{Shared-pixel precision and recall} are precision and recall over the
 pixels the reference gives to more than one instance, computed on the raw
@@ -193,7 +192,7 @@ matched one-to-one to some detection, and PLECTA ranks \emph{below} both
 comparators on it: at the densest stratum of GraFT's own generator,
 \PlectaRegimeHighPlectaMatched{} against \PlectaRegimeHighGraFTMatched{} and
 \PlectaRegimeHighDNAiMatched{}. It is not an endpoint because it counts
-existence rather than correctness --- a method emitting more objects than the
+existence rather than correctness: a method emitting more objects than the
 scene contains has a spare for every filament, each method's matched coverage
 equals the smaller of one and its emission ratio to within
 \PlectaRegimeCoverageCountResidual{}, and requiring a detection to cover half
