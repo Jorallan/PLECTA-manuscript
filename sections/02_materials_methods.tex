@@ -147,21 +147,27 @@ working distance, specimen preparation, and CNT material identity.}
 
 \subsubsection{Skeleton graph and local frames}
 
-PLECTA binarises $M$ at $>0$, skeletonises it, and iteratively removes
-spurs no longer than 3 px. Skeleton pixels with degree at least three form
-junction clusters, and adjacent clusters are merged into nodes. Connectors up
-to 5 px are absorbed into one node; connectors up to 14 px merge nearby nodes
-but remain real arms; free debris up to 2 px is absorbed. Each remaining
-connected path is stored as an ordered arm with one stub at each end.
+PLECTA skeletonises the mask and prunes the short spurs skeletonisation leaves
+behind. Skeleton pixels where three or more paths meet form junction clusters,
+and clusters close enough together are merged into a single \emph{node}: a
+crossing seen at this resolution is one blob, not a point, and neighbouring
+crossings often touch. What remains between nodes is an \emph{arm}, an
+unambiguous run of filament, carrying a \emph{stub} at each end.
 
-A stub frame contains its tip, outward tangent, and signed curvature,
-estimated by an arclength polynomial fit and considered reliable only with at
-least three samples spanning at least 3 px. Local frames use 24 px of support;
-once links form chains, the support expands to 55 px, so that a stub too short
-to have a direction of its own borrows one from the chain it has joined.
+Each stub is given a frame: its tip, the direction the filament is heading as
+it leaves, and how it is curving. Both are fitted over a short run of arclength
+back from the tip, and a stub too short to yield a reliable direction is marked
+as such rather than guessed at. That support widens once arms are linked into
+chains, so a stub with no direction of its own borrows one from the chain it
+has joined --- which is why the method iterates rather than deciding once.
 
-The cost of linking stubs $a$ and $b$ combines three angular terms, curvature
-continuity and, for gaps, a length penalty (Figure~\ref{fig:cost}):
+Linking two stubs is then priced by asking three geometric questions
+(Figure~\ref{fig:cost}). Do the two directions oppose one another, as they
+would if one filament simply continued into the other? Does each direction
+point at the other's tip, rather than running parallel past it? And does the
+curvature continue, or would the join require a kink? For a gap the distance to
+be spanned is charged as well; at a junction there is no gap to pay for. The
+cost of linking stubs $a$ and $b$ is therefore
 \begin{equation}
   C_{ab}=w_d\,\theta
         +w_t\,q(d)\,(\varphi_a+\varphi_b)
@@ -170,17 +176,20 @@ continuity and, for gaps, a length penalty (Figure~\ref{fig:cost}):
   \qquad q(d)=\min\!\left(1,\tfrac{d}{d_0}\right),
   \label{eq:cost}
 \end{equation}
-with $d$ the tip separation, $\theta$ the reversal angle between the two outward
-tangents, and $\varphi_a$, $\varphi_b$ the turns from each tangent onto the
-tip-to-tip chord, measured at their own vertices. Junction links set
-$w_\ell=0$, a junction having no gap to pay for. The reversal angle ignores the
-chord, which keeps it meaningful when the tips are three pixels apart and the
-chord direction is quantisation noise; the chord turns instead see lateral
-offset, so two parallel arms that never meet are penalised. Because it is the
-chord terms that degrade over short separations, the fade $q(d)$ withdraws them
-as the tips approach rather than letting an unstable angle dominate. The
-constant 30 places curvature, in px$^{-1}$, on the scale of the angular terms;
-the weights, $\ell_0$ and $d_0$ are fixed in the public configuration.
+with $d$ the tip separation, $\theta$ the reversal angle between the two
+outward tangents, and $\varphi_a$, $\varphi_b$ the turns from each tangent onto
+the tip-to-tip chord, measured at their own vertices; junction links set
+$w_\ell=0$.
+
+Three properties of that expression are deliberate. The reversal angle ignores
+the chord, which keeps it meaningful when the tips are three pixels apart and
+the chord direction is quantisation noise. The chord turns do see lateral
+offset, so two parallel arms that never meet are penalised. And because it is
+the chord terms that degrade over short separations, the fade $q(d)$ withdraws
+them as the tips approach rather than letting an unstable angle dominate. The
+weights, the scales $\ell_0$ and $d_0$, and the constant placing curvature on
+the scale of the angular terms are all fixed in the released configuration and
+are listed in \supprecon{}.
 
 \begin{figure}[tbp]
     \centering
@@ -203,71 +212,52 @@ the weights, $\ell_0$ and $d_0$ are fixed in the public configuration.
 
 \subsubsection{Candidate gates and exact matching}
 
-Leaving a stub unmatched is priced rather than forbidden, and the price $p_i$
-also fixes admissibility: an edge is offered only when $C_{ij}<p_i+p_j$. Exact
-maximum-weight partial matching then maximises $\sum(p_i+p_j-C_{ij})$ over
-disjoint pairs, which minimises the total link cost plus $p_i$ for every stub
-left free. At the configured prices junction stubs carry $p_i=0.62$, so a
-junction edge needs $C<1.24$; gap edges need $C<0.60$ and must in addition
-satisfy $d\le85$~px, $\theta\le0.40$~rad and $\varphi\le0.28$~rad at each end.
-Gap gates are the tighter set because a gap link asserts a continuation across
-evidence that is missing rather than merely ambiguous; the values themselves
-were fixed on development scenes, and the complete set is recorded in the
-public configuration. Rounds $r=0,\ldots,7$ apply a schedule fraction
-$\alpha_r=0.85+0.15\,r/7$ that scales the unmatched prices and the two gap
-angle limits and nothing else. Scaling a price \emph{down} admits fewer edges,
-admissibility being $C_{ij}<p_i+p_j$, and scaling an angle limit down narrows
-the gap gates, so early rounds are the conservative ones, deliberately
-under-linked: while the frames are at their least reliable, only pairings that
-survive the reduced prices and narrowed gates are committed, and the
-constraints relax towards their configured values as the chains assembled so
-far sharpen the frames. The final
-round, $\alpha_7=1$, is the only one run at the configured parameters and is
-the one returned. In full:
+Leaving a stub unmatched is priced rather than forbidden, and that price does
+double duty: it also fixes what may be offered at all, since an edge costing
+more than the two prices it would save could never be chosen. Exact
+maximum-weight partial matching then picks, over disjoint pairs,
+\begin{equation}
+  \max \sum_{(i,j)\in\mathcal{M}} \bigl(p_i+p_j-C_{ij}\bigr),
+  \qquad \text{admissible iff } C_{ij}<p_i+p_j,
+  \label{eq:matching}
+\end{equation}
+which is the same thing as minimising the total link cost plus a price $p_i$
+for every stub left free. Junction and gap links carry different prices, and a
+gap link must additionally clear limits on how far it may reach and how far
+either direction may turn --- the tighter set, because a gap asserts a
+continuation across evidence that is \emph{missing} rather than merely
+ambiguous. \supprecon{} lists the prices, the limits, and the schedule below.
 
-\begin{enumerate}[nosep,leftmargin=1.5em,label=\arabic*.]
-  \item Skeletonise $M$, prune spurs, merge junction clusters into nodes, and
-        store the remaining paths as arms with a stub at each end.
-  \item For $r=0,\ldots,7$, re-solving both matchings from scratch and carrying
-        only the chain structure forward from round $r-1$:
-  \begin{enumerate}[nosep,leftmargin=1.5em,label=(\alph*)]
-    \item Re-fit every stub frame along the chain it now belongs to.
-    \item At each node, form candidate edges between stubs of different arms
-          with finite frames and cost, keep those admissible at $\alpha_r$, and
-          solve one maximum-weight matching per node.
-    \item From the still-unmatched reliable stubs, form gap candidates on
-          different arms and different nodes that pass the distance gate and
-          the $\alpha_r$-scaled angle gates, and solve one global
-          maximum-weight matching over the admissible ones.
-  \end{enumerate}
-  \item Return the links of round $r=7$.
-\end{enumerate}
+The method does not decide once. It runs the two matchings over several rounds,
+re-fitting every frame along the chains assembled so far before each. Early
+rounds are deliberately conservative: prices are scaled down, which admits
+fewer edges, and the gap angle limits are narrowed, so only pairings that
+survive the stricter test are committed while the frames are least reliable.
+The constraints relax towards their configured values as the chains sharpen the
+frames, and only the final round runs at the configured parameters. That round
+is the one returned.
 
-Instances are assumed to be open projected curves, and a guard enforces it:
-after each of the two matchings, any matched component whose links close a
-ring has its longest link removed. On the \PlectaDevelopmentSceneCount{}
-development scenes the guard never fired, zero links removed, so it protects
-against a configuration the data did not produce rather than shaping the
-result; closed or looping filaments are outside the scope of this paper.
+Instances are assumed to be open projected curves, and a guard enforces it: any
+matched component whose links close a ring has its longest link removed. On the
+\PlectaDevelopmentSceneCount{} development scenes the guard never fired --- zero
+links removed --- so it protects against a configuration the data did not
+produce rather than shaping the result. Closed or looping filaments are outside
+the scope of this paper.
 
 Every stub is therefore either paired or pays the unmatched price, and there is
-no third possibility. The priced option is what lets a filament genuinely end,
+no third possibility. That priced option is what lets a filament genuinely end,
 and what stops a T-junction from inventing a continuation for the arm that has
-no partner. The admissibility limit is not a separate threshold: an edge with
-$C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective, so a
-maximum-weight \emph{partial} matching would never select it, and refusing to
-offer it removes an edge that could not have been chosen.
+no partner.
 
 Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
 shows what it buys on real nodes, alongside the other two decisions the linker
-makes. A locally attractive edge can be declined, as
-at the three-arm node of Figure~\ref{fig:matching}c. Joint and sequential solutions
-coincide at plain crossings and diverge only as nodes grow dense: over 20
-development scenes they
-never disagreed at nodes of degree 2--4 ($n=542$), disagreed at 22\,\% of nodes
-with 5--8 stubs ($n=187$) and at 69\,\% of nodes with 9 or more ($n=233$), where
-the joint solution was better by a median of 0.90 in total cost. That comparison
+makes. A locally attractive edge can be declined, as at the three-arm node of
+Figure~\ref{fig:matching}c. Joint and sequential solutions coincide at plain
+crossings and diverge only as nodes grow dense: they never disagree at nodes of
+degree two to four, disagree at roughly a fifth of nodes with five to eight
+stubs, and at two thirds of nodes with nine or more, where the joint solution
+is the cheaper one; \supprecon{} gives the counts. That comparison
 holds one node's costs fixed. Run inside the rounds, where each matching sets
 the frames the next is scored against, a cheap early choice propagates and the
 difference is no longer confined to dense nodes
@@ -356,15 +346,15 @@ rather than being decided by noise.
 \textbf{One order for the whole field.} Local decisions need not be mutually
 consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
 $A$, which no assignment of heights satisfies. Each decided crossing therefore
-contributes a directed edge weighted by $\lvert\operatorname{logit}p\rvert$, and
-within each connected component of the crossing graph the orientation that
-maximises total satisfied weight is chosen --- equivalently a minimum-weight
-feedback arc set. Relations that cannot be satisfied are flipped rather than
-discarded, and both the flip and the original local probability are recorded.
-Components small enough are solved exactly by dynamic programming and larger
-ones greedily. Depth propagates only along crossings, so two instances in
-different components are related by no evidence at all and their order is a
-stated tie-break, not a measurement.
+contributes a directed edge weighted by its own confidence, and within each
+connected component of the crossing graph the orientation that maximises total
+satisfied weight is chosen --- equivalently a minimum-weight feedback arc set.
+Relations that cannot be satisfied are flipped rather than discarded, and both
+the flip and the original local probability are recorded, so a reader can see
+how far the global correction moved. Depth propagates only along crossings, so
+two instances in different components are related by no evidence at all and
+their order is a stated tie-break, not a measurement.
+\suppdepthstage{} gives the sampling geometry, the weighting and the solver.
 
 \textbf{Layers and height.} The corrected relations form a directed acyclic
 graph whose longest path fixes the smallest number of layers consistent with

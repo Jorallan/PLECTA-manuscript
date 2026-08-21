@@ -1,0 +1,214 @@
+%  The technical layer of the two-layer split.
+%
+%  The article states what each stage does and why; this states the arithmetic
+%  it does it with -- the cost function, every threshold, the round schedule,
+%  and the solver detail, for the 2-D reconstruction and the depth stage. The
+%  division is by *depth of detail*, not by importance: nothing here is
+%  optional to the method, and every number here is the one the released
+%  configuration actually carries.
+%
+%  Included by supplementary.tex ahead of the measure definitions, so a reader
+%  who wants the mechanism meets it before the scoring.
+
+\section{Reconstruction: cost function, gates and schedule}
+\label{supp:recon}
+
+This section gives the arithmetic behind Section~2.4 of the article. Values are
+those of the released configuration; nothing here was tuned on held-out or
+locked data.
+
+\subsection{Skeleton graph}
+
+The mask $M$ is binarised at $>0$, skeletonised, and spurs no longer than
+\PlectaParamSpurPx{}\,px are removed iteratively. Skeleton pixels of degree at
+least three form junction clusters, and adjacent clusters merge into nodes:
+connectors up to \PlectaParamAbsorbPx{}\,px are absorbed into one node,
+connectors up to \PlectaParamJoinPx{}\,px merge nearby nodes while remaining
+real arms, and free debris up to \PlectaParamFreeDebrisPx{}\,px is absorbed.
+Each remaining connected path is stored as an ordered arm carrying one stub at
+each end.
+
+\subsection{Stub frames}
+
+A stub frame holds its tip, outward tangent and signed curvature, estimated by
+a least-squares arclength polynomial fit read outward from the tip. The fit is
+quadratic when the span reaches \PlectaParamMinQuadratic{}\,px and linear
+otherwise, and a frame counts as reliable only with at least three samples
+spanning at least \PlectaParamSpurPx{}\,px. Local frames use
+\PlectaParamWindowLocal{}\,px of support; once links form chains that support
+expands to \PlectaParamWindowChain{}\,px, so a stub too short to have a
+direction of its own borrows one from the chain it has joined.
+
+\subsection{Weights and scales of the pairing cost}
+
+The cost function itself is stated in the article, which also gives the
+reasoning behind its three deliberate properties. What follows are the values
+it is evaluated with.
+
+Junction and gap links use separate weight sets, because a junction link is
+scored on direction alone while a gap link must also answer for the distance it
+spans. The curvature term carries a constant of \PlectaParamKappaScale{}, which
+places curvature, in px$^{-1}$, on the scale of the angular terms; without it a
+term in reciprocal pixels and a term in radians could not be added. Junction
+links set
+$w_\ell=0$, a junction having no gap to pay for, and $\ell_0$ and $d_0$ set the
+length scale of the gap penalty and the width of the chord fade respectively.
+
+\begin{table}[tbp]
+  \centering
+  \caption{Cost weights and scales, read from the frozen configuration that
+  produced every published number. Junction and gap links are scored with
+  separate sets; the gap set alone carries a length term, a junction having no
+  gap to pay for.}
+  \label{tab:cost-weights}
+  \input{results/plecta_parameter_table}
+\end{table}
+
+\subsection{Prices, gates and admissibility}
+
+Leaving a stub unmatched is priced rather than forbidden, and the price $p_i$
+also fixes admissibility: an edge is offered only when $C_{ij}<p_i+p_j$. Exact
+maximum-weight partial matching then maximises $\sum(p_i+p_j-C_{ij})$ over
+disjoint pairs, which minimises total link cost plus $p_i$ for every stub left
+free.
+
+The admissibility limit is not a separate threshold. An edge with
+$C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective, so a
+maximum-weight \emph{partial} matching would never select it, and declining to
+offer it removes an edge that could not have been chosen.
+
+At the configured prices junction stubs carry
+$p_i=\PlectaParamJunctionPrice{}$, so a junction edge needs
+$C<\PlectaParamJunctionLimit{}$. Gap stubs carry
+$p_i=\PlectaParamGapPrice{}$, so a gap edge needs
+$C<\PlectaParamGapLimit{}$, and must in addition satisfy
+$d\le\PlectaParamGapMaxLen{}$\,px, $\theta\le\PlectaParamGapMaxTheta{}$\,rad
+and $\varphi\le\PlectaParamGapMaxPhi{}$\,rad at each end. The gap gates are the
+tighter set because a gap link asserts a continuation across evidence that is
+missing rather than merely ambiguous. The values were fixed on development
+scenes.
+
+\subsection{The round schedule}
+
+Rounds $r=0,\ldots,\PlectaParamRounds{}-1$ apply a schedule fraction
+$\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/7$ that
+scales the unmatched prices and the two gap angle limits, and nothing else.
+Scaling a price \emph{down} admits fewer edges, admissibility being
+$C_{ij}<p_i+p_j$, and scaling an angle limit down narrows the gap gates, so
+early rounds are the conservative ones and are deliberately under-linked: while
+the frames are least reliable, only pairings that survive the reduced prices and
+narrowed gates are committed, and the constraints relax towards their configured
+values as the chains assembled so far sharpen the frames. The final round,
+$\alpha_7=1$, is the only one run at the configured parameters, and is the one
+returned.
+
+In full:
+\begin{enumerate}[nosep,leftmargin=1.5em,label=\arabic*.]
+  \item Skeletonise $M$, prune spurs, merge junction clusters into nodes, and
+        store the remaining paths as arms with a stub at each end.
+  \item For $r=0,\ldots,7$, re-solving both matchings from scratch and carrying
+        only the chain structure forward from round $r-1$:
+  \begin{enumerate}[nosep,leftmargin=1.5em,label=(\alph*)]
+    \item Re-fit every stub frame along the chain it now belongs to.
+    \item At each node, form candidate edges between stubs of different arms
+          with finite frames and cost, keep those admissible at $\alpha_r$, and
+          solve one maximum-weight matching per node.
+    \item From the still-unmatched reliable stubs, form gap candidates on
+          different arms and different nodes that pass the distance gate and
+          the $\alpha_r$-scaled angle gates, and solve one global
+          maximum-weight matching over the admissible ones.
+  \end{enumerate}
+  \item Return the links of round $r=7$.
+\end{enumerate}
+
+\subsection{Open-curve guard}
+
+Instances are assumed to be open projected curves, and a guard enforces it:
+after each of the two matchings, any matched component whose links close a ring
+has its longest link removed. On the \PlectaDevelopmentSceneCount{} development
+scenes the guard never fired --- zero links removed --- so it protects against
+a configuration the data did not produce rather than shaping the result. Closed
+or looping filaments are outside the scope of this paper.
+
+\subsection{Why the junction is solved as a whole}
+
+Joint and sequential solutions coincide at plain crossings and diverge only as
+nodes grow dense. Over 20 development scenes they never disagreed at nodes of
+degree 2--4 ($n=542$), disagreed at 22\,\% of nodes with 5--8 stubs ($n=187$)
+and at 69\,\% of nodes with 9 or more ($n=233$), where the joint solution was
+better by a median of 0.90 in total cost.
+
+That comparison holds one node's costs fixed. Run inside the rounds, where each
+matching sets the frames the next is scored against, a cheap early choice
+propagates and the difference is no longer confined to dense nodes.
+
+\subsection{Instance output}
+
+Connected components of accepted arm links define instances. PLECTA paints
+every arm pixel and every junction cluster touched by a chain into that
+instance, so intersecting instances share crossing pixels. An isolated one-arm
+component shorter than 6\,px is omitted. Accepted gap links determine identity
+but are not painted into the fixed centreline output. All effective parameters,
+including values previously inherited as code defaults, are materialised in the
+released JSON configuration.
+
+\section{Depth stage: evidence and solver}
+\label{supp:depthstage}
+
+This section gives the detail behind Section~2.6 of the article.
+
+\subsection{Sampling geometry at a crossing}
+
+Where two instance centrelines intersect, a short arc of each is taken through
+the crossing --- the shared \emph{core}, whose half-size follows the two radii
+so that it spans both silhouettes --- together with the \emph{flanks} on either
+side of it. Flank samples are kept clear of the other filament's stroke,
+because a sample taken inside it measures the union of two rods rather than one
+of them. A crossing with too few usable flank samples abstains rather than
+being decided on thin evidence.
+
+\subsection{The two channels}
+
+Two quantities are read on core and flanks alike: median intensity, and median
+gradient magnitude sampled on the filament's own two edges, the axis gradient
+being near zero and therefore uninformative. Sharpness continuity is tested per
+rod on that rod's own geometry: the core-adjacent samples of rod $k$ sit on
+$k$'s edges when $k$ is on top, and inside the other rod's stroke when $k$ is
+underneath, where its edge is overwritten.
+
+The filament whose flank appearance the core matches better is called upper,
+and the normalised difference between the two channels passes through a
+logistic to give $p$. Where the two filaments genuinely look alike the
+difference is near zero, $p$ sits near $0.5$, and the crossing abstains; the
+width of that abstention band is a configured parameter, as are the two channel
+weights.
+
+\subsection{One order for the whole field}
+
+Each decided crossing contributes a directed edge weighted by
+$\lvert\operatorname{logit}p\rvert$, oriented toward its locally more likely
+relation. Within each connected component of the crossing graph, the
+orientation maximising total satisfied weight is chosen --- equivalently a
+minimum-weight feedback arc set. Components up to a configured size are solved
+exactly by dynamic programming and larger ones greedily. Relations that cannot
+be satisfied are flipped rather than discarded, and both the flip and the
+original local probability are recorded, so a reader can see how much the
+global correction moved.
+
+\subsection{Layers and metric height}
+
+The corrected relations form a directed acyclic graph whose longest path fixes
+the smallest number of layers consistent with them; filaments that never
+conflict share a layer, so the layer count follows from the ordering rather
+than from the number of instances. Each instance is then placed at a height
+respecting its order that keeps filaments from interpenetrating at their
+measured radii, with the stack compacted so the film is as thin as those
+constraints allow.
+
+\subsection{Configuration}
+
+Every tunable quantity of both stages --- the cost weights and gates above, the
+core and window sizes, the two channel weights, the abstention band, and the
+exact-solver size limit --- is carried in a single released parameter file,
+grouped by the stage it belongs to, with the 2-D grouping section checked
+against the frozen record that produced the published numbers.
