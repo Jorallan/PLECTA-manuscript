@@ -171,3 +171,23 @@ does not separate the two. To our knowledge this is the first depth
 decomposition of a filament network from a single micrograph; it is reported as
 a demonstration with a measured accuracy, not as a validated three-dimensional
 reconstruction.
+
+\subsection*{Contributions}
+
+Three, of different kinds, and it is worth separating them because they carry
+different weight. The first is a \textbf{formulation}: a junction of any degree
+is solved as one exact maximum-weight partial matching in which refusing to
+continue a filament is a priced option, and in which that same price fixes what
+may be considered at all, so the refusal removes a parameter rather than adding
+one. The second is a \textbf{cue}: depth at a crossing read from the continuity
+of a filament's own appearance, which is available where the terminating
+contour that classical occlusion reasoning depends on is not. The third is an
+\textbf{evidence standard} under which both are claimed, and it is the part
+most easily overlooked. Every comparator is run from its own released source on
+identical masks through one scorer, and no comparator number was believed until
+that path reproduced PLECTA's stored scores exactly. The ranking is re-tested
+on a generator built by a competitor, vendored unmodified, with the expected
+outcome recorded before the scenes existed. A reference is admitted only if it
+reproduces itself when scored as its own prediction, a check that caught a
+defect three others missed. And what any real-image score can mean is bounded
+by a measurement of how far two human readers of the same micrograph disagree.
