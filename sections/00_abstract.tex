@@ -1,60 +1,41 @@
-Dense filament networks are difficult to do  instance segmentation because their two failure
-modes pull in opposite directions: crossings join distinct objects into one
-connected component, while gaps in the segmentation divide a single object into
-several. We present PLECTA, which converts a binary filament-axis mask into
-overlap-aware two-dimensional instances. It decomposes the skeletonised mask
-into arms and junctions, alternates exact per-junction continuation matching
-with globally gated gap matching, and re-estimates tangent, chord, and curvature
-evidence from the assembled chains, so that a crossing pixel may belong to more
-than one output instance. What is new is narrow and specific: each junction of
-any degree is solved as one exact maximum-weight \emph{partial} matching in
-which leaving an arm unmatched is priced rather than left over, so a filament
-can end instead of having a continuation invented for it. What makes that
-decidable is directional continuity: the evidence is entirely directional,
-tangent and curvature read over tens of pixels of arclength either side of the
-discontinuity, so the method applies where direction persists across a
-crossing, a condition bending stiffness contributes to and rod-like filaments
-commonly meet. That is the semiflexible regime occupied by nanotube bundles,
-cytoskeletal filaments and synthetic fibres, and it excludes freely flexible
-chains, where no local direction survives the junction to be matched. Skeleton graphs, continuation angles, distance gates,
-optimisation and overlapping output are prior art. The method draws on no random number generator and its configuration
-is published, so a mask yields the same instances on every run.
+A dense network of filaments defeats instance segmentation in two opposite ways
+at once. Where filaments cross, separate objects fuse into one connected
+component; where the segmentation fades, one object breaks into several. Both
+faults look identical in a binary mask, and repairing either requires the same
+judgement: which arm continues into which.
 
-Evaluation used a method-independent partition of each input skeleton into
-common fragments, and reports pairwise \Fone{} with the adjusted Rand index and
-variation of information beside it. On \PlectaHeldoutSceneCount{} independently
-seeded held-out scenes from the same procedural generator, PLECTA achieved mean
-pairwise \Fone{}=\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
-[\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]), precision
-\PlectaHeldoutPrecisionMean{}, recall \PlectaHeldoutRecallMean{} and adjusted
-Rand index \PlectaHeldoutARIMean{}, with no failed scenes, falling from
-\PlectaDensityTwoZeroFOneMean{} at 20\% coverage to
-\PlectaDensitySixZeroFOneMean{} at 60\% and identifying dense crossings as the
-main remaining regime of error. Against a greedy minimum-turning-angle
-continuation rule on identical masks it gained \PlectaGreedySweptDeltaFOne{}
-\Fone{} [\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] over
-\PlectaGreedySceneCount{} scenes, and \PlectaDNAiDeltaFOne{} and
-\PlectaGraFTDeltaFOne{} over two released implementations run from their own
-sources; it leads at every coverage on this generator under all three reported
-measures. To test whether that ranking is an artefact of our own scenes, the
-comparison was repeated on a comparator's generator: GraFT's own, vendored
-unmodified at its published settings, over \PlectaRegimeSceneCount{} scenes in
-\PlectaRegimeStratumCount{} density strata. PLECTA led at every stratum with no
-crossover, including inside GraFT's published range, at overall \Fone{}
-\PlectaRegimeOverallPlectaFOne{} against \PlectaRegimeOverallGraFTFOne{} and
-\PlectaRegimeOverallDNAiFOne{}.
-Of the \PlectaJunctionCount{} reference crossings it partitions the incident
-arms exactly as the reference does at \PlectaJunctionPlectaRate{} of them,
-against \PlectaJunctionChance{} for leaving every arm unpaired.
+We present PLECTA, which makes that judgement from a binary filament-axis mask
+and nothing else. It cuts the skeleton into arms and junctions and solves every
+junction, of any degree, as a single exact maximum-weight \emph{partial}
+matching in which leaving an arm unmatched carries an explicit price. A
+filament is therefore allowed to end, instead of having a continuation invented
+for it. Crossing pixels may belong to more than one instance, so overlap is
+represented rather than partitioned away. The evidence is purely directional
+--- tangent and curvature read over tens of pixels either side of the
+discontinuity --- which makes the working condition plain: the method applies
+where direction survives a crossing, as it does for nanotube bundles,
+cytoskeletal filaments and synthetic fibres, and not for freely flexible
+chains.
 
-CNT-sheet scanning electron microscopy is the proof-of-concept application: an
-upstream synthetic-data-driven CycleGAN/U-Net route prepares the binary masks
-that let the method run on real micrographs, while image-informed width
-measurement and ribbon rendering are downstream stages that leave the grouping
-fixed. The evidence supports same-generator synthetic generalisation, a
-comparative ranking that survives transfer to a generator built by a
-comparator, and a demonstration on \PlectaRealFieldCount{} annotated SEM
-fields, two of them held out from the upstream segmenter; it does not support
-general real-image or three-dimensional reconstruction claims. On
-\PlectaInterReaderFieldCount{} fields annotated independently by a second
-reader, cross-reader agreement bounds what any real-image score can show.
+On \PlectaHeldoutSceneCount{} held-out synthetic scenes PLECTA reaches mean
+pairwise \Fone{}\,=\,\PlectaHeldoutFOneMean{}
+[\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}], falling from
+\PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as coverage
+rises from 20 to 60\,\%, with no failed scenes. It leads two released
+implementations, run from their own sources on identical masks, at every
+density. Because such a lead could be an artefact of our own generator, the
+comparison was repeated on a competitor's: GraFT's, vendored unmodified at its
+published settings over \PlectaRegimeSceneCount{} scenes. The ordering held at
+every density stratum, at \Fone{} \PlectaRegimeOverallPlectaFOne{} against
+\PlectaRegimeOverallGraFTFOne{} and \PlectaRegimeOverallDNAiFOne{}.
+
+An optional stage then reads the greyscale to decide which filament passes in
+front at each crossing, and stacks the network into layers --- information
+otherwise obtained by destructive sectioning. It is correct on
+\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the crossings it commits
+to, against a chance level of \PlectaDepthChance{}, and abstains where the
+image does not separate the two. The method uses no random number generator and
+its configuration is published, so a mask yields the same instances on every
+run. We demonstrate the whole workflow on \PlectaRealFieldCount{} annotated
+carbon-nanotube SEM fields, and state plainly what that evidence does not
+support.

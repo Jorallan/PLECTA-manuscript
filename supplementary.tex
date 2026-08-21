@@ -1,0 +1,94 @@
+%==============================================================================
+%  PLECTA: supplementary material
+%
+%  What was Appendix A-C of the main manuscript, moved out so the article
+%  itself fits its page budget. The content is unchanged; only the numbering
+%  differs (sections, tables and equations are prefixed S).
+%
+%  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf).
+%
+%  The main text refers here by name -- "Supplementary Section S1" and so on --
+%  through the \supp* commands defined in main.tex, rather than by \ref across
+%  documents. That keeps either file compilable on its own, which matters
+%  because a journal builds them separately.
+%==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[british]{babel}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\setlength{\parindent}{1.2em}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
+            urlcolor=blue!55!black,breaklinks=true]{hyperref}
+\hypersetup{
+  pdftitle={PLECTA: supplementary material},
+  pdfauthor={Oday Allan, Stefan Luding, Igor Ostanin}
+}
+
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\sisetup{detect-all,round-mode=places,round-precision=3}
+\newcommand{\um}{\si{\micro\metre}}
+\newcommand{\Fone}{F\textsubscript{1}}
+
+%  The main manuscript carries supervisor comments through these; nothing in
+%  the supplementary uses them, but the section files are shared, so they are
+%  defined here too rather than left to fail.
+\newcounter{igorcomment}
+\newcommand{\Igor}[1]{}
+\newcommand{\igorreply}[1]{}
+\newif\ifaq \aqtrue
+\newcommand{\todo}[1]{\ifaq{\color{orange}\textbf{[To do: #1]}}\fi}
+\newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed: #1]}}}
+
+%  The same generated numbers the article uses. Every quantity quoted here is a
+%  macro from this file, never a literal.
+\input{results/plecta_results}
+\input{results/runtime_comparison}
+
+%  S-numbering for everything a reader might cite.
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{\vspace{-1.2cm}\bfseries Supplementary material for\\
+PLECTA: Overlap-aware instance reconstruction of dense filament networks
+from binary masks}
+
+\author{%
+  \begin{minipage}{0.94\textwidth}
+  \centering
+  Oday Allan\textsuperscript{a}\quad
+  Stefan Luding\textsuperscript{a}\quad
+  Igor Ostanin\textsuperscript{a}\\[5pt]
+  {\small\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of
+  Engineering Technology, University of Twente, Enschede, The Netherlands}
+  \end{minipage}
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{sections/06_appendix}
+
+\setlength{\bibsep}{0pt plus 0.3ex}
+\renewcommand{\bibfont}{\footnotesize}
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

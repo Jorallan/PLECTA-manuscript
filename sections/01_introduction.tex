@@ -1,175 +1,163 @@
 \section{Introduction}
 \label{sec:intro}
 
-Separating the individual objects in an image of a dense filament network is an
-instance-segmentation problem with an awkward geometry. The objects are long,
-thin and open, they touch and cross and occlude one another, and what
-distinguishes them is local continuation rather than shape or extent. This paper
-presents a method for that problem. Its proof-of-concept application is scanning
-electron microscopy (SEM) of carbon-nanotube (CNT) sheets, whose mechanical and
-electrical response depends on the geometry of the bundle network: length,
-width, orientation, curvature and contact topology
+Many materials are networks of long, thin filaments. Sheets of carbon
+nanotubes, the cytoskeleton inside a living cell, paper, felt and synthetic
+fibre mats all consist of slender objects laid over one another in a tangle.
+What such a material does --- how stiff it is, how well it conducts, how it
+tears --- depends less on the filaments themselves than on the geometry of the
+network they form: how long each one is, how thick, which way it runs, how
+sharply it bends, and which others it touches
 \citep{devolder2013cnt,coleman2006small,volkov2010structural,%
-ostanin2013distinct,wittmaack2018mesoscopic}. SEM resolves that projected
-network, but routine image analysis often stops at coverage or orientation
-distributions \citep{dong2022detecting,imtiaz2023facile}, whereas
-instance-resolved analysis requires each visible bundle to remain addressable
-across gaps, touches and crossings.
+ostanin2013distinct,wittmaack2018mesoscopic}.
 
-That requirement is distinct from semantic segmentation. U-Net and its
-self-configuring variants can identify filament foreground
-\citep{ronneberger2015unet,isensee2021nnunet}, but a binary foreground mask does
-not encode object identity: a faded segment splits one filament into several
-connected components, and a crossing joins different filaments into one. The
-ambiguity is greatest in dense networks, where several local continuations are
-geometrically plausible. Compact-object instance priors (bounded blobs,
-centre-directed flows, star-convex shapes) are poorly matched to long open
-curves that may overlap \citep{stringer2021cellpose,schmidt2018stardist,%
-kirillov2023sam}. Ridge and vesselness filters enhance curvilinear signal but do
-not assign identity across junctions
-\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and fibre
-extraction packages such as FIRE, CT-FIRE, SOAX, FiNTA and DiameterJ report
-network statistics rather than resolved instances
-\citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,flormann2021finta,%
-hotaling2015diameterj}.
+A micrograph shows that network directly. Turning the picture into those
+numbers is the hard part. Routine image analysis measures the network in bulk
+--- what fraction of the frame is covered, which way the texture points
+\citep{dong2022detecting,imtiaz2023facile} --- and stops there. To measure a
+distribution of filament lengths, or to ask how often one filament crosses
+another, something more is needed: every filament must be recovered as a
+separate object, addressable from one end to the other.
 
-Recovering individual filaments through crossings is itself established prior
-art, and the design space is well explored. Basu et al.\ build a minimum
-spanning tree over centreline particles, delete every bifurcation node, and
-recombine the segments with a binary integer program over chains of at most
-three, priced by the integrated squared curvature of a fitted spline; a segment
-may stay unlinked, and the program is re-solved after refitting until the
-segment set stops changing \citep{basu2015extraction}. DeFiNe consumes a
-pre-extracted weighted graph and solves a filament cover as a linear program
-minimising path roughness, optionally letting several paths cover one edge, so
-overlaps are representable \citep{breuer2015define}. SIFNE excises each crossing
-with its neighbourhood, estimates tip directions towards the local centre of
-mass, and pairs termini greedily in priority order inside a fan-shaped region
-under angular and continuity gates, leftover tips becoming ends
-\citep{zhang2017sifne}. De et al.\ resolve crossovers by partitioning a directed
-graph \citep{de2016graph}, and Wegmayr et al.\ group skeleton branches by lowest
-mutual angle and learn pixel embeddings for tangled microplastic fibres, sharing
-junction pixels in principle but assigning them arbitrarily
-\citep{wegmayr2020microplastic}. DNAi detects junctions morphologically,
-clusters them by single linkage, erases a disk the width of the fibre, and
-enumerates the pairings at junctions of degree three or four from endpoint
-angles traced over a short span \citep{playout2026dnai}. GraFT builds a graph
-from a Frangi-filtered skeleton, derives an angle threshold per component, and
-traces filaments by constrained depth-first search and a greedy longest-first
-path cover \citep{osterlund2026graft}. Learned alternatives include
-orientation-aware terminus pairing \citep{liu2019intersection}, FibeR-CNN, and
-recurrent pick-and-trace models \citep{frei2020fiber,liu2023picktrace}.
+That is an instance-segmentation problem, and it has an awkward geometry. The
+objects are long, thin and open rather than compact and closed; they touch,
+cross and hide one another; and what tells two of them apart is not shape or
+size but which way each was heading. The consequence is a pair of failures that
+pull in opposite directions. Where two filaments cross, their pixels join into
+a single connected blob, and a method that trusts connectivity reports one
+object where there are two. Where the image fades or the segmentation drops
+out, one filament arrives in several disconnected pieces, and the same method
+reports several objects where there is one. In a binary mask the two look
+identical, and both are repaired by answering one question: at this junction,
+which arm continues into which?
 
-Two of those methods are compared against directly here, so what each was built
-for matters, because neither was built for this. DNAi is an end-to-end tool for
-DNA fibre spreading assays, in which immunofluorescence images of replicating
-DNA carry two nucleoside-analogue labels and the quantity wanted is the length
-ratio of the two tracts; it matches trained human annotators on that task and is
-released with both its models and its annotated data \citep{playout2026dnai}.
-GraFT traces and tracks filamentous structures through time in confocal series
-of the plant actin cytoskeleton, and the temporal dimension it handles is
-outside the scope of this work \citep{osterlund2026graft}. Both are strong in
-their own domains, and both make design choices those domains license: DNAi
-commits to a pairing at every junction of degree two to four and attempts none
-above that, while GraFT's greedy longest-first path cover cannot revise an early
-commitment. Such choices cost little where filaments are sparse and well
-separated, which is the regime each was validated in, and more where filaments
-are dense and crossings are frequent. Section~\ref{sec:res-comparators} runs
-both from their own released sources, on identical input masks and through one
-scorer, and reports what that costs on this material.
+Existing tools answer part of it. Semantic segmentation is mature --- U-Net and
+its self-configuring descendants reliably separate filament foreground from
+background \citep{ronneberger2015unet,isensee2021nnunet} --- but a foreground
+mask carries no identity, so it inherits both failures rather than resolving
+them. General-purpose instance methods assume the objects are compact: bounded
+blobs, centre-directed flows, star-convex outlines, none of which describes a
+long open curve that may overlap another \citep{stringer2021cellpose,%
+schmidt2018stardist,kirillov2023sam}. Ridge and vesselness filters sharpen
+curvilinear signal but assign nothing across a junction
+\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and the
+established fibre-analysis packages return network statistics rather than
+resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
+flormann2021finta,hotaling2015diameterj}. This paper addresses the step those
+leave open: given a binary filament-axis mask, recover the individual filaments
+through the crossings and the gaps.
+
+Recovering filaments through crossings is itself well-trodden ground, and the
+design space is thoroughly explored. Basu et al.\ build a spanning tree over
+centreline particles, delete every bifurcation, and recombine the segments with
+an integer program priced by spline curvature, re-solving until the segment set
+stops changing \citep{basu2015extraction}. DeFiNe consumes a pre-extracted
+weighted graph and covers it with paths of minimum roughness, optionally
+letting several paths share an edge so that overlaps are representable
+\citep{breuer2015define}. SIFNE excises each crossing, estimates tip
+directions, and pairs termini greedily inside an angular gate
+\citep{zhang2017sifne}. Others partition a directed graph \citep{de2016graph},
+group skeleton branches by lowest mutual angle and learn pixel embeddings for
+tangled microplastic fibres \citep{wegmayr2020microplastic}, enumerate the
+pairings at junctions of degree three or four from endpoint angles
+\citep{playout2026dnai}, or trace a Frangi-filtered skeleton by constrained
+search and a greedy longest-first path cover \citep{osterlund2026graft}.
+Learned alternatives pair termini with an orientation network, detect fibres
+with a region-based detector, or trace them recurrently
+\citep{liu2019intersection,frei2020fiber,liu2023picktrace}.
+
+Two of these are compared against directly here, so what each was built for
+matters, because neither was built for this. DNAi is an end-to-end tool for DNA
+fibre spreading assays, where the quantity wanted is a length ratio between two
+labelled tracts, and it matches trained human annotators on that task
+\citep{playout2026dnai}. GraFT traces and tracks the plant actin cytoskeleton
+through confocal time series, a temporal dimension outside this paper's scope
+\citep{osterlund2026graft}. Both are strong in their domains, and both make
+choices those domains license: DNAi commits to a pairing at every junction of
+degree two to four and attempts none above that, while GraFT's greedy path
+cover cannot revise an early commitment. Such choices cost little where
+filaments are sparse and well separated, which is the regime each was validated
+in, and more where filaments are dense and crossings frequent.
+Section~\ref{sec:res-comparators} runs both from their own released sources, on
+identical masks, through one scorer.
 
 Skeleton graphs, junction excision, continuation angles, distance gates,
-combinatorial optimisation, iterative refitting and overlapping filament output
-are therefore all prior art, and none is claimed here. What is new is narrower,
-and it is a combination rather than any single element: from a binary mask
-alone, PLECTA solves each junction of any degree as one exact maximum-weight
-\emph{partial} matching in which leaving an arm unmatched is an explicit option
-at a fixed price rather than a parity leftover, alternates that junction
-matching with globally gated gap matching, re-fits its tangent and curvature
-frames along the chains as they assemble, and emits overlapping instances.
-Each element exists somewhere in the catalogue above; no method there combines
-them. The methods that optimise globally consume intensity evidence or a
-pre-extracted weighted graph rather than a mask, and Basu et al.\ recombine
-chains of at most three segments \citep{basu2015extraction,breuer2015define};
-the mask-reading methods pair endpoints greedily in priority order
-\citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} or enumerate
-the pairings of a junction only up to degree four \citep{playout2026dnai}.
+combinatorial optimisation, iterative refitting and overlapping output are
+therefore all prior art, and none is claimed here. What is new is narrower, and
+it is a combination: from a binary mask alone, PLECTA solves each junction of
+\emph{any} degree as one exact maximum-weight \emph{partial} matching in which
+leaving an arm unmatched is an explicit option at a fixed price rather than a
+parity leftover, alternates that with globally gated gap matching, re-fits its
+tangent and curvature frames along the chains as they assemble, and emits
+overlapping instances. Each element exists somewhere above; no method there
+combines them. The globally optimising methods consume intensity evidence or a
+pre-extracted graph rather than a mask, and recombine chains of at most three
+segments \citep{basu2015extraction,breuer2015define}; the mask-reading methods
+pair endpoints greedily \citep{zhang2017sifne,osterlund2026graft,%
+wegmayr2020microplastic} or stop at degree four \citep{playout2026dnai}.
 Degree-general exact matching with a priced refusal is what lets a filament
-genuinely end instead of having a continuation invented for it.
+genuinely end rather than have a continuation invented for it. The closest
+single prior method is that of Liu et al., which likewise reads a mask,
+reconnects across gaps and permits overlapping output, but pairs termini
+greedily and depends on a trained orientation network
+\citep{liu2019intersection}.
 
-That claim carries a condition, and it is worth stating as scope rather than
-leaving to be inferred. The only evidence PLECTA has at a crossing is
-directional: the reversal angle between two outward tangents, the turns onto the
-chord between them, and the continuity of signed curvature, each estimated over
-the 24 to 55\,px of arclength the frames are fitted on. The working condition
-is therefore a property of the image: tangent and curvature must persist
-across the junction at the scale of that support, or the continuation is not
-decidable from geometry at all. Bending stiffness is the material property
-that most directly produces such persistence, which is why the semiflexible
-regime, where the persistence length is long against the width of a crossing,
-is the method's home ground; carbon-nanotube bundles sit there, and so do the
-actin, collagen and synthetic-fibre networks the methods above were built for.
-But stiffness contributes to the condition rather than uniquely causing it:
-tension, adhesion, confinement or bundling can hold a projected direction just
-as straight, and a stiff filament can still be ambiguous at a symmetric
-crossing. Where the condition fails, as for a freely flexible chain whose
-tangent decorrelates within the junction, no continuation is more plausible
-than another, and no amount of matching recovers what the image no longer
-distinguishes. The closest single prior method is that of Liu et al., which
-likewise works from a mask, reconnects across gaps and permits overlapping
-output, but pairs termini greedily and depends on a trained orientation
-network \citep{liu2019intersection}.
+That claim carries a condition, worth stating as scope rather than leaving to
+be inferred. The only evidence PLECTA has at a crossing is directional: the
+angle between two outward tangents, the turns onto the chord between them, and
+the continuity of signed curvature, each read over tens of pixels of arclength.
+The working condition is therefore a property of the image --- direction must
+persist across the junction at that scale, or the continuation is not decidable
+from geometry at all. Bending stiffness is what most directly produces such
+persistence, which is why the semiflexible regime is the method's home ground:
+nanotube bundles sit there, and so do the actin, collagen and synthetic-fibre
+networks the methods above were built for. Stiffness contributes to the
+condition rather than uniquely causing it, since tension, adhesion, confinement
+or bundling can hold a direction just as straight. Where the condition fails,
+as for a freely flexible chain whose tangent decorrelates within the junction,
+no continuation is more plausible than another, and no amount of matching
+recovers what the image no longer distinguishes.
 
 We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents and
-Assignment; the name is also the Latin \emph{plecta}, a braid), a
-graph-matching method for dense filament networks. PLECTA decomposes a skeleton into arms,
-endpoint stubs, and merged junction nodes. It then alternates exact per-node
+Assignment; also the Latin \emph{plecta}, a braid). It decomposes a skeleton
+into arms, endpoint stubs and merged junction nodes, alternates exact per-node
 continuation matching with globally gated gap matching while tangent and
-curvature estimates expand from local arms to assembled chains. Its output is a
-set of projected 2-D instance layers in which crossing pixels may be shared.
-Every parameter is fixed in a published configuration and the implementation
-draws on no random number generator, so a given mask yields the same instances
-on every run; that is the only sense in which it is called deterministic here.
+curvature estimates expand from local arms to assembled chains, and returns
+projected 2-D instance layers in which crossing pixels may be shared. Every
+parameter is fixed in a published configuration and the implementation draws on
+no random number generator, so a given mask yields the same instances on every
+run; that is the only sense in which it is called deterministic here.
 
-Reaching real micrographs takes one more component, and the closest complete
-workflow is that of Peters et al., who join a U-Net-like semantic segmentation,
-trained on more than a thousand annotated SEM micrographs, to algorithms that
-search, trace and refine fibre-shaped segments through intersections, and
-validate the result against human evaluators on fibre number, length and width
-over six CNT materials \citep{peters2026fibre}. That work and this one divide
-the task at the same joint, semantic foreground first and instances second,
-and differ in what the instance step is asked to prove: their tracer is
-validated as a substitute for human counting and measurement, morphological
-statistics on materials of graded complexity, while PLECTA is isolated behind
-a binary-mask contract and scored on identity through crossings against
-overlap-aware references in which every pairing is known. The two are
-complementary rather than competing readings of the same architecture, and the
-grouping stage evaluated here could in principle serve behind their front end
-as behind ours. We divide the workflow in two:
-Pipeline~A turns a raw SEM micrograph into a binary filament-axis mask by a
-synthetic-data-driven CycleGAN/U-Net route whose training pairs are
-synthesised rather than annotated
-\citep{ruehle2021workflow,allan2026cntsem}, and Pipeline~B is PLECTA. Without
-Pipeline~A the method could only ever be exercised on masks drawn by hand or
-emitted by a generator; with the division, grouping can be measured on its own
-against references whose identities are known exactly, and width rendering
-cannot move an identity score. Pipeline~A carries its own evaluation
-\citep{allan2026cntsem} and is not re-evaluated here. We evaluate PLECTA on
+Reaching real micrographs takes one further component, and the workflow is
+deliberately divided in two. An upstream route turns a raw SEM micrograph into
+a binary filament-axis mask by a synthetic-data-driven CycleGAN/U-Net whose
+training pairs are synthesised rather than annotated
+\citep{ruehle2021workflow,allan2026cntsem}; PLECTA is everything downstream of
+that mask. The division is what makes the grouping measurable on its own,
+against references whose identities are known exactly, and it keeps width
+rendering from moving an identity score. The closest complete workflow is that
+of Peters et al., who join a U-Net-like segmentation trained on over a thousand
+annotated SEM micrographs to algorithms that trace fibres through
+intersections, and validate against human evaluators on fibre number, length
+and width \citep{peters2026fibre}. That work and this one divide the task at
+the same joint and differ in what the instance step is asked to prove: their
+tracer stands in for human counting and measurement, while PLECTA is isolated
+behind a binary-mask contract and scored on identity through crossings against
+overlap-aware references in which every pairing is known. We evaluate PLECTA on
 \PlectaHeldoutSceneCount{} unseen scenes from the development generator and on
 \PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate
-the two pipelines together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
+the two stages together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
 fields, \PlectaRealHeldOutCount{} of them held out from the upstream segmenter.
 
-Beyond the plane, a projected crossing carries a second question the grouping
-does not answer: which of the two filaments passes in front. For nanostructured
-networks that information is normally obtained destructively, by
-focused-ion-beam serial sectioning and tomographic reconstruction
-\citep{gabbett2024fibsem}, because a micrograph's intensities record surface
-topography rather than height. PLECTA answers it optionally and non-destructively
-from the greyscale already in hand. The machinery is deliberately
-conventional: monocular depth ordering has long derived pairwise depth from
-local occlusion evidence, assembled the pairwise relations into a depth-order
-graph, and corrected the contradictions that inevitably arise among them
+Beyond the plane, a crossing carries a second question the grouping does not
+answer: which filament passes in front. For nanostructured networks that is
+normally obtained destructively, by focused-ion-beam sectioning and tomographic
+reconstruction \citep{gabbett2024fibsem}, because a micrograph's intensities
+record surface topography rather than height. PLECTA answers it optionally and
+non-destructively from the greyscale already in hand. The machinery is
+deliberately conventional: monocular depth ordering has long derived pairwise
+depth from local occlusion evidence, assembled those relations into a
+depth-order graph and corrected the contradictions among them
 \citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
 resolves the layering of intersecting strands in much the same spirit
 \citep{chai2012singleview}. What differs is the evidence available. Those

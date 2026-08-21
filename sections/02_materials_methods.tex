@@ -378,7 +378,7 @@ Without a greyscale image every crossing abstains, the ordering has nothing to
 satisfy, and the output degenerates to the tie-break: the stage requires image
 evidence and reports how much of it was usable.
 Section~\ref{sec:res-depth} evaluates it, and
-Appendix~\ref{sec:app-depth-measures} defines the measures used, which are
+\suppdepth{} defines the measures used, which are
 disjoint from those above because none of them can see depth.
 
 \subsection{Metrics and statistical analysis}
@@ -390,14 +390,14 @@ reads neither the reference nor any prediction, so every method compared is cut
 into the same pieces; each fragment then takes a reference and a predicted
 identity by one rule applied to both sides alike, and the score counts the
 pairs of fragments the prediction groups as the reference does.
-Appendix~\ref{app:measures} gives the construction and the assignment rule in
+\suppmeasures{} gives the construction and the assignment rule in
 full. Two points bear on the interpretation. The scorer shares two constants
 with the method --- both prune skeleton spurs of at most 3\,px, and the
 scorer's 6\,px minimum fragment length coincides with the length below which
 PLECTA omits an isolated component --- so endpoint and method rest on a shared
 preprocessing assumption rather than independent ones, and a prespecified
 one-at-a-time sweep of the four constants is reported in
-Appendix~\ref{app:measures}. And because junction pixels are deleted before
+\suppmeasures{}. And because junction pixels are deleted before
 fragments are labelled, the measure cannot see whether an emitted crossing
 pixel is given one owner or two, only whether the arms meeting there are
 grouped as the reference groups them;
@@ -423,7 +423,7 @@ rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}; it is
 always printed beside its own all-unpaired baseline, the fidelity of the
 deterministic do-nothing policy that leaves every arm unpaired. The input masks themselves, as distinct from the reconstructions, are
 characterised by the tolerant completeness/correctness/quality triple standard
-for thin structures. Appendix~\ref{app:measures} defines each measure in full,
+for thin structures. \suppmeasures{} defines each measure in full,
 with its equation, what it rewards and what it cannot see; every one is quoted
 with the others rather than alone.
 

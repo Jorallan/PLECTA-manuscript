@@ -1,11 +1,12 @@
-\appendix
-%  The appendix is set at the size of the reference list immediately above it.
-%  It is back matter, consulted one definition at a time rather than read
-%  through, and at this length the step is worth about a page and a half against
-%  the body size -- which is what keeps eleven full definitions inside the page
-%  budget instead of forcing four of them out. Typographic only: nothing is
-%  shortened to achieve it.
-\footnotesize
+%  This file is the supplementary material and is included by
+%  supplementary.tex, not by main.tex. It carries no \appendix declaration of
+%  its own: that command would reset the section counter and impose A/B/C
+%  lettering, overriding the S-numbering the supplementary document sets.
+%
+%  It was previously set \footnotesize, to buy about a page and a half against
+%  the body size while it was still competing for the article's page budget.
+%  It is not competing any more, so it is set at body size and is simply
+%  easier to read. Nothing was shortened for either decision.
 
 \section{Measures}
 \label{app:measures}
@@ -36,7 +37,7 @@ one owner or two, only whether the arms meeting there are grouped as the
 reference groups them.
 
 \textbf{Sensitivity to the scorer's constants.} Because the four constants
-above are shared with the method (Section~\ref{sec:mm-metrics}), the stored
+above are shared with the method (the article's metrics section), the stored
 predictions of all four methods were re-scored under one-at-a-time
 perturbations of each constant, with the grid frozen in writing before any
 result was computed: spur pruning 2--4\,px, minimum fragment length
@@ -174,7 +175,7 @@ all: only a method emitting overlapping layers can score above zero on the
 recall, and one emitting a hard partition scores exactly zero by construction.
 Blind spot: neither component distinguishes a pixel shared for the right reason
 from one shared because a chain was painted with a whole junction cluster,
-which is the over-marking Section~\ref{sec:res-overlap} reports.
+which is the over-marking the article's crossing-representation results report.
 
 \textbf{The runtime scaling exponent} is the slope of an ordinary least-squares
 fit of log seconds on log foreground pixels, so an exponent $b$ means cost
@@ -205,7 +206,7 @@ tolerance exists to correct. No clDice result is reported in this paper.
 \section{Comparator configuration}
 \label{app:comparators}
 
-Section~\ref{sec:res-comparators} states each adaptation and its cost; this is
+The article's comparator section states each adaptation and its cost; this is
 the mechanism behind it, for a reader checking that the comparison was run
 fairly. \textbf{DNAi} clusters junction pixels by single linkage and erases a
 disk at each cluster. At its released 10\,px linkage distance, crossings closer
@@ -230,7 +231,7 @@ scene collapses into one connected graph, as it does above 30\,\% coverage.
 \section{Depth measures}
 \label{sec:app-depth-measures}
 
-The measures of Appendix~\ref{app:measures} score which centreline
+The measures of Section~\ref{app:measures} score which centreline
 fragments belong to one instance. None of them can see depth: two
 reconstructions that agree on every instance but disagree about which filament
 passes in front at every crossing are indistinguishable to all of them. The
