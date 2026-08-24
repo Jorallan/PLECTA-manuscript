@@ -5,9 +5,9 @@ Reads ``results/plecta_depth_rule_measured.json``, written by
 ``\\PlectaDepthRule*`` macros the supplementary quotes.
 
 These numbers used to be transcribed out of prose. The 2026-08-22 study that
-justified the replacement wrote no machine-readable output, so roughly
-twenty-five published quantities sat outside the repository's own gate and
-could drift from the code silently. They are now recomputed from the held-out
+justified the replacement wrote no machine-readable output, so every published
+quantity sat outside the repository's own gate and could drift from the code
+silently. The twenty-one macros below are now recomputed from the held-out
 scenes on every run.
 
 Recomputing changed them, and the change is instructive rather than alarming.
@@ -19,11 +19,16 @@ survive is the earlier accuracy delta's sign at *full* coverage; see the note
 on ``accuracy_delta_at_full_coverage`` below, which is reported here precisely
 because it is the reading that goes against the shipped rule.
 
-Two quantities cannot be recomputed and stay transcribed, flagged as such in
-the JSON. Both describe channels the change deleted -- the sharpness channel's
-standalone behaviour, and the axial channel measured inert before removal --
-so no configuration of the current code can produce them. They are diagnoses
-of why the old rule went, not properties of the new one.
+Every quantity this module publishes is computed. None is transcribed. That
+was not true before: thirteen values describing what the rule change *deleted*
+-- the removed fixed denominator floor and the saturation behaviour it caused,
+the removed gradient/sharpness channel's standalone behaviour, and an axial
+channel measured inert before removal -- were typed out of prose and emitted
+alongside the computed ones. No configuration of the shipped code can produce
+them, because the code that produced them is gone, so they were diagnoses of
+why the old rule went rather than properties of the shipped one. They no longer
+appear in the manuscript or in this module's output; they are kept for
+reference in the untracked ``notes/depth_rule_transcribed_measurements.md``.
 
 Scope. Only measurements live here. The rule's tunable constants (core arc,
 sampling window, minimum flank count, abstention threshold, exact-solver
@@ -40,36 +45,6 @@ REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "results" / "plecta_depth_rule_measured.json"
 OUT_JSON = REPO / "results" / "plecta_depth_rule.json"
 OUT_TEX = REPO / "results" / "plecta_depth_rule.tex"
-
-#  Constants of the REMOVED rule, and diagnoses of channels the change
-#  deleted. No live configuration holds these and no run can reproduce them;
-#  they exist only as the record of why the rule was replaced.
-TRANSCRIBED = (
-    ("PlectaDepthRuleLegacyFloor", "0.02",
-     "the removed rule's fixed denominator floor"),
-    ("PlectaDepthRuleSaturationCut", "1.98",
-     "score at which the removed rule became unable to abstain"),
-    ("PlectaDepthRuleSatSynthPct", "32.3",
-     "per cent of synthetic crossings at that saturation"),
-    ("PlectaDepthRuleSatRealPct", "61.5",
-     "per cent of real crossings at that saturation"),
-    ("PlectaDepthRuleSatBelowNoiseAcc", "0.70",
-     "accuracy of saturated crossings below the noise floor"),
-    ("PlectaDepthRuleSatAboveNoiseAcc", "0.93",
-     "accuracy of saturated crossings above it"),
-    ("PlectaDepthRuleSharpDecidedPct", "0.2",
-     "per cent of crossings the removed sharpness channel decided alone"),
-    ("PlectaDepthRuleSharpKappa", "+0.09",
-     "its agreement with the intensity channel"),
-    ("PlectaDepthRuleSharpAccLow", "0.54",
-     "its standalone accuracy, low end"),
-    ("PlectaDepthRuleSharpAccHigh", "0.59",
-     "its standalone accuracy, high end"),
-    ("PlectaDepthRuleAxialDelta", "-0.0008",
-     "the axial channel, measured inert and not included"),
-    ("PlectaDepthRuleAxialCILow", "-0.0059", "its CI, low"),
-    ("PlectaDepthRuleAxialCIHigh", "+0.0048", "its CI, high"),
-)
 
 
 def _signed(value: float, digits: int = 4) -> str:
@@ -131,22 +106,15 @@ def main() -> int:
         "% run_depth_rule_comparison.py writes from the held-out scenes.",
         "% The rule's tunable constants are NOT here: they are \\PlectaParam*,",
         "% read live from plecta/parameters.yaml.",
+        "% Every macro below is computed; none is transcribed.",
     ]
     lines += [f"\\newcommand{{\\{n}}}{{{v}}}" for n, v in computed]
-    lines += [
-        "% Transcribed, and not recomputable: these describe channels the",
-        "% change deleted, so no configuration of the current code produces",
-        "% them. They are the diagnosis of why the old rule went.",
-    ]
-    lines += [f"\\newcommand{{\\{n}}}{{{v}}}" for n, v, _why in TRANSCRIBED]
     #  Convenience pairs the prose sets as one token.
     lines += [
         r"\newcommand{\PlectaDepthRuleAccCI}"
         r"{[\PlectaDepthRuleAccCILow,\PlectaDepthRuleAccCIHigh]}",
         r"\newcommand{\PlectaDepthRuleAucCI}"
         r"{[\PlectaDepthRuleAucCILow,\PlectaDepthRuleAucCIHigh]}",
-        r"\newcommand{\PlectaDepthRuleAxialCI}"
-        r"{[\PlectaDepthRuleAxialCILow,\PlectaDepthRuleAxialCIHigh]}",
         r"\newcommand{\PlectaDepthRuleAccFullCI}"
         r"{[\PlectaDepthRuleAccFullCILow,\PlectaDepthRuleAccFullCIHigh]}",
     ]
@@ -156,13 +124,9 @@ def main() -> int:
         "role": "the evidence-rule replacement, as published",
         "computed_from": str(SRC.relative_to(REPO)),
         "computed": dict(computed),
-        "transcribed": {n: {"value": v, "what": w} for n, v, w in TRANSCRIBED},
-        "transcribed_note": "channels deleted by the change; no run of the "
-                            "current code can reproduce these",
     }, indent=2) + "\n", encoding="utf-8")
 
-    print(f"wrote {OUT_TEX}  ({len(computed)} computed, "
-          f"{len(TRANSCRIBED)} transcribed)")
+    print(f"wrote {OUT_TEX}  ({len(computed)} computed, 0 transcribed)")
     return 0
 
 

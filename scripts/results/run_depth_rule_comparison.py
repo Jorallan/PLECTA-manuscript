@@ -3,8 +3,8 @@
 Why this exists. The 2026-08-22 comparison that justified replacing the depth
 stage's two-channel logistic rule with the one-channel noise-floored rule wrote
 no machine-readable output. Its numbers reached the manuscript by being typed
-out of prose, which put roughly twenty-five published quantities outside the
-repository's own gate. This driver recomputes them from the scenes, so
+out of prose, which put every published quantity outside the repository's own
+gate. This driver recomputes them from the scenes, so
 ``make_depth_rule_record.py`` can read a record instead of transcribing one.
 
 What it runs. Both rules over the same held-out set, in the ``--oracle``
@@ -32,11 +32,13 @@ ordering. So the rule is judged on two things, not one:
 Uncertainty is a scene-level bootstrap, resampling the 20 scenes with
 replacement. Scenes are the independent unit; crossings within one are not.
 
-What it cannot recover. Two quantities in the manuscript describe channels that
-no longer exist in the code -- the sharpness channel's standalone accuracy and
-agreement, and the axial channel measured inert before removal. Deleting them
-was the point of the change, so they are not recomputable here and remain
-transcribed, labelled as such in the record.
+What it cannot recover. Thirteen quantities described channels that no longer
+exist in the code -- the removed fixed denominator floor and its saturation
+behaviour, the sharpness channel's standalone accuracy and agreement, and the
+axial channel measured inert before removal. Deleting them was the point of the
+change, so they are not recomputable here. They have been withdrawn from the
+manuscript rather than transcribed into it, and are kept for reference in the
+untracked ``notes/depth_rule_transcribed_measurements.md``.
 
     python scripts/results/run_depth_rule_comparison.py [--score-only]
 """

@@ -3,6 +3,7 @@
 % run_depth_rule_comparison.py writes from the held-out scenes.
 % The rule's tunable constants are NOT here: they are \PlectaParam*,
 % read live from plecta/parameters.yaml.
+% Every macro below is computed; none is transcribed.
 \newcommand{\PlectaDepthRuleHeldoutScenes}{20}
 \newcommand{\PlectaDepthRuleHeldoutCrossings}{1342}
 \newcommand{\PlectaDepthRuleCovShipped}{83.0}
@@ -24,23 +25,6 @@
 \newcommand{\PlectaDepthRuleAucDelta}{+0.1056}
 \newcommand{\PlectaDepthRuleAucCILow}{+0.0659}
 \newcommand{\PlectaDepthRuleAucCIHigh}{+0.1425}
-% Transcribed, and not recomputable: these describe channels the
-% change deleted, so no configuration of the current code produces
-% them. They are the diagnosis of why the old rule went.
-\newcommand{\PlectaDepthRuleLegacyFloor}{0.02}
-\newcommand{\PlectaDepthRuleSaturationCut}{1.98}
-\newcommand{\PlectaDepthRuleSatSynthPct}{32.3}
-\newcommand{\PlectaDepthRuleSatRealPct}{61.5}
-\newcommand{\PlectaDepthRuleSatBelowNoiseAcc}{0.70}
-\newcommand{\PlectaDepthRuleSatAboveNoiseAcc}{0.93}
-\newcommand{\PlectaDepthRuleSharpDecidedPct}{0.2}
-\newcommand{\PlectaDepthRuleSharpKappa}{+0.09}
-\newcommand{\PlectaDepthRuleSharpAccLow}{0.54}
-\newcommand{\PlectaDepthRuleSharpAccHigh}{0.59}
-\newcommand{\PlectaDepthRuleAxialDelta}{-0.0008}
-\newcommand{\PlectaDepthRuleAxialCILow}{-0.0059}
-\newcommand{\PlectaDepthRuleAxialCIHigh}{+0.0048}
 \newcommand{\PlectaDepthRuleAccCI}{[\PlectaDepthRuleAccCILow,\PlectaDepthRuleAccCIHigh]}
 \newcommand{\PlectaDepthRuleAucCI}{[\PlectaDepthRuleAucCILow,\PlectaDepthRuleAucCIHigh]}
-\newcommand{\PlectaDepthRuleAxialCI}{[\PlectaDepthRuleAxialCILow,\PlectaDepthRuleAxialCIHigh]}
 \newcommand{\PlectaDepthRuleAccFullCI}{[\PlectaDepthRuleAccFullCILow,\PlectaDepthRuleAccFullCIHigh]}

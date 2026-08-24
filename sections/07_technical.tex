@@ -205,16 +205,17 @@ should not be read as one.
 By the reverse triangle inequality the numerator of \eqref{eq:depth-score} is
 bounded in magnitude by $\lvert m_i-m_j\rvert$, so a denominator equal to that
 separation drives the ratio to $\pm1$ whenever the two filaments differ at all.
-The previous form of this rule floored the denominator at a fixed
-$\PlectaDepthRuleLegacyFloor{}$ grey levels, far below the noise of any of
-these images. The consequence was structural rather than statistical:
-$\lvert s\rvert\ge\PlectaDepthRuleSaturationCut{}$ then exceeded any
-abstention threshold, so the rule could not abstain on such a crossing whatever
-the evidence actually was. Measured, \PlectaDepthRuleSatSynthPct{}\,\% of
-synthetic and \PlectaDepthRuleSatRealPct{}\,\% of real crossings were saturated
-this way, and among the saturated ones those whose separation fell below the
-noise scored about $\PlectaDepthRuleSatBelowNoiseAcc{}$ accuracy against about
-$\PlectaDepthRuleSatAboveNoiseAcc{}$ for those above it. Flooring at
+The previous form of this rule floored the denominator at a small fixed constant
+in grey levels, far below the noise of any of these images. The consequence was
+structural rather than statistical: a maximal score was then
+reachable on a separation smaller than the noise, and a maximal score exceeded
+any abstention threshold, so the rule could not abstain on such a crossing
+whatever the evidence actually was. Nor was that regime rare: a substantial
+fraction of crossings saturated this way, and among the saturated ones those
+whose separation fell below the noise were markedly less accurate than those
+separated by more than it. Those supporting measurements were made on the
+removed rule, which no configuration of the shipped code restores, so they are
+recorded outside this manuscript rather than reported here. Flooring at
 $2\hat\sigma$ instead makes a confident score mean \emph{separated by more than
 the noise} rather than merely separated, and restores the stage's ability to
 abstain where it should.
@@ -226,13 +227,14 @@ gradient magnitude sampled on each filament's own two edges at centreline
 $\pm r\,\mathbf{n}$, the axis gradient being near zero and therefore
 uninformative. The argument was that the upper filament's edges stay crisp
 through the crossing while the lower filament's are overwritten. It did not
-survive measurement. The channel decided \PlectaDepthRuleSharpDecidedPct{}\,\%
-of real crossings, agreed with the intensity channel at chance
-($\kappa\approx\PlectaDepthRuleSharpKappa{}$), and scored
-$\PlectaDepthRuleSharpAccLow{}$ to $\PlectaDepthRuleSharpAccHigh{}$ standing
-alone, which is chance. The reason is visible in its own sampling
-geometry: within the core those $\pm r$ offsets fall inside the \emph{other}
-filament's stroke, so the quantity is contaminated exactly where it would have
+survive measurement. Standing alone the channel decided almost no real
+crossings, agreed with the intensity channel at chance, and was itself at
+chance; those readings were taken on the removed channel, and no configuration
+of the shipped code reproduces them, so they are recorded outside this
+manuscript rather than reported here. The reason is structural, and is visible in
+the channel's own sampling geometry: within the core those $\pm r$ offsets fall
+inside the \emph{other} filament's stroke, so the quantity is contaminated
+exactly where it would have
 had to be read. The channel is removed, and with it the gradient image it
 required, the two channel weights that combined it with intensity, and the
 logistic -- with one channel there is nothing to combine, and $s$ is already the
@@ -279,8 +281,9 @@ wherever more abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
 better-ordered confidence, from a simpler evidence path.
 
 A second channel, axial continuity along each filament, was built and measured
-on the same held-out set. It was inert -- $\PlectaDepthRuleAxialDelta{}$, CI
-$\PlectaDepthRuleAxialCI{}$ -- and is deliberately not included.
+on the same held-out set. It was inert, and is deliberately not included. That
+measurement was made on code that was never merged and cannot be rerun here, so
+it is recorded outside this manuscript rather than reported in it.
 
 \subsection{One order for the whole field}
 
