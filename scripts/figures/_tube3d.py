@@ -1,6 +1,6 @@
 """Shared shaded-tube 3-D rendering for the depth figures.
 
-Swept-tube meshes come from `plecta.depth.tube_mesh` (stubmatch); this module
+Swept-tube meshes come from `plecta.depth.tube_mesh` (PLECTA); this module
 only draws them: Lambert-shaded quads, depth-coloured through viridis, one
 Poly3DCollection per panel so matplotlib's average-z sort orders every quad
 globally (painter's algorithm across instances, not per instance).
@@ -9,7 +9,7 @@ import sys
 
 import numpy as np
 
-sys.path.insert(0, r"C:\Repos\stubmatch")
+sys.path.insert(0, r"C:\Repos\PLECTA")
 from plecta.depth import tube_mesh  # noqa: E402,F401  (re-exported)
 
 import matplotlib  # noqa: E402

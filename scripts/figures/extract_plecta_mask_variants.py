@@ -12,7 +12,7 @@ is frozen and read from ``plecta/params.json``.
 Writes ``results/plecta_mask_variants.json``.
 
     python scripts/figures/extract_plecta_mask_variants.py \
-        --plecta C:/Repos/stubmatch \
+        --plecta C:/Repos/PLECTA \
         --scenes C:/Repos/filaments_quantification/input/synthetic_thick \
         --eval   C:/Repos/filaments_quantification/eval
 """
@@ -37,7 +37,7 @@ N_PER_DENSITY = 4
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--plecta", default=r"C:/Repos/stubmatch")
+    ap.add_argument("--plecta", default=r"C:/Repos/PLECTA")
     ap.add_argument("--scenes",
                     default=r"C:/Repos/filaments_quantification/input/synthetic_thick")
     ap.add_argument("--eval", default=r"C:/Repos/filaments_quantification/eval")

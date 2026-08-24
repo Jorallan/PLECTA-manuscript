@@ -44,7 +44,7 @@ MASK_PATH = SCENE / "mask.png"
 SEM_PATH = SCENE / "sem.png"
 META_PATH = SCENE / "scene_meta.json"
 
-sys.path.insert(0, r"C:\Repos\stubmatch")
+sys.path.insert(0, r"C:\Repos\PLECTA")
 from plecta.graph import read_mask  # noqa: E402
 from plecta.predict import load_params, predict  # noqa: E402
 from plecta import depth as D  # noqa: E402

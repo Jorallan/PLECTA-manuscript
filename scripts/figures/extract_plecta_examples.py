@@ -143,7 +143,7 @@ def comparator_rows(record, condition):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--plecta", default=r"C:/Repos/stubmatch")
+    ap.add_argument("--plecta", default=r"C:/Repos/PLECTA")
     ap.add_argument("--select", choices=("stratum", "plecta", "comparator"),
                     default="stratum")
     ap.add_argument("--strata", default="20,40,60",

@@ -42,7 +42,7 @@ from _tube3d import draw_tubes_shaded, tube_mesh  # noqa: E402
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_SCENES = os.path.join(REPO, "exploration", "depth_order_eval", "scenes")
 DEFAULT_APP = r"C:\Repos\PLECTA_APP"
-DEFAULT_PLECTA = r"C:\Repos\stubmatch"
+DEFAULT_PLECTA = r"C:\Repos\PLECTA"
 
 #: The binary axis mask is the only input PLECTA's grouping reads.
 INPUT_NAME = "mask_clean.png"

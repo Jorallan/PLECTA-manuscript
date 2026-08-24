@@ -37,9 +37,9 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "results"
 PARAMS = Path(os.environ.get(
-    "PLECTA_PARAMS_YAML", r"C:\Repos\stubmatch\plecta\parameters.yaml"))
+    "PLECTA_PARAMS_YAML", r"C:\Repos\PLECTA\plecta\parameters.yaml"))
 FROZEN = Path(os.environ.get(
-    "PLECTA_PARAMS", r"C:\Repos\stubmatch\plecta\params.json"))
+    "PLECTA_PARAMS", r"C:\Repos\PLECTA\plecta\params.json"))
 
 #  (symbol, description, junction key, gap key). None means the term does not
 #  apply to that link type rather than being zero by coincidence.

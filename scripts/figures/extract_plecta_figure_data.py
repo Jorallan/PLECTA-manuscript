@@ -14,9 +14,9 @@ from a clean checkout of this manuscript repository with no access to
 Usage (paths are the defaults on the author's machine)::
 
     python scripts/figures/extract_plecta_figure_data.py \
-        --plecta   C:/Repos/stubmatch \
+        --plecta   C:/Repos/PLECTA \
         --scenes   C:/Repos/filaments_quantification/input/synthetic_thick \
-        --heldout  C:/Repos/stubmatch/.local/evaluation/data \
+        --heldout  C:/Repos/PLECTA/.local/evaluation/data \
         --eval     C:/Repos/filaments_quantification/eval
 
 Scene and node selections are deterministic and are recorded in the
@@ -388,11 +388,11 @@ def read_gt_layers(scene_dir):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--plecta", default=r"C:/Repos/stubmatch")
+    ap.add_argument("--plecta", default=r"C:/Repos/PLECTA")
     ap.add_argument("--scenes",
                     default=r"C:/Repos/filaments_quantification/input/synthetic_thick")
     ap.add_argument("--heldout",
-                    default=r"C:/Repos/stubmatch/.local/evaluation/data")
+                    default=r"C:/Repos/PLECTA/.local/evaluation/data")
     ap.add_argument("--eval", default=r"C:/Repos/filaments_quantification/eval")
     args = ap.parse_args(argv)
 

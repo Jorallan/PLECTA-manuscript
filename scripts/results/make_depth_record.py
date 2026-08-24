@@ -40,7 +40,7 @@ REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "exploration" / "depth_order_eval" / "depth_scores.json"
 OUT = REPO / "results" / "plecta_depth_order.json"
 PARAMS = Path(os.environ.get(
-    "PLECTA_PARAMS_YAML", r"C:\Repos\stubmatch\plecta\parameters.yaml"))
+    "PLECTA_PARAMS_YAML", r"C:\Repos\PLECTA\plecta\parameters.yaml"))
 
 
 def _shipped_rule() -> str:

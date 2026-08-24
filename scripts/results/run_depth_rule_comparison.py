@@ -53,7 +53,7 @@ from pathlib import Path
 import numpy as np
 
 PY = r"C:\Repos\venv_cnt\Scripts\python.exe"
-STUBMATCH = Path(r"C:\Repos\stubmatch")
+PLECTA_ROOT = Path(r"C:\Repos\PLECTA")
 REPO = Path(__file__).resolve().parents[2]
 SCENES = Path(r"C:\Repos\filaments_quantification\input\synthetic_depth_heldout")
 WORK = REPO / "exploration" / "depth_rule_comparison"
@@ -76,7 +76,7 @@ def predict(rule: str, extra: list) -> None:
             continue
         cmd = [PY, "-m", "plecta.depth", "--scene", str(scene),
                "--out", str(out), "--oracle", *extra]
-        res = subprocess.run(cmd, cwd=str(STUBMATCH), capture_output=True,
+        res = subprocess.run(cmd, cwd=str(PLECTA_ROOT), capture_output=True,
                              text=True)
         if res.returncode:
             print(res.stderr[-1500:], file=sys.stderr)

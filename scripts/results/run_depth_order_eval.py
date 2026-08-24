@@ -39,7 +39,7 @@ import sys
 from pathlib import Path
 
 PY = r"C:\Repos\venv_cnt\Scripts\python.exe"
-STUBMATCH = Path(r"C:\Repos\stubmatch")
+PLECTA_ROOT = Path(r"C:\Repos\PLECTA")
 REPO = Path(__file__).resolve().parents[2]
 STUDY = REPO / "exploration" / "depth_order_eval"
 
@@ -72,7 +72,7 @@ def main() -> int:
                 cmd = [PY, "-m", "plecta.depth",
                        "--scene", str(scene), "--out", str(out),
                        *CONDITIONS[cond], *(LEGACY if args.legacy else [])]
-                res = subprocess.run(cmd, cwd=str(STUBMATCH),
+                res = subprocess.run(cmd, cwd=str(PLECTA_ROOT),
                                      capture_output=True, text=True)
                 if res.returncode != 0:
                     print(res.stdout[-2000:])

@@ -41,7 +41,7 @@ from _tube3d import draw_tubes_shaded, tube_mesh  # noqa: E402
 DEFAULT_SCENE = (r"C:\Repos\comparisons\real_sem_study\scenes_v2"
                  r"\b58_100\skel")
 DEFAULT_APP = r"C:\Repos\PLECTA_APP"
-DEFAULT_PLECTA = r"C:\Repos\stubmatch"
+DEFAULT_PLECTA = r"C:\Repos\PLECTA"
 
 
 def _engine(app_dir, plecta_dir):
