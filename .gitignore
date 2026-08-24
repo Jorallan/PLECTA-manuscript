@@ -70,9 +70,14 @@ filaseg_todolist.md
 comparator_study_brief.md
 filaseg_lowdensity_brief.md
 filaseg_lowdensity_prompt.md
-docs/internal/handover_prompt.md
-docs/internal/restructure_prompt.md
 CLAUDE.md
+
+# ---------------------------------------------------------------------------
+# docs/ is local working documentation (feasibility notes, reproducibility
+# scratch, internal handoff records, slide decks) and is not published in
+# this repository; nothing in main.tex or supplementary.tex reads from it.
+# ---------------------------------------------------------------------------
+docs/
 # ---------------------------------------------------------------------------
 # Exploratory studies. Self-contained investigations that inform decisions but
 # are not part of the manuscript: raw comparator outputs, downloaded third-party
@@ -103,3 +108,10 @@ sandbox/
 /Tools/
 /tests/
 /eval/
+
+# ---------------------------------------------------------------------------
+# Untracked record of measurements that were removed from the manuscript
+# because the code that produced them no longer exists. Kept locally for
+# future reference; not published.
+# ---------------------------------------------------------------------------
+notes/depth_rule_transcribed_measurements.md
