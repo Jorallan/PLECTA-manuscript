@@ -4,7 +4,7 @@
   "scenes": "eval/generators/synth_depth.py --domain semlike, seeds 20530101+, 512 px",
   "input_mask": "mask_clean.png, the non-degraded axis; measured median thickness 2.00 px. All 2.5-D results use this one mask so conditions differ only in what is being tested",
   "configuration": "image evidence on, grazing overlaps not cleared, undecided pairs stacked compactly -- the shipped defaults",
-  "evidence_rule": "noise_floored",
+  "evidence_rule": "unknown (PyYAML not installed)",
   "chance_level": 0.5,
   "conditions": {
     "oracle": "ground-truth 2-D centrelines; the 2-D grouping does not run, so this isolates the depth decision",
@@ -18,6 +18,8 @@
     "coa_all_max": 0.8146441602581953,
     "match_rate_min": 0.7460695317137269,
     "match_rate_max": 1.0,
+    "abstain_rate_min": 0.08457468457468457,
+    "abstain_rate_max": 0.17875758411472698,
     "coa_decided_span": 0.07653065617756283,
     "coa_all_span": 0.2586116254443853,
     "frac_within_min": 0.36083431723266607,

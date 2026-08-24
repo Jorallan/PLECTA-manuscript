@@ -114,6 +114,7 @@ def main() -> int:
     decided = [c["coa_decided"] for c in grid]
     allc = [c["coa_all"] for c in grid]
     match = [c["match_rate"] for c in grid]
+    abstain = [c["abstain_rate"] for c in grid]
 
     payload = {
         "role": "PLECTA's depth stage: is the instance chosen as `over` at "
@@ -150,6 +151,8 @@ def main() -> int:
             "coa_all_max": max(allc),
             "match_rate_min": min(match),
             "match_rate_max": max(match),
+            "abstain_rate_min": min(abstain),
+            "abstain_rate_max": max(abstain),
             # The decomposition: the decision holds while recovery does not.
             "coa_decided_span": max(decided) - min(decided),
             "coa_all_span": max(allc) - min(allc),

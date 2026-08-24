@@ -128,7 +128,7 @@ after each of the two matchings, any matched component whose links close a ring
 has its longest link removed. On the \PlectaDevelopmentSceneCount{} development
 scenes the guard never fired, with zero links removed, so it protects against
 a configuration the data did not produce rather than shaping the result. Closed
-or looping filaments are outside the scope of this paper.
+or looping strands are outside the scope of this paper.
 
 \subsection{Why the junction is solved as a whole}
 
@@ -162,12 +162,12 @@ This section gives the detail behind Section~2.6 of the article.
 Where two instance centrelines intersect, a short arc of each is taken through
 the crossing (the shared \emph{core}, a flat \PlectaParamCorePx{}\,px of arc,
 the same at every crossing), together with the \emph{flanks} on either side of
-it. Flank samples are kept clear of the other filament's stroke, because a
+it. Flank samples are kept clear of the other strand's stroke, because a
 sample taken inside it measures the union of two rods rather than one of them.
 A crossing with too few usable flank samples abstains rather than being decided
 on thin evidence.
 
-The core length was previously sized from the two filaments' radii so that it
+The core length was previously sized from the two strands' radii so that it
 spanned both silhouettes. It is now the constant above, and no per-rod radius
 enters the evidence path at all, so a radius estimate can no longer move a depth
 decision. Radii re-enter only downstream, in the non-interpenetration
@@ -176,7 +176,7 @@ constraints that set metric height.
 \subsection{One channel, and its noise floor}
 
 One quantity is read on core and flanks alike: median intensity. Write $m_i$ and
-$m_j$ for the two filaments' flank medians and $m_c$ for the pooled core median.
+$m_j$ for the two strands' flank medians and $m_c$ for the pooled core median.
 The evidence at the crossing is the score
 \begin{equation}
   s \;=\; 2\,
@@ -184,14 +184,14 @@ The evidence at the crossing is the score
        {\max\!\bigl(\lvert m_i-m_j\rvert,\;2\hat\sigma\bigr)},
   \label{eq:depth-score}
 \end{equation}
-whose sign names the upper filament -- the one whose flanks the core resembles
+whose sign names the upper strand -- the one whose flanks the core resembles
 more closely -- and whose magnitude $\lvert s\rvert$ is the weight that decision
 carries. A crossing abstains when
 $\lvert s\rvert<\PlectaParamAbstainScore{}$; the threshold is set directly in
 score units rather than as a band around a probability. Here
 $\hat\sigma$ is a noise estimate belonging to that crossing alone: $1.4826$
 times the median absolute deviation of the within-rod flank residuals, each
-filament's flank samples being centred on their own median and the two residual
+strand's flank samples being centred on their own median and the two residual
 sets pooled. It therefore measures the scatter within a rod's own appearance,
 not the difference between the two rods.
 
@@ -204,7 +204,7 @@ should not be read as one.
 
 By the reverse triangle inequality the numerator of \eqref{eq:depth-score} is
 bounded in magnitude by $\lvert m_i-m_j\rvert$, so a denominator equal to that
-separation drives the ratio to $\pm1$ whenever the two filaments differ at all.
+separation drives the ratio to $\pm1$ whenever the two strands differ at all.
 The previous form of this rule floored the denominator at a small fixed constant
 in grey levels, far below the noise of any of these images. The consequence was
 structural rather than statistical: a maximal score was then
@@ -223,17 +223,17 @@ abstain where it should.
 \subsubsection*{The gradient channel, and why it was removed}
 
 An earlier version of this stage read a second quantity beside intensity: median
-gradient magnitude sampled on each filament's own two edges at centreline
+gradient magnitude sampled on each strand's own two edges at centreline
 $\pm r\,\mathbf{n}$, the axis gradient being near zero and therefore
-uninformative. The argument was that the upper filament's edges stay crisp
-through the crossing while the lower filament's are overwritten. It did not
+uninformative. The argument was that the upper strand's edges stay crisp
+through the crossing while the lower strand's are overwritten. It did not
 survive measurement. Standing alone the channel decided almost no real
 crossings, agreed with the intensity channel at chance, and was itself at
 chance; those readings were taken on the removed channel, and no configuration
 of the shipped code reproduces them, so they are recorded outside this
 manuscript rather than reported here. The reason is structural, and is visible in
 the channel's own sampling geometry: within the core those $\pm r$ offsets fall
-inside the \emph{other} filament's stroke, so the quantity is contaminated
+inside the \emph{other} strand's stroke, so the quantity is contaminated
 exactly where it would have
 had to be read. The channel is removed, and with it the gradient image it
 required, the two channel weights that combined it with intensity, and the
@@ -280,7 +280,7 @@ wherever more abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
 \PlectaDepthRuleCovBPct{}\,\%. The claim is therefore the same accuracy with
 better-ordered confidence, from a simpler evidence path.
 
-A second channel, axial continuity along each filament, was built and measured
+A second channel, axial continuity along each strand, was built and measured
 on the same held-out set. It was inert, and is deliberately not included. That
 measurement was made on code that was never merged and cannot be rerun here, so
 it is recorded outside this manuscript rather than reported in it.
@@ -321,10 +321,10 @@ noisy predictions and is not what ships.
 \subsection{Layers and metric height}
 
 The corrected relations form a directed acyclic graph whose longest path fixes
-the smallest number of layers consistent with them; filaments that never
+the smallest number of layers consistent with them; strands that never
 conflict share a layer, so the layer count follows from the ordering rather
 than from the number of instances. Each instance is then placed at a height
-respecting its order that keeps filaments from interpenetrating at their
+respecting its order that keeps strands from interpenetrating at their
 measured radii, with the stack compacted so the film is as thin as those
 constraints allow.
 

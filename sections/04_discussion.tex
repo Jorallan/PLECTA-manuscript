@@ -2,7 +2,7 @@
 \label{sec:discussion}
 
 PLECTA addresses a narrow problem: assigning fragments of a binary
-filament-axis mask to overlapping projected instances. Explicit geometry
+strand-axis mask to overlapping projected instances. Explicit geometry
 recovers substantial identity there with no instance-labelled training data and
 no image intensity, and what recovers it is the combination of local and
 accumulated evidence, neither of which suffices alone: a junction is resolved by
@@ -13,7 +13,7 @@ meet: a tangent measured on one side of a crossing has to predict the arm
 leaving the other, which bending stiffness produces most directly and tension,
 confinement or bundling can produce as well. The ablations are consistent with
 that reading, the two largest losses being the junction chord-turn term and gap
-matching, both purely geometric. Where a filament is flexible on the scale of a
+matching, both purely geometric. Where a strand is flexible on the scale of a
 junction the premise fails rather than degrades: there is then nothing local to
 match, and the correct response is to acquire evidence the projection has lost
 rather than to weaken the gates. The
@@ -26,7 +26,7 @@ Difficulty follows the density of centrelines rather than the amount of ink, so
 what costs the score is the number of locally plausible alternatives at a
 crossing. The rest of the sensitivity belongs to the upstream segmenter, which
 fixes the thickness of the mask and therefore how clean a skeleton PLECTA is
-given. PLECTA can bridge a short omission, but it cannot infer a filament absent
+given. PLECTA can bridge a short omission, but it cannot infer a strand absent
 from the mask, nor reliably reject a false axis introduced upstream. Supplying
 identical masks isolates grouping in an algorithmic comparison; it does not
 establish end-to-end SEM performance, which is why the three-field case is a
@@ -108,7 +108,7 @@ many objects, shorter, with
 times as many components in the per-instance-skeleton union, and the
 directional variation of information is split-dominant one way and
 merge-dominant the other. That is two different answers to what an instance
-\emph{is} -- a whole physical filament, or a locally visible segment -- not one
+\emph{is} -- a whole physical strand, or a locally visible segment -- not one
 reader being wrong. For the same reason the automatic-mask condition, at
 \PlectaInterReaderNetFLow{}--\PlectaInterReaderNetFHigh{} against either
 reader, cannot be separated from reader disagreement on this evidence.
@@ -134,7 +134,7 @@ and Section~\ref{sec:res-overlap} measures the representation directly,
 including where PLECTA over-marks it.
 
 Two further limits concern the output itself. PLECTA recovers projected
-two-dimensional identity: shared pixels encode overlap but not which filament
+two-dimensional identity: shared pixels encode overlap but not which strand
 passes above another, so no three-dimensional topology follows. And the grouping
 metric evaluates ownership of centreline fragments, which is not a validation of
 rendered width; quantitative diameter claims require matched physical
@@ -150,5 +150,5 @@ endpoints greedily, or committing to a pairing with no option to decline, loses
 identity in dense crossings. They do not support a claim that PLECTA is
 generally superior; that would need several released implementations run in
 their own regimes by their own authors. Broader validation should extend to
-independent real masks and other filament domains, with input fragments and
+independent real masks and other strand domains, with input fragments and
 scoring rules held fixed.

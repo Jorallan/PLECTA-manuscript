@@ -579,6 +579,8 @@ def depth_order_macros(payload: dict) -> list[str]:
         macro("PlectaDepthAllSpan", fmt(h["coa_all_span"])),
         macro("PlectaDepthMatchLow", fmt(h["match_rate_min"])),
         macro("PlectaDepthMatchHigh", fmt(h["match_rate_max"])),
+        macro("PlectaDepthAbstainLow", "%.0f" % (h["abstain_rate_min"] * 100)),
+        macro("PlectaDepthAbstainHigh", "%.0f" % (h["abstain_rate_max"] * 100)),
         macro("PlectaDepthWithinLow", fmt(h["frac_within_min"])),
         macro("PlectaDepthWithinHigh", fmt(h["frac_within_max"])),
         macro("PlectaDepthOrderResidual", fmt(h["order_residual_absmax"])),

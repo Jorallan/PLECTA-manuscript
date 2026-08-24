@@ -44,7 +44,7 @@ these timings are hardware-specific.
 \label{sec:res-factorial}
 
 Coverage is the fraction of the frame filled by the rendered bundles, so it
-rises both when filaments are added and when the same filaments are drawn
+rises both when strands are added and when the same strands are drawn
 thicker, and only the first changes the grouping problem. A factorial separates
 them: twelve geometries, three centreline length densities crossed with four
 seeds, were each rendered at bundle widths of 6, 11 and 16 px. Within one geometry the input axis mask and the overlap-aware
@@ -135,7 +135,7 @@ scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
 \PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
 merging, with variation-of-information split rising
 \PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
-merge, \PlectaMatcherInstanceExcess{}\,\% more instances emitted and crossings
+merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
 resolved exactly falling \PlectaMatcherExactJunctionRate{} to
 \PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
 degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
@@ -286,19 +286,19 @@ Resolving a crossing and representing one are different things, and only the
 first is what the scores above measure. Which arm continues into which is the
 difficult decision, and every score in this paper rewards getting it right.
 Whether the emitted raster \emph{represents} a crossing pixel as belonging to
-both filaments is a property of the output format, and the metric cannot see
+both strands is a property of the output format, and the metric cannot see
 it: flattening the emitted layers to a single label image leaves PLECTA's
 \Fone{} unchanged to four decimal places (\PlectaOverlapFlattenCost{}).
 
 The representation is instead verifiable directly: on the comparison set,
-reference instances share \PlectaOverlapReferenceLow{}\,\% of their pixels with
-another instance at 20\% coverage, rising to
+reference strands share \PlectaOverlapReferenceLow{}\,\% of their pixels with
+another strand at 20\% coverage, rising to
 \PlectaOverlapReferenceHigh{}\,\% at 60\%; PLECTA emits
 \PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\%, and GraFT,
 whose output is close to a hard partition, about
 \PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
 PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
-than one instance, less than half, though the largest such recall here, against
+than one strand, less than half, though the largest such recall here, against
 \PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
 while the greedy baseline, a hard partition, scores zero by construction. It
 does so at a precision of \PlectaSharedPrecision{}, marking
@@ -317,12 +317,12 @@ median, so the rows are typical rather than selected.
     \caption{Reconstruction at three coverage levels, each the scene closest to
     the median \Fone{} of its stratum, shown as a horizontal window of the
     512\,px scene rather than the whole of it. Columns: the degraded input
-    mask, the overlap-aware reference, and PLECTA's instances drawn at their
+    mask, the overlap-aware reference, and PLECTA's strands drawn at their
     fitted widths. What is evaluated in this paper is the grouping of centreline
     pixels the method produces from the mask alone, and the \Fone{} beside each
     row is that grouping's score; the width rendering shown here is a
-    downstream step that redraws those instances and cannot move a pixel from
-    one to another. Instance colours are arbitrary and not matched between
+    downstream step that redraws those strands and cannot move a pixel from
+    one to another. Strand colours are arbitrary and not matched between
     columns.}
     \label{fig:examples}
 \end{figure}
@@ -379,9 +379,9 @@ less. These are development values, not held-out effect estimates.
 
 The core output is a grouping, not a set of connected curves: accepted gap
 links establish identity but are not painted, so on the development set
-\PlectaCoreDisconnected{} of core instances arrive as more than one disjoint
+\PlectaCoreDisconnected{} of core strands arrive as more than one disjoint
 pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
-that assumes one connected curve per instance must account for this. The
+that assumes one connected curve per strand must account for this. The
 optional ribbon rendering of Section~\ref{sec:mm-stage4}, at its defaults,
 scored development \Fone{}=\PlectaStageFourFOne{}, a change of
 \PlectaStageFourDeltaFOne{}, and reduced those fractions to
@@ -402,7 +402,7 @@ here is a measurement of Pipeline~A, which carries its own evaluation
 \citep{allan2026cntsem}.
 
 Pipeline~A runs procedural mask $\rightarrow$ CycleGAN $\rightarrow$ paired
-synthetic corpus $\rightarrow$ nnU-Net $\rightarrow$ binary filament-axis mask:
+synthetic corpus $\rightarrow$ nnU-Net $\rightarrow$ binary strand-axis mask:
 a generator draws a mask, a CycleGAN translates it into an SEM-like image so
 that image and mask are paired without an annotator, an nnU-Net trained on
 those pairs segments a real micrograph, and its output is a binary axis mask
@@ -426,7 +426,7 @@ centrelines the scores are computed on.
     themselves, before any reconstruction, so there is nothing to tell apart
     within a panel and one colour is sufficient; the comparison the figure
     makes is between them. Everything separating the two conditions of
-    Table~\ref{tab:plecta-real-masks} is visible here: the same filaments, read
+    Table~\ref{tab:plecta-real-masks} is visible here: the same strands, read
     a second time by a network rather than by a person, arrive thicker, broken
     into more pieces, and displaced by a pixel or two almost everywhere. The
     axis is dilated by one pixel for legibility at this size, which changes no
@@ -446,12 +446,12 @@ centrelines the scores are computed on.
     differing only in the mask. All three are drawn at width so that they are
     the same kind of object: the annotation as the annotator painted it, and
     the two reconstructions through the optional image layer of
-    Section~\ref{sec:mm-stage4}, which measures a width per instance across the
+    Section~\ref{sec:mm-stage4}, which measures a width per strand across the
     centreline and renders a ribbon. That layer runs after the grouping is
-    fixed and cannot move a pixel from one instance to another, so no score in
-    this paper depends on it. Instance colours correspond across the panels of
-    a row: a predicted instance takes the colour of the annotated filament it
-    was matched to, one matched to none is crimson, and adjacent filaments are
+    fixed and cannot move a pixel from one strand to another, so no score in
+    this paper depends on it. Strand colours correspond across the panels of
+    a row: a predicted strand takes the colour of the annotated strand it
+    was matched to, one matched to none is crimson, and adjacent strands are
     given different colours, which carry identity within the row and nothing
     else. Each crop is the window whose local pairwise \Fone{} is jointly
     closest to that field's whole-field value on both axes, so it is typical of
@@ -535,14 +535,14 @@ quality falls to \PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{},
 \PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} and
 \PlectaMaskQualityBFiveEightThreeZeroZeroQualityOne{} at 1\,px, because the
 annotation and the nnU-Net output are two independent readings of the same
-filaments and disagree in placement almost everywhere. That displacement is
+strands and disagree in placement almost everywhere. That displacement is
 also why detection \Fone{} carries a placement tolerance, and the control that
 makes it a correction rather than an inflation is here: on the manual-derived
 axes, where the input mask is a skeleton of the annotation itself, the
 tolerance moves detection \Fone{} by 0.000, against
 \PlectaDetectionBFiveEightOneOneZeroUNetStrict{} rising to
 \PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} on B58\_110's nnU-Net axis.
-Because the pairwise score is quadratic in fragments, a filament the nnU-Net
+Because the pairwise score is quadratic in fragments, a strand the nnU-Net
 mask breaks into several pieces carries every one of its pairs; join \Fone{},
 which counts one decision per pair of fragment ends the mask brings within
 reach, reports \PlectaJoinBFiveEightOneOneZeroManualDecisions{} decisions on
@@ -551,19 +551,19 @@ B58\_110's manual axis against
 the gap without closing it, and its decomposition says what the rest is: a join
 precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
-than fusing filaments, which is what panel~(c) of Figure~\ref{fig:real-sem}
+than fusing strands, which is what panel~(c) of Figure~\ref{fig:real-sem}
 shows.
 
 \subsection{Optional depth decomposition}
 \label{sec:res-depth}
 
-The stages above reconstruct instances in projection. A crossing pixel is
-assigned to both filaments that own it, but nothing so far says which of the
+The stages above reconstruct strands in projection. A crossing pixel is
+assigned to both strands that own it, but nothing so far says which of the
 two passes in front. The optional depth stage answers that from the greyscale
-alone -- the continuity of each filament's own brightness across the crossing,
+alone -- the continuity of each strand's own brightness across the crossing,
 weighed against the noise measured there -- then imposes one
-globally consistent vertical order and places each instance at a height at
-which nothing interpenetrates. It changes no 2-D instance.
+globally consistent vertical order and places each strand at a height at
+which nothing interpenetrates. It changes no 2-D strand.
 
 % Depth re-run 2026-08-23: every macro in this subsection and
 % Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
@@ -616,10 +616,10 @@ The global stack is weaker than the local decision, and the gap is a property
 of the evidence rather than of the decision. Depth order is recovered at
 \PlectaDepthCleanCovTwoZeroCrossOrder{} over pairs that cross but only
 \PlectaDepthCleanCovTwoZeroAllOrder{} over all pairs, because depth propagates
-solely along crossings: two instances in different components of the crossing
+solely along crossings: two strands in different components of the crossing
 graph are related by no evidence whatever, and their order is a stated
 tie-break. That is measurable, not merely arguable. Only
-\PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of instance pairs lie
+\PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs lie
 within one component, and if the pairs that do are ordered at the
 crossing-pair rate while the rest are a coin flip, the all-pairs figure follows
 arithmetically: at 20\,\% coverage that predicts
@@ -641,7 +641,7 @@ Layer agreement follows the same pattern, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
 coverage doubles while the recovered layer count stays close to the reference:
 the ordering is locally right, so the number of layers is about right, while
-small order errors move instances across layer boundaries.
+small order errors move strands across layer boundaries.
 
 \begin{figure}[tbp]
 \centering
@@ -661,8 +661,8 @@ rendered image cannot show. The table carries that measurement.}
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
 \caption{The same comparison on a real CNT SEM field, reconstructed from the
 manual annotation's axis. \textbf{Nothing here is scored.} No depth ground truth exists for real
-SEM -- the annotation records which pixels belong to which filament, not which
-filament passes in front -- so this shows the stage runs end to end on real
+SEM -- the annotation records which pixels belong to which strand, not which
+strand passes in front -- so this shows the stage runs end to end on real
 data and re-renders to something recognisable, not that the depths are right.
 The forward model's appearance parameters are fitted to this micrograph, so the
 residual quoted beneath the panel is in-sample and is a sanity check rather

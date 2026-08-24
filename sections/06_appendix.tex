@@ -68,7 +68,7 @@ changes the ordering of the four methods.
 
 \textbf{Common-fragment pairwise \Fone{}}, the primary endpoint. A pair of
 fragments is a true positive when it shares both identities, a false positive
-when the prediction joins fragments of different reference filaments, a false
+when the prediction joins fragments of different reference strands, a false
 negative when it separates fragments of one:
 \begin{equation}
     P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
@@ -78,15 +78,15 @@ negative when it separates fragments of one:
 \end{equation}
 A clustering measure of the Rand family
 \citep{rand1971objective,amigo2009comparison,argandacarreras2015crowdsourcing},
-permutation-invariant in the instance labels; it rewards holding a filament
+permutation-invariant in the instance labels; it rewards holding a strand
 together across every crossing and gap it passes. Blind spots: it is quadratic
-in fragmentation, so a filament arriving in $n$ pieces carries $\binom{n}{2}$
+in fragmentation, so a strand arriving in $n$ pieces carries $\binom{n}{2}$
 pairs and a broken mask is charged many times for one missed join, and it
-weights long, much-crossed filaments far above short ones.
+weights long, much-crossed strands far above short ones.
 
 \textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
-corrected for chance, which matters because with a hundred filaments per scene
-almost every pair genuinely belongs to different filaments and the uncorrected
+corrected for chance, which matters because with a hundred strands per scene
+almost every pair genuinely belongs to different strands and the uncorrected
 index sits near 1 for anything. Blind spot: redundancy, since over the comparison
 set it never departs from pairwise \Fone{} by more than
 \PlectaPanelARIMaxGap{}, so it confirms rather than adds.
@@ -94,7 +94,7 @@ set it never departs from pairwise \Fone{} by more than
 \textbf{Variation of information} \citep{meila2007comparing}, in bits, lower
 better, is the conditional-entropy distance between the partitions:
 $\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$ is paid
-for cutting one filament into several,
+for cutting one strand into several,
 $\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$ for
 fusing several into one, and reporting both is what separates a method that
 divides from one that fuses. Blind spot: each component alone is degenerate, since a method merging everything never splits anything and scores a perfect zero on
@@ -116,12 +116,12 @@ swap, which it scores 1.000 where the pairwise score gives 0.000.
 
 \textbf{Crossing Fidelity} states the contribution directly. At every junction
 node the reference induces a partition of the incident arms, two together
-exactly when the reference gives them the same filament, and so does the
+exactly when the reference gives them the same strand, and so does the
 prediction; Crossing Fidelity is the fraction of crossings at which the two
 partitions are identical. Nodes are the junction clusters of the same pruned
 skeleton and a node's arms are the fragments 8-adjacent to it. Only nodes whose
-arms carry at least two distinct reference filaments are scored, since a node
-where every arm belongs to one filament is a skeletonisation artefact and
+arms carry at least two distinct reference strands are scored, since a node
+where every arm belongs to one strand is a skeletonisation artefact and
 scoring it would reward doing nothing. It is an in-house diagnostic, not an
 established metric. Blind spots, both of which govern its use: it is far less
 discriminative than the pairwise score, so it says what was solved and is never
@@ -140,18 +140,18 @@ linear rather than quadratic in fragmentation, and conditioned on the mask, it
 asks two mask sources comparably hard questions, and splitting and merging
 appear separately as low recall and low precision. Blind spot: a fragment pair
 the mask never brought within reach counts against nobody, so it cannot see a
-filament the mask lost entirely, and it is always quoted with the number of
+strand the mask lost entirely, and it is always quoted with the number of
 decisions each mask posed.
 
-\textbf{Reference-instance recovery} is the fraction of reference filaments
+\textbf{Reference-instance recovery} is the fraction of reference strands
 recovered whole by one predicted instance. The dominant predicted instance of a
-filament owns most of its fragments; coverage is that count over the filament's
+strand owns most of its fragments; coverage is that count over the strand's
 fragment count, purity the same count over every fragment that instance owns
-anywhere, and a filament counts as recovered when the dominance is
+anywhere, and a strand counts as recovered when the dominance is
 \emph{mutual} and both reach 0.8. Purity is what stops a method that merges
-everything from scoring 1.0, and the measure weights every filament equally,
+everything from scoring 1.0, and the measure weights every strand equally,
 complementing the pairwise score's quadratic weighting. Blind spot: the two
-thresholds, which make it insensitive to how badly a failing filament was
+thresholds, which make it insensitive to how badly a failing strand was
 reconstructed.
 
 \textbf{Completeness, correctness and quality} characterise the input
@@ -187,13 +187,13 @@ for any method whose slowest scenes did not finish, which is why GraFT's is a
 lower bound.
 
 \textbf{Two measures were computed and are not endpoints.} GraFT's
-\emph{filament matched coverage} asks whether each reference filament was
+\emph{filament matched coverage} asks whether each reference strand was
 matched one-to-one to some detection, and PLECTA ranks \emph{below} both
 comparators on it: at the densest stratum of GraFT's own generator,
 \PlectaRegimeHighPlectaMatched{} against \PlectaRegimeHighGraFTMatched{} and
 \PlectaRegimeHighDNAiMatched{}. It is not an endpoint because it counts
 existence rather than correctness: a method emitting more objects than the
-scene contains has a spare for every filament, each method's matched coverage
+scene contains has a spare for every strand, each method's matched coverage
 equals the smaller of one and its emission ratio to within
 \PlectaRegimeCoverageCountResidual{}, and requiring a detection to cover half
 the axis it claims restores the order. \emph{Centreline Dice}
@@ -220,7 +220,7 @@ junction of degree two to four with no cost threshold, so it cannot decline a
 continuation the way a priced unmatched option can, and it attempts no junction
 above degree four, resolving \PlectaJunctionDNAiDegreeFivePlus{} of the
 crossings above it. Those are about a tenth of the crossings, but they carry
-\PlectaEvidenceHighDegree{}\,\% of same-filament fragment pairs on the degraded
+\PlectaEvidenceHighDegree{}\,\% of same-strand fragment pairs on the degraded
 masks, one such junction severing every pair that spans it. \textbf{GraFT}'s
 errors are divisions rather than merges (variation-of-information split
 \PlectaGraFTVISplit{} against merge \PlectaGraFTVIMerge{}), which follows from a
@@ -232,7 +232,7 @@ scene collapses into one connected graph, as it does above 30\,\% coverage.
 
 The measures of Section~\ref{app:measures} score which centreline
 fragments belong to one instance. None of them can see depth: two
-reconstructions that agree on every instance but disagree about which filament
+reconstructions that agree on every instance but disagree about which strand
 passes in front at every crossing are indistinguishable to all of them. The
 2.5-D stage is therefore scored by its own family, defined here.
 

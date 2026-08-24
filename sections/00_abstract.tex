@@ -1,42 +1,48 @@
-A dense network of filaments defeats instance segmentation in two opposite ways
-at once. Where filaments cross, separate objects fuse into one connected
-component; where the segmentation fades, one object breaks into several. Both
-faults look identical in a binary mask, and repairing either requires the same
-judgement: which arm continues into which.
+Instance segmentation on a dense network of long, thin strands is difficult
+because it can fail in two opposite ways: a loose reconnect algorithm ends up
+fusing the wrong strands, and a strict one ends up fragmenting them, so that
+each strand is split into multiple pieces. A non-perfect binary mask, such as
+one from machine-learning segmentation, makes both failures harder to avoid,
+because it poses the same two ambiguities at every junction and every gap: a
+true crossing, where separate strands legitimately fuse into one connected
+component, cannot be told apart from an erroneous merge, and a true end
+cannot be told apart from a break left by a fading segmentation. Resolving
+either ambiguity takes the same judgement: which arm continues into which.
 
-We present PLECTA, which makes that judgement from a binary filament-axis mask
+We present PLECTA, which makes that judgement from a binary strand-axis mask
 and nothing else. It cuts the skeleton into arms and junctions and solves every
 junction, of any degree, as a single exact maximum-weight \emph{partial}
 matching in which leaving an arm unmatched carries an explicit price. A
-filament is therefore allowed to end, instead of having a continuation invented
-for it. Crossing pixels may belong to more than one instance, so overlap is
-represented rather than partitioned away. The evidence is purely directional, tangent and curvature read over tens of pixels either side of the
-discontinuity, which makes the working condition plain: the method applies
-where direction survives a crossing, as it does for nanotube bundles,
-cytoskeletal filaments and synthetic fibres, and not for freely flexible
-chains.
+strand is therefore allowed to end, instead of having a continuation invented
+for it. Crossing pixels are emitted to every strand that claims them, so the
+output is a set of overlapping layers rather than the hard partition most
+instance methods return. The evidence is purely directional (tangent and
+curvature, read over tens of pixels either side of the discontinuity), which
+makes the working condition plain: the method applies where direction survives
+a crossing, as it does for nanotube bundles, biological filaments such as
+actin and collagen, and synthetic fibres, and not for freely flexible chains.
 
-On \PlectaHeldoutSceneCount{} held-out synthetic scenes PLECTA reaches mean
-pairwise \Fone{}\,=\,\PlectaHeldoutFOneMean{}
+On \PlectaHeldoutSceneCount{} synthetic scenes from unseen seeds, PLECTA
+reaches mean pairwise \Fone{}\,=\,\PlectaHeldoutFOneMean{}
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}], falling from
 \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as coverage
-rises from 20 to 60\,\%, with no failed scenes. It leads two released
-implementations, run from their own sources on identical masks, at every
-density. Because such a lead could be an artefact of our own generator, the
-comparison was repeated on a competitor's: GraFT's, vendored unmodified at its
-published settings over \PlectaRegimeSceneCount{} scenes. The ordering held at
-every density stratum, at \Fone{} \PlectaRegimeOverallPlectaFOne{} against
+rises from 20 to 60\,\%. It leads two released implementations, run from their
+own sources on identical masks, at every density. The comparison was repeated
+on a competitor's own generator, GraFT's, vendored unmodified at its published
+settings, over \PlectaRegimeSceneCount{} scenes. The ordering held at every
+density stratum, at \Fone{} \PlectaRegimeOverallPlectaFOne{} against
 \PlectaRegimeOverallGraFTFOne{} and \PlectaRegimeOverallDNAiFOne{}.
 
-An optional stage then reads the greyscale to decide which filament passes in
-front at each crossing, and stacks the network into layers, information
-otherwise obtained by destructive sectioning. It is correct on
+A secondary depth-resolution stage then reads the greyscale to decide which
+strand passes in front at each crossing, and stacks the network into layers,
+an ordering otherwise obtained by destructive sectioning. It is correct on
 \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the crossings it commits
 to, against a chance level of \PlectaDepthChance{}, because it abstains where
-the image does not separate the two by more than the local noise; counting
-every abstention as an error, it is correct on
-\PlectaDepthAllLow{}--\PlectaDepthAllHigh{} of all reference crossings. The method uses
-no random number generator and its configuration is published, so a mask yields
-the same instances on every run. We demonstrate the whole workflow on \PlectaRealFieldCount{} annotated
-carbon-nanotube SEM fields, and state plainly what that evidence does not
-support.
+the image does not separate the two by more than the local noise. It abstains
+at \PlectaDepthAbstainLow{}--\PlectaDepthAbstainHigh{}\,\% of crossings, and
+counting every one of those as an error it is correct on
+\PlectaDepthAllLow{}--\PlectaDepthAllHigh{} of all reference crossings. The
+method uses no random number generator and its configuration is published, so
+a mask yields the same strands on every run. We demonstrate the whole
+workflow on \PlectaRealFieldCount{} annotated carbon-nanotube SEM fields, and
+state plainly what that evidence does not support.
