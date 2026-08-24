@@ -1471,6 +1471,13 @@ def main() -> None:
         ),
         encoding="utf-8",
     )
+    #  UNREFERENCED (checked 2026-08-23): no \input or \include anywhere in
+    #  main.tex, supplementary.tex, sections/*.tex or results/*.tex reaches
+    #  plecta_greedy_table.tex. The greedy baseline is reported instead in the
+    #  four-method comparator table and in 03_results.tex's own paragraph,
+    #  through \PlectaGreedy* macros. Kept emitting because the table is a
+    #  correct, self-contained record and someone may want it back; delete the
+    #  block and the file together if that is decided, never the file alone.
     (RESULTS / "plecta_greedy_table.tex").write_text(
         greedy_table(greedy), encoding="utf-8"
     )
@@ -1492,6 +1499,10 @@ def main() -> None:
     (RESULTS / "plecta_depth_order_table.tex").write_text(
         depth_order_table(depth_order), encoding="utf-8"
     )
+    #  UNREFERENCED (checked 2026-08-23), same as plecta_greedy_table.tex
+    #  above. The completeness/correctness/quality triple it tabulates is
+    #  reported in 03_results.tex through \PlectaMaskQuality* and
+    #  \Plecta*AxisRecall macros instead.
     (RESULTS / "plecta_real_axis_table.tex").write_text(
         real_axis_table(real_fields), encoding="utf-8"
     )

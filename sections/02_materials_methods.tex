@@ -350,32 +350,41 @@ them. This stage supplies one. It runs after the grouping is fixed, reads the
 greyscale and the instances, and changes no instance membership.
 
 \textbf{Evidence at one crossing.} Where two instance centrelines intersect, a
-short arc of each is taken through the crossing (the shared \emph{core},
-sized from the two radii), together with the \emph{flanks} on either side of
-it, kept clear of the other filament's stroke so that they measure one filament
-and not the union. Two channels are read on both: median intensity, and median
-gradient magnitude on the filament's two edges. The physical argument is
-occlusion. Whichever filament lies on top presents the same surface through the
-crossing as it does beside it, so its core matches its own flanks in brightness
-and its edges stay crisp; the lower filament is overwritten there, so both
-channels break. The filament whose flank appearance the core matches better is
-called upper, and the normalised difference between the two channels passes
-through a logistic to give $p$. Where the two filaments genuinely look alike the
-difference is near zero, $p$ sits near $0.5$, and the crossing \emph{abstains}
-rather than being decided by noise.
+short arc of each is taken through the crossing (the shared \emph{core}, a fixed
+length, the same at every crossing), together with the \emph{flanks} on either
+side of it, kept clear of the other filament's stroke so that they measure one
+filament and not the union. One channel is read on both: median intensity. The
+physical argument is occlusion. Whichever filament lies on top presents the same
+surface through the crossing as it does beside it, so its core matches its own
+flanks in brightness; the lower filament is overwritten there, so its own
+continuity breaks. The filament whose flank brightness the core matches better
+is called upper, and by how much, divided by the larger of the two filaments'
+brightness separation and the noise measured at that crossing, is the score $s$
+that decides it. Where the two filaments genuinely look alike, or differ by less
+than that noise, $\lvert s\rvert$ falls below a fixed threshold and the crossing
+\emph{abstains} rather than being decided by noise. Dividing by the noise,
+rather than by the separation alone, is what makes a confident score mean
+\emph{separated by more than the noise} rather than merely separated.
 
 \textbf{One order for the whole field.} Local decisions need not be mutually
 consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
 $A$, which no assignment of heights satisfies. Each decided crossing therefore
-contributes a directed edge weighted by its own confidence, and within each
-connected component of the crossing graph the orientation that maximises total
-satisfied weight is chosen, equivalently a minimum-weight feedback arc set.
-Relations that cannot be satisfied are flipped rather than discarded, and both
-the flip and the original local probability are recorded, so a reader can see
-how far the global correction moved. Depth propagates only along crossings, so
-two instances in different components are related by no evidence at all and
+contributes a directed edge weighted by $\lvert s\rvert$, the strength of its
+own evidence, and within each connected component of the crossing graph one
+total order over its instances is derived so as to maximise the total
+satisfied weight -- the minimum-weight feedback arc set objective, attained
+exactly only for components small enough to search and approached greedily
+above that size. Every relation is then re-read from that order, which is
+re-derived for the component as a whole rather than only where relations
+conflict, so a relation that nothing contradicts can come back reversed too;
+the relations the order disagrees with are flipped rather than discarded, and
+both the flip and the original local score are recorded, so a reader can see
+how far the global correction moved. Depth
+propagates only along crossings, so two instances in different components are
+related by no evidence at all and
 their order is a stated tie-break, not a measurement.
-\suppdepthstage{} gives the sampling geometry, the weighting and the solver.
+\suppdepthstage{} gives the sampling geometry, the score in full, the
+measurement that replaced an earlier two-channel rule with it, and the solver.
 
 \textbf{Layers and height.} The corrected relations form a directed acyclic
 graph whose longest path fixes the smallest number of layers consistent with

@@ -560,10 +560,17 @@ shows.
 The stages above reconstruct instances in projection. A crossing pixel is
 assigned to both filaments that own it, but nothing so far says which of the
 two passes in front. The optional depth stage answers that from the greyscale
-alone -- brightness and edge sharpness across the crossing -- then imposes one
+alone -- the continuity of each filament's own brightness across the crossing,
+weighed against the noise measured there -- then imposes one
 globally consistent vertical order and places each instance at a height at
 which nothing interpenetrates. It changes no 2-D instance.
 
+% Depth re-run 2026-08-23: every macro in this subsection and
+% Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
+% (results/plecta_depth_order.json, via scripts/results/run_depth_order_eval.py
+% -> make_depth_record.py -> make_plecta_results.py). The two markers before the
+% figures remain open: those panels are rendered images, not macros, and were
+% not re-rendered.
 It is evaluated on \PlectaDepthSceneCount{} depth-resolved synthetic scenes at
 two areal coverages, under the measures of
 \suppdepth{}, in two input conditions. Given the
@@ -577,19 +584,31 @@ carries its error. Table~\ref{tab:depth-order} reports both.
 scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
 six scenes per coverage, plain means, no inference.}
 \label{tab:depth-order}
-\input{results/plecta_depth_order_table.tex}
+\input{results/plecta_depth_order_table}
 \end{table}
 
 The decomposition is the result. Order accuracy over decided crossings spans
-only \PlectaDepthDecidedSpan{}
+\PlectaDepthDecidedSpan{}
 (\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
-and both densities, while accuracy over all crossings spans
-\PlectaDepthAllSpan{} (\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
+and both densities, while accuracy over all crossings spans more than three
+times that, \PlectaDepthAllSpan{}
+(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
 falls by the amount the crossing recovery rate falls,
-\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}. Once a crossing is found,
-the decision is made at close to the same accuracy whether the geometry was
-given or reconstructed, and whether the scene carries the sparser crossing load or roughly five
-times it. What limits
+\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}: at the denser coverage the
+reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all crossings,
+divided by the given condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces
+its crossing recovery rate \PlectaDepthCleanCovFourZeroMatch{} to within two
+thousandths. The decided figures are only meaningful beside the abstention row
+above them: what the stage declines there are the hard crossings, so a higher
+decided accuracy is a stage answering less often, not a stage deciding better.
+Once a crossing is found, the decision is made at a broadly similar accuracy
+whether the geometry was given or reconstructed, and whether the scene carries
+the sparser crossing load or roughly five times it, though not at the same
+accuracy: the widest gap between the input conditions is
+\PlectaDepthCleanCovTwoZeroDecided{} reconstructed against
+\PlectaDepthOracleCovTwoZeroDecided{} given, at the sparser coverage and in
+favour of the reconstruction, which scores only the crossings it matched and
+abstains on more of them. What limits
 the depth result is the 2-D stage not recovering every crossing, not the
 ordering of the crossings it does recover.
 
@@ -605,8 +624,12 @@ within one component, and if the pairs that do are ordered at the
 crossing-pair rate while the rest are a coin flip, the all-pairs figure follows
 arithmetically: at 20\,\% coverage that predicts
 \PlectaDepthCleanCovTwoZeroOrderPred{} against
-\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The account is not complete at
-the denser end, where the measured order falls below the prediction by up to
+\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The arithmetic is an
+approximation in both directions rather than an account that holds at one end
+and fails at the other: it under-predicts at the sparser coverage, where the
+pairs in different components are evidently not quite a coin flip, and
+over-predicts at the denser end, where the measured order falls below the
+prediction by up to
 \PlectaDepthOrderResidual{}, consistent with error accumulating along the long
 transitive chains that large components create. Depth claims are therefore
 scoped to the connected component, and a globally ordered film would need

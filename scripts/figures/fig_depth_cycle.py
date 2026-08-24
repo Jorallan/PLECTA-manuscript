@@ -4,9 +4,15 @@ Local over/under evidence is estimated per crossing, so nothing stops it
 from asserting A > B, B > C, C > A -- impossible when every instance has one
 z. This figure shows the first such cycle in the held-out predicted-instance
 run (first scene, in scene order, whose raw precedence graph is cyclic; no
-other selection): the raw relations with their local probabilities, and the
-globally corrected relations after the maximum-weight acyclic orientation,
-with the reversed relation highlighted.
+other selection): the raw relations with the local score magnitude |s| that
+weights each of them, and the globally corrected relations after the
+maximum-weight acyclic orientation, with the reversed relation highlighted.
+
+|s| is the quantity, not p. The stage's decision variable is the signed score
+s: sign(s) names the upper filament and |s| is the edge weight the ordering is
+solved with. The probability p in the record is a monotone relabelling of s,
+written for schema compatibility, and is neither calibrated nor the quantity
+anything is decided or weighted on.
 
 Writes to figures/archive/ (no `\\includegraphics` yet).
 """
@@ -96,7 +102,7 @@ def draw_graph(ax, nodes, relations, title_letter, title, show_flip):
                                 edgecolor=INK, linewidth=1.0, zorder=3))
         ax.text(x, y, str(node), ha="center", va="center",
                 fontsize=PT_ANNOT, color=INK, zorder=4)
-    for (hi, lo, p, flipped) in relations:
+    for (hi, lo, weight, flipped) in relations:
         x0, y0 = pos[hi]
         x1, y1 = pos[lo]
         d = np.array([x1 - x0, y1 - y0])
@@ -119,18 +125,32 @@ def draw_graph(ax, nodes, relations, title_letter, title, show_flip):
         # chord between the nodes: arc3 bows the path out by ~rad * |chord|
         # at the midpoint, and placing the label from the CHORD's normal (as
         # a straight-line offset would) put it back on top of that bow --
-        # which is what made "p = 0.88" read as overlapping double digits.
+        # which is what made a two-digit label read as overlapping digits.
         mx, my = (start[0] + end[0]) / 2, (start[1] + end[1]) / 2
         normal = np.array([d[1], -d[0]])
         bow = rad * np.linalg.norm(np.array(end) - np.array(start))
         off = normal * (bow + 0.15)
-        ax.text(mx + off[0], my + off[1], f"p = {p:.2f}", ha="center",
+        ax.text(mx + off[0], my + off[1], f"|s| = {weight:.2f}", ha="center",
                 va="center", fontsize=PT_ANNOT, color=CHORD)
     ax.set_xlim(-1.55, 1.55)
     ax.set_ylim(-1.55, 1.6)
     ax.set_aspect("equal")
     ax.set_axis_off()
     tagged_title(ax, title_letter, title, dy=1.05, gap=0.135)
+
+
+def edge_weight(c):
+    """|s|, the weight the ordering actually solves with.
+
+    Records written from 2026-08-22 carry ``score`` directly. Older ones carry
+    only ``p_over``; p was built there as sigmoid(s), so |logit(p)| recovers
+    the same |s| exactly rather than approximating it.
+    """
+    s = c.get("score")
+    if s is None:
+        p = min(max(float(c["p_over"]), 1e-6), 1.0 - 1e-6)
+        s = math.log(p / (1.0 - p))
+    return abs(float(s))
 
 
 def main():
@@ -145,11 +165,11 @@ def main():
         if not ({c["i"], c["j"]} <= node_set):
             continue
         raw_lo = c["j"] if c["raw_over"] == c["i"] else c["i"]
-        p_raw = c["p_over"] if c["raw_over"] == c["i"] else 1 - c["p_over"]
-        raw.append((c["raw_over"], raw_lo, p_raw, c["flipped"]))
+        weight = edge_weight(c)
+        raw.append((c["raw_over"], raw_lo, weight, c["flipped"]))
         over = c["over"]
         lo = c["j"] if over == c["i"] else c["i"]
-        corrected.append((over, lo, p_raw, c["flipped"]))
+        corrected.append((over, lo, weight, c["flipped"]))
 
     fig, axes = plt.subplots(1, 2, figsize=(FIG_W * 0.72, FIG_W * 0.40))
     fig.subplots_adjust(left=0.02, right=0.98, top=0.86, bottom=0.04,
@@ -165,7 +185,7 @@ def main():
              fontsize=PT_ANNOT, color=INK, ha="left")
     fig.text(0.02, 0.005,
              "reversed by the maximum-weight acyclic orientation; its "
-             "local probability is kept in the record.",
+             "local score is kept in the record.",
              fontsize=PT_ANNOT, color=INK, ha="left")
     save_fig(fig, "fig_depth_cycle", subdir="archive")
 

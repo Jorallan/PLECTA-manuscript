@@ -160,40 +160,154 @@ This section gives the detail behind Section~2.6 of the article.
 \subsection{Sampling geometry at a crossing}
 
 Where two instance centrelines intersect, a short arc of each is taken through
-the crossing (the shared \emph{core}, whose half-size follows the two radii
-so that it spans both silhouettes), together with the \emph{flanks} on either
-side of it. Flank samples are kept clear of the other filament's stroke,
-because a sample taken inside it measures the union of two rods rather than one
-of them. A crossing with too few usable flank samples abstains rather than
-being decided on thin evidence.
+the crossing (the shared \emph{core}, a flat \PlectaParamCorePx{}\,px of arc,
+the same at every crossing), together with the \emph{flanks} on either side of
+it. Flank samples are kept clear of the other filament's stroke, because a
+sample taken inside it measures the union of two rods rather than one of them.
+A crossing with too few usable flank samples abstains rather than being decided
+on thin evidence.
 
-\subsection{The two channels}
+The core length was previously sized from the two filaments' radii so that it
+spanned both silhouettes. It is now the constant above, and no per-rod radius
+enters the evidence path at all, so a radius estimate can no longer move a depth
+decision. Radii re-enter only downstream, in the non-interpenetration
+constraints that set metric height.
 
-Two quantities are read on core and flanks alike: median intensity, and median
-gradient magnitude sampled on the filament's own two edges, the axis gradient
-being near zero and therefore uninformative. Sharpness continuity is tested per
-rod on that rod's own geometry: the core-adjacent samples of rod $k$ sit on
-$k$'s edges when $k$ is on top, and inside the other rod's stroke when $k$ is
-underneath, where its edge is overwritten.
+\subsection{One channel, and its noise floor}
 
-The filament whose flank appearance the core matches better is called upper,
-and the normalised difference between the two channels passes through a
-logistic to give $p$. Where the two filaments genuinely look alike the
-difference is near zero, $p$ sits near $0.5$, and the crossing abstains; the
-width of that abstention band is a configured parameter, as are the two channel
-weights.
+One quantity is read on core and flanks alike: median intensity. Write $m_i$ and
+$m_j$ for the two filaments' flank medians and $m_c$ for the pooled core median.
+The evidence at the crossing is the score
+\begin{equation}
+  s \;=\; 2\,
+  \frac{\lvert m_c-m_j\rvert-\lvert m_c-m_i\rvert}
+       {\max\!\bigl(\lvert m_i-m_j\rvert,\;2\hat\sigma\bigr)},
+  \label{eq:depth-score}
+\end{equation}
+whose sign names the upper filament -- the one whose flanks the core resembles
+more closely -- and whose magnitude $\lvert s\rvert$ is the weight that decision
+carries. A crossing abstains when
+$\lvert s\rvert<\PlectaParamAbstainScore{}$; the threshold is set directly in
+score units rather than as a band around a probability. Here
+$\hat\sigma$ is a noise estimate belonging to that crossing alone: $1.4826$
+times the median absolute deviation of the within-rod flank residuals, each
+filament's flank samples being centred on their own median and the two residual
+sets pooled. It therefore measures the scatter within a rod's own appearance,
+not the difference between the two rods.
+
+A probability $p$ is still written into the per-crossing record so that the
+output keeps its schema, but it is a monotone relabelling of $s$. It is neither
+a calibrated confidence nor the quantity anything is decided or weighted on, and
+should not be read as one.
+
+\subsubsection*{Why the denominator is a noise floor}
+
+By the reverse triangle inequality the numerator of \eqref{eq:depth-score} is
+bounded in magnitude by $\lvert m_i-m_j\rvert$, so a denominator equal to that
+separation drives the ratio to $\pm1$ whenever the two filaments differ at all.
+The previous form of this rule floored the denominator at a fixed
+$\PlectaDepthRuleLegacyFloor{}$ grey levels, far below the noise of any of
+these images. The consequence was structural rather than statistical:
+$\lvert s\rvert\ge\PlectaDepthRuleSaturationCut{}$ then exceeded any
+abstention threshold, so the rule could not abstain on such a crossing whatever
+the evidence actually was. Measured, \PlectaDepthRuleSatSynthPct{}\,\% of
+synthetic and \PlectaDepthRuleSatRealPct{}\,\% of real crossings were saturated
+this way, and among the saturated ones those whose separation fell below the
+noise scored about $\PlectaDepthRuleSatBelowNoiseAcc{}$ accuracy against about
+$\PlectaDepthRuleSatAboveNoiseAcc{}$ for those above it. Flooring at
+$2\hat\sigma$ instead makes a confident score mean \emph{separated by more than
+the noise} rather than merely separated, and restores the stage's ability to
+abstain where it should.
+
+\subsubsection*{The gradient channel, and why it was removed}
+
+An earlier version of this stage read a second quantity beside intensity: median
+gradient magnitude sampled on each filament's own two edges at centreline
+$\pm r\,\mathbf{n}$, the axis gradient being near zero and therefore
+uninformative. The argument was that the upper filament's edges stay crisp
+through the crossing while the lower filament's are overwritten. It did not
+survive measurement. The channel decided \PlectaDepthRuleSharpDecidedPct{}\,\%
+of real crossings, agreed with the intensity channel at chance
+($\kappa\approx\PlectaDepthRuleSharpKappa{}$), and scored
+$\PlectaDepthRuleSharpAccLow{}$ to $\PlectaDepthRuleSharpAccHigh{}$ standing
+alone, which is chance. The reason is visible in its own sampling
+geometry: within the core those $\pm r$ offsets fall inside the \emph{other}
+filament's stroke, so the quantity is contaminated exactly where it would have
+had to be read. The channel is removed, and with it the gradient image it
+required, the two channel weights that combined it with intensity, and the
+logistic -- with one channel there is nothing to combine, and $s$ is already the
+decision variable.
+
+\subsubsection*{What the replacement is worth}
+
+The two rules were compared on a held-out set of
+\PlectaDepthRuleHeldoutScenes{} optically rendered synthetic scenes carrying
+\PlectaDepthRuleHeldoutCrossings{} crossings, whose seeds are disjoint from
+every set used to develop either rule and to choose between them. Its
+constants are a weaker claim: the flat core half-size
+(\PlectaParamCorePx{}\,px) was settled by a sweep run on this same set, and
+the abstention threshold's flatness was checked on it, so with respect to
+those two values the set is not held out. Neither was invented here --
+\PlectaParamCorePx{}\,px is exactly what the previous rule's radius-free
+fallback already computed, and both values sit on a plateau rather than a
+peak, a flat core being no worse than oracle per-rod radii anywhere over
+6--14\,px and the accuracy unchanged across a band of thresholds around
+\PlectaParamAbstainScore{} -- so nothing below turns on either value, but
+the comparison is in-sample with respect to them.
+
+At matched coverage the
+one-channel rule matches the two-channel rule's accuracy: the difference is
+$\PlectaDepthRuleAccDelta{}$, 95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no
+difference, and no claim of higher accuracy is made. What improves is the
+ordering of the stage's own confidence. The area
+under the curve of correctness against $\lvert s\rvert$ rises from
+$\PlectaDepthRuleAucOld{}$ to $\PlectaDepthRuleAucNew{}$, a gain of
+$\PlectaDepthRuleAucDelta{}$, CI $\PlectaDepthRuleAucCI{}$. That matters
+because $\lvert s\rvert$ is the edge weight the global ordering below is solved
+with:
+better-ordered confidence means contradictions are broken at the genuinely
+weakest relations rather than at arbitrary ones. It also converts into accuracy
+wherever more abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
+\PlectaDepthRuleCovAPct{}\,\% coverage and $\PlectaDepthRuleAccAtCovB{}$ at
+\PlectaDepthRuleCovBPct{}\,\%. The claim is therefore the same accuracy with
+better-ordered confidence, from a simpler evidence path.
+
+A second channel, axial continuity along each filament, was built and measured
+on the same held-out set. It was inert -- $\PlectaDepthRuleAxialDelta{}$, CI
+$\PlectaDepthRuleAxialCI{}$ -- and is deliberately not included.
 
 \subsection{One order for the whole field}
 
-Each decided crossing contributes a directed edge weighted by
-$\lvert\operatorname{logit}p\rvert$, oriented toward its locally more likely
-relation. Within each connected component of the crossing graph, the
-orientation maximising total satisfied weight is chosen, equivalently a
-minimum-weight feedback arc set. Components up to a configured size are solved
-exactly by dynamic programming and larger ones greedily. Relations that cannot
-be satisfied are flipped rather than discarded, and both the flip and the
-original local probability are recorded, so a reader can see how much the
-global correction moved.
+Each decided crossing contributes a directed edge weighted by $\lvert s\rvert$
+itself, oriented toward the relation the sign of $s$ names. The score is the
+primitive: the reported $p$ is a relabelling of it and enters no computation
+here. Within each connected component of the crossing graph one total order
+over its instances is derived so as to maximise the total satisfied weight,
+and every relation in the component is then re-read from that order: the ones
+the order disagrees with are flipped rather than discarded, and both the flip
+and the original local score are recorded, so a reader can see how much the
+global correction moved. Which relations that turns out to be is the subject of
+the paragraph below.
+
+% 24 reversals / layer agreement 0.886: measured record in stubmatch
+% METHOD.md, "Global ordering can reverse a relation nothing contradicts",
+% mirrored in plecta/depth.py at resolve_global_order. No results/ macro
+% exists for either figure.
+Maximising satisfied weight is the minimum-weight feedback arc set objective,
+but only components of at most \PlectaParamExactMaxNodes{} instances attain
+it, by dynamic programming over subsets; larger ones get a greedy order
+refined with adjacent swaps, which carries no optimality guarantee. Because
+the order is re-derived for the component as a whole rather than only where
+relations conflict, a greedily ordered component can return a relation
+reversed that nothing contradicts, which an exact solution never does -- a
+reversal lying on no cycle only loses weight. Fed ground-truth crossings with
+their true directions, input that is acyclic by construction and that an exact
+solver would leave untouched, the pass still reverses 24 relations across the
+\PlectaDepthRuleHeldoutScenes{} held-out scenes, capping layer agreement at
+$0.886$ where it should reach $1.000$; a condense-then-order variant, which
+orders the condensation of the strongly connected components and reorders only
+inside genuine cycles, reverses none of them but measured worse on the actual
+noisy predictions and is not what ships.
 
 \subsection{Layers and metric height}
 
@@ -208,7 +322,20 @@ constraints allow.
 \subsection{Configuration}
 
 Every tunable quantity of both stages (the cost weights and gates above, the
-core and window sizes, the two channel weights, the abstention band, and the
+core and window sizes, the abstention threshold in score units, and the
 exact-solver size limit) is carried in a single released parameter file,
 grouped by the stage it belongs to, with the 2-D grouping section checked
 against the frozen record that produced the published numbers.
+Table~\ref{tab:cost-weights} gives that file's 2-D half;
+Table~\ref{tab:depth-params} gives its depth half, so both are shown rather
+than asserted. Every value in either table, and every parameter this section
+quotes in passing, is read from the released file when this document is built.
+
+\begin{table}[tbp]
+  \centering
+  \caption{The depth stage's own entries in the released parameter file. The
+  abstention threshold is in score units, not a band around a probability, and
+  the core is flat: no per-rod radius enters the evidence path.}
+  \label{tab:depth-params}
+  \input{results/plecta_depth_parameter_table}
+\end{table}

@@ -32,9 +32,11 @@ An optional stage then reads the greyscale to decide which filament passes in
 front at each crossing, and stacks the network into layers, information
 otherwise obtained by destructive sectioning. It is correct on
 \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the crossings it commits
-to, against a chance level of \PlectaDepthChance{}, and abstains where the
-image does not separate the two. The method uses no random number generator and
-its configuration is published, so a mask yields the same instances on every
-run. We demonstrate the whole workflow on \PlectaRealFieldCount{} annotated
+to, against a chance level of \PlectaDepthChance{}, because it abstains where
+the image does not separate the two by more than the local noise; counting
+every abstention as an error, it is correct on
+\PlectaDepthAllLow{}--\PlectaDepthAllHigh{} of all reference crossings. The method uses
+no random number generator and its configuration is published, so a mask yields
+the same instances on every run. We demonstrate the whole workflow on \PlectaRealFieldCount{} annotated
 carbon-nanotube SEM fields, and state plainly what that evidence does not
 support.

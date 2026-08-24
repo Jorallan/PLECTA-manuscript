@@ -2,10 +2,45 @@
 
 Status: internal engineering specification, audited 2026-08-10.
 
+> **Historical audit — its citations do not resolve against the current
+> checkout.** Added 2026-08-23. This document audited `C:\Repos\stubmatch` as
+> it stood on 2026-08-10, before the package was renamed and restructured.
+> Every path and line number below refers to that tree:
+>
+> | cited then | now |
+> |---|---|
+> | `frozen/predict.py` | `plecta/predict.py` |
+> | `frozen/indep/linker.py` | `plecta/linking.py` |
+> | `frozen/indep/skelgraph.py` | `plecta/graph.py` |
+> | `frozen/indep/geometry.py` | `plecta/geometry.py` |
+> | `frozen/indep/predictor.py` | folded into `plecta/predict.py` |
+> | `frozen/params.json` | `plecta/params.json` (and `plecta/parameters.yaml`) |
+> | `semwidth/*` | `plecta/image/` |
+> | `mergegate/*` | removed |
+>
+> Line ranges are not remapped: the files were rewritten, not merely moved, so
+> a remapped range would look verified when it is not. `SPLIT.md` is now 22
+> lines, so every range cited against it here lies partly or wholly past its
+> end. Re-derive any citation you need to rely on.
+>
+> Two of the conditions this audit reports on have since changed, and the text
+> below is left as written rather than edited in place:
+>
+> * `C:\Repos\stubmatch` **is** a Git repository now (HEAD `7d369d8`), so the
+>   statements that it carries no Git metadata and offers no verifiable commit
+>   are no longer true.
+> * The effective configuration is now materialised in one file,
+>   `plecta/parameters.yaml`, with `plecta/params.json` retained as the frozen
+>   cross-check, and `evidence/` carries the seed manifest, the per-scene
+>   held-out record, the release parity record and the tested environment.
+>
+> What remains valid is the reasoning, not the coordinates.
+
 The code and effective frozen configuration take precedence over prose. The
-working implementation is in `C:\Repos\stubmatch`; that directory has no Git
-metadata, so this audit cites executable files and stored result artifacts rather
-than an unverifiable commit identifier.
+working implementation is in `C:\Repos\stubmatch`. At the time of this audit
+that directory carried no Git metadata, so the audit cites executable files and
+stored result artifacts rather than a commit identifier; it is a Git repository
+now, and a present-day audit should cite the commit.
 
 ## Publication-safe specification
 

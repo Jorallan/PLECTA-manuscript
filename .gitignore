@@ -71,8 +71,8 @@ comparator_study_brief.md
 filaseg_lowdensity_brief.md
 filaseg_lowdensity_prompt.md
 docs/internal/handover_prompt.md
+docs/internal/restructure_prompt.md
 CLAUDE.md
-docs
 # ---------------------------------------------------------------------------
 # Exploratory studies. Self-contained investigations that inform decisions but
 # are not part of the manuscript: raw comparator outputs, downloaded third-party

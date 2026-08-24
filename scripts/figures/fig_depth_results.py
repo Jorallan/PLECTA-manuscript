@@ -11,12 +11,24 @@ scripts/results/run_depth_ablations.py over the held-out sets) and draws:
 
 Every value is a plain mean over scenes (n = 20 per set); exploratory, no
 inference. A bar that is absent because a condition produced zero decided
-crossings in that split (sharpness-only, 20 % coverage: every scene abstains
-on every crossing) is labelled "no decisions" rather than left blank, so it
-reads as a finding and not as a rendering gap. A bar that is present but near
-zero (oracle radii trivially give ~0 diameter error; sharpness-only barely
-moves ordinal/layer agreement) gets its value printed above it for the same
-reason -- a bar too short to see is not the same as a bar that is not there.
+crossings in that split is labelled "no decisions" rather than left blank, so
+it reads as a finding and not as a rendering gap. A bar that is present but
+near zero (oracle radii trivially give ~0 diameter error) gets its value
+printed above it for the same reason -- a bar too short to see is not the same
+as a bar that is not there.
+
+The condition list tracks scripts/results/run_depth_ablations.py and must stay
+in step with it. It changed with the evidence rule on 2026-08-22: the panels
+used to carry ``pred_intensity`` and ``pred_sharpness``, the two channels of
+the removed two-channel rule, one of which ("sharpness channel only") abstained
+on every crossing at 20 % coverage and was drawn with a special case for it.
+The shipped rule reads one channel, so those two conditions no longer exist;
+what is ablated now is the abstention threshold, the core geometry, and the
+previous rule taken as a whole.
+
+Conditions missing from the record are dropped with a printed note rather than
+raising, so a partial grid (see the runner precondition in
+run_depth_ablations.py) still draws.
 
 Writes to figures/archive/ (no `\\includegraphics` yet).
 """
@@ -38,14 +50,18 @@ REPO = os.path.normpath(os.path.join(HERE, "..", ".."))
 RECORD = os.path.join(REPO, "exploration", "depth_25d",
                       "depth_ablation_record.json")
 
+#  Must match CONDITIONS in scripts/results/run_depth_ablations.py.
 CONDS = ["oracle_oracle_r", "oracle_meas", "pred_meas",
-         "pred_intensity", "pred_sharpness"]
+         "pred_abstain_lo", "pred_abstain_hi",
+         "pred_core_radius", "pred_legacy_rule"]
 LABELS = {
     "oracle_oracle_r": "oracle 2-D + oracle d",
     "oracle_meas": "oracle 2-D + measured d",
     "pred_meas": "predicted 2-D + measured d",
-    "pred_intensity": "intensity channel only",
-    "pred_sharpness": "sharpness channel only",
+    "pred_abstain_lo": "abstain |s| < 0.20",
+    "pred_abstain_hi": "abstain |s| < 0.60",
+    "pred_core_radius": "radius-scaled core",
+    "pred_legacy_rule": "previous two-channel rule",
 }
 TAG_GAP = 0.115
 
@@ -106,8 +122,27 @@ def mark_bars(ax, xs, vals, axis_max, fmt="{:.2f}", small_frac=0.07,
 
 
 def main():
+    global CONDS
     plecta_style()
     record = json.load(open(RECORD, encoding="utf-8"))
+
+    #  A record written before this grid changed, or by a partial run, will not
+    #  carry every condition. Drawing what is there beats raising KeyError on
+    #  the first missing one -- but say which are missing, so a half-empty
+    #  figure is never mistaken for a complete one.
+    sets = ("heldout", "heldout_shifted")
+    have = [c for c in CONDS
+            if all(f"{s}__{c}" in record for s in sets)]
+    missing = [c for c in CONDS if c not in have]
+    if missing:
+        print(f"fig_depth_results  no record for {missing}; drawing "
+              f"{len(have)} of {len(CONDS)} conditions")
+    if not have:
+        raise SystemExit(
+            f"{RECORD} carries none of {CONDS}. Re-run "
+            "scripts/results/run_depth_ablations.py; the grid changed with "
+            "the evidence rule on 2026-08-22.")
+    CONDS = have
 
     fig, axes = plt.subplots(2, 2, figsize=(FIG_W, FIG_W * 0.78))
     # left is wider than a bare margin would need: the first, right-anchored,

@@ -236,7 +236,7 @@ def main() -> int:
     dn_centres, dn_end = chain(
         ax, 0.96, y_dn,
         ["Crossings in\nprojection",
-         "Over/under from the\nimage: brightness,\nsharpness",
+         "Over/under from the\nimage: brightness\nagainst local noise",
          "One global order,\ncycles removed",
          "Layers, then metric $z$\nwith no interpenetration"],
         ORANGE, "white", gap=0.13, fontsize=PT_MIN)

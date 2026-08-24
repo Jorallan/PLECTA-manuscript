@@ -3,6 +3,13 @@
 # input, and none of it is referenced by main.tex.
 #
 # Ignore everything in this folder except this file, so the rule survives a
-# fresh clone while the figures themselves never re-enter the repository.
+# fresh clone.
+#
+# It applies to NEW files only. Twenty figures here (fig_common_fragment_metric,
+# fig_comparators, fig_comparators_density, fig_graft_regime, fig_plecta_control,
+# fig_plecta_density, fig_plecta_gates, fig_plecta_performance,
+# fig_plecta_sensitivity and fig_plecta_task, .pdf and .png each) were tracked
+# before this rule landed, and .gitignore does not evict a tracked file. They
+# stay tracked. Nothing else here enters the repository.
 *
 !.gitignore

@@ -1,5 +1,13 @@
 """Run frozen PLECTA on two GT-derived Microplastics SEM inputs.
 
+NOT A MANUSCRIPT BUILD INPUT. This is a comparator-study driver: it writes to
+``C:/Repos/comparisons/Microplastics_SEM/PLECTA_comparison/oracle_inputs`` and
+produces no results/ record, no macro and no figure, and nothing in sections/,
+results/ or the other scripts references it. By CLAUDE.md's own convention
+comparator studies live in ``C:/Repos/comparisons/``, so this belongs beside
+its output; it is kept here only for provenance until someone moves it. Do not
+add it to any build sequence.
+
 Conditions:
 
 * ``gt_centerline``: skeleton of the thresholded manual ``label_gray`` mask;

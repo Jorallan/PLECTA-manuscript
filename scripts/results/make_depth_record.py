@@ -10,7 +10,18 @@ Two input conditions over the same 12 scenes, and the pairing is the point:
 * ``clean`` runs PLECTA's own 2-D reconstruction from the non-degraded binary
   axis mask, so it carries upstream error.
 
-Both then place z from the same image evidence, brightness and edge sharpness.
+Both then place z from the same image evidence: ONE channel, the flank-vs-core
+median intensity of each rod, with the denominator floored at twice the local
+noise estimate (``2 * sigma_hat``). The signed score ``s`` decides the
+direction and weights it, and a crossing abstains when ``|s| < 0.40``. See
+sections/07_technical.tex for the normative account of the change.
+
+Re-measured under that shipped rule on 2026-08-23 by
+``scripts/results/run_depth_order_eval.py``, which regenerates every
+``pred_depth.json`` and then calls ``score_depth.py``. Everything before that
+date was measured under the previous two-channel logistic rule and is
+superseded. ``score_depth.py`` only scores what is already on disk, so re-running
+it alone does NOT re-measure the rule -- go through the driver.
 Reporting either alone would misattribute: ``coa_all`` falls sharply between
 them, but ``coa_decided`` does not, and the gap is the crossing match rate.
 The record therefore always carries all three together.
@@ -20,6 +31,7 @@ Exploratory: 6 scenes per coverage, plain means, no interval and none claimed.
 from __future__ import annotations
 
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 from statistics import mean
@@ -27,6 +39,27 @@ from statistics import mean
 REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "exploration" / "depth_order_eval" / "depth_scores.json"
 OUT = REPO / "results" / "plecta_depth_order.json"
+PARAMS = Path(os.environ.get(
+    "PLECTA_PARAMS_YAML", r"C:\Repos\stubmatch\plecta\parameters.yaml"))
+
+
+def _shipped_rule() -> str:
+    """The evidence rule these scores were produced under, from the released file.
+
+    Three rules are implemented and the shipped one has changed once already,
+    moving every number in this record. Naming it here, from
+    ``parameters.yaml`` rather than from a description, is what lets a reader
+    check the record against the code: if the two disagree, they disagree
+    visibly instead of silently.
+    """
+    try:
+        import yaml
+    except ModuleNotFoundError:                       # pragma: no cover
+        return "unknown (PyYAML not installed)"
+    if not PARAMS.is_file():
+        return f"unknown (no {PARAMS})"
+    tree = yaml.safe_load(PARAMS.read_text(encoding="utf-8"))
+    return str(tree["depth_3d"]["evidence_weights"]["scoring"])
 
 # Reported per cell. Chance for every accuracy here is 0.5 -- the over/under
 # decision is binary and symmetric -- so the margin over 0.5 is the evidence.
@@ -95,6 +128,11 @@ def main() -> int:
         "configuration": "image evidence on, grazing overlaps not cleared, "
                          "undecided pairs stacked compactly -- the shipped "
                          "defaults",
+        #  Which rule combined the channels, read live rather than described.
+        #  The shipped rule changed once during this work and the numbers moved
+        #  with it, so a record that does not name its rule cannot be checked
+        #  against the code that produced it.
+        "evidence_rule": _shipped_rule(),
         "chance_level": 0.5,
         "conditions": {
             "oracle": "ground-truth 2-D centrelines; the 2-D grouping does not "
