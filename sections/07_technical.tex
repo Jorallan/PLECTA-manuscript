@@ -255,11 +255,17 @@ peak, a flat core being no worse than oracle per-rod radii anywhere over
 \PlectaParamAbstainScore{} -- so nothing below turns on either value, but
 the comparison is in-sample with respect to them.
 
-At matched coverage the
-one-channel rule matches the two-channel rule's accuracy: the difference is
-$\PlectaDepthRuleAccDelta{}$, 95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no
-difference, and no claim of higher accuracy is made. What improves is the
-ordering of the stage's own confidence. The area
+At matched coverage, meaning both rules made to answer as often as the shipped
+one does at \PlectaDepthRuleCovShipped{}\,\%, the one-channel rule matches the
+two-channel rule's accuracy: the difference is $\PlectaDepthRuleAccDelta{}$,
+95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no difference, and no claim of
+higher accuracy is made. One reading does go against the replacement and is
+reported rather than omitted: forced to decide \emph{every} crossing, including
+those it would decline, the one-channel rule is worse by
+$\PlectaDepthRuleAccDeltaFull{}$, CI $\PlectaDepthRuleAccFullCI{}$. That is the
+expected direction, because abstention is exactly where an ordered confidence
+pays, and removing it removes the advantage; it is also not how either rule is
+run. What improves is the ordering of the stage's own confidence. The area
 under the curve of correctness against $\lvert s\rvert$ rises from
 $\PlectaDepthRuleAucOld{}$ to $\PlectaDepthRuleAucNew{}$, a gain of
 $\PlectaDepthRuleAucDelta{}$, CI $\PlectaDepthRuleAucCI{}$. That matters

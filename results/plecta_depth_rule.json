@@ -1,124 +1,82 @@
 {
- "measured": {
-  "PlectaDepthRuleHeldoutScenes": {
-   "value": 20,
-   "what": "held-out optically rendered scenes"
+  "role": "the evidence-rule replacement, as published",
+  "computed_from": "results\\plecta_depth_rule_measured.json",
+  "computed": {
+    "PlectaDepthRuleHeldoutScenes": "20",
+    "PlectaDepthRuleHeldoutCrossings": "1342",
+    "PlectaDepthRuleCovShipped": "83.0",
+    "PlectaDepthRuleCovLegacy": "83.8",
+    "PlectaDepthRuleAccShipped": "0.8501",
+    "PlectaDepthRuleAccLegacy": "0.8434",
+    "PlectaDepthRuleCovAPct": "82.5",
+    "PlectaDepthRuleAccAtCovA": "+0.0054",
+    "PlectaDepthRuleCovBPct": "80",
+    "PlectaDepthRuleAccAtCovB": "+0.0121",
+    "PlectaDepthRuleAccDelta": "+0.0045",
+    "PlectaDepthRuleAccCILow": "-0.0186",
+    "PlectaDepthRuleAccCIHigh": "+0.0235",
+    "PlectaDepthRuleAccDeltaFull": "-0.0142",
+    "PlectaDepthRuleAccFullCILow": "-0.0313",
+    "PlectaDepthRuleAccFullCIHigh": "+0.0007",
+    "PlectaDepthRuleAucOld": "0.6531",
+    "PlectaDepthRuleAucNew": "0.7586",
+    "PlectaDepthRuleAucDelta": "+0.1056",
+    "PlectaDepthRuleAucCILow": "+0.0659",
+    "PlectaDepthRuleAucCIHigh": "+0.1425"
   },
-  "PlectaDepthRuleHeldoutCrossings": {
-   "value": 1355,
-   "what": "crossings in that held-out set"
+  "transcribed": {
+    "PlectaDepthRuleLegacyFloor": {
+      "value": "0.02",
+      "what": "the removed rule's fixed denominator floor"
+    },
+    "PlectaDepthRuleSaturationCut": {
+      "value": "1.98",
+      "what": "score at which the removed rule became unable to abstain"
+    },
+    "PlectaDepthRuleSatSynthPct": {
+      "value": "32.3",
+      "what": "per cent of synthetic crossings at that saturation"
+    },
+    "PlectaDepthRuleSatRealPct": {
+      "value": "61.5",
+      "what": "per cent of real crossings at that saturation"
+    },
+    "PlectaDepthRuleSatBelowNoiseAcc": {
+      "value": "0.70",
+      "what": "accuracy of saturated crossings below the noise floor"
+    },
+    "PlectaDepthRuleSatAboveNoiseAcc": {
+      "value": "0.93",
+      "what": "accuracy of saturated crossings above it"
+    },
+    "PlectaDepthRuleSharpDecidedPct": {
+      "value": "0.2",
+      "what": "per cent of crossings the removed sharpness channel decided alone"
+    },
+    "PlectaDepthRuleSharpKappa": {
+      "value": "+0.09",
+      "what": "its agreement with the intensity channel"
+    },
+    "PlectaDepthRuleSharpAccLow": {
+      "value": "0.54",
+      "what": "its standalone accuracy, low end"
+    },
+    "PlectaDepthRuleSharpAccHigh": {
+      "value": "0.59",
+      "what": "its standalone accuracy, high end"
+    },
+    "PlectaDepthRuleAxialDelta": {
+      "value": "-0.0008",
+      "what": "the axial channel, measured inert and not included"
+    },
+    "PlectaDepthRuleAxialCILow": {
+      "value": "-0.0059",
+      "what": "its CI, low"
+    },
+    "PlectaDepthRuleAxialCIHigh": {
+      "value": "+0.0048",
+      "what": "its CI, high"
+    }
   },
-  "PlectaDepthRuleLegacyFloor": {
-   "value": 0.02,
-   "what": "grey levels; the previous rule's fixed denominator floor"
-  },
-  "PlectaDepthRuleSaturationCut": {
-   "value": 1.98,
-   "what": "|s| at or above which the previous rule was structurally unable to abstain"
-  },
-  "PlectaDepthRuleSatSynthPct": {
-   "value": 32.3,
-   "what": "per cent of synthetic crossings saturated by that floor"
-  },
-  "PlectaDepthRuleSatRealPct": {
-   "value": 61.5,
-   "what": "per cent of real crossings saturated by that floor"
-  },
-  "PlectaDepthRuleSatBelowNoiseAcc": {
-   "value": 0.7,
-   "what": "accuracy of saturated crossings whose separation fell below the noise"
-  },
-  "PlectaDepthRuleSatAboveNoiseAcc": {
-   "value": 0.93,
-   "what": "accuracy of saturated crossings whose separation cleared the noise"
-  },
-  "PlectaDepthRuleSharpDecidedPct": {
-   "value": 0.2,
-   "what": "per cent of real crossings the sharpness channel decided"
-  },
-  "PlectaDepthRuleSharpKappa": {
-   "value": 0.09,
-   "what": "Cohen's kappa between the sharpness and the intensity channel"
-  },
-  "PlectaDepthRuleSharpAccLow": {
-   "value": 0.54,
-   "what": "low end of the sharpness channel's standalone accuracy"
-  },
-  "PlectaDepthRuleSharpAccHigh": {
-   "value": 0.59,
-   "what": "high end of the sharpness channel's standalone accuracy"
-  },
-  "PlectaDepthRuleAccDelta": {
-   "value": 0.0025,
-   "what": "accuracy difference, one-channel minus two-channel, matched coverage"
-  },
-  "PlectaDepthRuleAccCILow": {
-   "value": -0.0042,
-   "what": "lower 95 per cent confidence bound on that difference"
-  },
-  "PlectaDepthRuleAccCIHigh": {
-   "value": 0.0079,
-   "what": "upper 95 per cent confidence bound on that difference"
-  },
-  "PlectaDepthRuleAucOld": {
-   "value": 0.7772,
-   "what": "AUC of correctness against confidence, previous rule"
-  },
-  "PlectaDepthRuleAucNew": {
-   "value": 0.8698,
-   "what": "AUC of correctness against |s|, shipped rule"
-  },
-  "PlectaDepthRuleAucDelta": {
-   "value": 0.0926,
-   "what": "the gain in that AUC"
-  },
-  "PlectaDepthRuleAucCILow": {
-   "value": 0.0563,
-   "what": "lower 95 per cent confidence bound on the AUC gain"
-  },
-  "PlectaDepthRuleAucCIHigh": {
-   "value": 0.1321,
-   "what": "upper 95 per cent confidence bound on the AUC gain"
-  },
-  "PlectaDepthRuleCovAPct": {
-   "value": 82.5,
-   "what": "the first coverage reported"
-  },
-  "PlectaDepthRuleAccAtCovA": {
-   "value": 0.0188,
-   "what": "accuracy gain at that coverage"
-  },
-  "PlectaDepthRuleCovBPct": {
-   "value": 80,
-   "what": "the second coverage reported"
-  },
-  "PlectaDepthRuleAccAtCovB": {
-   "value": 0.024,
-   "what": "accuracy gain at that coverage"
-  },
-  "PlectaDepthRuleAxialDelta": {
-   "value": -0.0008,
-   "what": "accuracy difference from adding an axial continuity channel"
-  },
-  "PlectaDepthRuleAxialCILow": {
-   "value": -0.0059,
-   "what": "lower 95 per cent confidence bound on that difference"
-  },
-  "PlectaDepthRuleAxialCIHigh": {
-   "value": 0.0048,
-   "what": "upper 95 per cent confidence bound on that difference"
-  }
- },
- "provenance": {
-  "study": "depth evidence-rule replacement, measured 2026-08-22",
-  "held_out_set": "20 optically rendered synthetic scenes, 1355 crossings; seeds disjoint from every set used to choose either rule or its constants",
-  "prose_sources": [
-   "exploration/depth_order_eval/MEMO.md, note of 2026-08-22",
-   "C:/Repos/stubmatch/plecta/parameters.yaml, depth_3d.evidence_weights",
-   "docs/internal/DEPTH_HANDOFF.md, note of 2026-08-22"
-  ],
-  "machine_readable_source": null,
-  "note": "transcribed, not computed here; see TODO(depth-rule-record) in this generator"
- },
- "headline": "the same accuracy with better-ordered confidence, from a simpler evidence path"
+  "transcribed_note": "channels deleted by the change; no run of the current code can reproduce these"
 }
