@@ -4,12 +4,14 @@
 \subsection{Scope and workflow}
 \label{sec:mm-workflow}
 
-The formal input is a binary strand-axis mask
-$M\in\{0,1\}^{H\times W}$, from which PLECTA reconstructs an overlap-aware
-collection $\{I_1,\ldots,I_N\}$ with $I_n\subseteq M$ and a crossing pixel
-possibly belonging to several strands. The evaluated grouping stage uses only
-$M$; a grayscale SEM image is optional downstream input for width and brightness
-measurement and cannot revise the fixed grouping.
+The input is a binary strand-axis mask $M\in\{0,1\}^{H\times W}$, whose
+foreground $F=\{x:M(x)=1\}$ is one pixel wide and traces strand centrelines
+rather than strand widths. From it PLECTA reconstructs an overlap-aware
+collection $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$, so that every emitted
+pixel is one the mask already carried, and a crossing pixel may belong to
+several strands at once. The evaluated grouping stage uses only
+$M$; a greyscale SEM image is an optional downstream input for width and
+brightness measurement and cannot revise the fixed grouping.
 
 Figure~\ref{fig:scope} places the method. Its five geometric steps read mask
 geometry alone, and the two matching steps are re-made over eight rounds against
@@ -28,7 +30,7 @@ from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
     Steps~3 and~4 are the only decisions it makes and are drawn heavier for it;
     the rest is bookkeeping. The optional depth stage adds a third dimension
     without revising any identity. Colours: green, a PLECTA geometric step;
-    orange, a dependency on the grayscale image; dark, a data object.}
+    orange, a dependency on the greyscale image; dark, a data object.}
     \label{fig:scope}
 \end{figure}
 
@@ -326,7 +328,7 @@ fixed JSON configuration.
 \label{sec:mm-stage4}
 
 The grouping above reads the mask alone and is what this paper evaluates. Where
-a grayscale image of the same field exists, two further stages can use it to
+a greyscale image of the same field exists, two further stages can use it to
 give each strand a width, and both are off by default and governed by limits
 recorded in the fixed configuration. Neither is specific to SEM: they take
 whatever image accompanies the mask, and SEM is simply the case demonstrated
