@@ -202,6 +202,17 @@ adopted: it tests each side's skeleton against the other's \emph{volume}, and a
 centreline grouping has none, so it degenerates into the placement test the
 tolerance exists to correct. No clDice result is reported in this paper.
 
+\textbf{Admitting a reference at all.} Every measure above compares a
+prediction with a reference, so a defective reference is invisible to all of
+them: it will simply score every method a little lower and change no ordering.
+A reference is therefore admitted only if it reproduces itself, that is, only
+if scoring it as though it were a prediction of itself returns a perfect score
+on every measure. Anything less means the reference disagrees with its own
+fragment assignment, and the shortfall bounds what any method could score
+against it. The check is cheap and it is not redundant: it caught a defect that
+the completeness, correctness and quality triple all passed, because those
+characterise a mask and this characterises the identities carried on it.
+
 \section{Comparator configuration}
 \label{app:comparators}
 

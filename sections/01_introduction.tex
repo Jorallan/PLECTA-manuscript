@@ -140,7 +140,6 @@ single prior method is that of Liu et al., which likewise reads a mask,
 reconnects across gaps and permits overlapping output, but pairs termini
 greedily and depends on a trained orientation network
 \citep{liu2019intersection}.
-
 That claim carries a condition, worth stating as scope rather than leaving to
 be inferred. The only evidence PLECTA has at a crossing is directional: the
 angle between two outward tangents, the turns onto the chord between them, and
@@ -201,33 +200,13 @@ depth-order graph and corrected the contradictions among them
 \citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
 resolves the layering of intersecting strands in much the same spirit
 \citep{chai2012singleview}. What differs is the evidence available. Those
-methods key on \emph{T}-junctions, where one contour terminates against
-another; two crossing strands produce no such junction, since both contours
-continue through and the mask is a single blob. The cue used here is instead
-the continuity of a strand's own appearance across the crossing, where the
-upper strand's brightness runs through uninterrupted while the lower
-strand's is overwritten, and the stage abstains where that evidence does not
-separate the two by more than the local image noise. To our knowledge this is
+methods read the shape of the outlines where two objects overlap, which a
+bundle a few pixels across in a noisy micrograph does not present reliably.
+What separates the two strands here is instead the continuity of each
+one's own brightness: the upper strand keeps the appearance it has on either
+side of the crossing, while the lower strand's is overwritten by the strand
+above it. The stage abstains where that difference is no larger than the local
+image noise. To our knowledge this is
 the first depth decomposition of a strand network from a single micrograph;
 it is reported as a demonstration with a measured accuracy, not as a validated
 three-dimensional reconstruction.
-
-\subsection*{Contributions}
-
-Three, of different kinds, and it is worth separating them because they carry
-different weight. The first is a \textbf{formulation}: a junction of any degree
-is solved as one exact maximum-weight partial matching in which refusing to
-continue a strand is a priced option, and in which that same price fixes what
-may be considered at all, so the refusal removes a parameter rather than adding
-one. The second is a \textbf{cue}: depth at a crossing read from the continuity
-of a strand's own appearance, which is available where the terminating
-contour that classical occlusion reasoning depends on is not. The third is an
-\textbf{evidence standard} under which both are claimed, and it is the part
-most easily overlooked. Every comparator is run from its own released source on
-identical masks through one scorer, and no comparator number was believed until
-that path reproduced PLECTA's stored scores exactly. The ranking is re-tested
-on a generator built by a competitor, vendored unmodified, with the expected
-outcome recorded before the scenes existed. A reference is admitted only if it
-reproduces itself when scored as its own prediction, a check that caught a
-defect three others missed. And what any real-image score can mean is bounded
-by a measurement of how far two human readers of the same micrograph disagree.
