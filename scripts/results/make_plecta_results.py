@@ -28,6 +28,10 @@ GREEDY_BASELINE = RESULTS / "plecta_greedy_baseline.json"
 DENSITY_FACTORIAL = RESULTS / "plecta_density_factorial.json"
 DNAI = RESULTS / "plecta_dnai_comparison.json"
 RUNTIME = RESULTS / "runtime_comparison.json"
+#  OUR REIMPLEMENTATION of Basu, Liu & Rohde (TCBB 2015) Stage B. Optional:
+#  if the record is absent the comparator table simply omits the column.
+#  Written by comparisons/basu_comparison/scripts/make_manuscript_record.py.
+BASU = RESULTS / "plecta_basu_reimplementation.json"
 COMPARATOR_ANALYSIS = RESULTS / "plecta_comparator_analysis.json"
 GREEDY_SWEPT = RESULTS / "plecta_greedy_swept_paired.json"
 GRAFT = RESULTS / "plecta_graft_comparison.json"
@@ -555,6 +559,38 @@ def interannotator_macros(payload: dict) -> list[str]:
     return lines
 
 
+def basu_macros(basu: dict | None) -> list[str]:
+    """Our reimplementation of Basu et al.'s Stage B, reported as a floor.
+
+    Emitted only if the record exists, so the manuscript degrades gracefully to
+    no Basu column and no Basu prose if the study is ever withdrawn. Every one
+    of these is OUR code, not the authors', and Section 3.3 and the Table 3
+    caption both say so; the macro names carry no such marker, so they must
+    never be quoted without the surrounding qualification.
+    """
+    if not basu:
+        return []
+    o = basu["overall"]
+    ratio = (float(np.mean([r["n_filaments"] for r in basu["per_scene"]]))
+             / float(np.mean([r.get("ref_instances", float("nan"))
+                              for r in basu["per_scene"]]))
+             if basu["per_scene"] and basu["per_scene"][0].get("ref_instances")
+             else None)
+    lines = [
+        macro("PlectaBasuFOne", fmt(o["f1"])),
+        macro("PlectaBasuARI", fmt(o["adjusted_rand_index"])),
+        macro("PlectaBasuVITotal", fmt(o["vi_total_bits"])),
+        macro("PlectaBasuRecovery", fmt(o["fragment_recovery_recovery_rate"])),
+        macro("PlectaBasuCrossingFidelity",
+              fmt(basu["junction_resolution"]["exact_rate"])),
+        macro("PlectaBasuDelta", "%g" % basu["params"]["delta"]),
+        macro("PlectaBasuTheta", "%g" % basu["params"]["theta_deg"]),
+    ]
+    if ratio:
+        lines.append(macro("PlectaBasuInstanceRatio", "%.1f" % ratio))
+    return lines
+
+
 def depth_order_macros(payload: dict) -> list[str]:
     """The depth stage, emitted so the decomposition cannot be split up.
 
@@ -987,7 +1023,8 @@ def greedy_table(greedy: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def comparator_table(audit: dict, runtime: dict | None = None) -> str:
+def comparator_table(audit: dict, runtime: dict | None = None,
+                     basu: dict | None = None) -> str:
     """One table for all four methods on the degraded masks.
 
     Supersedes greedy_table(), which compared two methods on six measures and
@@ -1017,7 +1054,22 @@ def comparator_table(audit: dict, runtime: dict | None = None) -> str:
     """
     means = audit["methods"]["degraded"]
     junction = audit["junction_resolution"]["degraded"]
-    columns = ("plecta", "greedy_swept", "dnai", "graft")
+    #  EXTERNAL METHODS ONLY. The greedy continuation rule is our own
+    #  invention rather than anyone's published method, so it belongs with the
+    #  controls in the ablation table, not in a table whose purpose is to
+    #  compare against other people's work. Basu* stays because it IS someone
+    #  else's published method, reimplemented; the star and the caption say so.
+    columns = ("plecta", "dnai", "graft")
+
+    #  Basu* is OUR REIMPLEMENTATION and is marked with a star everywhere it
+    #  appears, because the manuscript's comparator standard is methods run
+    #  from their own released source and no implementation of that paper was
+    #  ever released. It is appended as a final column rather than sorted in
+    #  among the released methods, and the caption carries the qualification.
+    #  Source record: results/plecta_basu_reimplementation.json, written by
+    #  comparisons/basu_comparison/scripts/make_manuscript_record.py.
+    def basu_cell(key: str) -> list[str]:
+        return [fmt(basu["overall"][key])] if basu else []
 
     body: list[tuple[str, list[str]]] = []
     for label, key in (("Common-fragment $F_1$", "f1"),
@@ -1026,10 +1078,12 @@ def comparator_table(audit: dict, runtime: dict | None = None) -> str:
                        ("Reference-instance recovery",
                         "fragment_recovery_recovery_rate"),
                        ("Adjusted Rand index", "adjusted_rand_index")):
-        body.append((label, [fmt(means[c]["overall"][key]) for c in columns]))
+        body.append((label, [fmt(means[c]["overall"][key]) for c in columns]
+                     + basu_cell(key)))
 
     body.append(("Variation of information~$\\downarrow$",
-                 [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns]))
+                 [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns]
+                 + basu_cell("vi_total_bits")))
 
     #  One crossing row, not two.  The chance-corrected resolution index used
     #  to sit under this one; over the real-field rows it correlates with the
@@ -1038,7 +1092,8 @@ def comparator_table(audit: dict, runtime: dict | None = None) -> str:
     #  of the reference rather than of any method.
     resolution = [
         ("Crossing Fidelity",
-         [fmt(junction[c]["overall"]["exact_rate"]) for c in columns]),
+         [fmt(junction[c]["overall"]["exact_rate"]) for c in columns]
+         + ([fmt(basu["junction_resolution"]["exact_rate"])] if basu else [])),
     ]
 
     # Median seconds per scene at the two ends of the density range. One row
@@ -1054,12 +1109,25 @@ def comparator_table(audit: dict, runtime: dict | None = None) -> str:
                 return "---"
             return f"{block['cov20']:.2f}--{block['cov60']:.1f}"
 
+        #  Basu*'s timing is OUR Python reimplementation of Stage B only, with
+        #  the intensity front end excluded; the authors' own figure is 323 s
+        #  for a 256x256 image in MATLAB. It is printed so the column is not
+        #  silently blank, and the caption says what it is not.
+        basu_span = "---"
+        if basu:
+            med = basu["runtime"]["median_seconds"]
+            basu_span = f"{med['cov20']:.2f}--{med['cov60']:.1f}"
         timing = [("Median s per scene, 20/60\\%",
-                   [span("plecta"), "---", span("dnai"), span("graft")])]
+                   [span("plecta"), span("dnai"), span("graft")]
+                   + ([basu_span] if basu else []))]
 
+    ncol = "r" * (len(columns) + (1 if basu else 0))
+    header = "Measure & PLECTA & DNAi & GraFT"
+    if basu:
+        header += " & Basu\\textsuperscript{*}"
     lines = ["% Generated by scripts/results/make_plecta_results.py; do not edit.",
-             "\\begin{tabular}{lrrrr}", "\\toprule",
-             "Measure & PLECTA & Greedy & DNAi & GraFT \\\\",
+             f"\\begin{{tabular}}{{l{ncol}}}", "\\toprule",
+             header + " \\\\",
              "\\midrule"]
     for group in (body, resolution, timing):
         if not group:
@@ -1084,7 +1152,8 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 depth_order: dict,
                 metric_panels: dict, sensitivity: dict,
                 scorer_sensitivity: dict,
-                crossing_chance: dict) -> str:
+                crossing_chance: dict,
+                basu: dict | None = None) -> str:
     rows = [r for r in held["per_scene"] if r.get("status") == "ok"]
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
@@ -1226,6 +1295,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 ["reported_tolerance_px"]),
             *metric_panels_macros(metric_panels),
             *sensitivity_macros(sensitivity),
+            *basu_macros(basu),
         ]
     )
     return "\n".join(lines) + "\n"
@@ -1258,7 +1328,22 @@ def heldout_table(held: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def ablation_table(payload: dict) -> str:
+def ablation_table(payload: dict, audit: dict | None = None) -> str:
+    """Component ablations, plus the one formulation control that belongs here.
+
+    The greedy per-junction matcher is a CONTROL rather than a component: it
+    keeps the graph, the cost, the admissibility gate and the round schedule
+    and replaces only the exact maximum-weight matching by greedy
+    cheapest-first acceptance, so the difference isolates the formulation. It
+    is ours by construction, which is exactly what lets it hold everything else
+    fixed, and it is therefore reported here rather than in the comparator
+    table, whose purpose is comparison against other people's published work.
+
+    It is on 30 development scenes against the table's 84, so it sits in its
+    own block and the caption gives both counts. Its delta is taken against the
+    exact-matcher arm of the same 30 scenes, not against the 84-scene fixed
+    configuration, since only the former is a paired comparison.
+    """
     base = next(r for r in payload["rows"] if r["ablation"] == "frozen")
     selected = {
         "frozen",
@@ -1301,6 +1386,16 @@ def ablation_table(payload: dict) -> str:
         lines.append(
             f"{tex_escape(label)} & {fmt(row['f1'])} & "
             f"{delta:+.3f} & {fmt(row['adjusted_rand_index'])} \\\\"
+        )
+    if audit:
+        arms = audit["matcher_ablation"]["degraded"]["arms"]
+        exact, greedy = arms["exact"], arms["greedy_junction"]
+        lines.append(r"\addlinespace")
+        lines.append(
+            r"Greedy per-junction matcher\textsuperscript{\dag} & "
+            f"{fmt(greedy['f1'])} & "
+            f"{float(greedy['f1']) - float(exact['f1']):+.3f} & "
+            f"{fmt(greedy['adjusted_rand_index'])} \\\\"
         )
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
@@ -1443,6 +1538,8 @@ def main() -> None:
     graft = json.loads(GRAFT.read_text(encoding="utf-8"))
     audit = json.loads(METRICS_AUDIT.read_text(encoding="utf-8"))
     runtime = json.loads(RUNTIME.read_text(encoding="utf-8"))
+    basu = (json.loads(BASU.read_text(encoding="utf-8"))
+            if BASU.is_file() else None)
     supplement = json.loads(METRICS_SUPPLEMENT.read_text(encoding="utf-8"))
     mask_quality = json.loads(MASK_QUALITY.read_text(encoding="utf-8"))
     graft_regime = json.loads(GRAFT_REGIME.read_text(encoding="utf-8"))
@@ -1469,7 +1566,7 @@ def main() -> None:
             real_field_metrics, real_fields, interannotator, curviness,
             depth_order,
             metric_panels, sensitivity,
-            scorer_sensitivity, crossing_chance,
+            scorer_sensitivity, crossing_chance, basu,
         ),
         encoding="utf-8",
     )
@@ -1484,7 +1581,7 @@ def main() -> None:
         greedy_table(greedy), encoding="utf-8"
     )
     (RESULTS / "plecta_comparator_table.tex").write_text(
-        comparator_table(audit, runtime), encoding="utf-8"
+        comparator_table(audit, runtime, basu), encoding="utf-8"
     )
     (RESULTS / "plecta_factorial_table.tex").write_text(
         factorial_table(factorial), encoding="utf-8"
@@ -1493,7 +1590,7 @@ def main() -> None:
         heldout_table(held), encoding="utf-8"
     )
     (RESULTS / "plecta_ablation_table.tex").write_text(
-        ablation_table(ablation), encoding="utf-8"
+        ablation_table(ablation, audit), encoding="utf-8"
     )
     (RESULTS / "plecta_real_masks_table.tex").write_text(
         real_fields_table(real_fields), encoding="utf-8"

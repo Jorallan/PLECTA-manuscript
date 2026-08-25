@@ -79,15 +79,23 @@ as a proxy for the length density accompanying them under this generator.
     \input{results/plecta_factorial_table}
 \end{table}
 
-\subsection{Four linkers on identical masks}
+\subsection{Published methods on identical masks}
 \label{sec:res-comparators}
 
-One baseline and two published methods -- DNAi \citep{playout2026dnai} and
-GraFT \citep{osterlund2026graft}, each run from its own released source -- were
-scored on identical masks through the same conversion and metric code as
-PLECTA, over \PlectaGreedySceneCount{} scenes generated after every
-configuration was fixed. That path was gated on parity: no comparator number
-was believed until it reproduced PLECTA's stored \Fone{}, adjusted Rand index
+This section compares PLECTA against methods published by others. Our own
+controls, which isolate parts of the formulation rather than compare against
+anyone, are reported separately in Section~\ref{sec:res-ablation}.
+
+Three published methods are scored beside PLECTA on identical masks, through
+the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
+generated after every configuration was fixed. DNAi \citep{playout2026dnai}
+and GraFT \citep{osterlund2026graft} are run from their own released sources.
+The third, \citet{basu2015extraction}, never released an implementation and is
+reimplemented here; it is marked with a star wherever it appears, and what
+that costs the comparison is stated below.
+
+Every comparator was gated on parity before any of its numbers was read: none
+was believed until the conversion reproduced PLECTA's stored \Fone{}, adjusted Rand index
 and both variation-of-information components, because a faulty conversion
 yields plausible rather than obviously wrong scores. Each comparator's
 parameter translation was selected on the same \PlectaDevelopmentSceneCount{}
@@ -95,54 +103,32 @@ development scenes PLECTA was configured on, and every adaptation was checked
 and found to favour the comparator; \suppcomparators{} records each
 one and how each method fails.
 
-\textbf{Greedy continuation.} The baseline skeletonises the same mask and
-greedily accepts the lowest-turning-angle pairing between branch ends inside
-distance and turning-angle gates fixed by a development sweep. It is ours --
-not a reimplementation of any paper but of the pairing principle shared by
-SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
-is reported as a transparent floor, never as an external result. PLECTA leads
-it by \PlectaGreedySweptDeltaFOne{} \Fone{}
-[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
-the \PlectaGreedySceneCount{} scenes, and by
-\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
-\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
-artefact of mask degradation.
-
 \begin{table}[tbp]
     \centering
-    \caption{All four methods on the degraded masks, identical input masks and
+    \caption{PLECTA against the three published methods, on the degraded
+    masks, with identical input masks and
     one scorer. $n=\PlectaGreedySceneCount{}$ scenes and
     \PlectaJunctionCount{} reference crossings, except GraFT, over the
     \PlectaGraFTSceneCount{} it completed. Variation of information is in bits
     and lower is better; higher is better for the rest. Crossing Fidelity is
     defined in \suppmeasures{}, and leaving every arm unpaired
     scores \PlectaJunctionChance{} on it here. Paired differences with their
-    intervals are in the text.}
+    intervals are in the text.\\[2pt]
+    \textsuperscript{*}\,\emph{Basu} is \textbf{our reimplementation} of the
+    segment-recombination stage of \citet{basu2015extraction}, not that
+    paper's own software: no implementation of it has ever been released. Only
+    their Section~II-B is implemented, so their intensity-guided centreline
+    localisation is absent and a skeletonised mask is substituted for the
+    particle cloud it would produce; its two parameters were selected by us on
+    development scenes rather than shipped by its authors, and its timing is
+    our Python code for that one stage, excluding the front end. It is
+    therefore not an externally run comparator in the way DNAi and GraFT are,
+    and a margin against it does not carry the weight theirs do. Our own
+    controls are in Table~\ref{tab:plecta-ablation}, not here.}
     \label{tab:plecta-comparators}
     \small
     \input{results/plecta_comparator_table}
 \end{table}
-
-\textbf{Exact against greedy matching, matcher only.} That baseline replaces
-the whole linker; a second arm isolates the claim, keeping the graph, cost,
-admissibility gate and round schedule and replacing only the per-junction
-maximum-weight matching by greedy cheapest-first acceptance. Exactness was
-worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
-\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
-scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
-\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
-\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
-merging, with variation-of-information split rising
-\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
-merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
-resolved exactly falling \PlectaMatcherExactJunctionRate{} to
-\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
-degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
-\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
-peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
-lie; and the greedy arm runs at parameters selected with the exact matcher in
-the loop, a bias in that matcher's favour.
 
 \textbf{DNAi.} Its segmentation network was bypassed and only its
 instance-forming stage used, so grouping is not confounded with segmentation
@@ -219,6 +205,34 @@ excluded from its means; they are the hardest scenes of the set, so that
 exclusion flatters GraFT. Neither released method establishes a general
 ranking, and Section~\ref{sec:limitations} states what these comparisons leave
 untested.
+
+\textbf{Curvature-priced recombination, reimplemented.} The one prior method
+that both optimises over a neighbourhood and prices its joins on curvature is
+that of \citet{basu2015extraction}, so it is the closest structural relative
+PLECTA's junction matching has. Its software was never released, so it is
+reimplemented here and reported as a floor, exactly as the greedy rule is,
+never as an externally run result. Only its Section~II-B is implemented: a
+spanning tree over the mask points, every bifurcation deleted, and the
+surviving chains recombined by a set-partitioning integer program that prices
+each candidate by the curvature energy of a fitted spline less a fixed bond
+energy per join. Its intensity-guided front end is absent, so the skeleton
+stands in for the particle cloud it would produce, and its two parameters were
+selected on the same development scenes as every other comparator's.
+
+It reaches \Fone{}=\PlectaBasuFOne{}, above GraFT and below the greedy rule,
+and it over-segments: \PlectaBasuInstanceRatio{} times as many instances as the
+reference. The informative result is the split between its two scores. On
+Crossing Fidelity it reaches \PlectaBasuCrossingFidelity{}, second only to
+PLECTA and ahead of both released methods, while its pairwise \Fone{} sits far
+below theirs. Crossing Fidelity counts junction decisions and is not quadratic
+in fragmentation; the pairwise score is both. So the curvature-priced matching
+is doing real work at the junctions themselves, and what costs it is
+everything around that decision: deleting every bifurcation shatters a scene
+faster than a recombination limited to three segments per round can rebuild
+it, and the formulation carries no gap model at all. That is the distinction
+this comparison exists to draw, and it is why the priced refusal in
+Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
+its own.
 
 \textbf{A second generator.} Every scene above comes from one generator, so the
 comparison was repeated on GraFT's own, run unmodified at its published settings
@@ -356,6 +370,46 @@ geometry of its axis and not by how much of the frame its bundles fill.
 \subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
 
+\textbf{Two controls isolate the formulation.} Neither is anyone else's
+method, which is exactly what makes them useful: each holds the evidence
+fixed and varies one thing, so the margin measures the formulation rather
+than two whole systems. They are reported here rather than in
+Section~\ref{sec:res-comparators}, whose subject is published work.
+
+\textbf{Greedy continuation.} The baseline skeletonises the same mask and
+greedily accepts the lowest-turning-angle pairing between branch ends inside
+distance and turning-angle gates fixed by a development sweep. It is ours --
+not a reimplementation of any paper but of the pairing principle shared by
+SIFNE, GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
+is reported as a transparent floor, never as an external result. PLECTA leads
+it by \PlectaGreedySweptDeltaFOne{} \Fone{}
+[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
+the \PlectaGreedySceneCount{} scenes, and by
+\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
+\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
+artefact of mask degradation.
+
+\textbf{Exact against greedy matching, matcher only.} That baseline replaces
+the whole linker; a second arm isolates the claim, keeping the graph, cost,
+admissibility gate and round schedule and replacing only the per-junction
+maximum-weight matching by greedy cheapest-first acceptance. Exactness was
+worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
+\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
+scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
+\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
+\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
+merging, with variation-of-information split rising
+\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
+merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
+resolved exactly falling \PlectaMatcherExactJunctionRate{} to
+\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
+degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
+\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
+peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
+lie; and the greedy arm runs at parameters selected with the exact matcher in
+the loop, a bias in that matcher's favour.
+
 One-at-a-time ablations were evaluated only on the
 \PlectaDevelopmentSceneCount{} development scenes
 (Table~\ref{tab:plecta-ablation}).
@@ -371,7 +425,15 @@ less. These are development values, not held-out effect estimates.
     \centering
     \caption{One-at-a-time component ablations on the
     \PlectaDevelopmentSceneCount{}-scene development set. Negative $\Delta F_1$
-    values denote losses relative to the evaluated configuration.}
+    values denote losses relative to the evaluated configuration.\\[2pt]
+    \textsuperscript{\dag}\,The last row is a \emph{formulation control}, not a
+    component: it keeps the graph, the cost, the admissibility gate and the
+    round schedule, and replaces only the exact per-junction matching by greedy
+    cheapest-first acceptance, so the difference isolates the formulation
+    rather than the evidence. It is measured on the
+    \PlectaMatcherSceneCount{} development scenes of that arm and its
+    $\Delta F_1$ is against the exact matcher on those same scenes, not against
+    the \PlectaDevelopmentSceneCount{}-scene configuration above.}
     \label{tab:plecta-ablation}
     \small
     \input{results/plecta_ablation_table}
