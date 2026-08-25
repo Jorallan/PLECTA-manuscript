@@ -127,6 +127,10 @@
 \newcommand{\suppmeasures}{Supplementary Section~S3}
 \newcommand{\suppcomparators}{Supplementary Section~S4}
 \newcommand{\suppdepth}{Supplementary Section~S5}
+%  S6 is appended at the END of 06_appendix.tex on purpose: inserting a section
+%  anywhere earlier would renumber S3 to S5 and silently invalidate the four
+%  names above, which are plain text rather than \ref cross-references.
+\newcommand{\suppsplit}{Supplementary Section~S6}
 
 \title{\vspace{-1.2cm}\bfseries PLECTA: Overlap-aware instance
 reconstruction of dense strand networks from binary masks}

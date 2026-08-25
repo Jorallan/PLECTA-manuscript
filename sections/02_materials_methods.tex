@@ -43,24 +43,32 @@ a pixel inside that blob is counted in both strands that claim it.
 \subsection{Synthetic data and evaluation split}
 \label{sec:mm-synth}
 
-Procedural scenes preserve the ordered centreline $\mathcal C_k$ and
-rendered support $\Omega_k$ of every strand $k$; supports remain separate, so
-several strands may own the same crossing pixel. Besides the exact
-overlap-aware reference, the generator provides an undegraded one-pixel axis
-mask, a degraded thin mask containing small gaps and irregularities, a combined
-thick foreground, and an SEM-like image. The degraded one-pixel axis is the
-input evaluated throughout. Areal coverage is the
-union area of the thick supports divided by image area, not the occupancy of the
-thin input mask, and Section~\ref{sec:res-factorial} shows it is a proxy for
-difficulty rather than a cause of it.
+Because the scenes are generated rather than annotated, the answer is known
+exactly. For every strand $k$ the generator records its ordered centreline
+$\mathcal C_k$ and the pixels it was drawn onto, its support $\Omega_k$. The
+supports are kept one per strand instead of being merged, so a crossing pixel
+belongs to both strands that pass through it and the reference is
+overlap-aware by construction.
 
-Development used \PlectaDevelopmentSceneCount{} scenes spanning 20--60\%
-coverage. The held-out set comprised \PlectaHeldoutSceneCount{} different seeds,
-32 scenes at each of 20, 30, 40, and 60\% coverage: an independent sample from
-the same generator, not an independent distribution. A separate 125-scene
-locked set remains unevaluated. The compact seed manifest records every seed
-block and an executable verifier checks counts, disjointness, and available
-scene metadata.
+Each scene is written out four ways: the exact one-pixel axis; that axis
+degraded with small gaps and raster irregularities; the strands at full width,
+merged into a single foreground; and an SEM-like greyscale image. Every result
+in this paper is computed from the degraded axis.
+
+Scenes are labelled throughout by areal coverage, the fraction of the frame the
+full-width strands cover rather than the fraction the thin axis occupies. That
+label reports difficulty without setting it: drawing the same strands thicker
+raises coverage and leaves the score exactly where it was, since neither PLECTA
+nor the metric ever sees how wide a strand was drawn. What makes a scene hard
+is the amount of centreline packed into the frame, which coverage happens to
+follow under this generator, and Section~\ref{sec:res-factorial} separates the
+two.
+
+Every parameter was fixed on a separate development set and never on the scenes
+reported here; the \PlectaHeldoutSceneCount{} evaluation scenes use seeds that
+appear nowhere in it, 32 at each of 20, 30, 40 and 60\,\% coverage. \suppsplit{}
+gives the seed blocks, the verifier that checks their disjointness, and the
+locked set that remains unevaluated.
 
 A separate controlled paired set of \PlectaRobustnessSceneCount{} scenes,
 ten at each of 20, 30, 40, 50, and 60\% coverage, was scored once from each

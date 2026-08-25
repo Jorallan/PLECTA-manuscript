@@ -356,3 +356,33 @@ pairs is $2a-1$ for accuracy $a$ and is not reported separately.
 reconstruction can order every pair correctly yet cut the film into a different
 number of layers. Layer agreement, the fraction of instances placed in the
 reference layer, is therefore reported separately.
+
+\section{Evaluation split and seeds}
+\label{app:split}
+
+The article states only that every parameter was fixed on a separate
+development set and never on the scenes it reports. This is the mechanism.
+
+Development used \PlectaDevelopmentSceneCount{} scenes spanning 20--60\,\%
+coverage. Every parameter of the reconstruction, every gate and price, and the
+round schedule were settled there, as was each comparator's parameter
+translation, so that no method was tuned on the scenes it is scored on and all
+were tuned on the same ones.
+
+The evaluation set is \PlectaHeldoutSceneCount{} scenes, 32 at each of 20, 30,
+40 and 60\,\% coverage, generated from seed blocks disjoint from development.
+Disjointness is not asserted but checked: a compact manifest records every seed
+block, and an executable verifier confirms the counts, the disjointness and the
+scene metadata it can reach. A further 125-scene locked set exists and
+\emph{remains unevaluated}; it is reserved against the possibility that the
+evaluation set above is eventually read too often to stay honest.
+
+Two qualifications follow from this design and are stated wherever they bear on
+a number. First, the evaluation scenes are an independent \emph{sample} but not
+an independent \emph{distribution}: they are fresh draws from the generator
+that produced the development scenes, so their intervals describe sampling
+within that generator and not transfer to another, which is why the article
+re-tests its ranking on a generator built by someone else and on real SEM
+masks. Second, any figure computed on the development scenes, the component
+ablations and the width-sensitivity sweep among them, is labelled as such and
+is not a held-out effect estimate.
