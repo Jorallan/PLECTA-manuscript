@@ -1,5 +1,5 @@
 {
-  "role": "the three reported measures against target areal coverage, for the two comparison figures of Section 3.3; one mask condition each",
+  "role": "the three reported measures against target areal coverage, for the two-row comparison figure of Section 3.3; five methods, both mask conditions",
   "scenes": "50 scenes, ten at each of 20, 30, 40, 50 and 60 % target areal coverage, identical input masks for every method, one scorer",
   "aggregation": "plain mean of per-scene values in every panel; no interval is drawn and none is claimed",
   "detection_metric": "DNAi's greedy-IoU object detection F1 at its shipped IoU threshold of 0.1, with a 2 px symmetric placement tolerance; without the tolerance an object IoU between two independently read one-pixel centrelines measures placement rather than shape",
@@ -15,7 +15,8 @@
     50,
     60
   ],
-  "parity": "reproduces every per-density mean already printed in results/plecta_dnai_comparison.json and results/plecta_graft_comparison.json, both conditions, within 1e-05, including GraFT's censored counts",
+  "parity": "reproduces every per-density mean already printed in results/plecta_dnai_comparison.json and results/plecta_graft_comparison.json, both conditions, within 1e-05, including GraFT's censored counts; and the overall means of results/plecta_sifne_comparison.json, results/plecta_basu_reimplementation.json and the Basu study's own eval_testcmp10.json, with every SIFNE and Basu stratum required to be a full ten scenes",
+  "comparator_provenance": "SIFNE is run from its own released source at parameters we selected on development scenes, marked with a dagger in the manuscript; Basu is OUR REIMPLEMENTATION of Stage B, because no implementation of that paper was ever released, marked with a star. Neither qualification may be dropped when these curves are shown",
   "source_record": {
     "study": "C:/Repos/comparisons/metrics_study",
     "per_scene": {
@@ -29,6 +30,32 @@
     "chance": {
       "file": "results/crossing_fidelity_chance.json",
       "sha256": "d3d56567013cbb1b2b8795bb1393cf6af6fa5d01206442cbc47bf4124d9ee72e"
+    },
+    "sifne": {
+      "study": "C:/Repos/comparisons/sifne_comparison",
+      "per_scene_degraded": {
+        "file": "results/per_scene_testcmp10_degraded.json",
+        "sha256": "3c960cb29f6b5ad796c8fdee4ae17c1a47f7c7e598ac26fc0b722a9e1a44dc82"
+      },
+      "per_scene_clean": {
+        "file": "results/per_scene_testcmp10_clean.json",
+        "sha256": "5449ed8c11a38f491f1fc22adc39a33d2e40c04eea37c18c326f04fd82c5e324"
+      },
+      "detection": {
+        "file": "results/detection_testcmp10.json",
+        "sha256": "09024ffcb555408c6307f18b9c10f3bd54ad622cbe30be5d1e90d4d9541ce783"
+      }
+    },
+    "basu": {
+      "study": "C:/Repos/comparisons/basu_comparison",
+      "panel_cells": {
+        "file": "results/panel_cells_testcmp10.json",
+        "sha256": "f6cb585d2e5b22afa843b3d3b238b3b48e3d4cf72a019f23173b2259099d41c3"
+      },
+      "eval": {
+        "file": "results/eval_testcmp10.json",
+        "sha256": "f2620df255affd57ce5f0369623769b1a3bde46451b8b460446525a49873b58d"
+      }
     }
   },
   "chance": {
@@ -242,6 +269,110 @@
           "n_attempted": 10,
           "n_detection": 10
         }
+      },
+      "sifne": {
+        "20": {
+          "f1": 0.82861,
+          "detection_f1": 0.8565613771303854,
+          "crossing_fidelity": 0.8506600000000001,
+          "ari": 0.82039,
+          "vi_total_bits": 0.45766,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.74551,
+          "detection_f1": 0.7931631379837569,
+          "crossing_fidelity": 0.81068,
+          "ari": 0.738,
+          "vi_total_bits": 0.72958,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.72929,
+          "detection_f1": 0.7833015956342055,
+          "crossing_fidelity": 0.83062,
+          "ari": 0.72335,
+          "vi_total_bits": 0.84576,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.64761,
+          "detection_f1": 0.713149448599754,
+          "crossing_fidelity": 0.77288,
+          "ari": 0.64169,
+          "vi_total_bits": 1.21709,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.6035299999999999,
+          "detection_f1": 0.6722961430452286,
+          "crossing_fidelity": 0.74344,
+          "ari": 0.59863,
+          "vi_total_bits": 1.38922,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      },
+      "basu": {
+        "20": {
+          "f1": 0.6456297941515565,
+          "detection_f1": 0.7439173626675253,
+          "crossing_fidelity": 0.8366494632432173,
+          "ari": 0.6312084159144669,
+          "vi_total_bits": 0.9082770140457284,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.5509643203663075,
+          "detection_f1": 0.6824533129853616,
+          "crossing_fidelity": 0.7891191408154192,
+          "ari": 0.5394016479458272,
+          "vi_total_bits": 1.2725148402541433,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.5478893924088035,
+          "detection_f1": 0.6726392350991717,
+          "crossing_fidelity": 0.8070210319224984,
+          "ari": 0.5392323271273941,
+          "vi_total_bits": 1.337808484798701,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.4916025078713731,
+          "detection_f1": 0.6091189401274526,
+          "crossing_fidelity": 0.7660794544711892,
+          "ari": 0.4837385357229068,
+          "vi_total_bits": 1.5980387084292618,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.477932235857531,
+          "detection_f1": 0.5808018669615402,
+          "crossing_fidelity": 0.7297953208995969,
+          "ari": 0.4722156762182131,
+          "vi_total_bits": 1.7239579830021872,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
       }
     },
     "clean": {
@@ -426,6 +557,110 @@
           "vi_split_bits": 2.0578207197549814,
           "vi_merge_bits": 0.9413448191741731,
           "vi_total_bits": 2.9991655389291543,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      },
+      "sifne": {
+        "20": {
+          "f1": 0.8474600000000001,
+          "detection_f1": 0.8859462060949476,
+          "crossing_fidelity": 0.88616,
+          "ari": 0.84002,
+          "vi_total_bits": 0.3894,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.82667,
+          "detection_f1": 0.8180271615951856,
+          "crossing_fidelity": 0.83926,
+          "ari": 0.8213100000000001,
+          "vi_total_bits": 0.52313,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.76786,
+          "detection_f1": 0.7937689834688634,
+          "crossing_fidelity": 0.8227800000000001,
+          "ari": 0.76265,
+          "vi_total_bits": 0.75532,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.64948,
+          "detection_f1": 0.7081258266945764,
+          "crossing_fidelity": 0.75708,
+          "ari": 0.64342,
+          "vi_total_bits": 1.23591,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.59605,
+          "detection_f1": 0.6662544010567727,
+          "crossing_fidelity": 0.72502,
+          "ari": 0.59083,
+          "vi_total_bits": 1.4768599999999998,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        }
+      },
+      "basu": {
+        "20": {
+          "f1": 0.8494983470137824,
+          "detection_f1": 0.8924817757546426,
+          "crossing_fidelity": 0.9188689012394257,
+          "ari": 0.8425286696844163,
+          "vi_total_bits": 0.39311737717238326,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "30": {
+          "f1": 0.7575225294507086,
+          "detection_f1": 0.8455111695687177,
+          "crossing_fidelity": 0.8473307059686441,
+          "ari": 0.7502122018298687,
+          "vi_total_bits": 0.6901451827413693,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "40": {
+          "f1": 0.7186705856972618,
+          "detection_f1": 0.8122794118128368,
+          "crossing_fidelity": 0.8218131395752021,
+          "ari": 0.7126865835066577,
+          "vi_total_bits": 0.9004084840322684,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "50": {
+          "f1": 0.6365309783301955,
+          "detection_f1": 0.7527412073900175,
+          "crossing_fidelity": 0.7821767544169255,
+          "ari": 0.6305365461684704,
+          "vi_total_bits": 1.2098977496800765,
+          "n": 10,
+          "n_attempted": 10,
+          "n_detection": 10
+        },
+        "60": {
+          "f1": 0.5871976331763331,
+          "detection_f1": 0.7251090284538576,
+          "crossing_fidelity": 0.7551647284676528,
+          "ari": 0.5821023713454576,
+          "vi_total_bits": 1.4446298587466329,
           "n": 10,
           "n_attempted": 10,
           "n_detection": 10

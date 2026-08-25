@@ -128,12 +128,7 @@ automatic mask allows it to do. That segmentation is a separate contribution
 with its own evaluation; all that matters here is that its output is a binary
 mask produced without seeing any annotation.
 
-Which fields that model had seen is a property of the (model, field) pair and
-was verified by image content rather than by filename. B58\_110 and B58\_300 are
-absent from the training set of the run used here; B58\_100 is present in every
-available run and its U-Net condition is therefore an upper bound throughout.
-Section~\ref{sec:res-real} measures what that contamination is worth rather than
-leaving it as a caveat. Mask quality was compared after skeletonisation with the
+Mask quality was compared after skeletonisation with the
 symmetric \PlectaPlacementTolerance{}-px tolerance used throughout, which avoids
 rewarding mask thickness, and reconstruction scores were computed within each
 mask's own visible common-fragment population.

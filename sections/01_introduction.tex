@@ -65,79 +65,64 @@ since two strands that cross genuinely share the same pixels. This paper
 addresses the step those leave open: given a binary strand-axis mask, recover
 the individual strands through the crossings and the gaps.
 
-Recovering strands through crossings is itself well-trodden ground, and the
-design space is thoroughly explored. It divides on the two axes that decide
-what a method can do at a dense crossing: what evidence it reads, and how it
-commits once it is there. One group optimises over a whole neighbourhood but
-does not read a binary mask. Basu et al.\ build a spanning tree over centreline
-particles, delete every bifurcation, and recombine the segments with an integer
-program priced by spline curvature, re-solving until the segment set stops
-changing \citep{basu2015extraction}; the re-solving is the strength, since a
-recombination that a later fit contradicts can still be undone. DeFiNe covers a
-pre-extracted weighted graph with paths of minimum roughness, optionally
-letting several paths share an edge, so that overlap survives into the output
-instead of being assigned away \citep{breuer2015define}. Deciding several
-candidates together is the property that matters at a busy node, and both have
-it. What neither has is an axis-mask contract: one consumes intensity evidence
-and the other a graph an earlier stage has already built. Both also recombine
-chains of at most three segments, which bounds how much of a shattered
-neighbourhood any one round can put back.
+Recovering strands through crossings is well-trodden ground. Existing methods
+differ in two ways that matter: what evidence they read, and whether a pairing
+once made can later be undone. On both counts the field clusters.
 
-A second group reads the mask and commits greedily, one pairing at a time.
-SIFNE excises each crossing, estimates tip directions from the excised stubs,
-and pairs termini inside an angular gate, recovering dense microtubule networks
-from the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton
-branches at a junction by lowest mutual angle, and where that rule fails they
-learn pixel embeddings on patches centred on the junction, so that evidence
-beyond the incident angles can inform the grouping
-\citep{wegmayr2020microplastic}; the embedding is the better of their two arms
-and it is the one that does not read a mask, since it consumes grayscale
-context and is trained on instance-labelled crops, and even with it their
-tangled fibres are recovered at about half the precision of their isolated
-ones, in a regime where two thirds of fibres cross nothing at all. GraFT traces
-a Frangi-filtered skeleton by constrained search and covers it greedily,
-longest path first \citep{osterlund2026graft}. Greedy acceptance is cheap and
-adequate where crossings are rare, but no such pass can revisit a pairing that
-a later arm contradicts. DNAi instead enumerates the pairings at junctions of
-degree three or four from endpoint angles \citep{playout2026dnai}, which is
-exhaustive inside that range and attempts nothing outside it. Learned
-alternatives pair termini with an orientation network, detect fibres with a
+The largest cluster follows one recipe. These methods skeletonise the mask, cut
+the crossing out,
+and pair the arms left behind by how nearly each continues the direction of
+another. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
+directions from the excised stubs and recovers dense microtubule networks from
+the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
+by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
+Frangi-filtered skeleton greedily, longest path first
+\citep{osterlund2026graft}. This is cheap, and where crossings are rare it is
+enough. Its weakness is structural: once an arm is paired, a later arm that
+contradicts the choice cannot reopen it.
+
+Two ways out of that have been tried. The first is to bring in more evidence
+than a mask carries. Wegmayr et al.'s stronger arm drops the angle rule and
+learns pixel embeddings on patches around each junction; it reads the greyscale
+image, and it must be trained on crops in which every fibre is already labelled
+individually. Even then it recovers tangled fibres at about half the precision
+of isolated ones, in data where two thirds of fibres cross nothing at all.
+Methods that pair ends with an orientation network, detect fibres with a
 region-based detector, or trace them recurrently
-\citep{liu2019intersection,frei2020fiber,liu2023picktrace}, at the cost of
-instance-labelled training data that a binary-mask contract does not otherwise
-require.
+\citep{liu2019intersection,frei2020fiber,liu2023picktrace} need the same
+labelled training data. Reading a mask and nothing else avoids that cost, which
+is the trade this paper takes. DNAi keeps to the mask and simply looks harder,
+enumerating every pairing a junction allows from its endpoint angles; it does
+so exhaustively at degree three and four, and not at all above
+\citep{playout2026dnai}.
 
-A third position combines the two, and it is the closest to the one taken here:
-read the mask, and still decide globally. De et al.\ reduce a segmented
-skeleton to a digraph whose nodes are branches and whose edges are junction
-contacts, then partition it by label propagation solved through the
-matrix-forest theorem, so that no junction is settled on its incident angles
-alone and a decision at one node constrains its neighbours
-\citep{de2016graph}. The propagation needs somewhere to propagate from. Labels
-originate at root nodes -- DAPI-stained somata in their neuronal images, the
-optic disc in their retinal ones -- and the number of instances recovered is
-the number of roots supplied. Neurites and vessel trees have such roots. A
-tangle of open-ended strands has none, and its instance count is exactly what
-is to be recovered, so the formulation does not transfer without a seeding rule
-that would have to be invented here rather than adopted. Global reasoning from
-a mask, with no seed and no instance count given in advance, is the position
-this paper works from.
+The second way out is to stop deciding one pairing at a time. Basu et al.\ and
+DeFiNe both weigh a whole neighbourhood at once, which is what a busy node
+needs. Basu et al.\ delete every branch point from a spanning tree over
+centreline points, then reassemble the pieces with an integer program that
+prices each join by how sharply it bends, repeating until the set of pieces
+settles; a join that a later fit contradicts can therefore still be undone
+\citep{basu2015extraction}. DeFiNe covers an already-built weighted graph with
+the smoothest paths it can find, and lets two paths share an edge, so a
+crossing pixel can belong to both strands instead of being awarded to one
+\citep{breuer2015define}. Neither, though, starts from an axis mask: one wants
+intensities, the other a graph some earlier stage has already produced. Both
+also reassemble at most three pieces at a time, which limits how much of a
+shattered neighbourhood a single round can repair. Deciding broadly and
+starting from a mask have so far been alternatives.
 
-Two of these are compared against directly here, so what each was built for
-matters, because neither was built for this. DNAi is an end-to-end tool for the
-DNA fibre spreading assay described above, and it matches trained human
-annotators on that task \citep{playout2026dnai}. GraFT traces the plant actin
-cytoskeleton through confocal time series, a temporal dimension outside this
-paper's scope \citep{osterlund2026graft}. Both are strong in their domains, and both make
-choices those domains license: DNAi commits to a pairing at every junction of
-degree two to four and attempts none above that, while GraFT's greedy path
-cover cannot revise an early commitment. Such choices cost little where
-strands are sparse and well separated, which is the regime each was validated
-in, and more where strands are dense and crossings frequent.
-Section~\ref{sec:res-comparators} runs both from their own released sources, on
-identical masks, through one scorer. It also reimplements the recombination
-stage of \citet{basu2015extraction}, whose software was never released, and
-reports it as a floor rather than as an externally run result.
+One method has them both, and it comes closest to the position taken here. De
+et al.\ reason globally and do start from a mask. Branches and junction contacts become a graph, and
+labels spread across it so that a decision at one node constrains its
+neighbours rather than resting on that node's own angles \citep{de2016graph}.
+The labels have to start somewhere, however. In their images they start at
+anatomical roots, the stained cell bodies of neurons or the optic disc of a
+retina, and the method returns as many strands as there are roots. A tangle of
+open-ended strands offers no such starting point, and how many strands it holds
+is precisely the unknown. Reasoning globally from a mask alone, with no seed
+and no strand count supplied in advance, is where this paper begins. Four of
+these methods are measured against it directly in
+Section~\ref{sec:res-comparators}, on identical masks and through one scorer.
 
 Skeleton graphs, junction excision, continuation angles, distance gates,
 combinatorial optimisation, iterative refitting and overlapping output are
@@ -172,8 +157,7 @@ as for a freely flexible chain whose tangent decorrelates within the junction,
 no continuation is more plausible than another, and no amount of matching
 recovers what the image no longer distinguishes.
 
-We introduce PLECTA (Pairwise Linking with Evidence from Chain Tangents and
-Assignment; also the Latin \emph{plecta}, a braid). It decomposes a skeleton
+We introduce PLECTA, after the Latin \emph{plecta}, a braid. It decomposes a skeleton
 into arms, endpoint stubs and merged junction nodes, alternates exact per-node
 continuation matching with globally gated gap matching while tangent and
 curvature estimates expand from local arms to assembled chains, and returns
@@ -196,18 +180,20 @@ intersections, and validate against human evaluators on fibre number, length
 and width \citep{peters2026fibre}. That work and this one divide the task at
 the same joint and differ in what the instance step is asked to prove: their
 tracer stands in for human counting and measurement, while PLECTA is isolated
-behind a binary-mask contract and scored on identity through crossings against
+behind a binary mask and scored on identity through crossings against
 overlap-aware references in which every pairing is known. We evaluate PLECTA on
-\PlectaHeldoutSceneCount{} unseen scenes from the development generator and on
-\PlectaRobustnessSceneCount{} paired clean and degraded scenes, and demonstrate
-the two stages together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
-fields, \PlectaRealHeldOutCount{} of them held out from the upstream segmenter.
+\PlectaHeldoutSceneCount{} procedurally generated scenes spanning 20 to
+60\,\% areal coverage. A further \PlectaRobustnessSceneCount{} scenes are
+rendered twice, once from a clean axis and once from a damaged one, so that
+what mask damage costs is measured on unchanged geometry. Both stages are then
+demonstrated together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
+fields.
 
 Beyond the plane, a crossing carries a second question the grouping does not
-answer: which strand passes in front. For nanostructured networks that is
+answer: which strand lies on top. For nanostructured networks that is
 normally obtained destructively, by focused-ion-beam sectioning and tomographic
 reconstruction \citep{gabbett2024fibsem}, because a micrograph's intensities
-record surface topography rather than height. PLECTA answers it optionally and
+record surface topography rather than height. PLECTA answers it
 non-destructively from the greyscale already in hand. The machinery is
 deliberately conventional: monocular depth ordering has long derived pairwise
 depth from local occlusion evidence, assembled those relations into a

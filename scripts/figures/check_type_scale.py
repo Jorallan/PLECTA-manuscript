@@ -46,17 +46,17 @@ import _style
 from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 
 #: The figures the manuscript includes, in the order it includes them.
-#: ``fig_metric_panels`` writes two of them -- the degraded and the clean mask
-#: condition -- from one generator, so the pair cannot drift apart; both appear
-#: in the table below under that generator's number.
+#: ``fig_metric_panels`` used to write two of them, the degraded and the clean
+#: mask condition; they are now the two rows of one figure, which is why the
+#: numbering below closes up after it.
 SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
     ("fig_plecta_exact_matching", 3),
     ("fig_metric_panels", 4),
-    ("fig_plecta_examples", 6),
-    ("fig_real_sem", 7),
-    ("fig_real_sem_axis", 8),
+    ("fig_plecta_examples", 5),
+    ("fig_real_sem", 6),
+    ("fig_real_sem_axis", 7),
 ]
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was

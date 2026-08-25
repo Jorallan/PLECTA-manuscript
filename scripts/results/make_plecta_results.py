@@ -32,6 +32,7 @@ RUNTIME = RESULTS / "runtime_comparison.json"
 #  if the record is absent the comparator table simply omits the column.
 #  Written by comparisons/basu_comparison/scripts/make_manuscript_record.py.
 BASU = RESULTS / "plecta_basu_reimplementation.json"
+SIFNE = RESULTS / "plecta_sifne_comparison.json"
 COMPARATOR_ANALYSIS = RESULTS / "plecta_comparator_analysis.json"
 GREEDY_SWEPT = RESULTS / "plecta_greedy_swept_paired.json"
 GRAFT = RESULTS / "plecta_graft_comparison.json"
@@ -591,6 +592,59 @@ def basu_macros(basu: dict | None) -> list[str]:
     return lines
 
 
+def sifne_macros(sifne: dict | None) -> list[str]:
+    r"""SIFNE, run from its own released source, so a genuine external comparator.
+
+    Emitted only if the record exists, so the manuscript degrades gracefully to
+    no SIFNE column and no SIFNE prose if the study is ever withdrawn.
+
+    Unlike the Basu macros these ARE an externally run result and may be quoted
+    as one. The single qualification they carry is tuning: SIFNE's shipped
+    parameters excise a square at every crossing pixel and discard between a
+    third and two thirds of the input mask at these densities, so three of them
+    were re-selected on development scenes exactly as DNAi's linkage distance
+    was. \PlectaSifneShippedFOne is the shipped-default score and exists so the
+    tuned figure is never quoted without it available beside it.
+    """
+    if not sifne:
+        return []
+    o = sifne["overall"]
+    p = sifne["tuned_params"]
+    lines = [
+        macro("PlectaSifneFOne", fmt(o["f1"])),
+        macro("PlectaSifneARI", fmt(o["adjusted_rand_index"])),
+        macro("PlectaSifneVITotal", fmt(o["vi_total_bits"])),
+        macro("PlectaSifneRecovery", fmt(o["fragment_recovery_recovery_rate"])),
+        macro("PlectaSifneCrossingFidelity",
+              fmt(sifne["junction_resolution"]["exact_rate"])),
+        macro("PlectaSifneSceneCount", str(sifne["n_scenes"])),
+        macro("PlectaSifneJuncSize", "%g" % p["Size_Junc"]),
+        macro("PlectaSifneFanR", "%g" % p["FanR"]),
+        macro("PlectaSifneShippedJuncSize",
+              "%g" % sifne["shipped_params"]["Size_Junc"]),
+    ]
+    if sifne.get("shipped_default_f1") == sifne.get("shipped_default_f1"):
+        lines.append(macro("PlectaSifneShippedFOne",
+                           fmt(sifne["shipped_default_f1"])))
+
+    #  Arm 2, SIFNE's own published topology REBUILT BY US. Weaker standing
+    #  than the GraFT regime arm, where that generator was vendored and run
+    #  unmodified: SIFNE released none, so this is our reconstruction of a
+    #  topology described in words. The macro names carry no marker, so the
+    #  prose that quotes them must say so.
+    own = sifne.get("own_topology", {}).get("groups", {})
+    for tag, key in (("Sparse", "web_sparse"), ("Dense", "web_dense")):
+        g = own.get(key)
+        if not g:
+            continue
+        lines += [
+            macro(f"PlectaSifneOwn{tag}Density", "%.3f" % g["density"]),
+            macro(f"PlectaSifneOwn{tag}PlectaFOne", fmt(g["plecta_f1"])),
+            macro(f"PlectaSifneOwn{tag}SifneFOne", fmt(g["sifne_f1"])),
+        ]
+    return lines
+
+
 def depth_order_macros(payload: dict) -> list[str]:
     """The depth stage, emitted so the decomposition cannot be split up.
 
@@ -727,8 +781,9 @@ def real_fields_macros(payload: dict) -> list[str]:
     tolerance = payload["fields"][0]["axis_triple"]["reported_tolerance_px"]
     lines = [macro("PlectaPlacementTolerance", str(tolerance)),
              macro("PlectaRealFieldCount", str(len(payload["fields"])))]
-    held_out = [f["image"] for f in payload["fields"] if f["unet_held_out"]]
-    lines.append(macro("PlectaRealHeldOutCount", str(len(held_out))))
+    #  PlectaRealHeldOutCount retired 2026-08-25: the manuscript no longer
+    #  states which fields the upstream segmenter had seen. `unet_held_out`
+    #  survives in plecta_real_fields.json, so restoring the macro is one line.
 
     total_crossings = 0
     for field in payload["fields"]:
@@ -767,30 +822,19 @@ def real_fields_macros(payload: dict) -> list[str]:
             ])
     lines.append(macro("PlectaRealCrossingTotal", "%d" % total_crossings))
 
-    #  What training on the field is worth, measured where a clean comparison
-    #  exists rather than argued.  It is why B58_100's U-Net row is an upper
-    #  bound and not a result.
-    contamination = payload["contamination"]
-    lines.extend([
-        macro("PlectaContaminationDeltaLow",
-              fmt(contamination["delta_pairwise_f1_min"])),
-        macro("PlectaContaminationDeltaHigh",
-              fmt(contamination["delta_pairwise_f1_max"])),
-        macro("PlectaContaminationModelCount",
-              str(len(contamination["per_field"][0]["held_out_models"])
-                  + len(contamination["per_field"][0]["trained_on_models"]))),
-    ])
-    for entry in contamination["per_field"]:
-        stem = entry["field"].replace("_", "")
-        if "delta_pairwise_f1" not in entry:
-            continue
-        clean = entry["held_out_pairwise_f1"]
-        lines.extend([
-            macro(f"PlectaContamination{stem}CleanLow", fmt(min(clean))),
-            macro(f"PlectaContamination{stem}CleanHigh", fmt(max(clean))),
-            macro(f"PlectaContamination{stem}Trained",
-                  fmt(max(entry["trained_on_pairwise_f1"]))),
-        ])
+    #  The PlectaContamination* macros are RETIRED, 2026-08-25, by author
+    #  decision, together with the results subsection that used them.
+    #
+    #  They reported what training on a field is worth, measured by running
+    #  several nnU-Net models over all three fields and comparing a field
+    #  scored under models that excluded it against one that did not. That
+    #  experiment is not deleted: `payload["contamination"]` is still written
+    #  by scripts/results/make_real_fields_record.py and still carries every
+    #  number, so reinstating the block below restores the macros without
+    #  re-running anything.
+    #
+    #  Emitting them while nothing cites them would leave ten dead macros in
+    #  plecta_results.tex, so they are not emitted.
     return lines
 
 
@@ -1024,7 +1068,8 @@ def greedy_table(greedy: dict) -> str:
 
 
 def comparator_table(audit: dict, runtime: dict | None = None,
-                     basu: dict | None = None) -> str:
+                     basu: dict | None = None,
+                     sifne: dict | None = None) -> str:
     """One table for all four methods on the degraded masks.
 
     Supersedes greedy_table(), which compared two methods on six measures and
@@ -1054,22 +1099,49 @@ def comparator_table(audit: dict, runtime: dict | None = None,
     """
     means = audit["methods"]["degraded"]
     junction = audit["junction_resolution"]["degraded"]
-    #  EXTERNAL METHODS ONLY. The greedy continuation rule is our own
-    #  invention rather than anyone's published method, so it belongs with the
-    #  controls in the ablation table, not in a table whose purpose is to
-    #  compare against other people's work. Basu* stays because it IS someone
-    #  else's published method, reimplemented; the star and the caption say so.
-    columns = ("plecta", "dnai", "graft")
 
-    #  Basu* is OUR REIMPLEMENTATION and is marked with a star everywhere it
-    #  appears, because the manuscript's comparator standard is methods run
-    #  from their own released source and no implementation of that paper was
-    #  ever released. It is appended as a final column rather than sorted in
-    #  among the released methods, and the caption carries the qualification.
-    #  Source record: results/plecta_basu_reimplementation.json, written by
-    #  comparisons/basu_comparison/scripts/make_manuscript_record.py.
-    def basu_cell(key: str) -> list[str]:
-        return [fmt(basu["overall"][key])] if basu else []
+    #  COLUMNS ARE ORDERED BY COMMON-FRAGMENT F1, BEST FIRST, and the order is
+    #  computed from the numbers rather than written down, so it stays correct
+    #  if any of them change. A reader scanning left to right then meets the
+    #  methods in the order the endpoint ranks them.
+    #
+    #  The greedy continuation rule is excluded: it is our own invention rather
+    #  than anyone's published method, and belongs with the controls in the
+    #  ablation table, not in a table whose purpose is to compare against other
+    #  people's published work.
+    #
+    #  Two columns carry a marker rather than a position. Basu* is OUR
+    #  reimplementation, because no implementation of that paper was ever
+    #  released; SIFNE-dagger is externally run but at parameters we selected on
+    #  development scenes, its own being degenerate at these densities. Sorting
+    #  by score puts the reimplementation above two externally run methods, so
+    #  the markers and the caption carry that qualification and the position
+    #  does not.
+    #  Source records: results/plecta_basu_reimplementation.json and
+    #  results/plecta_sifne_comparison.json.
+    entries: list[dict] = [
+        {"key": "plecta", "label": "PLECTA", "src": "audit"},
+        {"key": "dnai", "label": "DNAi", "src": "audit"},
+        {"key": "graft", "label": "GraFT", "src": "audit"},
+    ]
+    if sifne:
+        entries.append({"key": "sifne", "label": r"SIFNE$^{\dagger}$",
+                        "src": "record", "rec": sifne})
+    if basu:
+        entries.append({"key": "basu", "label": r"Basu$^{*}$",
+                        "src": "record", "rec": basu})
+
+    def value(e: dict, key: str) -> float:
+        if e["src"] == "audit":
+            return means[e["key"]]["overall"][key]
+        return e["rec"]["overall"][key]
+
+    def crossing(e: dict) -> float:
+        if e["src"] == "audit":
+            return junction[e["key"]]["overall"]["exact_rate"]
+        return e["rec"]["junction_resolution"]["exact_rate"]
+
+    entries.sort(key=lambda e: -value(e, "f1"))
 
     body: list[tuple[str, list[str]]] = []
     for label, key in (("Common-fragment $F_1$", "f1"),
@@ -1077,54 +1149,38 @@ def comparator_table(audit: dict, runtime: dict | None = None,
                        ("Recall", "recall"),
                        ("Reference-instance recovery",
                         "fragment_recovery_recovery_rate"),
-                       ("Adjusted Rand index", "adjusted_rand_index")):
-        body.append((label, [fmt(means[c]["overall"][key]) for c in columns]
-                     + basu_cell(key)))
+                       ("Adjusted Rand index", "adjusted_rand_index"),
+                       (r"Variation of information~$\downarrow$", "vi_total_bits")):
+        body.append((label, [fmt(value(e, key)) for e in entries]))
 
-    body.append(("Variation of information~$\\downarrow$",
-                 [fmt(means[c]["overall"]["vi_total_bits"]) for c in columns]
-                 + basu_cell("vi_total_bits")))
+    #  One crossing row, not two. The chance-corrected resolution index used to
+    #  sit under this one; over the real-field rows it correlates with the exact
+    #  rate at Pearson 0.997 and never went negative, so it restated the row
+    #  above it. The chance level belongs in the caption, being a property of
+    #  the reference rather than of any method.
+    resolution = [("Crossing Fidelity", [fmt(crossing(e)) for e in entries])]
 
-    #  One crossing row, not two.  The chance-corrected resolution index used
-    #  to sit under this one; over the real-field rows it correlates with the
-    #  exact rate at Pearson 0.997 and never went negative, so it restated the
-    #  row above it.  The chance level belongs in the caption, being a property
-    #  of the reference rather than of any method.
-    resolution = [
-        ("Crossing Fidelity",
-         [fmt(junction[c]["overall"]["exact_rate"]) for c in columns]
-         + ([fmt(basu["junction_resolution"]["exact_rate"])] if basu else [])),
-    ]
-
-    # Median seconds per scene at the two ends of the density range. One row
-    # here replaces about fourteen typeset lines of prose, and the greedy
-    # baseline was not separately timed.
+    #  Median seconds per scene at the two ends of the density range. Basu* is
+    #  our Python code for one stage, and SIFNE-dagger is MATLAB including
+    #  interpreter start-up; neither is comparable with the other columns and
+    #  the caption says so.
     timing = []
     if runtime:
         medians = runtime["per_density_median_seconds"]
 
-        def span(method: str) -> str:
-            block = medians.get(method)
-            if not block:
+        def span(e: dict) -> str:
+            if e["src"] == "audit":
+                block = medians.get(e["key"])
+            else:
+                block = e["rec"].get("runtime", {}).get("median_seconds")
+            if not block or block.get("cov20") is None or block.get("cov60") is None:
                 return "---"
             return f"{block['cov20']:.2f}--{block['cov60']:.1f}"
 
-        #  Basu*'s timing is OUR Python reimplementation of Stage B only, with
-        #  the intensity front end excluded; the authors' own figure is 323 s
-        #  for a 256x256 image in MATLAB. It is printed so the column is not
-        #  silently blank, and the caption says what it is not.
-        basu_span = "---"
-        if basu:
-            med = basu["runtime"]["median_seconds"]
-            basu_span = f"{med['cov20']:.2f}--{med['cov60']:.1f}"
-        timing = [("Median s per scene, 20/60\\%",
-                   [span("plecta"), span("dnai"), span("graft")]
-                   + ([basu_span] if basu else []))]
+        timing = [(r"Median s per scene, 20/60\%", [span(e) for e in entries])]
 
-    ncol = "r" * (len(columns) + (1 if basu else 0))
-    header = "Measure & PLECTA & DNAi & GraFT"
-    if basu:
-        header += " & Basu\\textsuperscript{*}"
+    ncol = "r" * len(entries)
+    header = "Measure & " + " & ".join(e["label"] for e in entries)
     lines = ["% Generated by scripts/results/make_plecta_results.py; do not edit.",
              f"\\begin{{tabular}}{{l{ncol}}}", "\\toprule",
              header + " \\\\",
@@ -1153,7 +1209,8 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 metric_panels: dict, sensitivity: dict,
                 scorer_sensitivity: dict,
                 crossing_chance: dict,
-                basu: dict | None = None) -> str:
+                basu: dict | None = None,
+                sifne: dict | None = None) -> str:
     rows = [r for r in held["per_scene"] if r.get("status") == "ok"]
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
@@ -1295,6 +1352,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 ["reported_tolerance_px"]),
             *metric_panels_macros(metric_panels),
             *sensitivity_macros(sensitivity),
+            *sifne_macros(sifne),
             *basu_macros(basu),
         ]
     )
@@ -1457,30 +1515,28 @@ def scorer_sensitivity_macros(record: dict) -> list[str]:
 def real_fields_table(payload: dict) -> str:
     """Three fields, two mask sources, the five measures of Section 2.6.
 
-    The held-out column is the first thing in the table because it is the first
-    thing a reader has to know: one of the three U-Net rows is an upper bound
-    and cannot be made otherwise.
+    The held-out column was removed on 2026-08-25 by author decision, together
+    with the results subsection that measured what training overlap costs. The
+    record `plecta_real_fields.json` still carries `unet_held_out` per field,
+    and `plecta_real_masks.json` still carries the contamination experiment, so
+    the column can be restored without re-running anything.
     """
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
-        r"\begin{tabular}{llcrrrrrrr}",
+        r"\begin{tabular}{llrrrrrrr}",
         r"\toprule",
-        r" & & Held & \multicolumn{3}{c}{Grouping} & "
+        r" & & \multicolumn{3}{c}{Grouping} & "
         r"\multicolumn{3}{c}{Objects and crossings} & \\",
-        r"\cmidrule(lr){4-6}\cmidrule(lr){7-9}",
-        r"Field & Input axis & out & $F_1$ & Join $F_1$ & Decisions & "
+        r"\cmidrule(lr){3-5}\cmidrule(lr){6-8}",
+        r"Field & Input axis & $F_1$ & Join $F_1$ & Decisions & "
         r"Det.\ $F_1$ & CF & Unpaired & Cross. \\",
         r"\midrule",
     ]
     for field in payload["fields"]:
         for key, label in (("manual", "Manual-derived"), ("unet", "U-Net")):
             c = field["conditions"][key]
-            if key == "manual":
-                held = "--"
-            else:
-                held = "yes" if field["unet_held_out"] else "no"
             lines.append(
-                f"{tex_escape(field['image'])} & {label} & {held} & "
+                f"{tex_escape(field['image'])} & {label} & "
                 f"{fmt(c['pairwise_f1'])} & {fmt(c['join_f1'])} & "
                 f"{c['n_decisions']:,} & {fmt(c['detection_f1'])} & "
                 f"{fmt(c['crossing_fidelity'])} & "
@@ -1540,6 +1596,8 @@ def main() -> None:
     runtime = json.loads(RUNTIME.read_text(encoding="utf-8"))
     basu = (json.loads(BASU.read_text(encoding="utf-8"))
             if BASU.is_file() else None)
+    sifne = (json.loads(SIFNE.read_text(encoding="utf-8"))
+             if SIFNE.is_file() else None)
     supplement = json.loads(METRICS_SUPPLEMENT.read_text(encoding="utf-8"))
     mask_quality = json.loads(MASK_QUALITY.read_text(encoding="utf-8"))
     graft_regime = json.loads(GRAFT_REGIME.read_text(encoding="utf-8"))
@@ -1566,7 +1624,7 @@ def main() -> None:
             real_field_metrics, real_fields, interannotator, curviness,
             depth_order,
             metric_panels, sensitivity,
-            scorer_sensitivity, crossing_chance, basu,
+            scorer_sensitivity, crossing_chance, basu, sifne,
         ),
         encoding="utf-8",
     )
@@ -1581,7 +1639,7 @@ def main() -> None:
         greedy_table(greedy), encoding="utf-8"
     )
     (RESULTS / "plecta_comparator_table.tex").write_text(
-        comparator_table(audit, runtime, basu), encoding="utf-8"
+        comparator_table(audit, runtime, basu, sifne), encoding="utf-8"
     )
     (RESULTS / "plecta_factorial_table.tex").write_text(
         factorial_table(factorial), encoding="utf-8"

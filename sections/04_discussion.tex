@@ -81,11 +81,8 @@ the sweep stays well inside the stiff regime the paper claims, reaching a
 The real SEM study is deliberately a case study with
 \PlectaRealFieldCount{} fields, not a population validation. Manual-derived
 masks are an oracle-like input condition: they test grouping when the axis
-evidence is curated, not automatic SEM-to-instance performance. B58\_100 is
-training-contaminated for the U-Net condition and cannot be made otherwise, so
-its row there is an upper bound; B58\_110 and B58\_300 are held out, and two
-fields that agree closely are a stronger statement than the one the study
-previously had, but they still cannot estimate generalisation. The two mask
+evidence is curated, not automatic SEM-to-instance performance. Three fields
+cannot estimate generalisation, however closely any two of them agree. The two mask
 sources also generate different fragment universes, so their $F_1$ values
 describe performance under each input condition rather than comparing identical
 objects. More independent fields, sealed before configuration, are still

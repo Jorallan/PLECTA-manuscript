@@ -227,17 +227,98 @@ errors are divisions rather than merges (variation-of-information split
 greedy longest-first path cover that cannot revise an early commitment once the
 scene collapses into one connected graph, as it does above 30\,\% coverage.
 
+\textbf{SIFNE} enhances the image with an orientation filter transform,
+thresholds it by Otsu, thins it, and then works from the binary skeleton alone:
+it marks every pixel whose eight-connected neighbourhood sum reaches three as a
+crossing, erases each such pixel together with a square neighbourhood, and
+pairs the resulting fragment termini inside an angular search fan, bidirectionally
+and one pairing at a time \citep{zhang2017sifne}. Because everything after the
+thinning reads a binary axis, its own re-entry point is the thinned array, and
+the mask is injected there; every stage downstream is its released source
+unmodified. Only its graphical callbacks are re-expressed, so that it can run
+unattended, and its manual-correction stage is never invoked, since every
+comparator here runs without a human in the loop. One shipped default is
+degenerate at these densities and is re-selected on development scenes.
+
+The mechanism is measured rather than inferred. Its erasure neighbourhood is
+\PlectaSifneShippedJuncSize{} pixels square, applied at every pixel whose
+eight-connected neighbourhood sum reaches three, so the erasures multiply with
+the crossings: on scenes at 20, 40 and 60\,\% coverage the surviving mask is
+51, 44 and 31\,\% of what was handed in, and the evidence is gone before any
+pairing is attempted. On the sparse single-molecule fields the method was built
+for this costs almost nothing. Selection was staged and both grids were fixed
+before either ran: first the three settings that govern how much mask survives,
+then the linkage gates at the winner of the first. Only the ten development
+scenes were read, never the comparison set. The chosen configuration reduces
+the erasure to \PlectaSifneJuncSize{} pixels square and the search radius to
+\PlectaSifneFanR{} pixels, raising development \Fone{} from 0.537 to 0.749 and
+crossing fidelity from 0.502, below the all-unpaired baseline, to 0.831 well
+above it. On the comparison set the same change is worth
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{}, and both are reported.
+
+Two further points bear on reading its column. The search-fan angle turns out
+to be inert at the selected angular gate, because the gate is the stricter of
+the two tests for every fan wider than sixty degrees and therefore binds first;
+this was checked against the source rather than assumed from three identical
+sweep rows. And the neighbourhood radius that its front end uses for
+orientation filtering is \emph{not} inert once the mask is injected, because
+the same value sets the arclength over which every tip direction is estimated,
+which is the whole evidence its pairing sees.
+
+Its crossing excision is not a scoring artefact. It deletes each crossing pixel
+and its neighbourhood and never restores them, but the common-fragment scorer
+also deletes junction pixels before labelling, and scores only whether the arms
+meeting there are grouped as the reference groups them. SIFNE links across the
+excised crossing, so it makes exactly the decision the endpoint measures. It
+does score zero on the shared-pixel measures, which is a structural property of
+a method that assigns no crossing pixel to anything.
+
+\textbf{Basu et al.} is the one comparator with no released implementation: the
+only code its authors published covers the earlier centreline-localisation
+paper, at a departmental address that no longer resolves and that no archive
+captured. What is measured here is therefore a reimplementation of the
+published principle rather than the authors' program, and it is reported on the
+same footing as the greedy continuation baseline, a transparent floor and never
+an external result. Only the geometric half of the method is reimplemented: a
+minimum spanning tree over the centreline pixels, deletion of every bifurcation
+node, and recombination of two- and three-segment groups scored by the
+curvature energy of a fitted cubic spline less a bond energy, chosen by a
+set-partitioning integer program that is re-solved until the segment set stops
+changing. That half reads geometry alone and so accepts an axis mask directly.
+The other half, an intensity filter bank and a reverse diffusion that converges
+particles onto brightness crests, is not reimplemented, because scoring our own
+front end would measure our filter bank rather than their idea; the consequence
+is that this arm speaks to the recombination logic only.
+
+Its two user parameters, the maximum linking distance and the maximum tangent
+mismatch, were selected on the same ten development scenes and by the same
+criterion used for the others. Their published values, fixed in that paper for
+its own simulated benchmark, score \PlectaBasuDelta{} and \PlectaBasuTheta{}
+here only after selection; at the published pair the reimplementation scores
+0.076 on these masks, because a two-pixel linking distance admits almost no
+recombination on a mask whose gaps are wider than that. Both figures are
+recorded. Because the paper underdetermines two further quantities that change
+the result, the smoothing of the fitted spline and the quadrature of the bond
+energy, each was resolved in whichever direction favours the method, and the
+direction is recorded alongside the choice.
+
+The comparison is read on crossing fidelity as well as on the pairwise score,
+and the two separate cleanly here: the recombination decides junctions almost
+as well as the exact matcher does, and loses the pairwise margin on the
+assembly built from those decisions, because a pairwise score over fragments is
+quadratic in fragmentation while a junction count is not.
+
 \section{Depth measures}
 \label{sec:app-depth-measures}
 
 The measures of Section~\ref{app:measures} score which centreline
 fragments belong to one instance. None of them can see depth: two
 reconstructions that agree on every instance but disagree about which strand
-passes in front at every crossing are indistinguishable to all of them. The
+lies on top at every crossing are indistinguishable to all of them. The
 2.5-D stage is therefore scored by its own family, defined here.
 
 \paragraph{Crossing order accuracy.} Each reference crossing names the instance
-physically in front; the reconstruction either names one or abstains. Three
+physically on top; the reconstruction either names one or abstains. Three
 quantities are reported and none is quoted alone: \emph{decided only}, the
 fraction of committed decisions that are correct, which by itself is not
 evidence because abstaining on every hard crossing scores $1.000$;

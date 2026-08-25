@@ -152,6 +152,20 @@ INSTANCE_CYCLE = (
     "#3B7A57", "#8E44AD",
 )
 
+#: The five method series of fig_metric_panels, in the order the comparator
+#: table prints them -- descending overall F1: PLECTA, SIFNE, Basu, GraFT,
+#: DNAi.  That figure carries its own legend and contains no filaments, so
+#: BLUE and ORANGE are plain categorical hues there; GREEN keeps its one fixed
+#: meaning, PLECTA itself.  Two more hues are needed for the two methods added
+#: after the first round, and they are chosen away from the three already in
+#: use rather than cycled: VIOLET is far from both BLUE and GREEN in hue and
+#: darker than either, ROSE is far from ORANGE in saturation and darker again.
+#: Marker shape carries the identity a second time, so a reader who cannot
+#: separate two of the five hues can still separate the five curves.
+VIOLET = "#7C5CC4"     # SIFNE
+ROSE = "#C2185B"       # Basu
+SERIES_CYCLE = (GREEN, VIOLET, ROSE, BLUE, ORANGE)
+
 #: \linewidth of the manuscript (11pt article, a4paper, margin=1in) is
 #: 451.3 TeX pt = 449.61 bp = 6.2446 in.  Figures are drawn at exactly this
 #: width and included with ``width=\linewidth``, so the include scale is 1.0
