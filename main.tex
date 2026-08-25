@@ -32,7 +32,11 @@
 %  `parskip`, which spends about a line of vertical space on every one of ~130
 %  paragraphs; indenting instead is the target format's own convention and is
 %  worth a page and a half at this length. Typographic only: no text changes.
-\setlength{\parindent}{1.2em}
+%  1.5em, the class default for 11pt, rather than the 1.2em used earlier: the
+%  saving above comes from dropping parskip, not from shrinking the indent, and
+%  at a 1-inch margin on A4 the measure is wide enough that a narrow indent
+%  reads faintly.
+\setlength{\parindent}{1.5em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}

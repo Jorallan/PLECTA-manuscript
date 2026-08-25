@@ -16,12 +16,16 @@ geometry alone, and the two matching steps are re-made over eight rounds against
 frames re-fitted along the chains assembled so far. Where the mask itself comes
 from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
 
-\begin{figure}[tbp]
+%  [!ht] rather than [tbp]: under [tbp] this float was placed at the top of the
+%  page, which put it above the section heading that introduces it, so a reader
+%  met the figure before any context for it. The ! overrides the float
+%  fractions relaxed in the preamble.
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
-    \caption{Where PLECTA sits. The method reads one binary axis mask and
-    nothing else; every result in this paper measures the dashed green box.
-    Steps~3 and~4 are the only decisions it makes and are drawn heavier for it,
+    \caption{Where PLECTA sits. A single binary axis mask is the method's only
+    input, and every result in this paper measures the dashed green box.
+    Steps~3 and~4 are the only decisions it makes and are drawn heavier for it;
     the rest is bookkeeping. The optional depth stage adds a third dimension
     without revising any identity. Colours: green, a PLECTA geometric step;
     orange, a dependency on the grayscale image; dark, a data object.}
