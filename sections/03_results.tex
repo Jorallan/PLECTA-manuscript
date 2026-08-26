@@ -150,7 +150,8 @@ setting, and how it performs in that setting is not what these numbers
 measure. DNAi \citep{playout2026dnai}, GraFT \citep{osterlund2026graft} and
 SIFNE \citep{zhang2017sifne} are run from their own released sources. For the
 fourth, \citet{basu2015extraction}, no implementation was found, and it is
-reimplemented here.
+reimplemented here. Running someone else's method on data it was not built for
+takes decisions, and each of those decisions is stated here.
 
 
 \begin{table}[tbp]
@@ -196,24 +197,26 @@ attempted, and how each method fails.
   \label{fig:metric-panels}
 \end{figure}
 
-SIFNE is the strongest comparator, so the margin rests on a method configured
-for this data rather than on a default that suits it badly. Two entries in the
-table read against the ordering. DNAi's deficit is a limitation of domain and
-density rather than a general ranking: it is built for DNA-fibre micrographs,
-which are sparse, and where the network is sparse and the axis clean it
-recovers \PlectaDNAiCleanSparseFOne{} at 20\% coverage. And
+Favoured in all those ways, the four order as
+Table~\ref{tab:plecta-comparators} shows. SIFNE is the strongest of them, so
+the margin rests on a method configured for this data rather than on a default
+that suits it badly. Two entries read against that ordering. The first is
+DNAi, whose deficit is a limitation of domain and density rather than a
+general ranking: it is built for DNA-fibre micrographs, which are sparse, and
+where the network is sparse and the axis clean it recovers
+\PlectaDNAiCleanSparseFOne{} at 20\% coverage. The second is
 \citet{basu2015extraction}, the closest structural relative PLECTA's junction
 matching has in that it too optimises over a neighbourhood and prices joins on
-curvature, is second only to PLECTA on Crossing Fidelity while its pairwise
-\Fone{} sits far below both released methods: the curvature-priced matching
-does real work at the junctions, and what costs it is everything around that
-decision, which is why the priced refusal of Section~\ref{sec:mm-plecta} is
-claimed as part of a combination rather than on its own. \suppcomparators{}
-gives both in full.
+curvature. It stands second only to PLECTA on Crossing Fidelity while its
+pairwise \Fone{} sits far below both released methods, so the curvature-priced
+matching does real work at the junctions and what costs it is everything
+around that decision. That is why the priced refusal of
+Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
+its own. \suppcomparators{} gives both in full.
 
-\textbf{Each method on its own ground.} Every scene above comes from one
-generator, so the comparison was repeated in the regimes the two released
-methods were built for. On GraFT's own generator, run unmodified at its
+\textbf{Each method on its own ground.} That ordering is drawn from one
+generator, so it was tested in the regimes the two released methods were built
+for. On GraFT's own generator, run unmodified at its
 published settings over \PlectaRegimeSceneCount{} scenes in
 \PlectaRegimeStratumCount{} density strata, PLECTA leads at every density and
 nothing crosses over, including inside the range GraFT itself published, and
@@ -230,30 +233,33 @@ Section~\ref{sec:res-density} is a same-generator measurement and remains one;
 this comparison is not. \suppcomparators{} gives both ladders in full.
 
 
-\textbf{Crossings resolved.} The Crossing Fidelity row of
-Table~\ref{tab:plecta-comparators} states the contribution directly: pooled
-over the \PlectaJunctionCount{} reference crossings of the degraded set,
-PLECTA partitions \PlectaJunctionPlectaRate{} of them exactly, ahead of every
-comparator, and clean axes order them the same way. The measure is far less
-discriminative than the pairwise score, spanning \PlectaJunctionSpreadHigh{}
-between best and worst method at 60\,\% coverage where pairwise \Fone{} spans
-\PlectaPairwiseSpreadHigh{}, so it is used to say what was solved and not to
-rank. Every method is poor at the busiest nodes: above degree four PLECTA
-resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does better,
-while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is what its
-degree-four cap predicts. \suppcomparators{} gives the paired margins and the
-all-unpaired baseline the rate is read against.
+\textbf{What the margin is made of.} An ordering says which method wins, not
+where. The Crossing Fidelity row of Table~\ref{tab:plecta-comparators} says
+where: pooled over the \PlectaJunctionCount{} reference crossings of the
+degraded set, PLECTA partitions \PlectaJunctionPlectaRate{} of them exactly,
+ahead of every comparator, and clean axes order them the same way. That
+measure is far less discriminative than the pairwise score, spanning
+\PlectaJunctionSpreadHigh{} between best and worst method at 60\,\% coverage
+where pairwise \Fone{} spans \PlectaPairwiseSpreadHigh{}, so it is used to say
+what was solved and not to rank. Every method is poor at the busiest nodes:
+above degree four PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no
+comparator does better, while DNAi collapses to
+\PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four cap
+predicts. \suppcomparators{} gives the paired margins and the all-unpaired
+baseline the rate is read against.
 
-Per-scene cost was measured warm, single-threaded and pinned to one core, timing
-each method's own computation only (Table~\ref{tab:plecta-comparators};
-\RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded \RuntimeBudgetSeconds{}~s
-and are censored). These are independently optimised codebases, so absolute
-times measure implementation as much as algorithm; the transferable quantity is
-scaling, and the log--log exponents against foreground pixels are
-\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
-\RuntimeGraftScalingExponent{}. PLECTA has the largest uncensored exponent;
-GraFT's is a lower bound, because the scenes its fit lost to censoring are the
-slowest ones, and only GraFT is heavy-tailed.
+\textbf{Cost.} Accuracy is not the only axis on which these methods differ.
+Per-scene cost was measured warm, single-threaded and pinned to one core,
+timing each method's own computation only (Table~\ref{tab:plecta-comparators};
+\RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded
+\RuntimeBudgetSeconds{}~s and are censored). These are independently optimised
+codebases, so absolute times measure implementation as much as algorithm; the
+transferable quantity is scaling, and the log--log exponents against
+foreground pixels are \RuntimeDnaiScalingExponent{},
+\RuntimePlectaScalingExponent{} and at least \RuntimeGraftScalingExponent{}.
+PLECTA has the largest uncensored exponent; GraFT's is a lower bound, because
+the scenes its fit lost to censoring are the slowest ones, and only GraFT is
+heavy-tailed.
 
 \label{sec:res-overlap}%
 
