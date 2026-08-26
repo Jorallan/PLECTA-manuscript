@@ -60,8 +60,9 @@ SHIPPED = [
     ("fig_plecta_examples", 8),
     ("fig_real_sem_axis", 9),
     ("fig_real_sem", 10),
-    ("fig_resem_synth", 11),
-    ("fig_resem_real", 12),
+    ("fig_pipeline_upstream", 11),
+    ("fig_resem_synth", 12),
+    ("fig_resem_real", 13),
 ]
 
 

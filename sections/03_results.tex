@@ -227,9 +227,7 @@ on that reconstruction the two are level where the paper works,
 and part only slightly at the denser end. That places the difference in how
 tangled the crossings are rather than in how much strand the frame holds,
 though a topology we rebuilt is weaker evidence than a generator its authors
-released. The held-out result of Section~\ref{sec:res-density} is a
-same-generator measurement and remains one; this comparison is not.
-\suppcomparators{} gives both ladders in full.
+released. \suppcomparators{} gives both ladders in full.
 
 
 \textbf{What the margin is made of.} An ordering says which method wins, not
@@ -405,7 +403,26 @@ second technique supplies the mask, and Pipeline~A is such a technique. Nothing
 here is a measurement of Pipeline~A, which carries its own evaluation
 \citep{allan2026cntsem}.
 
-Pipeline~A runs procedural mask $\rightarrow$ CycleGAN $\rightarrow$ paired
+%  [!ht] for the reason given at Figure~1: this float belongs beside the
+%  paragraph that names the two pipelines.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_pipeline_upstream.pdf}
+    \caption{Where the mask comes from. Pipeline~A trains a segmenter without
+    an annotator: a generator draws a binary mask, a CycleGAN turns it into an
+    SEM-like micrograph, and the mask that made the image is its label, so the
+    pairs an nnU-Net trains on are manufactured rather than drawn by hand. At
+    inference the trained network segments a real micrograph into a binary
+    strand-axis mask. That mask is the whole interface between the two
+    pipelines. Pipeline~A is not a contribution of this paper and is not
+    evaluated in it; it carries its own evaluation
+    \citep{ruehle2021workflow,allan2026cntsem}. Only the dashed box is measured
+    here.}
+    \label{fig:pipeline-upstream}
+\end{figure}
+
+Pipeline~A (Figure~\ref{fig:pipeline-upstream}) runs procedural mask
+$\rightarrow$ CycleGAN $\rightarrow$ paired
 synthetic corpus $\rightarrow$ nnU-Net $\rightarrow$ binary strand-axis mask:
 a generator draws a mask, a CycleGAN translates it into an SEM-like image so
 that image and mask are paired without an annotator, an nnU-Net trained on
