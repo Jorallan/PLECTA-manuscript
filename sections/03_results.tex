@@ -131,14 +131,10 @@ GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
 their own released sources. For the fourth, \citet{basu2015extraction}, no
 implementation was found, and it is reimplemented here.
 
-Every comparator was gated on parity before any of its numbers was read: none
-was believed until the conversion reproduced PLECTA's stored \Fone{}, adjusted Rand index
-and both variation-of-information components, because a faulty conversion
-yields plausible rather than obviously wrong scores. Each comparator's
-parameter translation was selected on the same \PlectaDevelopmentSceneCount{}
-development scenes PLECTA was configured on, and every adaptation was checked
-and found to favour the comparator; \suppcomparators{} records each
-one and how each method fails.
+Each comparator's parameter translation was selected on the same
+\PlectaDevelopmentSceneCount{} development scenes PLECTA was configured on, and
+every adaptation was checked and found to favour the comparator;
+\suppcomparators{} records each one and how each method fails.
 
 \begin{table}[tbp]
     \centering
