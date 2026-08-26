@@ -1,12 +1,12 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{Held-out synthetic reconstruction}
+\subsection{Reconstruction on synthetic images}
 \label{sec:res-density}
 
-PLECTA completed all \PlectaHeldoutSceneCount{} held-out scenes with
-\PlectaHeldoutFailureCount{} failures. Mean common-fragment pairwise
-\Fone{} was \PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
+Mean common-fragment pairwise \Fone{} over the
+\PlectaHeldoutSceneCount{} held-out scenes was
+\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]);
 Table~\ref{tab:plecta-heldout} gives precision, recall, reference-instance
 recovery, adjusted Rand index and both variation-of-information components,
@@ -40,32 +40,16 @@ Per-scene runtime had mean \PlectaHeldoutRuntimeMean{}~s, median
 \PlectaHeldoutRuntimePNinety{}~s, and maximum \PlectaHeldoutRuntimeMaximum{}~s;
 these timings are hardware-specific.
 
-\subsection{Which density axis matters}
-\label{sec:res-factorial}
-
-Coverage is the fraction of the frame filled by the rendered bundles, so it
-rises both when strands are added and when the same strands are drawn
-thicker, and only the first changes the grouping problem. A factorial separates
-them: twelve geometries, three centreline length densities crossed with four
-seeds, were each rendered at bundle widths of 6, 11 and 16 px. Within one geometry the input axis mask and the overlap-aware
-centreline reference are byte-identical across the three widths, verified by
-SHA-256, while the union of the thick supports changes: areal coverage varies by
-up to a factor of \PlectaFactorialMaxCoverageRatio{}. Any movement in the score
-across those three renderings would mean that the method or the metric reads the
-silhouette.
-
-Across all \PlectaFactorialGeometryCount{} geometries the within-geometry
-\Fone{} range was \PlectaFactorialMaxFOneRange{}, that is, exactly zero in
-\PlectaFactorialZeroRangeCount{} of \PlectaFactorialGeometryCount{}
-(Table~\ref{tab:plecta-factorial}). Areal coverage therefore cannot causally
-affect the grouping score; PLECTA reads the axis mask, and the metric scores
-centreline fragments, so neither sees the width the bundles were drawn at.
-Centreline length density does move it, mean \Fone{} falling from
-\PlectaFactorialLowFOne{} to \PlectaFactorialHighFOne{} across the three
-densities of Table~\ref{tab:plecta-factorial}. The coverage bands of the three length
-densities also overlap, so coverage does not identify a difficulty level on its
-own. Density strata reported by target areal coverage should therefore be read
-as a proxy for the length density accompanying them under this generator.
+Areal coverage labels these strata but does not cause the difficulty they
+report. \label{sec:res-factorial}Table~\ref{tab:plecta-factorial} separates the
+two: rendering one geometry at three bundle widths leaves the input axis mask
+and the overlap-aware reference byte-identical while areal coverage varies by
+up to a factor of \PlectaFactorialMaxCoverageRatio{}, and the within-geometry
+\Fone{} range across those renderings was \PlectaFactorialMaxFOneRange{}.
+Centreline length density does move the score, mean \Fone{} falling from
+\PlectaFactorialLowFOne{} to \PlectaFactorialHighFOne{}, and the coverage bands
+of the three densities overlap, so a coverage stratum should be read as a
+proxy for the length density accompanying it under this generator.
 
 \begin{table}[tbp]
     \centering
@@ -78,6 +62,7 @@ as a proxy for the length density accompanying them under this generator.
     \small
     \input{results/plecta_factorial_table}
 \end{table}
+
 
 \subsection{Published methods on identical masks}
 \label{sec:res-comparators}

@@ -53,11 +53,24 @@ SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
     ("fig_plecta_exact_matching", 3),
-    ("fig_metric_panels", 4),
-    ("fig_plecta_examples", 5),
-    ("fig_real_sem", 6),
-    ("fig_real_sem_axis", 7),
+    ("fig_depth_evidence", 4),
+    ("fig_depth_order", 5),
+    ("fig_f1_example", 6),
+    ("fig_metric_panels", 7),
+    ("fig_plecta_examples", 8),
+    ("fig_real_sem_axis", 9),
+    ("fig_real_sem", 10),
 ]
+
+#: fig_resem_synth and fig_resem_real are included by the manuscript but are
+#: NOT in SHIPPED, and that is a defect recorded rather than fixed here.  Both
+#: save with bbox_inches="tight", which crops the page to 5.04 in; LaTeX then
+#: scales them to \linewidth (6.2446 in), so every glyph in them prints about
+#: 24 % larger than the same nominal size elsewhere in the paper.  The gate
+#: refuses them for exactly that reason.  The fix is one line each --
+#: bbox_inches=None, as every other generator passes -- but it changes how two
+#: already-published figures look, so it wants a human decision first.  Added
+#: 2026-08-26.
 
 #: Generators no ``\includegraphics`` reaches any more, kept because each was
 #: once a figure and may be wanted again: fig_comparators drew pairwise F1

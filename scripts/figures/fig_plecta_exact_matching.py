@@ -297,37 +297,6 @@ def marker(ax, xy, colour, ms=6.0):
 # ── panels ────────────────────────────────────────────────────────────────
 
 
-def panel_crossing(fig, overlay, rects, node, names, arms, hub, n_shared):
-    """The same node before and after the decision, side by side."""
-    card(fig, overlay, rects[0])
-    ax = node_axes(fig, rects[0], arms)
-    blob(ax, hub, 3.4)
-    for arm in arms.values():
-        ax.plot(arm[:, 0], arm[:, 1], color=INK, lw=2.4,
-                solid_capstyle="round", zorder=4, path_effects=LINE_SHADOW)
-    for sid, arm in arms.items():
-        step = arm[-1] - arm[max(0, len(arm) - 6)]
-        step = step / max(1e-9, float(np.hypot(*step)))
-        ax.text(*(arm[-1] + step * 3.0), names[sid], fontsize=PT_TAG,
-                fontweight="bold", color=INK, ha="center", va="center",
-                zorder=7, bbox=dict(boxstyle="circle,pad=0.20", fc="white",
-                                    ec="#D2D2D7", lw=0.8))
-    caption_below(fig, rects[0], "one blob, four arms")
-
-    card(fig, overlay, rects[1])
-    ax = node_axes(fig, rects[1], arms)
-    pairs = [tuple(p) for p in node["exact"]]
-    colours = pair_colours(arms, pairs)
-    for sid, arm in arms.items():
-        ax.plot(arm[:, 0], arm[:, 1], color=colours[sid], lw=2.4,
-                solid_capstyle="round", zorder=4, path_effects=LINE_SHADOW)
-    bridge(ax, arms, pairs)
-    blob(ax, hub, 3.4, colour=FIL_A, alpha=0.14)
-    blob(ax, hub, 3.4, colour=FIL_B, alpha=0.14)
-    caption_below(fig, rects[1], "two instances,\n%d pixels owned twice" % n_shared,
-                 linespacing=1.5)
-
-
 def option(fig, overlay, rect, arms, hub, pairs, costs, price, total, chosen,
           free_label):
     """One admissible configuration of one node.
@@ -470,8 +439,6 @@ def main() -> int:
     arms3, hub3 = node_arms(j3)
     cost4 = {frozenset((p["a"], p["b"])): p["cost"] for p in j4["pairs"]}
     cost3 = {frozenset((p["a"], p["b"])): p["cost"] for p in j3["pairs"]}
-    layers = [unpack(p) for p in data["crossing"]["layers"]]
-    n_shared = int((layers[0] & layers[1]).sum())
 
     fig = plt.figure(figsize=(FIG_W, FIG_H))
     fig.patch.set_facecolor(PAGE_BG)
@@ -482,17 +449,17 @@ def main() -> int:
     overlay.set_facecolor("none")
     h = 0.92 / FIG_H
 
-    # ── row 1: one crossing, and every way it could have been paired ──────
+    # ── row 1: every way one four-arm crossing could have been paired ────
+    #  The before/after panel that used to open this row was dropped: the
+    #  chosen configuration is already the first card here, so the row said
+    #  the same thing twice.  The four cards take the width it freed.
     row1 = fy(1.42)
-    panel_crossing(fig, overlay, [[0.048, row1, 0.126, h], [0.208, row1, 0.126, h]],
-                   j4, names4, arms4, hub4, n_shared)
     for i, cfg in enumerate(j4["configurations"]):
-        rect = [0.392 + i * 0.152, row1, 0.136, h]
+        rect = [0.048 + i * 0.2375, row1, 0.2095, h]
         option(fig, overlay, rect, arms4, hub4, [tuple(p) for p in cfg["pairs"]],
                cost4, j4["price"], cfg["total"], chosen=(i == 0),
                free_label="free")
-    title(fig, 0.040, fy(0.24), "a", "One crossing, decided", accent=ACCENT_BLUE)
-    title(fig, 0.384, fy(0.24), "b", "Every pairing, scored as a whole",
+    title(fig, 0.040, fy(0.24), "a", "Every pairing of one crossing, scored as a whole",
          accent=ACCENT_BLUE)
 
     # ── row 2: the priced free option, and what solving jointly buys ──────
@@ -503,15 +470,14 @@ def main() -> int:
                cost3, j3["price"], cfg["total"], chosen=(i == 0),
                free_label="free" if cfg["pairs"] else "all free")
     panel_gap(fig, overlay, [0.606, row2, 0.140, h], [0.762, row2, 0.208, h], data)
-    title(fig, 0.040, fy(1.94), "c", "An arm left free, and its price",
+    title(fig, 0.040, fy(1.94), "b", "An arm left free, and its price",
          accent=ACCENT_BLUE)
-    title(fig, 0.604, fy(1.94), "d", "A gap bridged", accent=ACCENT_BLUE)
+    title(fig, 0.604, fy(1.94), "c", "A gap bridged", accent=ACCENT_BLUE)
 
     save_fig(fig, "fig_plecta_exact_matching", bbox_inches=None)
     plt.close(fig)
     declined = max(p["cost"] for p in j3["pairs"] if p["admissible"])
-    print("shared px:", n_shared, "names:", names4,
-          "declined edge:", declined)
+    print("names:", names4, "declined edge:", declined)
     return 0
 
 

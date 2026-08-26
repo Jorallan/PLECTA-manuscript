@@ -52,8 +52,17 @@ overlap-aware by construction.
 
 Each scene is written out four ways: the exact one-pixel axis; that axis
 degraded with small gaps and raster irregularities; the strands at full width,
-merged into a single foreground; and an SEM-like greyscale image. Every result
-in this paper is computed from the degraded axis.
+merged into a single foreground; and an SEM-like greyscale image, in which
+each strand carries its own brightness and a slow variation along its length,
+blurred by one point-spread function over a low-frequency background with
+grain. A depth-resolved variant of the
+generator supplies the missing structure for the depth stage of
+Section~\ref{sec:mm-depth}. It gives every strand a height and a radius,
+refuses to let two interpenetrate, and renders the stack from the top down,
+so the image carries occlusion, defocus that grows with distance from a
+randomised focal plane, and width broadening. Those cues are randomised
+independently of one another, so no single rule such as brighter-is-higher
+recovers the order.
 
 Scenes are labelled throughout by areal coverage, the fraction of the frame the
 full-width strands cover rather than the fraction the thin axis occupies. That
@@ -135,13 +144,27 @@ symmetric \PlectaPlacementTolerance{}-px tolerance used throughout, which avoids
 rewarding mask thickness, and reconstruction scores were computed within each
 mask's own visible common-fragment population.
 
-\needed{Author metadata: SEM instrument and detector, accelerating voltage,
-working distance, specimen preparation, and CNT material identity.}
+%  Instrument settings below are read from the acquisition blocks embedded in
+%  the source TIFFs of the three fields, not transcribed from a logbook; the
+%  same blocks give HFW 1.6576 um and 1.07917 nm/px, which is where the
+%  1.66 um and 1.08 nm/px quoted above come from.
+The fields were acquired on a Thermo Fisher Helios 5~UX DualBeam with an
+Elstar field-emission column in immersion mode, imaged with the through-lens
+detector at 2.00\,kV and 400\,pA and a working distance of 4.3\,mm. Each
+frame is an integration of 35 passes at 100\,ns dwell with drift correction
+enabled.
+
+%  Held out of the rendered PDF on 2026-08-26 at the author's request: the
+%  specimen preparation and the CNT material identity are not known to anyone
+%  in this repository and are not recoverable from the source TIFFs, which
+%  carry instrument settings only. Restore this line before submission, or
+%  supply the two facts and fold them into the paragraph above.
+%  \needed{Author metadata: specimen preparation and CNT material identity.}
 
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
 
-\subsubsection{Skeleton graph and local frames}
+\subsubsection{Skeleton graph and stub frames}
 
 PLECTA skeletonises the mask and prunes the short spurs skeletonisation leaves
 behind. Skeleton pixels where three or more paths meet form junction clusters,
@@ -157,7 +180,9 @@ as such rather than guessed at. That support widens once arms are linked into
 chains, so a stub with no direction of its own borrows one from the chain it
 has joined, which is why the method iterates rather than deciding once.
 
-Linking two stubs is then priced by asking three geometric questions
+\subsubsection{The pairing cost}
+
+Linking two stubs is priced by asking three geometric questions
 (Figure~\ref{fig:cost}). Do the two directions oppose one another, as they
 would if one strand simply continued into the other? Does each direction
 point at the other's tip, rather than running parallel past it? And does the
@@ -233,13 +258,6 @@ The constraints relax towards their configured values as the chains sharpen the
 frames, and only the final round runs at the configured parameters. That round
 is the one returned.
 
-Strands are assumed to be open projected curves, and a guard enforces it: any
-matched component whose links close a ring has its longest link removed. On the
-\PlectaDevelopmentSceneCount{} development scenes the guard never fired, with zero
-links removed, so it protects against a configuration the data did not
-produce rather than shaping the result. Closed or looping strands are outside
-the scope of this paper.
-
 Every stub is therefore either paired or pays the unmatched price, and there is
 no third possibility. That priced option is what lets a strand genuinely end,
 and what stops a node with an odd number of arms from inventing a continuation
@@ -260,7 +278,7 @@ Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
 shows what it buys on real nodes, alongside the other two decisions the linker
 makes. A locally attractive edge can be declined, as at the three-arm node of
-Figure~\ref{fig:matching}c. Joint and sequential solutions coincide at plain
+Figure~\ref{fig:matching}b. Joint and sequential solutions coincide at plain
 crossings and diverge only as nodes grow dense: they never disagree at nodes of
 degree two to four, disagree at roughly a fifth of nodes with five to eight
 stubs, and at two thirds of nodes with nine or more, where the joint solution
@@ -269,44 +287,33 @@ holds one node's costs fixed. Run inside the rounds, where each matching sets
 the frames the next is scored against, a cheap early choice propagates and the
 difference is no longer confined to dense nodes.
 
-Two measurements test that claim rather than assert it, and they are separated
-deliberately. The greedy minimum-turning-angle baseline of
-Section~\ref{sec:res-comparators} reads the \emph{same} masks and the same
-local geometry and differs only in pairing greedily instead of jointly, so the
-\PlectaGreedySweptDeltaFOne{} \Fone{} between them isolates the formulation
-rather than the evidence. The component ablations of
-Section~\ref{sec:res-ablation} then ask the complementary question, whether the
-rest of the combination is load-bearing or decorative, and find that removing
-the junction chord-turn term costs
-\PlectaAblationTangentTermOnlyDeltaFOne{} and removing gap matching
-\PlectaAblationNoGapBridgingDeltaFOne{}. Neither measurement alone would do:
-the first says the matching is worth its complexity, the second that the terms
-it matches on are not redundant.
+Two measurements test that claim rather than assert it. The greedy
+continuation baseline of Section~\ref{sec:res-ablation} reads the \emph{same}
+masks and the same local geometry and differs only in pairing greedily instead
+of jointly, so the \PlectaGreedySweptDeltaFOne{} \Fone{} between them isolates
+the formulation rather than the evidence. The component ablations reported
+alongside it then ask the complementary question, whether the rest of the
+combination is load-bearing or decorative, and find that removing the junction
+chord-turn term costs \PlectaAblationTangentTermOnlyDeltaFOne{} and removing
+gap matching \PlectaAblationNoGapBridgingDeltaFOne{}. Neither measurement
+alone would do: the first says the matching is worth its complexity, the
+second that the terms it matches on are not redundant.
 
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
-    \caption{Every decision the linker can make, on the nodes it made them at.
-    Every number shown is measured, and every arm is the skeleton it was
-    measured from, drawn through a short moving average that removes the raster
-    staircase and moves no point by a pixel; the two nodes are rigidly rotated
-    to fit their panels, so every angle shown is the measured one.
-    (a)~A four-arm crossing (development scene \texttt{cov20/synth\_0001},
-    node~9) before and after the decision: arms named $a$ to $d$ anticlockwise
-    by outward tangent, the junction cluster shaded, and the two strands it
-    becomes, which share seven pixels. (b)~Every configuration the
-    admissibility gate allows at that node, each scored as a whole. Under each
-    is the sum of its edge costs and the price $p_i=0.62$ of every arm it
-    leaves free, a ring marking such an arm; the boxed configuration is the one
-    returned. The two candidate pairs missing here cost 3.15 and 3.33, above
-    $p_i+p_j=1.24$, so pairing them would cost more than leaving both free.
-    (c)~The same at a three-arm node
-    (\texttt{cov40/synth\_0001}), where an admissible edge costing 1.01 is
-    declined: taking it totals 1.63, against 0.77 for pairing the two arms that
-    continue into one another and paying to leave the third free, and 1.86 for
-    leaving all three free. (d)~The third decision, on the same scene: two arm
-    tips 25.8\,px apart joined across a break in the mask, with the other mask
-    pieces of the crop in grey. A gap link must clear all four gates at once.}
+    \caption{Every decision the linker makes, on the nodes it made them at.
+    Every number is measured and every arm is the skeleton it was measured
+    from, smoothed only enough to lift the raster staircase and rotated
+    rigidly, so every angle shown is the one the cost was computed on.
+    \textbf{(a)}~Every pairing the admissibility gate allows at a four-arm
+    crossing on a development scene, each scored as a whole:
+    its edge costs plus the price $p_i=0.62$ of each arm it leaves free,
+    marked. The green card is the one returned. Two further pairs, at 3.15
+    and 3.33, exceed $p_i+p_j=1.24$ and are never offered.
+    \textbf{(b)}~A three-arm node on another development scene, where an
+    admissible edge is declined on the total rather than on its own cost.
+    \textbf{(c)}~A gap link, which must clear all four gates at once.}
     \label{fig:matching}
 \end{figure}
 
@@ -320,35 +327,38 @@ but are not painted into the fixed centreline output. All effective parameters,
 including values previously inherited as code defaults, are materialised in the
 fixed JSON configuration.
 
-\subsection{Image-informed width reconstruction, optional}
-\label{sec:mm-stage4}
+\subsection{Image-informed reconstruction}
+\label{sec:mm-image}
 
-The grouping above reads the mask alone and is what this paper evaluates. Where
-a greyscale image of the same field exists, two further stages can use it to
-give each strand a width, and both are off by default and governed by limits
-recorded in the fixed configuration. Neither is specific to SEM: they take
-whatever image accompanies the mask, and SEM is simply the case demonstrated
-here.
+The grouping above reads the mask alone and is what this paper evaluates.
+Where a greyscale image of the same field exists, three further stages can
+read it: two give each strand a width, and one orders the strands at their
+crossings. All three run after the grouping is fixed and none can move a pixel
+from one strand to another, so no identity score in this paper depends on any
+of them. All are governed by limits recorded in the fixed configuration, and
+none is specific to SEM: they take whatever image accompanies the mask, and
+SEM is simply the case demonstrated here.
+
+\subsubsection{Width and ribbon rendering}
+\label{sec:mm-stage4}
 
 Perpendicular intensity profiles, sampled along each ordered chain away from
 junctions, attach an apparent width, a brightness, an uncertainty and a quality
 flag to an existing strand without altering its arm membership. Ribbon
 rendering then interpolates accepted gaps, resamples and smooths the centreline,
-and draws the chain at its fitted width, excluding junction blobs. Silhouette
-absorption, which would union rendered strands, has threshold zero by default;
-neither it nor any post-hoc continuation merge is part of the evaluated
-algorithm or contributed to the held-out result. Because the grouping is fixed
-before either stage runs, no width measurement can move a pixel from one
-strand to another, and no identity score in this paper depends on one.
+and draws the chain at its fitted width, excluding junction blobs. Neither
+silhouette absorption, which would union rendered strands, nor any other step
+merges two strands after the fact, and none contributed to the held-out
+result.
 
-\subsection{Depth decomposition, optional}
+\subsubsection{Depth decomposition}
 \label{sec:mm-depth}
 
 A projected crossing has an owner in each of two strands but no order between
-them. This stage supplies one. It runs after the grouping is fixed, reads the
-greyscale and the strands, and changes no strand membership.
+them. This stage supplies one.
 
-\textbf{Evidence at one crossing.} Where two strand centrelines intersect, a
+\textbf{Evidence at one crossing} (Figure~\ref{fig:depth-evidence}).
+Where two strand centrelines intersect, a
 short arc of each is taken through the crossing (the shared \emph{core}, a fixed
 length, the same at every crossing), together with the \emph{flanks} on either
 side of it, kept clear of the other strand's stroke so that they measure one
@@ -365,15 +375,40 @@ than that noise, $\lvert s\rvert$ falls below a fixed threshold and the crossing
 rather than by the separation alone, is what makes a confident score mean
 \emph{separated by more than the noise} rather than merely separated.
 
+%  [!ht] rather than [tbp], for the reason given at Figure~1: under [tbp]
+%  this float went to the top of the page, which put it ahead of the
+%  subsection heading that introduces it.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_depth_evidence.pdf}
+    \caption{What the depth stage measures, at one crossing of a
+    development scene where two strands meet at $83.8^{\circ}$, chosen as a
+    legible example rather than at random. Every position and grey level shown was
+    read back from the stage itself. \textbf{(a)}~The core arc shared by the
+    two strands, and each strand's own flanks, which the window keeps clear
+    of the other's stroke; open dots are core samples, filled ones flanks.
+    \textbf{(b)}~The same samples against arclength: the pooled core median
+    $m_c$ sits by strand $i$'s flank level and far from $j$'s, which is the
+    occlusion. \textbf{(c)}~The two distances the score compares, over the
+    larger of the strands' contrast and twice the flank noise. That ratio is
+    the score $s$ of \suppdepthstage{}: its sign names the upper strand,
+    its size weights the
+    crossing in the ordering below, and $\lvert s\rvert$ under a fixed
+    threshold abstains instead.}
+    \label{fig:depth-evidence}
+\end{figure}
+
 \textbf{One order for the whole field.} Local decisions need not be mutually
 consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
 $A$, which no assignment of heights satisfies. Each decided crossing therefore
 contributes a directed edge weighted by $\lvert s\rvert$, the strength of its
-own evidence, and within each connected component of the crossing graph one
+own evidence (Figure~\ref{fig:depth-order}), and within each connected
+component of the crossing graph one
 total order over its strands is derived so as to maximise the total
-satisfied weight -- the minimum-weight feedback arc set objective, attained
-exactly only for components small enough to search and approached greedily
-above that size. Every relation is then re-read from that order, which is
+satisfied weight, which is the same as reversing the lightest set of
+relations that leaves no contradiction behind. That is the minimum-weight
+feedback arc set objective, and it is attained exactly only for components
+small enough to search, larger ones being approached greedily. Every relation is then re-read from that order, which is
 re-derived for the component as a whole rather than only where relations
 conflict, so a relation that nothing contradicts can come back reversed too;
 the relations the order disagrees with are flipped rather than discarded, and
@@ -384,6 +419,26 @@ related by no evidence at all and
 their order is a stated tie-break, not a measurement.
 \suppdepthstage{} gives the sampling geometry, the score in full, the
 measurement that replaced an earlier two-channel rule with it, and the solver.
+
+%  [!ht] for the reason given at Figure~1: this float belongs with the
+%  paragraph above it, not at the top of whatever page it lands on.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_depth_order.pdf}
+    \caption{Why the order is solved for a whole component rather than one
+    crossing at a time, on a contradiction the stage met on a development
+    scene. \textbf{(a)}~Four strands and the four
+    calls the local evidence made at their crossings. \textbf{(b)}~Those calls
+    as a graph: each arrow points from the strand called upper to the one
+    called lower, and following them returns to where it started, so no
+    stack of heights satisfies all four. \textbf{(c)}~The order that satisfies
+    the most evidence by weight keeps the two heaviest calls and reverses
+    the two lightest, including the weakest at $0.95$. The reversals are
+    recorded, not discarded. Layer numbers are not shown: a strand's layer
+    follows from its whole component, and these four sit in a scene of
+    seven.}
+    \label{fig:depth-order}
+\end{figure}
 
 \textbf{Layers and height.} The corrected relations form a directed acyclic
 graph whose longest path fixes the smallest number of layers consistent with
@@ -409,55 +464,50 @@ reads neither the reference nor any prediction, so every method compared is cut
 into the same pieces; each fragment then takes a reference and a predicted
 identity by one rule applied to both sides alike, and the score counts the
 pairs of fragments the prediction groups as the reference does.
+
+%  [!ht] for the reason given at Figure~1: the panel row is only useful
+%  beside the paragraph that defines what it is scoring.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_f1_example.pdf}
+    \caption{What the endpoint scores, on the smallest case that has a
+    crossing. Two strands cross; the scorer removes a neighbourhood of the
+    junction (red) and keeps the four arms it separates, then asks of each of
+    the six pairs of arms whether the grouping joins it, or leaves it apart,
+    as the reference does. \textbf{(a)}~is the reference pairing.
+    \textbf{(b)}~leaves one strand unlinked, a split, which costs recall
+    alone. \textbf{(c)}~merges both strands into one instance, which costs
+    precision alone. \textbf{(d)}~pairs the arms the wrong way round and
+    scores zero, having got no pair right. \textbf{(e)}~emits every arm
+    separately, which makes no pair at all, so precision has no denominator
+    and $\Fone{}$ is undefined rather than zero -- one reason the adjusted
+    Rand index and variation of information are reported beside it. Every
+    value is computed by the scorer of \suppmeasures{}, not worked out by
+    hand.}
+    \label{fig:f1-example}
+\end{figure}
+
 \suppmeasures{} gives the construction and the assignment rule in
-full. Two points bear on the interpretation. The scorer shares two constants
-with the method: both prune skeleton spurs of at most 3\,px, and the
-scorer's 6\,px minimum fragment length coincides with the length below which
-PLECTA omits an isolated component, so endpoint and method rest on a shared
-preprocessing assumption rather than independent ones, and a prespecified
-one-at-a-time sweep of the four constants is reported in
-\suppmeasures{}. And because junction pixels are deleted before
+full. Because junction pixels are deleted before
 fragments are labelled, the measure cannot see whether an emitted crossing
 pixel is given one owner or two, only whether the arms meeting there are
 grouped as the reference groups them;
 Section~\ref{sec:res-overlap} separates the two.
 
-Several measures accompany it, and the reason for carrying more than one is a
-single distinction: \emph{pairwise scores relationships between pieces,
-detection scores the existence of objects}. A strand delivered in $n$ pieces
-contributes $\binom{n}{2}$ pairs but one object, so pairwise \Fone{} is
-quadratic in fragmentation and a broken mask is charged many times over for one
-missed join, while object detection is blind to an arm swap at a crossing,
-scoring an inverted reconstruction 1.000 where pairwise scores 0.000; and
-neither states how many crossings were solved. So the adjusted Rand index and
-variation of information \citep{hubert1985comparing,meila2007comparing} are
-quoted beside the pairwise score, detection \Fone{} beside them, join \Fone{}
-where two mask sources fragment differently, and reference-instance recovery to
-weight every strand equally rather than by its pair count. Crossing Fidelity,
-the fraction of reference crossings at which the predicted grouping of the
-incident arms matches the reference partition exactly, says how many
-crossings were solved, and is an in-house diagnostic rather than an established
-metric, in the tradition of measures that score correctness at branch points
-rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}; it is
-always printed beside its own all-unpaired baseline, the fidelity of the
-deterministic do-nothing policy that leaves every arm unpaired. The input masks themselves, as distinct from the reconstructions, are
-characterised by the tolerant completeness/correctness/quality triple standard
-for thin structures. \suppmeasures{} defines each measure in full,
-with its equation, what it rewards and what it cannot see; every one is quoted
-with the others rather than alone.
+No one measure is quoted alone, because each is blind to something another
+sees: pairwise \Fone{} scores relationships between pieces and is quadratic in
+fragmentation, while object detection scores existence and cannot see an arm
+swap at a crossing, which it rates 1.000 where pairwise scores 0.000. The
+adjusted Rand index and variation of information
+\citep{hubert1985comparing,meila2007comparing} are therefore quoted beside the
+pairwise score, with detection \Fone{}, join \Fone{}, reference-instance
+recovery, Crossing Fidelity, and for the input masks the tolerant
+completeness/correctness/quality triple standard for thin structures.
+\suppmeasures{} defines each in full, with its equation, what it rewards and
+what it cannot see.
 
-\subsubsection*{Statistical analysis}
-
-Held-out means and density strata are accompanied by 95\% nonparametric
-bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
-stratification by density; the clean-minus-degraded analysis resamples paired
-scene differences within density. Per-coverage points in the comparison figures
-are plain means of ten scenes with no interval drawn and none claimed. The real
-SEM work is exploratory, \PlectaRealFieldCount{} fields, and no inference is
-made from it; the inferential unit there is the field, and the
-\PlectaRealCrossingTotal{} reference crossings entering the crossing measures
-are a count pooled over six condition-specific evaluations of the three
-fields, not a sample size.
-Active-component ablations are one-at-a-time development experiments on all
-\PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
-set.
+%  The statistical apparatus moved to the supplement on 2026-08-26: it is
+%  procedure, not method, and Section~3 quotes intervals often enough that
+%  a reader who wants the construction will look for it deliberately.
+\suppmeasures{} states the interval construction, the resampling unit and
+the cases where no inference is drawn.

@@ -123,7 +123,8 @@ skeleton and a node's arms are the fragments 8-adjacent to it. Only nodes whose
 arms carry at least two distinct reference strands are scored, since a node
 where every arm belongs to one strand is a skeletonisation artefact and
 scoring it would reward doing nothing. It is an in-house diagnostic, not an
-established metric. Blind spots, both of which govern its use: it is far less
+established metric, though it follows measures that score correctness at
+branch points rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}. Blind spots, both of which govern its use: it is far less
 discriminative than the pairwise score, so it says what was solved and is never
 a ranking axis; and crossings carry no information about \emph{gaps}, so it is
 silent on the cost the pairwise score pays for bridging them. Sharing its
@@ -213,6 +214,22 @@ against it. The check is cheap and it is not redundant: it caught a defect that
 the completeness, correctness and quality triple all passed, because those
 characterise a mask and this characterises the identities carried on it.
 
+
+\subsection{Statistical analysis}
+
+Held-out means and density strata are accompanied by 95\% nonparametric
+bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
+stratification by density; the clean-minus-degraded analysis resamples paired
+scene differences within density. Per-coverage points in the comparison figures
+are plain means of ten scenes with no interval drawn and none claimed. The real
+SEM work is exploratory, \PlectaRealFieldCount{} fields, and no inference is
+made from it; the inferential unit there is the field, and the
+\PlectaRealCrossingTotal{} reference crossings entering the crossing measures
+are a count pooled over six condition-specific evaluations of the three
+fields, not a sample size.
+Active-component ablations are one-at-a-time development experiments on all
+\PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
+set.
 \section{Comparator configuration}
 \label{app:comparators}
 
