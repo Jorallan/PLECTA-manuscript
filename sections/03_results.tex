@@ -85,28 +85,25 @@ irregularities therefore caused a small resolved loss under this generator.
 \label{sec:res-ablation}
 
 Everything here is measured on the development scenes and none of it reuses
-the held-out set. Two controls vary one part of PLECTA against the fixed
-configuration, and the component ablations remove one part at a time.
+the held-out set. Two controls replace part or all of the linker, and the
+component ablations remove one component at a time.
 
-\textbf{Two greedy controls, one inside the other.} The first replaces the
-linker entirely: it skeletonises the same mask and greedily accepts the
+\textbf{Two controls, differing in how much they replace.} The first replaces
+the linker entirely: it skeletonises the same mask and greedily accepts the
 lowest-turning-angle pairing between branch ends inside distance and
 turning-angle gates fixed by a development sweep, which is the pairing
 principle shared by SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. PLECTA
-leads it by \PlectaGreedySweptDeltaFOne{} \Fone{}
-[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
-the \PlectaGreedySceneCount{} scenes, and by
-\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
-\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
-artefact of mask degradation. That margin covers every difference at once, so
-the second arm varies one thing only: it keeps the graph, the cost, the
-admissibility gate and the round schedule, and replaces just the per-junction
-maximum-weight matching by greedy cheapest-first acceptance. Its failure is
-division rather than merging, with variation-of-information split rising at
-unchanged merge and \PlectaMatcherInstanceExcess{}\,\% more strands emitted, and
-the relative loss grows with node degree while peaking in absolute terms at
-degree four, where most crossings lie. That arm runs at parameters selected
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. Its
+margin therefore covers every difference between the two methods at once and
+attributes none of them. The second changes one rule: the graph, the cost, the
+admissibility gate and the round schedule all stand, and only the exact
+maximum-weight matching at a node gives way to greedy cheapest-first
+acceptance, so its margin is the exact matching alone. What separates them is
+not where the greed acts, since junction edges at different nodes never share
+a stub and greedy within a node is greedy over the image, but how much of
+PLECTA is still running. Both losses are in
+Table~\ref{tab:plecta-ablation}, each against PLECTA on its own scenes, and the
+greedy matcher fails by division rather than merging, at parameters selected
 with the exact matcher in the loop, a bias in the exact matcher's favour.
 
 The three largest losses were, in order, the junction chord-turn term, gap
@@ -117,10 +114,10 @@ values, not held-out effect estimates.
 
 \begin{table}[tbp]
     \centering
-    \caption{One-at-a-time component ablations, \PlectaDevelopmentSceneCount{}
-    development scenes; $\Delta F_1$ is the loss against the fixed
-    configuration. The matcher row is a formulation control rather than a
-    component, measured on its own \PlectaMatcherSceneCount{} scenes.}
+    \caption{Component ablations and the two controls, on development scenes.
+    The three blocks use different scene sets, so $n$ is given per row and
+    each $\Delta F_1$ is against PLECTA on that row's own scenes; the column is
+    not comparable across rows of different $n$.}
     \label{tab:plecta-ablation}
     \small
     \input{results/plecta_ablation_table}
