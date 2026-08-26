@@ -128,9 +128,8 @@ Four published methods are scored beside PLECTA on identical masks, through
 the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
 generated after every configuration was fixed. DNAi \citep{playout2026dnai},
 GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
-their own released sources. The fourth, \citet{basu2015extraction}, never
-released an implementation and is reimplemented here; it is marked with a star
-wherever it appears, and what that mark costs the comparison is stated below.
+their own released sources. For the fourth, \citet{basu2015extraction}, no
+implementation was found, and it is reimplemented here.
 
 Every comparator was gated on parity before any of its numbers was read: none
 was believed until the conversion reproduced PLECTA's stored \Fone{}, adjusted Rand index
@@ -147,8 +146,8 @@ one and how each method fails.
     and one scorer, ordered by \Fone{}. $n=\PlectaGreedySceneCount{}$ scenes,
     GraFT over the \PlectaGraFTSceneCount{} it completed. Variation of
     information in bits, lower better; higher better for the rest.\\[2pt]
-    $^{*}$\,our reimplementation; no implementation of that paper was ever
-    released. \suppcomparators{} details it, and the timings that column cannot
+    $^{*}$\,our reimplementation; no implementation of that paper was found.
+    \suppcomparators{} details it, and the timings that column cannot
     support.}
     \label{tab:plecta-comparators}
     \small
@@ -192,7 +191,7 @@ attempted.
     (Section~\ref{sec:mm-metrics}). The two disagree where a method
     fragments, since only the first is quadratic in fragmentation. Crossing
     Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes, no
-    interval claimed. $^{*}$\,our reimplementation, never released.}
+    interval claimed. $^{*}$\,our reimplementation; none was found.}
   \label{fig:metric-panels}
 \end{figure}
 
@@ -212,7 +211,7 @@ margin is therefore coverage of cases the comparator cannot attempt, and
 \textbf{Curvature-priced recombination, reimplemented.} The one prior method
 that both optimises over a neighbourhood and prices its joins on curvature is
 that of \citet{basu2015extraction}, so it is the closest structural relative
-PLECTA's junction matching has. Its software was never released, so its
+PLECTA's junction matching has. No implementation of it was found, so its
 recombination stage is reimplemented here and reported as a floor, exactly as
 the greedy rule is, never as an externally run result. \suppcomparators{}
 gives what was implemented and what was left out.

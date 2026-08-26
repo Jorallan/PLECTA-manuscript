@@ -30,7 +30,7 @@ turn.  The columns keep their meaning down the rows, so a1 and b1 are the same
 measure on the same scenes from two mask conditions.
 
 **Five methods, and one of them is qualified.**  Basu is our reimplementation
-of Stage B -- no implementation of that paper has ever been released -- which
+of Stage B, no implementation of that paper having been found, which
 is the star.  SIFNE carried a dagger here until 2026-08-26, for being run at
 parameters we selected on development scenes; it was dropped because every
 comparator was translated on those same scenes, so the mark implied a

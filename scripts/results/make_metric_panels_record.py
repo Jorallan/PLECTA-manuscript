@@ -26,7 +26,7 @@ the committed extract the figure generator plots.
 **Five methods, and two of them are qualified.**  SIFNE is run from its own
 released source, but at parameters we selected on development scenes -- the
 dagger in ``tab:plecta-comparators``.  Basu is OUR REIMPLEMENTATION of Stage B,
-because no implementation of that paper has ever been released -- the star.
+because no implementation of that paper was found -- the star.
 Both qualifications travel with the curves; a legend that drops them claims two
 external results the study does not have.
 
@@ -362,7 +362,7 @@ def main() -> int:
                                   "scenes, marked with a dagger in the "
                                   "manuscript; Basu is OUR REIMPLEMENTATION "
                                   "of Stage B, because no implementation of "
-                                  "that paper was ever released, marked with "
+                                  "that paper was found, marked with "
                                   "a star. Neither qualification may be "
                                   "dropped when these curves are shown"),
         "source_record": {
