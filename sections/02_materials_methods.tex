@@ -480,7 +480,7 @@ pairs of fragments the prediction groups as the reference does.
     precision alone. \textbf{(d)}~pairs the arms the wrong way round and
     scores zero, having got no pair right. \textbf{(e)}~emits every arm
     separately, which makes no pair at all, so precision has no denominator
-    and $\Fone{}$ is undefined rather than zero -- one reason the adjusted
+    and $\Fone{}$ is undefined rather than zero, which is one reason the adjusted
     Rand index and variation of information are reported beside it. Every
     value is computed by the scorer of \suppmeasures{}, not worked out by
     hand.}
@@ -502,8 +502,9 @@ adjusted Rand index and variation of information
 \citep{hubert1985comparing,meila2007comparing} are therefore quoted beside the
 pairwise score, with detection \Fone{}, reference-instance recovery and
 Crossing Fidelity. The input masks themselves are characterised
-by a tolerant recall, precision and Jaccard index -- completeness, correctness
-and quality in the thin-structure literature -- matched within a tolerance
+by a tolerant recall, precision and Jaccard index, called completeness,
+correctness and quality in the thin-structure literature, matched within a
+tolerance
 rather than pixel for pixel, because two skeletonisations of one strand
 seldom fall on the same pixels.
 \suppmeasures{} defines each in full, with its equation, what it rewards and

@@ -88,48 +88,32 @@ Everything here is measured on the development scenes and none of it reuses
 the held-out set. Two controls vary one part of PLECTA against the fixed
 configuration, and the component ablations remove one part at a time.
 
-\textbf{Greedy continuation.} The baseline skeletonises the same mask and
-greedily accepts the lowest-turning-angle pairing between branch ends inside
-distance and turning-angle gates fixed by a development sweep. It is ours --
-not a reimplementation of any paper but of the pairing principle shared by
-SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
-is reported as a transparent floor, never as an external result. PLECTA leads
-it by \PlectaGreedySweptDeltaFOne{} \Fone{}
+\textbf{Two greedy controls, one inside the other.} The first replaces the
+linker entirely: it skeletonises the same mask and greedily accepts the
+lowest-turning-angle pairing between branch ends inside distance and
+turning-angle gates fixed by a development sweep, which is the pairing
+principle shared by SIFNE, GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. PLECTA
+leads it by \PlectaGreedySweptDeltaFOne{} \Fone{}
 [\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
 the \PlectaGreedySceneCount{} scenes, and by
 \PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
 \PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
-artefact of mask degradation.
+artefact of mask degradation. That margin covers every difference at once, so
+the second arm varies one thing only: it keeps the graph, the cost, the
+admissibility gate and the round schedule, and replaces just the per-junction
+maximum-weight matching by greedy cheapest-first acceptance. Its failure is
+division rather than merging, with variation-of-information split rising at
+unchanged merge and \PlectaMatcherInstanceExcess{}\,\% more strands emitted, and
+the relative loss grows with node degree while peaking in absolute terms at
+degree four, where most crossings lie. That arm runs at parameters selected
+with the exact matcher in the loop, a bias in the exact matcher's favour.
 
-\textbf{Exact against greedy matching, matcher only.} That baseline replaces
-the whole linker; a second arm isolates the claim, keeping the graph, cost,
-admissibility gate and round schedule and replacing only the per-junction
-maximum-weight matching by greedy cheapest-first acceptance. Exactness was
-worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
-\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
-scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
-\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
-\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
-merging, with variation-of-information split rising
-\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
-merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
-resolved exactly falling \PlectaMatcherExactJunctionRate{} to
-\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
-degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
-\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
-peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
-lie; and the greedy arm runs at parameters selected with the exact matcher in
-the loop, a bias in that matcher's favour.
-
-The three largest losses relative to the evaluated configuration
-(Table~\ref{tab:plecta-ablation}) were, in
-order, the junction chord-turn term
-(\PlectaAblationTangentTermOnlyDeltaFOne{}), gap matching
-(\PlectaAblationNoGapBridgingDeltaFOne{}) and connector-based junction-cluster
-consolidation (\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}); every other
-component, chain-extended frames and the round schedule included, mattered
-less. These are development values, not held-out effect estimates.
+The three largest losses were, in order, the junction chord-turn term, gap
+matching and connector-based junction-cluster consolidation
+(Table~\ref{tab:plecta-ablation}); every other component, chain-extended
+frames and the round schedule included, mattered less. These are development
+values, not held-out effect estimates.
 
 \begin{table}[tbp]
     \centering
@@ -146,16 +130,7 @@ The core output is a grouping, not a set of connected curves: accepted gap
 links establish identity but are not painted, so on the development set
 \PlectaCoreDisconnected{} of core strands arrive as more than one disjoint
 pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
-that assumes one connected curve per strand must account for this. The
-optional ribbon rendering of Section~\ref{sec:mm-stage4}, at its defaults,
-scored development \Fone{}=\PlectaStageFourFOne{}, a change of
-\PlectaStageFourDeltaFOne{}, and reduced those fractions to
-\PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}, so rendering buys
-connectivity at a small cost in the identity score without changing chain
-membership. Enabling the separate 0.6 silhouette-absorption rule reduced
-\Fone{} further to \PlectaStageFourAbsorbFOne{}, and because absorption can
-merge identities it remained disabled. None of these topology measurements
-validates apparent width.
+that assumes one connected curve per strand must account for this.
 
 \subsection{Published methods on identical masks}
 \label{sec:res-comparators}
@@ -194,8 +169,8 @@ one and how each method fails.
 \end{table}
 
 \textbf{The three released methods.} Each has a front end that precedes the
-stage assigning identity -- DNAi a segmentation network, GraFT a Frangi and
-Otsu ridge detector built for greyscale, SIFNE a thinning step -- and in each
+stage assigning identity (DNAi a segmentation network, GraFT a Frangi and
+Otsu ridge detector built for greyscale, SIFNE a thinning step), and in each
 case the mask is injected where that stage begins, so grouping is not
 confounded with segmentation and every stage that assigns identity is their
 own code. Each substitution favours the comparator: run end to end on the
@@ -382,8 +357,8 @@ median, so the rows are typical rather than selected.
 The stages above reconstruct strands in projection. A crossing pixel is
 assigned to both strands that own it, but nothing so far says which of the
 two lies on top. The optional depth stage answers that from the greyscale
-alone -- the continuity of each strand's own brightness across the crossing,
-weighed against the noise measured there -- then imposes one
+alone, the continuity of each strand's own brightness across the crossing
+weighed against the noise measured there, then imposes one
 globally consistent vertical order and places each strand at a height at
 which nothing interpenetrates. It changes no 2-D strand.
 
@@ -414,7 +389,7 @@ The decomposition is the result. Order accuracy over decided crossings spans
 (\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
 and both densities, while accuracy over all crossings spans more than three
 times that, \PlectaDepthAllSpan{}
-(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
+(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}), and it
 falls by the amount the crossing recovery rate falls,
 \PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}: at the denser coverage the
 reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all crossings,
@@ -484,7 +459,7 @@ rendered image cannot show. The table carries that measurement.}
 \caption{The same comparison on a real CNT SEM field, reconstructed from the axis
 of annotator~A's annotation. \textbf{Nothing here is scored.} No depth ground
 truth exists for real
-SEM -- the annotation records which pixels belong to which strand, not which
+SEM, because the annotation records which pixels belong to which strand, not which
 strand lies on top, so this shows the stage runs end to end on real
 data and re-renders to something recognisable, not that the depths are right.
 The forward model's appearance parameters are fitted to this micrograph, so the

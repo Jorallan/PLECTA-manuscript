@@ -175,8 +175,8 @@ The evidence at the crossing is the score
        {\max\!\bigl(\lvert m_i-m_j\rvert,\;2\hat\sigma\bigr)},
   \label{eq:depth-score}
 \end{equation}
-whose sign names the upper strand -- the one whose flanks the core resembles
-more closely -- and whose magnitude $\lvert s\rvert$ is the weight that decision
+whose sign names the upper strand, the one whose flanks the core resembles
+more closely, and whose magnitude $\lvert s\rvert$ is the weight that decision
 carries. A crossing abstains when
 $\lvert s\rvert<\PlectaParamAbstainScore{}$; the threshold is set directly in
 score units rather than as a band around a probability. Here
@@ -228,7 +228,7 @@ inside the \emph{other} strand's stroke, so the quantity is contaminated
 exactly where it would have
 had to be read. The channel is removed, and with it the gradient image it
 required, the two channel weights that combined it with intensity, and the
-logistic -- with one channel there is nothing to combine, and $s$ is already the
+logistic, since with one channel there is nothing to combine and $s$ is already the
 decision variable.
 
 \subsubsection*{What the replacement is worth}
@@ -245,7 +245,7 @@ those two values the set is not held out. Neither was invented here --
 fallback already computed, and both values sit on a plateau rather than a
 peak, a flat core being no worse than oracle per-rod radii anywhere over
 6--14\,px and the accuracy unchanged across a band of thresholds around
-\PlectaParamAbstainScore{} -- so nothing below turns on either value, but
+\PlectaParamAbstainScore{}, so nothing below turns on either value, but
 the comparison is in-sample with respect to them.
 
 At matched coverage, meaning both rules made to answer as often as the shipped
@@ -299,7 +299,7 @@ it, by dynamic programming over subsets; larger ones get a greedy order
 refined with adjacent swaps, which carries no optimality guarantee. Because
 the order is re-derived for the component as a whole rather than only where
 relations conflict, a greedily ordered component can return a relation
-reversed that nothing contradicts, which an exact solution never does -- a
+reversed that nothing contradicts, which an exact solution never does; a
 reversal lying on no cycle only loses weight. Fed ground-truth crossings with
 their true directions, input that is acyclic by construction and that an exact
 solver would leave untouched, the pass still reverses 24 relations across the
