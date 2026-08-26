@@ -82,11 +82,9 @@ Four published methods are scored beside PLECTA on identical masks, through
 the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
 generated after every configuration was fixed. DNAi \citep{playout2026dnai},
 GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
-their own released sources; SIFNE is marked with a dagger because one shipped
-setting is degenerate at these densities and was re-selected on development
-scenes, as DNAi's was. The fourth, \citet{basu2015extraction}, never released
-an implementation and is reimplemented here; it is marked with a star wherever
-it appears, and what each mark costs the comparison is stated below.
+their own released sources. The fourth, \citet{basu2015extraction}, never
+released an implementation and is reimplemented here; it is marked with a star
+wherever it appears, and what that mark costs the comparison is stated below.
 
 Every comparator was gated on parity before any of its numbers was read: none
 was believed until the conversion reproduced PLECTA's stored \Fone{}, adjusted Rand index
@@ -103,9 +101,8 @@ one and how each method fails.
     and one scorer, ordered by \Fone{}. $n=\PlectaGreedySceneCount{}$ scenes,
     GraFT over the \PlectaGraFTSceneCount{} it completed. Variation of
     information in bits, lower better; higher better for the rest.\\[2pt]
-    $^{\dagger}$\,released source, parameters selected by us on development
-    scenes.\quad $^{*}$\,our reimplementation; none was ever released.
-    \suppcomparators{} details both, and the timings those two columns cannot
+    $^{*}$\,our reimplementation; no implementation of that paper was ever
+    released. \suppcomparators{} details it, and the timings that column cannot
     support.}
     \label{tab:plecta-comparators}
     \small
@@ -135,8 +132,7 @@ the gap widening monotonically with density
     (Section~\ref{sec:mm-metrics}). The two disagree where a method
     fragments, since only the first is quadratic in fragmentation. Crossing
     Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes, no
-    interval claimed. $^{\dagger}$\,released source, our development-selected
-    parameters; $^{*}$\,our reimplementation, never released.}
+    interval claimed. $^{*}$\,our reimplementation, never released.}
   \label{fig:metric-panels}
 \end{figure}
 
@@ -575,9 +571,12 @@ tolerance moves detection \Fone{} by 0.000, against
 \PlectaDetectionBFiveEightOneOneZeroUNetStrict{} rising to
 \PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} on B58\_110's nnU-Net axis.
 Because the pairwise score is quadratic in fragments, a strand the nnU-Net
-mask breaks into several pieces carries every one of its pairs; join \Fone{},
-which counts one decision per pair of fragment ends the mask brings within
-reach, reports \PlectaJoinBFiveEightOneOneZeroManualDecisions{} decisions on
+mask breaks into several pieces carries every one of its pairs. Join \Fone{}
+removes that weighting by scoring one decision per pair of fragment ends the
+mask brings within reach, rather than every pair of fragments the strand has;
+it is defined in \suppmeasures{} with the rest, and quoted only here, where a
+difference in fragmentation is what is being read. It reports
+\PlectaJoinBFiveEightOneOneZeroManualDecisions{} decisions on
 B58\_110's manual axis against
 \PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one. It narrows
 the gap without closing it, and its decomposition says what the rest is: a join

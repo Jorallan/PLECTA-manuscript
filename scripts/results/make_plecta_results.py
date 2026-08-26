@@ -1122,13 +1122,17 @@ def comparator_table(audit: dict, runtime: dict | None = None,
     #  ablation table, not in a table whose purpose is to compare against other
     #  people's published work.
     #
-    #  Two columns carry a marker rather than a position. Basu* is OUR
+    #  One column carries a marker rather than a position: Basu* is OUR
     #  reimplementation, because no implementation of that paper was ever
-    #  released; SIFNE-dagger is externally run but at parameters we selected on
-    #  development scenes, its own being degenerate at these densities. Sorting
-    #  by score puts the reimplementation above two externally run methods, so
-    #  the markers and the caption carry that qualification and the position
-    #  does not.
+    #  released. Sorting by score puts it above externally run methods, so the
+    #  marker and the caption carry that qualification and the position does
+    #  not.
+    #
+    #  SIFNE carried a dagger until 2026-08-26, for being externally run at
+    #  parameters we selected on development scenes. That was dropped because
+    #  it did not discriminate: every comparator here was translated on those
+    #  same scenes, and DNAi likewise had a degenerate shipped setting
+    #  re-selected, so the mark implied a distinction that does not exist.
     #  Source records: results/plecta_basu_reimplementation.json and
     #  results/plecta_sifne_comparison.json.
     entries: list[dict] = [
@@ -1137,7 +1141,7 @@ def comparator_table(audit: dict, runtime: dict | None = None,
         {"key": "graft", "label": "GraFT", "src": "audit"},
     ]
     if sifne:
-        entries.append({"key": "sifne", "label": r"SIFNE$^{\dagger}$",
+        entries.append({"key": "sifne", "label": "SIFNE",
                         "src": "record", "rec": sifne})
     if basu:
         entries.append({"key": "basu", "label": r"Basu$^{*}$",

@@ -29,11 +29,12 @@ mask degrades -- inside one frame and one column, rather than across a page
 turn.  The columns keep their meaning down the rows, so a1 and b1 are the same
 measure on the same scenes from two mask conditions.
 
-**Five methods, and two of them are qualified.**  SIFNE is run from its own
-released source but at parameters we selected on development scenes, which is
-the dagger it carries in ``tab:plecta-comparators`` and here.  Basu is our
-reimplementation of Stage B -- no implementation of that paper has ever been
-released -- which is the star.  The legend is ordered by overall F1,
+**Five methods, and one of them is qualified.**  Basu is our reimplementation
+of Stage B -- no implementation of that paper has ever been released -- which
+is the star.  SIFNE carried a dagger here until 2026-08-26, for being run at
+parameters we selected on development scenes; it was dropped because every
+comparator was translated on those same scenes, so the mark implied a
+distinction that does not exist.  The legend is ordered by overall F1,
 descending, the same order the comparator table prints.
 
 Variation of information is the fourth measure the paper reports and it does
@@ -72,11 +73,11 @@ REPO = Path(__file__).resolve().parents[2]
 
 #: The figure contains no filaments and carries its own legend, so BLUE and
 #: ORANGE are plain categorical hues here.  GREEN keeps its one fixed meaning.
-#: Ordered by overall F1, descending, as the comparator table is; the dagger
-#: and the star are that table's own marks and mean the same thing here.
+#: Ordered by overall F1, descending, as the comparator table is; the star is
+#: that table's own mark and means the same thing here.
 SERIES = (
     ("plecta", "PLECTA", GREEN, "o"),
-    ("sifne", r"SIFNE$^{\dagger}$", VIOLET, "s"),
+    ("sifne", "SIFNE", VIOLET, "s"),
     ("basu", r"Basu$^{*}$", ROSE, "v"),
     ("graft", "GraFT", BLUE, "^"),
     ("dnai", "DNAi", ORANGE, "D"),
