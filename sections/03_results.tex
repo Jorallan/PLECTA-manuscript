@@ -131,10 +131,6 @@ GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
 their own released sources. For the fourth, \citet{basu2015extraction}, no
 implementation was found, and it is reimplemented here.
 
-Each comparator's parameter translation was selected on the same
-\PlectaDevelopmentSceneCount{} development scenes PLECTA was configured on, and
-every adaptation was checked and found to favour the comparator;
-\suppcomparators{} records each one and how each method fails.
 
 \begin{table}[tbp]
     \centering
@@ -158,10 +154,10 @@ confounded with segmentation and every stage that assigns identity is their
 own code. Each substitution favours the comparator: run end to end on the
 greyscale instead, GraFT scores \PlectaGraFTNativeFOne{}, its segmentation
 recovering only a third to a half of the reference skeleton. Each was also run
-at a development-selected configuration rather than its defaults, worth
-\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE, and both are
-reported. Tuned, the paired difference favours PLECTA by
+at a configuration selected on the same \PlectaDevelopmentSceneCount{}
+development scenes PLECTA was configured on, rather than at its own defaults,
+which is worth \PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE; both are reported. Tuned, the paired difference favours PLECTA by
 \PlectaDNAiDeltaFOne{} [\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}]
 over DNAi across \PlectaDNAiSceneCount{} scenes and by
 \PlectaGraFTDeltaFOne{} [\PlectaGraFTDeltaCILow{},
