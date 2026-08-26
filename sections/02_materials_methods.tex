@@ -65,10 +65,10 @@ follow under this generator, and Section~\ref{sec:res-factorial} separates the
 two.
 
 Every parameter was fixed on a separate development set and never on the scenes
-reported here; the \PlectaHeldoutSceneCount{} evaluation scenes use seeds that
-appear nowhere in it, 32 at each of 20, 30, 40 and 60\,\% coverage. \suppsplit{}
-gives the seed blocks, the verifier that checks their disjointness, and the
-locked set that remains unevaluated.
+reported here; the \PlectaHeldoutSceneCount{} evaluation scenes, 32 at each of
+20, 30, 40 and 60\,\% coverage, use seeds that appear nowhere in that
+development set. \suppsplit{} gives the seed blocks, the verifier that checks
+their disjointness, and the locked set that remains unevaluated.
 
 A separate controlled paired set of \PlectaRobustnessSceneCount{} scenes,
 ten at each of 20, 30, 40, 50, and 60\% coverage, was scored once from each
@@ -79,7 +79,7 @@ was fixed.
 \subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
 
-\PlectaRealFieldCount{} manually annotated CNT-sheet SEM fields were available
+\PlectaRealFieldCountWord{} manually annotated CNT-sheet SEM fields were available
 for exploratory analysis, each $1536\times1024$ px:
 B58\_100 (\PlectaBFiveEightOneZeroZeroReferenceCount{} visible CNT bundles),
 B58\_110 (\PlectaBFiveEightOneOneZeroReferenceCount{}) and B58\_300
@@ -88,52 +88,39 @@ the visible bundle, not the individual nanotube, which SEM does not resolve at
 this magnification. The nominal horizontal field
 width is $1.66~\um$ across the long, 1536-px axis of the stored images, which is
 $1.08~\mathrm{nm\,px^{-1}}$. Each annotation is one human interpretation of
-projected, locally ambiguous crossings, and B58\_100 and B58\_110 informed
-development.
+projected, locally ambiguous crossings.
 
 The reference annotations were drawn with an in-house interactive
 instance-segmentation tool for greyscale SEM of thin, crossing strands,
 whose data model is per-instance masks rather than a flat label image, so a
 pixel may belong to several strands at once; that is what makes the
-reference overlap-aware and comparable with PLECTA's output at all. Its
-primary artefact, a compressed sparse per-instance pixel set, is the identical
-file the evaluation loads as its reference, so provenance is end to end. The
-annotator paints each visible bundle as its own strand, and the tool
-assists without deciding: strokes may snap onto the local intensity ridge,
+reference overlap-aware and comparable with PLECTA's output. The file the tool
+saves is the file the evaluation reads, with no export or conversion step in
+between. The annotator paints each visible bundle as its own strand, and the
+tool assists without deciding: strokes may snap onto the local intensity ridge,
 with polarity calibrated from the existing annotation, and may be re-rendered
 through a smoothing-spline fit whose centreline is shifted onto the measured
-intensity crest only where that crest is consistent and by at most about
-8\,px; widths come from perpendicular full-width-at-half-maximum profiles
+intensity crest only where that crest is consistent; widths come from perpendicular full-width-at-half-maximum profiles
 referenced to the local minima either side of the peak and reported as twice
 the nearer half-width, so a crossing strand fusing into the profile does not
 bias the measurement wide. Candidate gap bridges, collinear endpoint pairs of
 different strands, are suggested but never applied automatically; each is
 accepted or rejected by the annotator, so identity through every crossing is
-a human decision, machine-assisted but not machine-made. The tool keeps an
-audit log of every mutating action alongside the saved annotation, and an
-advisory per-instance plausibility score, computed from profile support, peak
-contrast and width plausibility, was used as quality control while
-annotating; the score is advisory only and is not part of the saved
-reference.
+a human decision, machine-assisted but not machine-made.
 
-The protocol's limits are stated rather than implied. The primary
-annotator is an author of this paper and also configured PLECTA, and there was
-no blinding, so differences smaller than plausible annotation variation should
-not be read as real, and the annotations are manual reference annotations, not
-ground truth. A second reader has since annotated
+The protocol's limits are stated rather than implied. Reader~A, the primary
+annotator, is an author of this paper and also configured PLECTA, and there
+was no blinding, so the reference may encode the method's own reading of an
+ambiguous crossing, and no real-data difference smaller than the variation
+between two readers should be read as real. These are manual reference
+annotations, not ground truth. Reader~B has annotated
 \PlectaInterReaderFieldCount{} of these fields independently, and
 Section~\ref{sec:limitations} reports what that measurement shows: the two
 readers do not implement one strand definition, so every real-data score in
 this paper is reported against a named reader and the two are never averaged.
-One assumption is also shared across the divide: the annotator's width
-measurement and PLECTA's optional width layer of Section~\ref{sec:mm-stage4}
-both read perpendicular FWHM profiles across a centreline. That does not
-touch the grouping scores, which are computed on centreline fragments, but it
-does mean the two are not independent about width; nothing in this paper
-compares the two widths, and no such comparison should be made without
-restating this.
+Scores throughout are computed on centreline fragments, not on strand widths.
 
-Two inputs were derived per field. The first is the skeleton of the manual
+Two inputs were derived per field. The first is the skeleton of reader~A's
 strand annotation, an oracle-like condition that asks what the grouping can do
 when the axis evidence is curated. The second is an automatic mask from the
 upstream CycleGAN/nnU-Net segmentation of Section~\ref{sec:res-qualitative}

@@ -78,29 +78,30 @@ the sweep stays well inside the stiff regime the paper claims, reaching a
 95th-percentile local bend of only \PlectaCurvinessBendHigh{}$^\circ$ over
 20\,px.
 
-The real SEM study is deliberately a case study with
-\PlectaRealFieldCount{} fields, not a population validation. Manual-derived
-masks are an oracle-like input condition: they test grouping when the axis
-evidence is curated, not automatic SEM-to-instance performance. Three fields
-cannot estimate generalisation, however closely any two of them agree. The two mask
-sources also generate different fragment universes, so their $F_1$ values
-describe performance under each input condition rather than comparing identical
-objects. More independent fields, sealed before configuration, are still
-required.
+The real SEM study is deliberately a case study with \PlectaRealFieldCount{}
+fields, not a population validation. Manual-derived masks are an oracle-like
+input condition: they test grouping when the axis evidence is curated, not
+automatic SEM-to-instance performance. \PlectaRealFieldCountWord{} fields
+cannot estimate generalisation, however closely any two of them agree. The two
+mask sources also generate different fragment universes, so their $F_1$ values
+describe performance under each input condition rather than comparing
+identical objects. More independent fields, sealed before configuration, are
+still required.
 
 Multi-reader annotation is no longer outstanding, and the result reframes the
-limitation above rather than softening it. A second reader independently
-annotated \PlectaInterReaderFieldCount{} of these fields. Judged against the
-reader whose skeleton it was given, PLECTA scores
-\PlectaInterReaderSameFLow{}--\PlectaInterReaderSameFHigh{}; judged against the
-other reader, \PlectaInterReaderCrossFLow{}--\PlectaInterReaderCrossFHigh{}.
-That collapse is not the method degrading. The two readers agree with each
-other at \PlectaInterReaderAgreeFLow{}--\PlectaInterReaderAgreeFHigh{} by the
-same measure with no method in the loop, so the cross-reader scores sit at
-roughly the ceiling human agreement allows. The disagreement is systematic and
-not noise: the second reader exports
-\PlectaInterReaderObjectRatioLow{}--\PlectaInterReaderObjectRatioHigh{} times as
-many objects, shorter, with
+limitation above rather than softening it. Reader~B independently annotated
+\PlectaInterReaderFieldCount{} of these fields. Scored against the reader
+whose skeleton it was given -- A against A, B against B -- PLECTA reaches
+\PlectaInterReaderSameFLow{}--\PlectaInterReaderSameFHigh{}; scored across, A
+against B and B against A, it reaches
+\PlectaInterReaderCrossFLow{}--\PlectaInterReaderCrossFHigh{}. That collapse
+is not the method degrading. A and B agree with each other at
+\PlectaInterReaderAgreeFLow{}--\PlectaInterReaderAgreeFHigh{} by the same
+measure with no method in the loop, so the cross-reader scores sit at roughly
+the ceiling human agreement allows. The disagreement is systematic and not
+noise: B exports
+\PlectaInterReaderObjectRatioLow{}--\PlectaInterReaderObjectRatioHigh{} times
+as many objects as A, shorter, with
 \PlectaInterReaderComponentRatioLow{}--\PlectaInterReaderComponentRatioHigh{}
 times as many components in the per-instance-skeleton union, and the
 directional variation of information is split-dominant one way and

@@ -779,8 +779,20 @@ def real_fields_macros(payload: dict) -> list[str]:
     written in, and a reader has no way to tell that from the page.
     """
     tolerance = payload["fields"][0]["axis_triple"]["reported_tolerance_px"]
+    n_fields = len(payload["fields"])
+    #  Spelled out as well as in digits, because two sentences in the
+    #  manuscript open on this count and a sentence does not begin with a
+    #  numeral.  DIGIT_WORDS covers one digit; past nine, decide how a
+    #  two-digit count should read before extending this.
+    if n_fields > 9:
+        raise ValueError(
+            f"{n_fields} annotated fields: no spelled-out form is defined "
+            "past nine, so PlectaRealFieldCountWord would be wrong")
+    word = DIGIT_WORDS[str(n_fields)]
     lines = [macro("PlectaPlacementTolerance", str(tolerance)),
-             macro("PlectaRealFieldCount", str(len(payload["fields"])))]
+             macro("PlectaRealFieldCount", str(n_fields)),
+             macro("PlectaRealFieldCountWord", word),
+             macro("PlectaRealFieldCountLower", word.lower())]
     #  PlectaRealHeldOutCount retired 2026-08-25: the manuscript no longer
     #  states which fields the upstream segmenter had seen. `unet_held_out`
     #  survives in plecta_real_fields.json, so restoring the macro is one line.
