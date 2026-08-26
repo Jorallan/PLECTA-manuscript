@@ -90,7 +90,11 @@ def main():
 
     plecta_style()
     fig = plt.figure(figsize=(FIG_W, 0.38 * FIG_W))
-    gs = fig.add_gridspec(1, 3, wspace=0.06)
+    #  Explicit margins. These panels used to be cropped to their content
+    #  at save time, which shrank the page so LaTeX scaled the figure up
+    #  and its text printed larger than every other figure in the paper.
+    gs = fig.add_gridspec(1, 3, wspace=0.06, left=0.004, right=0.996,
+                          top=0.90, bottom=0.005)
 
     result = Engine().run(Settings(
         scene_path=os.path.join(scene, INPUT_NAME),
@@ -115,7 +119,7 @@ def main():
                       z_stretch=span / reference.shape[0])
     ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
 
-    save_fig(fig, "fig_resem_synth", bbox_inches="tight")
+    save_fig(fig, "fig_resem_synth", bbox_inches=None)
     print("wrote fig_resem_synth")
     return 0
 

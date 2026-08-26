@@ -4,6 +4,13 @@
 \subsection{Reconstruction on synthetic images}
 \label{sec:res-density}
 
+PLECTA is scored first where the answer is known exactly: the held-out
+synthetic scenes, under the measures of Section~\ref{sec:mm-metrics} and
+against the overlap-aware reference the generator recorded when it drew them.
+Table~\ref{tab:plecta-heldout} reports every measure overall and by density
+stratum; the paragraphs below take the headline score, how it moves with
+density, and what that density label does and does not mean.
+
 Mean common-fragment pairwise \Fone{} over the
 \PlectaHeldoutSceneCount{} held-out scenes was
 \PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
