@@ -468,13 +468,14 @@ a generator draws a mask, a CycleGAN translates it into an SEM-like image so
 that image and mask are paired without an annotator, an nnU-Net trained on
 those pairs segments a real micrograph, and its output is a binary axis mask
 \citep{ruehle2021workflow,allan2026cntsem}. Pipeline~B is PLECTA, and it is the
-only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated CNT-sheet
-fields separate the two: PLECTA is run once on the skeleton of reader~A's
-annotation and once on the nnU-Net axis, with reader~A's annotation as the
-reference in both cases, so the two conditions differ only in the mask. The first is an
-oracle-like input condition rather than an end-to-end result, asking what the
-grouping can do when the axis evidence is curated; only the second says what an
-automatic mask allows. Figures~\ref{fig:real-sem}
+only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated
+CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
+annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
+annotation as the reference in both cases, so the two conditions differ only
+in the mask. The first is an oracle-like input condition rather than an
+end-to-end result, asking what the grouping can do when the axis evidence is
+curated; only the second says what an automatic mask allows.
+Figures~\ref{fig:real-sem}
 and~\ref{fig:real-sem-axis} show both on one field, at width and as the
 centrelines the scores are computed on.
 
@@ -482,7 +483,8 @@ centrelines the scores are computed on.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
     \caption{The two input axes of field B58\_110, drawn over the micrograph
-    they were read from: \textbf{(a)}~the skeleton of reader~A's annotation and
+    they were read from: \textbf{(a)}~the skeleton of annotator~A's annotation
+    and
     \textbf{(b)}~the output of Pipeline~A. These are the binary masks
     themselves, before any reconstruction, so there is nothing to tell apart
     within a panel and one colour is sufficient; the comparison the figure
@@ -501,7 +503,7 @@ centrelines the scores are computed on.
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
     \caption{Reconstructed bundles on two of the annotated SEM fields, one
     field per row.
-    \textbf{(a)}~reader~A's annotation; \textbf{(b)}~PLECTA from the
+    \textbf{(a)}~annotator~A's annotation; \textbf{(b)}~PLECTA from the
     manual-derived axis; \textbf{(c)}~PLECTA from the nnU-Net axis of
     Figure~\ref{fig:real-sem-axis}b, the same method and the same parameters,
     differing only in the mask. All three are drawn at width so that they are
@@ -697,8 +699,9 @@ rendered image cannot show. The table carries that measurement.}
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same comparison on a real CNT SEM field, reconstructed from the
-reader~A's annotation. \textbf{Nothing here is scored.} No depth ground truth exists for real
+\caption{The same comparison on a real CNT SEM field, reconstructed from the axis
+of annotator~A's annotation. \textbf{Nothing here is scored.} No depth ground
+truth exists for real
 SEM -- the annotation records which pixels belong to which strand, not which
 strand lies on top, so this shows the stage runs end to end on real
 data and re-renders to something recognisable, not that the depths are right.

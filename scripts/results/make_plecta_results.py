@@ -528,9 +528,9 @@ def real_field_metrics_macros(metrics: dict, tolerance: int) -> list[str]:
 
 
 def interannotator_macros(payload: dict) -> list[str]:
-    """The two-reader study, as ranges over the three paired fields.
+    """The two-annotator study, as ranges over the three paired fields.
 
-    Every cross-reader number is emitted beside the reader-versus-reader
+    Every cross-annotator number is emitted beside the annotator-versus-annotator
     agreement it must be read against. Quoting the collapse without the
     ceiling would misattribute a disagreement between two humans about what
     an instance *is* to a failure of the method, and the pairing here is what
@@ -539,22 +539,22 @@ def interannotator_macros(payload: dict) -> list[str]:
     spans = payload["spans"]
 
     def pair(name: str, low_key: str, high_key: str) -> list[str]:
-        return [macro(f"PlectaInterReader{name}Low", fmt(spans[low_key]["min"])),
-                macro(f"PlectaInterReader{name}High", fmt(spans[high_key]["max"]))]
+        return [macro(f"PlectaInterAnnotator{name}Low", fmt(spans[low_key]["min"])),
+                macro(f"PlectaInterAnnotator{name}High", fmt(spans[high_key]["max"]))]
 
-    lines = [macro("PlectaInterReaderFieldCount", str(payload["n_paired_fields"]))]
+    lines = [macro("PlectaInterAnnotatorFieldCount", str(payload["n_paired_fields"]))]
     lines += pair("SameF", "same_reader_f1", "same_reader_f1_high")
     lines += pair("CrossF", "cross_reader_f1", "cross_reader_f1_high")
     lines += pair("AgreeF", "reader_partition_f1", "reader_partition_f1_high")
     lines += pair("NetF", "nnunet_f1", "nnunet_f1_high")
     lines += [
-        macro("PlectaInterReaderObjectRatioLow",
+        macro("PlectaInterAnnotatorObjectRatioLow",
               fmt(spans["object_ratio"]["min"], 2)),
-        macro("PlectaInterReaderObjectRatioHigh",
+        macro("PlectaInterAnnotatorObjectRatioHigh",
               fmt(spans["object_ratio"]["max"], 2)),
-        macro("PlectaInterReaderComponentRatioLow",
+        macro("PlectaInterAnnotatorComponentRatioLow",
               "%.0f" % spans["component_ratio"]["min"]),
-        macro("PlectaInterReaderComponentRatioHigh",
+        macro("PlectaInterAnnotatorComponentRatioHigh",
               "%.0f" % spans["component_ratio"]["max"]),
     ]
     return lines

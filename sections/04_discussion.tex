@@ -88,28 +88,29 @@ describe performance under each input condition rather than comparing
 identical objects. More independent fields, sealed before configuration, are
 still required.
 
-Multi-reader annotation is no longer outstanding, and the result reframes the
-limitation above rather than softening it. Reader~B independently annotated
-\PlectaInterReaderFieldCount{} of these fields. Scored against the reader
-whose skeleton it was given -- A against A, B against B -- PLECTA reaches
-\PlectaInterReaderSameFLow{}--\PlectaInterReaderSameFHigh{}; scored across, A
-against B and B against A, it reaches
-\PlectaInterReaderCrossFLow{}--\PlectaInterReaderCrossFHigh{}. That collapse
-is not the method degrading. A and B agree with each other at
-\PlectaInterReaderAgreeFLow{}--\PlectaInterReaderAgreeFHigh{} by the same
-measure with no method in the loop, so the cross-reader scores sit at roughly
-the ceiling human agreement allows. The disagreement is systematic and not
-noise: B exports
-\PlectaInterReaderObjectRatioLow{}--\PlectaInterReaderObjectRatioHigh{} times
-as many objects as A, shorter, with
-\PlectaInterReaderComponentRatioLow{}--\PlectaInterReaderComponentRatioHigh{}
+Independent re-annotation is no longer outstanding, and the result reframes
+the limitation above rather than softening it. Annotator~B independently
+annotated \PlectaInterAnnotatorFieldCount{} of these fields. Scored against
+the annotator whose skeleton it was given -- A against A, B against B --
+PLECTA reaches
+\PlectaInterAnnotatorSameFLow{}--\PlectaInterAnnotatorSameFHigh{}; scored
+across, A against B and B against A, it reaches
+\PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{}. That
+collapse is not the method degrading. A and B agree with each other at
+\PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{} by the
+same measure with no method in the loop, so the cross-annotator scores sit at
+roughly the ceiling human agreement allows. The disagreement is systematic and
+not noise: B exports
+\PlectaInterAnnotatorObjectRatioLow{}--\PlectaInterAnnotatorObjectRatioHigh{}
+times as many objects as A, shorter, with
+\PlectaInterAnnotatorComponentRatioLow{}--\PlectaInterAnnotatorComponentRatioHigh{}
 times as many components in the per-instance-skeleton union, and the
 directional variation of information is split-dominant one way and
 merge-dominant the other. That is two different answers to what an instance
 \emph{is} -- a whole physical strand, or a locally visible segment -- not one
-reader being wrong. For the same reason the automatic-mask condition, at
-\PlectaInterReaderNetFLow{}--\PlectaInterReaderNetFHigh{} against either
-reader, cannot be separated from reader disagreement on this evidence.
+annotator being wrong. For the same reason the automatic-mask condition, at
+\PlectaInterAnnotatorNetFLow{}--\PlectaInterAnnotatorNetFHigh{} against either
+annotator, cannot be separated from annotator disagreement on this evidence.
 
 This is also the strongest available argument for evaluating on a generator at
 all. Instance identity through an occlusion is precisely the quantity manual
