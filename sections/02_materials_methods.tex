@@ -215,18 +215,16 @@ are listed in \supprecon{}.
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_frame_cost.pdf}
-    \caption{The stub frame and the terms of the pairing cost. (a)~The
-    least-squares arclength fit over window $w$, read outward from the tip at
-    $s=0$, giving outward tangent $\mathbf{t}$ and signed curvature $\kappa$;
-    the fit is quadratic when the span is at least 18\,px and linear otherwise.
-    (b)~$\theta=\arccos(\mathbf{t}_a\cdot-\mathbf{t}_b)$, in the two steps its
-    definition takes: the two outward tangents where they lie, then the same
-    pair with $\mathbf{t}_b$ reversed and both read from one origin, which is
-    where the angle is measured. A perfect continuation makes the two tangents
-    antiparallel, so $\theta=0$. (c)~The chord turns $\varphi_a$, $\varphi_b$
-    onto the chord
-    $\mathbf{u}$ joining the tips. (d)~The fade $q(d)$ against tip separation;
-    triangles mark the six real separations at the crossing of
+    \caption{The stub frame and the terms of the pairing cost.
+    \textbf{(a)}~The least-squares arclength fit over window $w$, read outward
+    from the tip at $s=0$, giving outward tangent $\mathbf{t}$ and signed
+    curvature $\kappa$; quadratic when the span allows, linear otherwise.
+    \textbf{(b)}~$\theta$, in the two steps its definition takes: the outward
+    tangents where they lie, then the same pair with $\mathbf{t}_b$ reversed and
+    both read from one origin. A perfect continuation makes them antiparallel,
+    so $\theta=0$. \textbf{(c)}~The chord turns $\varphi_a$, $\varphi_b$ onto the
+    chord $\mathbf{u}$ joining the tips. \textbf{(d)}~The fade $q(d)$ against tip
+    separation; triangles mark the six real separations at the crossing of
     Figure~\ref{fig:matching}.}
     \label{fig:cost}
 \end{figure}
@@ -303,17 +301,14 @@ second that the terms it matches on are not redundant.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
     \caption{Every decision the linker makes, on the nodes it made them at.
-    Every number is measured and every arm is the skeleton it was measured
-    from, smoothed only enough to lift the raster staircase and rotated
-    rigidly, so every angle shown is the one the cost was computed on.
-    \textbf{(a)}~Every pairing the admissibility gate allows at a four-arm
-    crossing on a development scene, each scored as a whole:
-    its edge costs plus the price $p_i=0.62$ of each arm it leaves free,
-    marked. The green card is the one returned. Two further pairs, at 3.15
-    and 3.33, exceed $p_i+p_j=1.24$ and are never offered.
-    \textbf{(b)}~A three-arm node on another development scene, where an
-    admissible edge is declined on the total rather than on its own cost.
-    \textbf{(c)}~A gap link, which must clear all four gates at once.}
+    Every arm is the skeleton the numbers were measured from, so every angle
+    shown is the one the cost was computed on. \textbf{(a)}~Every pairing the
+    admissibility gate allows at a four-arm crossing, each scored as a whole:
+    its edge costs plus the price $p_i=0.62$ of each arm it leaves free. The
+    green card is the one returned; two further pairs exceed $p_i+p_j=1.24$ and
+    are never offered. \textbf{(b)}~A three-arm node where an admissible edge is
+    declined on the total rather than on its own cost. \textbf{(c)}~A gap link,
+    which must clear all four gates at once.}
     \label{fig:matching}
 \end{figure}
 
@@ -381,20 +376,17 @@ rather than by the separation alone, is what makes a confident score mean
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_evidence.pdf}
-    \caption{What the depth stage measures, at one crossing of a
-    development scene where two strands meet at $83.8^{\circ}$, chosen as a
-    legible example rather than at random. Every position and grey level shown was
-    read back from the stage itself. \textbf{(a)}~The core arc shared by the
-    two strands, and each strand's own flanks, which the window keeps clear
-    of the other's stroke; open dots are core samples, filled ones flanks.
-    \textbf{(b)}~The same samples against arclength: the pooled core median
-    $m_c$ sits by strand $i$'s flank level and far from $j$'s, which is the
-    occlusion. \textbf{(c)}~The two distances the score compares, over the
-    larger of the strands' contrast and twice the flank noise. That ratio is
-    the score $s$ of \suppdepthstage{}: its sign names the upper strand,
-    its size weights the
-    crossing in the ordering below, and $\lvert s\rvert$ under a fixed
-    threshold abstains instead.}
+    \caption{What the depth stage measures, at one crossing where two strands
+    meet at $83.8^{\circ}$, chosen as a legible example rather than at random.
+    Every position and grey level was read back from the stage itself.
+    \textbf{(a)}~The core arc shared by the two strands, and each strand's own
+    flanks, which the window keeps clear of the other's stroke; open dots are
+    core samples, filled ones flanks. \textbf{(b)}~The same samples against
+    arclength: the pooled core median $m_c$ sits by strand $i$'s flank level
+    and far from $j$'s, which is the occlusion. \textbf{(c)}~The two distances
+    the score compares, over the larger of the strands' contrast and twice the
+    flank noise. That ratio is the score $s$ of \suppdepthstage{}, whose sign
+    names the upper strand and whose size weights the crossing below.}
     \label{fig:depth-evidence}
 \end{figure}
 
@@ -426,17 +418,15 @@ measurement that replaced an earlier two-channel rule with it, and the solver.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_order.pdf}
     \caption{Why the order is solved for a whole component rather than one
-    crossing at a time, on a contradiction the stage met on a development
-    scene. \textbf{(a)}~Four strands and the four
-    calls the local evidence made at their crossings. \textbf{(b)}~Those calls
-    as a graph: each arrow points from the strand called upper to the one
-    called lower, and following them returns to where it started, so no
-    stack of heights satisfies all four. \textbf{(c)}~The order that satisfies
-    the most evidence by weight keeps the two heaviest calls and reverses
-    the two lightest, including the weakest at $0.95$. The reversals are
-    recorded, not discarded. Layer numbers are not shown: a strand's layer
-    follows from its whole component, and these four sit in a scene of
-    seven.}
+    crossing at a time, on a contradiction the stage met.
+    \textbf{(a)}~Four strands and the four calls the local evidence made at
+    their crossings. \textbf{(b)}~Those calls as a graph: each arrow points from
+    the strand called upper to the one called lower, and following them returns
+    to where it started, so no stack of heights satisfies all four.
+    \textbf{(c)}~The order satisfying the most evidence by weight keeps the two
+    heaviest calls and reverses the two lightest, which are recorded rather
+    than discarded. Layer numbers are not shown: a strand's layer follows from
+    its whole component, and these four sit in a scene of seven.}
     \label{fig:depth-order}
 \end{figure}
 
