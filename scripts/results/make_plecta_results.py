@@ -1484,8 +1484,9 @@ def ablation_table(payload: dict, audit: dict | None = None,
         head = next(k for k, l in enumerate(lines)
                     if l.startswith(r"\midrule"))
         lines.insert(head + 2, matcher_row)
-    #  The whole-linker control, on its own 50-scene set. It sits third so the
-    #  two controls read together, most replaced last.
+    #  The whole-linker control last: it is the one row that is not a variant
+    #  of the shipped configuration at all, so it closes the table rather than
+    #  sitting among the components.
     #  `greedy` is taken inside this function by the matcher arm, hence the
     #  longer parameter name.
     if greedy_baseline:
@@ -1498,9 +1499,7 @@ def ablation_table(payload: dict, audit: dict | None = None,
             f"{met['f1']['greedy_mean'] - met['f1']['plecta_mean']:+.3f} & "
             f"{fmt(met['adjusted_rand_index']['greedy_mean'])} \\\\"
         )
-        head = next(k for k, l in enumerate(lines)
-                    if l.startswith(r"\midrule"))
-        lines.insert(head + 3, row)
+        lines.append(row)
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
 

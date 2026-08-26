@@ -85,30 +85,34 @@ irregularities therefore caused a small resolved loss under this generator.
 \label{sec:res-ablation}
 
 Everything here is measured on the development scenes and none of it reuses
-the held-out set. Two controls replace part or all of the linker, and the
-component ablations remove one component at a time.
+the held-out set.
 
-\textbf{What the formulation is worth.} Two controls answer that from
-opposite ends. The first replaces the linker outright, skeletonising the same
+\textbf{What each part is worth.} Table~\ref{tab:plecta-ablation} varies one
+thing at a time. Two rows change what a link costs, dropping the junction
+chord-turn term or the curvature term; two change the graph the linker reads,
+leaving neighbouring junction clusters unconsolidated or arms too short to
+merge the crossings they join; two change the iteration, running a single
+round or removing the schedule that relaxes the gates; and one removes gap
+bridging, so identity never crosses a break in the mask. The three largest
+losses are the junction chord-turn term, gap bridging and junction-cluster
+consolidation; every other component matters less.
+
+Two rows are controls rather than components. Removing the joint solve leaves
+PLECTA otherwise intact and pairs each node's arms cheapest edge
+first, rather than by whichever complete pairing of that node is cheapest
+overall; a cheap edge taken early can then strand two arms that would have
+paired well together, which is why that arm fails by division rather than by
+merging. The last row replaces the linker outright, skeletonising the same
 mask and greedily pairing the branch ends that turn least inside fixed
-distance and angle gates, which is the pairing principle shared by SIFNE,
-GraFT's path cover and Wegmayr et
+distance and
+angle gates, which is the pairing principle shared by SIFNE, GraFT's path
+cover and Wegmayr et
 al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. It
-measures the method whole and attributes nothing to any part of it. The second
-leaves PLECTA running and changes one rule: at each node the arms are paired
-cheapest edge first, rather than by whichever complete pairing of that node is
-cheapest overall, so the difference is that rule and nothing else. A cheap
-edge taken early can strand two arms that would have paired well together,
-which is why the greedy arm fails by division rather than by merging. Both
-losses are in Table~\ref{tab:plecta-ablation}, each against PLECTA on its own
-scenes; the greedy arm also runs at parameters selected with the exact matcher
-in the loop, a bias in the exact matcher's favour.
-
-The three largest losses were, in order, the junction chord-turn term, gap
-matching and connector-based junction-cluster consolidation
-(Table~\ref{tab:plecta-ablation}); every other component, chain-extended
-frames and the round schedule included, mattered less. These are development
-values, not held-out effect estimates.
+measures the method whole and attributes nothing to any part of it. Each delta
+is against PLECTA on that row's own scenes, these are development values
+rather than held-out effect estimates, and the greedy solve runs at parameters
+selected with the exact matcher in the loop, a bias in the exact matcher's
+favour.
 
 \begin{table}[tbp]
     \centering
