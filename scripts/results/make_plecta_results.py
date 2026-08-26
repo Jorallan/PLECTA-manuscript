@@ -1449,7 +1449,7 @@ def ablation_table(payload: dict, audit: dict | None = None,
         arms = audit["matcher_ablation"]["degraded"]["arms"]
         exact, greedy = arms["exact"], arms["greedy_junction"]
         matcher_row = (
-            r"Greedy instead of exact matching & "
+            r"No joint junction solve & "
             f"{greedy['n_scenes']} & "
             f"{fmt(greedy['f1'])} & "
             f"{float(greedy['f1']) - float(exact['f1']):+.3f} & "
@@ -1492,7 +1492,7 @@ def ablation_table(payload: dict, audit: dict | None = None,
         g = greedy_baseline["conditions"]["degraded"]["summary"]
         met = g["metrics"]
         row = (
-            r"Greedy continuation, whole linker & "
+            r"Whole linker replaced & "
             f"{g['n_scenes']} & "
             f"{fmt(met['f1']['greedy_mean'])} & "
             f"{met['f1']['greedy_mean'] - met['f1']['plecta_mean']:+.3f} & "

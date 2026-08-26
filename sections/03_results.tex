@@ -88,23 +88,21 @@ Everything here is measured on the development scenes and none of it reuses
 the held-out set. Two controls replace part or all of the linker, and the
 component ablations remove one component at a time.
 
-\textbf{Two controls, differing in how much they replace.} The first replaces
-the linker entirely: it skeletonises the same mask and greedily accepts the
-lowest-turning-angle pairing between branch ends inside distance and
-turning-angle gates fixed by a development sweep, which is the pairing
-principle shared by SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. Its
-margin therefore covers every difference between the two methods at once and
-attributes none of them. The second changes one rule: the graph, the cost, the
-admissibility gate and the round schedule all stand, and only the exact
-maximum-weight matching at a node gives way to greedy cheapest-first
-acceptance, so its margin is the exact matching alone. What separates them is
-not where the greed acts, since junction edges at different nodes never share
-a stub and greedy within a node is greedy over the image, but how much of
-PLECTA is still running. Both losses are in
-Table~\ref{tab:plecta-ablation}, each against PLECTA on its own scenes, and the
-greedy matcher fails by division rather than merging, at parameters selected
-with the exact matcher in the loop, a bias in the exact matcher's favour.
+\textbf{What the formulation is worth.} Two controls answer that from
+opposite ends. The first replaces the linker outright, skeletonising the same
+mask and greedily pairing the branch ends that turn least inside fixed
+distance and angle gates, which is the pairing principle shared by SIFNE,
+GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. It
+measures the method whole and attributes nothing to any part of it. The second
+leaves PLECTA running and changes one rule: at each node the arms are paired
+cheapest edge first, rather than by whichever complete pairing of that node is
+cheapest overall, so the difference is that rule and nothing else. A cheap
+edge taken early can strand two arms that would have paired well together,
+which is why the greedy arm fails by division rather than by merging. Both
+losses are in Table~\ref{tab:plecta-ablation}, each against PLECTA on its own
+scenes; the greedy arm also runs at parameters selected with the exact matcher
+in the loop, a bias in the exact matcher's favour.
 
 The three largest losses were, in order, the junction chord-turn term, gap
 matching and connector-based junction-cluster consolidation
