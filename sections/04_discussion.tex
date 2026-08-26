@@ -25,8 +25,7 @@ than either.
 Difficulty follows the density of centrelines rather than the amount of ink, so
 what costs the score is the number of locally plausible alternatives at a
 crossing. The rest of the sensitivity belongs to the upstream segmenter, which
-fixes the thickness of the mask and therefore how clean a skeleton PLECTA is
-given. PLECTA can bridge a short omission, but it cannot infer a strand absent
+fixes how clean a skeleton PLECTA is given. PLECTA can bridge a short omission, but it cannot infer a strand absent
 from the mask, nor reliably reject a false axis introduced upstream. Supplying
 identical masks isolates grouping in an algorithmic comparison; it does not
 establish end-to-end SEM performance, which is why the three-field case is a

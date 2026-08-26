@@ -81,21 +81,6 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
 
-The thickness of the axis mask costs more, and it matters because it is the
-upstream segmenter, not the method, that fixes it: over
-\PlectaSensitivityWidthSceneCount{} development scenes a nominal
-\PlectaSensitivityWidthHigh{}\,px axis mask scored
-\PlectaSensitivityWidthDeltaFOne{} \Fone{}
-[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
-against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
-variant is scored against common fragments rebuilt from its own input mask, so
-the question asked is how well the method groups the skeleton it is handed, and
-the decline with width is a thicker mask skeletonising into a messier graph
-rather than a change in the grouping problem. This is the one density axis that
-does move the score. The rendered silhouette does not, causally and scene by
-scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
-geometry of its axis and not by how much of the frame its bundles fill.
-
 \subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
 
