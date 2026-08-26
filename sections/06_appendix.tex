@@ -336,6 +336,29 @@ as well as the exact matcher does, and loses the pairwise margin on the
 assembly built from those decisions, because a pairwise score over fragments is
 quadratic in fragmentation while a junction count is not.
 
+
+\subsection{Margins the main text states without their intervals}
+
+The article's comparator section gives the crossing-resolution rates and the
+restricted DNAi comparison in summary. The paired figures are here.
+
+Crossing Fidelity, paired against PLECTA over the degraded set:
+\PlectaJunctionGreedyDelta{} [\PlectaJunctionGreedyDeltaCILow{},
+\PlectaJunctionGreedyDeltaCIHigh{}] over the greedy baseline,
+\PlectaJunctionGraFTDelta{} [\PlectaJunctionGraFTDeltaCILow{},
+\PlectaJunctionGraFTDeltaCIHigh{}] over GraFT and \PlectaJunctionDNAiDelta{}
+[\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}] over DNAi.
+On clean axes PLECTA resolves \PlectaJunctionCleanPlectaRate{}. Leaving every
+arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is the
+all-unpaired baseline the rate is read against: a deterministic do-nothing
+policy rather than a chance level.
+
+The restricted DNAi comparison, which scores only the evidence a
+degree-limited, gap-blind method can reach, moves the clean-axis difference
+from \PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
+[\PlectaDNAiRestrictedCleanDeltaCILow{},
+\PlectaDNAiRestrictedCleanDeltaCIHigh{}], still favouring PLECTA in
+\PlectaDNAiRestrictedCleanWinCount{} of \PlectaDNAiCleanSceneCount{} scenes.
 \section{Depth measures}
 \label{sec:app-depth-measures}
 

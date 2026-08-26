@@ -81,6 +81,22 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
 
+Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
+taking at three coverage levels the scene whose \Fone{} is closest to the
+median, so the rows are typical rather than selected.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
+    \caption{Reconstruction at three coverage levels, each the scene closest
+    to the median \Fone{} of its stratum, shown as a horizontal window of the
+    scene. Columns: the degraded input mask, the overlap-aware reference, and
+    PLECTA's strands at their fitted widths. The score beside each row is the
+    grouping's, not the rendering's. Strand colours are arbitrary and not
+    matched between columns.}
+    \label{fig:examples}
+\end{figure}
+
 \subsection{Development ablations}
 \label{sec:res-ablation}
 
@@ -194,14 +210,11 @@ DNAi's margin is a limitation of domain and density, not a general ranking: it
 is built for DNA-fibre micrographs, which are sparse, and where the network is
 sparse and the axis clean it recovers \PlectaDNAiCleanSparseFOne{} at 20\%
 coverage. Restricting the score to the evidence a degree-limited, gap-blind
-method can reach separates capability from judgement, and on clean axes the
-difference falls from \PlectaDNAiCleanDeltaFOne{} to
-\PlectaDNAiRestrictedCleanDeltaFOne{} [\PlectaDNAiRestrictedCleanDeltaCILow{},
-\PlectaDNAiRestrictedCleanDeltaCIHigh{}], still favouring PLECTA in
-\PlectaDNAiRestrictedCleanWinCount{} of \PlectaDNAiCleanSceneCount{} scenes and
-at every coverage level. Roughly \PlectaDNAiCoverageShareClean{}\,\% of the
-margin is therefore coverage of cases the comparator cannot attempt, and
-\PlectaDNAiDecisionShareClean{}\,\% the outcome of decisions both methods make.
+method can reach separates capability from judgement, and still favours PLECTA
+at every coverage level: roughly \PlectaDNAiCoverageShareClean{}\,\% of the
+margin is coverage of cases the comparator cannot attempt and
+\PlectaDNAiDecisionShareClean{}\,\% the outcome of decisions both methods
+make. \suppcomparators{} gives the restricted deltas.
 
 \textbf{Basu et al., reimplemented.} The closest structural relative PLECTA's
 junction matching has is \citet{basu2015extraction}, which also optimises over
@@ -261,27 +274,18 @@ frame holds, though a topology we rebuilt is weaker evidence than a generator
 its authors released.
 
 \textbf{Crossings resolved.} The Crossing Fidelity row of
-Table~\ref{tab:plecta-comparators} states the contribution directly, and pooled over the
-\PlectaJunctionCount{} reference crossings of the degraded set PLECTA
-partitions \PlectaJunctionPlectaRate{} of them exactly against
-\PlectaJunctionGreedyRate{} for the greedy baseline,
-\PlectaJunctionGraFTRate{} for GraFT and \PlectaJunctionDNAiRate{} for DNAi;
-paired, PLECTA's margins are \PlectaJunctionGreedyDelta{}
-[\PlectaJunctionGreedyDeltaCILow{}, \PlectaJunctionGreedyDeltaCIHigh{}],
-\PlectaJunctionGraFTDelta{} [\PlectaJunctionGraFTDeltaCILow{},
-\PlectaJunctionGraFTDeltaCIHigh{}] and \PlectaJunctionDNAiDelta{}
-[\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}]. Clean axes
-order them the same way, PLECTA at \PlectaJunctionCleanPlectaRate{}. Leaving
-every arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is
-the all-unpaired baseline the rate is read against; it is a deterministic
-do-nothing policy rather than a chance level. It is much less discriminative than
-the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
-method at 60\,\% coverage where pairwise \Fone{} spans
+Table~\ref{tab:plecta-comparators} states the contribution directly: pooled
+over the \PlectaJunctionCount{} reference crossings of the degraded set,
+PLECTA partitions \PlectaJunctionPlectaRate{} of them exactly, ahead of every
+comparator, and clean axes order them the same way. The measure is far less
+discriminative than the pairwise score, spanning \PlectaJunctionSpreadHigh{}
+between best and worst method at 60\,\% coverage where pairwise \Fone{} spans
 \PlectaPairwiseSpreadHigh{}, so it is used to say what was solved and not to
-rank. Everyone is poor at the busiest nodes: above degree four PLECTA resolves
-\PlectaJunctionPlectaDegreeFivePlus{} and no comparator does better, while DNAi
-collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four
-cap predicts.
+rank. Every method is poor at the busiest nodes: above degree four PLECTA
+resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does better,
+while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is what its
+degree-four cap predicts. \suppcomparators{} gives the paired margins and the
+all-unpaired baseline the rate is read against.
 
 Per-scene cost was measured warm, single-threaded and pinned to one core, timing
 each method's own computation only (Table~\ref{tab:plecta-comparators};
@@ -296,50 +300,22 @@ slowest ones, and only GraFT is heavy-tailed.
 
 \label{sec:res-overlap}%
 
-Resolving a crossing and representing one are different things, and only the
-first is what the scores above measure. Which arm continues into which is the
-difficult decision, and every score in this paper rewards getting it right.
-Whether the emitted raster \emph{represents} a crossing pixel as belonging to
-both strands is a property of the output format, and the metric cannot see
-it: flattening the emitted layers to a single label image leaves PLECTA's
-\Fone{} unchanged to four decimal places (\PlectaOverlapFlattenCost{}).
-
-The representation is instead verifiable directly: on the comparison set,
-reference strands share \PlectaOverlapReferenceLow{}\,\% of their pixels with
-another strand at 20\% coverage, rising to
-\PlectaOverlapReferenceHigh{}\,\% at 60\%; PLECTA emits
-\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\%, and GraFT,
-whose output is close to a hard partition, about
-\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
-PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
-than one strand, less than half, though the largest such recall here, against
+\textbf{Representing a crossing, and where it over-marks.} Resolving a
+crossing and representing one are different things, and only the first is what
+the scores above measure: flattening PLECTA's emitted layers to a single label
+image leaves its \Fone{} unchanged to four decimal places. The representation
+is verifiable on its own, and the result is mixed. PLECTA recovers
+\PlectaSharedRecall{} of the pixels the reference gives to more than one
+strand, less than half, though the largest such recall here, against
 \PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
 while the greedy baseline, a hard partition, scores zero by construction. It
 does so at a precision of \PlectaSharedPrecision{}, marking
-\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
-the reference contains, because a chain is painted with every pixel of every
-junction cluster it touches. That is a property of the rendering rather than of
-the grouping, and one the \Fone{} neither rewards nor penalises.
-
-Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
-taking at three coverage levels the scene whose \Fone{} is closest to the
-median, so the rows are typical rather than selected.
-
-\begin{figure}[tbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
-    \caption{Reconstruction at three coverage levels, each the scene closest to
-    the median \Fone{} of its stratum, shown as a horizontal window of the
-    512\,px scene rather than the whole of it. Columns: the degraded input
-    mask, the overlap-aware reference, and PLECTA's strands drawn at their
-    fitted widths. What is evaluated in this paper is the grouping of centreline
-    pixels the method produces from the mask alone, and the \Fone{} beside each
-    row is that grouping's score; the width rendering shown here is a
-    downstream step that redraws those strands and cannot move a pixel from
-    one to another. Strand colours are arbitrary and not matched between
-    columns.}
-    \label{fig:examples}
-\end{figure}
+\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels
+than the reference contains, because a chain is painted with every pixel of
+every junction cluster it touches. That is a property of the rendering rather
+than of the grouping, and one the \Fone{} neither rewards nor penalises.
+\suppmeasures{} gives the shares emitted against the shares the reference
+carries, by coverage.
 
 \subsection{Depth decomposition}
 \label{sec:res-depth}
