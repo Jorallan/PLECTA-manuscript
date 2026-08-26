@@ -167,29 +167,19 @@ reimplemented here.
     \input{results/plecta_comparator_table}
 \end{table}
 
-\textbf{The three released methods.} Each has a front end that precedes the
-stage assigning identity (DNAi a segmentation network, GraFT a Frangi and
-Otsu ridge detector built for greyscale, SIFNE a thinning step), and in each
-case the mask is injected where that stage begins, so grouping is not
-confounded with segmentation and every stage that assigns identity is their
-own code. Each substitution favours the comparator: run end to end on the
-greyscale instead, GraFT scores \PlectaGraFTNativeFOne{}, its segmentation
-recovering only a third to a half of the reference skeleton. Each was also run
-at a configuration selected on the same \PlectaDevelopmentSceneCount{}
-development scenes PLECTA was configured on, rather than at its own defaults,
-which is worth \PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE; both are reported.
-PLECTA leads GraFT on every one of the \PlectaGraFTSceneCount{} scenes the two
-completed. \PlectaGraFTFailed{} of the densest degraded scenes exceeded a
-45-minute budget and are excluded from GraFT's means; they are the hardest
-scenes in the set. SIFNE is the strongest of the three, ahead of GraFT and of
-the greedy rule, and its Crossing Fidelity of \PlectaSifneCrossingFidelity{}
-is second only to PLECTA's, so the margin rests on a method configured for
-this data rather than on a default that suits it badly. \suppcomparators{}
-gives each injection point, each selection, and what was not attempted. None
-of this
-establishes a general ranking of these methods, and
-Section~\ref{sec:limitations} states what the comparison leaves untested.
+\textbf{How each was run.} Each released method has a front end that precedes
+the stage assigning identity, and in each case the mask is injected where that
+stage begins, so grouping is not confounded with segmentation and every stage
+that assigns identity is their own code. Each was also run at a configuration
+selected on the same \PlectaDevelopmentSceneCount{} development scenes PLECTA
+was configured on rather than at its own defaults. Every one of these
+adaptations favours the comparator, and by a wide margin: run end to end on
+the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
+\PlectaGraFTFOne{} injected, and the re-selected configurations are worth
+\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are reported.
+\suppcomparators{} gives each injection point, each selection, what was not
+attempted, and how each method fails.
 
 \begin{figure}[!t]
   \centering
@@ -206,72 +196,39 @@ Section~\ref{sec:limitations} states what the comparison leaves untested.
   \label{fig:metric-panels}
 \end{figure}
 
-DNAi's margin is a limitation of domain and density, not a general ranking: it
-is built for DNA-fibre micrographs, which are sparse, and where the network is
-sparse and the axis clean it recovers \PlectaDNAiCleanSparseFOne{} at 20\%
-coverage. Restricting the score to the evidence a degree-limited, gap-blind
-method can reach separates capability from judgement, and still favours PLECTA
-at every coverage level: roughly \PlectaDNAiCoverageShareClean{}\,\% of the
-margin is coverage of cases the comparator cannot attempt and
-\PlectaDNAiDecisionShareClean{}\,\% the outcome of decisions both methods
-make. \suppcomparators{} gives the restricted deltas.
-
-\textbf{Basu et al., reimplemented.} The closest structural relative PLECTA's
-junction matching has is \citet{basu2015extraction}, which also optimises over
-a neighbourhood and prices its joins on curvature. It reaches
-\Fone{}=\PlectaBasuFOne{}, above GraFT and below the greedy rule, and it
-over-segments: \PlectaBasuInstanceRatio{} times as many instances as the
-reference. The informative result is the split between its two scores. On
-Crossing Fidelity it reaches \PlectaBasuCrossingFidelity{}, second only to
-PLECTA and ahead of both released methods, while its pairwise \Fone{} sits far
-below theirs. Crossing Fidelity counts junction decisions and is not quadratic
-in fragmentation; the pairwise score is both. So the curvature-priced matching
-is doing real work at the junctions themselves, and what costs it is
-everything around that decision: deleting every bifurcation shatters a scene
-faster than a recombination limited to three segments per round can rebuild
-it, and the formulation carries no gap model at all. That is the distinction
-this comparison exists to draw, and it is why the priced refusal in
-Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
-its own.
+SIFNE is the strongest comparator, so the margin rests on a method configured
+for this data rather than on a default that suits it badly. Two entries in the
+table read against the ordering. DNAi's deficit is a limitation of domain and
+density rather than a general ranking: it is built for DNA-fibre micrographs,
+which are sparse, and where the network is sparse and the axis clean it
+recovers \PlectaDNAiCleanSparseFOne{} at 20\% coverage. And
+\citet{basu2015extraction}, the closest structural relative PLECTA's junction
+matching has in that it too optimises over a neighbourhood and prices joins on
+curvature, is second only to PLECTA on Crossing Fidelity while its pairwise
+\Fone{} sits far below both released methods: the curvature-priced matching
+does real work at the junctions, and what costs it is everything around that
+decision, which is why the priced refusal of Section~\ref{sec:mm-plecta} is
+claimed as part of a combination rather than on its own. \suppcomparators{}
+gives both in full.
 
 \textbf{Each method on its own ground.} Every scene above comes from one
-generator, so the
-comparison was repeated on GraFT's own, run unmodified at its published settings
-over \PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
-strata spanning \PlectaRegimeDensityLow{} to \PlectaRegimeDensityHigh{}
-centreline pixels per image pixel; GraFT's published comparison reaches
-\PlectaRegimeDensityPublished{}, so its whole range is the lower half of this
-one. PLECTA leads at every density, from \PlectaRegimeLowPlectaFOne{} against
-\PlectaRegimeLowGraFTFOne{} and \PlectaRegimeLowDNAiFOne{} at the sparsest to
-\PlectaRegimeHighPlectaFOne{} against \PlectaRegimeHighGraFTFOne{} and
-\PlectaRegimeHighDNAiFOne{} at the densest; the margin widens with density and
-nothing crosses over, including inside GraFT's published range. The
-field-standard measures order the three identically over the whole ladder
-(adjusted Rand index \PlectaRegimeOverallPlectaARI{},
-\PlectaRegimeOverallGraFTARI{} and \PlectaRegimeOverallDNAiARI{}; variation of
-information \PlectaRegimeOverallPlectaVITotal{},
-\PlectaRegimeOverallGraFTVITotal{} and \PlectaRegimeOverallDNAiVITotal{} bits),
-and PLECTA's errors lean mildly to fusion where both comparators divide far more
-than they fuse. GraFT was also run end to end with its own front end, which on
-this data is inside its design envelope rather than degenerate as it is on ours;
-that arm scored \PlectaRegimeLowGraFTNativeFOne{} and
-\PlectaRegimeHighGraFTNativeFOne{} at the two ends, below the injected arm
-almost everywhere, so injecting the mask continues to favour it. The held-out
-result of Section~\ref{sec:res-density} is a same-generator measurement and
-remains one; this comparison is not.
+generator, so the comparison was repeated in the regimes the two released
+methods were built for. On GraFT's own generator, run unmodified at its
+published settings over \PlectaRegimeSceneCount{} scenes in
+\PlectaRegimeStratumCount{} density strata, PLECTA leads at every density and
+nothing crosses over, including inside the range GraFT itself published, and
+the field-standard measures order the three identically. SIFNE released no
+generator, so the sparse cobweb topology its paper validates against was
+rebuilt here from that description, with open arcs rather than closed rings
+since closed curves are outside what this paper claims; on that reconstruction
+the two are level where the paper works, \PlectaSifneOwnSparsePlectaFOne{}
+against \PlectaSifneOwnSparseSifneFOne{}, and part only slightly at the denser
+end. That places the difference in how tangled the crossings are rather than
+in how much strand the frame holds, though a topology we rebuilt is weaker
+evidence than a generator its authors released. The held-out result of
+Section~\ref{sec:res-density} is a same-generator measurement and remains one;
+this comparison is not. \suppcomparators{} gives both ladders in full.
 
-SIFNE released no generator, so the sparse cobweb topology its paper validates
-against was rebuilt here from that description, with open arcs rather than
-closed rings, since closed curves are outside what this paper claims. On that
-reconstruction the two methods are level where the paper works,
-\PlectaSifneOwnSparsePlectaFOne{} against \PlectaSifneOwnSparseSifneFOne{} at
-\PlectaSifneOwnSparseDensity{} centreline pixels per image pixel, and part
-only slightly at \PlectaSifneOwnDenseDensity{},
-\PlectaSifneOwnDensePlectaFOne{} against \PlectaSifneOwnDenseSifneFOne{}. Its
-larger deficit on the scenes above, at the same density, therefore locates the
-difference in how tangled the crossings are rather than in how much strand the
-frame holds, though a topology we rebuilt is weaker evidence than a generator
-its authors released.
 
 \textbf{Crossings resolved.} The Crossing Fidelity row of
 Table~\ref{tab:plecta-comparators} states the contribution directly: pooled
