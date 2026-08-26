@@ -107,8 +107,7 @@ in the loop, a bias in the exact matcher's favour. The last row replaces the
 linker outright, skeletonising the same mask and greedily pairing the branch
 ends that turn least inside fixed distance and angle gates, which is the
 pairing principle shared by SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}. It
-measures the method whole and attributes nothing to any part of it.
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
 
 \begin{table}[tbp]
     \centering
@@ -121,19 +120,14 @@ measures the method whole and attributes nothing to any part of it.
     \input{results/plecta_ablation_table}
 \end{table}
 
-The core output is a grouping, not a set of connected curves: accepted gap
-links establish identity but are not painted, so on the development set
-\PlectaCoreDisconnected{} of core strands arrive as more than one disjoint
-pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
-that assumes one connected curve per strand must account for this.
 
 \subsection{Published methods on identical masks}
 \label{sec:res-comparators}
 
 Four published methods are scored beside PLECTA on identical masks, through
 the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
-generated after every configuration was fixed. The controls above varied one
-part of PLECTA at a time; these are other people's methods, entire.
+generated after every configuration was fixed. The controls above are ours;
+these are other people's methods.
 DNAi \citep{playout2026dnai},
 GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
 their own released sources. The fourth, \citet{basu2015extraction}, never
