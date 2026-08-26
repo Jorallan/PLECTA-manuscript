@@ -248,15 +248,15 @@ baseline the rate is read against.
 \textbf{Cost.} Accuracy is not the only axis on which these methods differ.
 Per-scene cost was measured warm, single-threaded and pinned to one core,
 timing each method's own computation only (Table~\ref{tab:plecta-comparators};
-\RuntimeGraftCovSixtyCensored{} GraFT scenes exceeded
-\RuntimeBudgetSeconds{}~s and are censored). These are independently optimised
-codebases, so absolute times measure implementation as much as algorithm; the
-transferable quantity is scaling, and the log--log exponents against
-foreground pixels are \RuntimeDnaiScalingExponent{},
-\RuntimePlectaScalingExponent{} and at least \RuntimeGraftScalingExponent{}.
-PLECTA has the largest uncensored exponent; GraFT's is a lower bound, because
-the scenes its fit lost to censoring are the slowest ones, and only GraFT is
-heavy-tailed.
+\RuntimeGraftCovSixtyCensored{} GraFT scenes ran past the
+\RuntimeBudgetSeconds{}~s budget and were stopped rather than timed). These
+are independently optimised codebases, so absolute times measure
+implementation as much as algorithm; the transferable quantity is scaling, and
+the log--log exponents against foreground pixels are
+\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
+\RuntimeGraftScalingExponent{}. PLECTA has the largest exponent among the
+methods timed to completion; GraFT's is a lower bound, because the scenes
+missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
 
 \label{sec:res-overlap}%
 

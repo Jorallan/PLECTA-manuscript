@@ -183,9 +183,9 @@ grows as the $b$-th power of the amount of ink. It is reported instead of
 absolute time because these are independently optimised codebases, where
 absolute time measures implementation as much as algorithm. Blind spot: it
 describes a median trend and is silent on the tail, so it is quoted beside the
-per-density medians and the censored-scene count; censoring biases it downwards
-for any method whose slowest scenes did not finish, which is why GraFT's is a
-lower bound.
+per-density medians and the count of scenes stopped at the budget. Dropping
+those scenes biases the exponent downwards for any method whose slowest ones
+did not finish, which is why GraFT's is a lower bound.
 
 \textbf{Two measures were computed and are not endpoints.} GraFT's
 \emph{filament matched coverage} asks whether each reference strand was
