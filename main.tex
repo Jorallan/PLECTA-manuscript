@@ -83,6 +83,18 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
 
+%  No stray one-line fragments. A float can push the tail of a paragraph onto
+%  the next page, where one line under a table reads as a typo rather than as
+%  the end of a sentence from the page before -- the "Section 3.5." case. These
+%  penalties refuse to break a paragraph so that a single line is left behind
+%  (club) or carried over (widow). 10000 is a prohibition rather than a cost,
+%  so TeX moves the whole paragraph instead; aggedbottom lets the resulting
+%  slack fall at the foot of the page rather than stretching the text.
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\brokenpenalty=10000
+\raggedbottom
 \captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}

@@ -38,8 +38,8 @@ Performance decreased with scene density: mean \Fone{} fell from
 coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
 monotonically through the intermediate strata. The same decline appears on the
-paired clean-against-degraded set of Section~\ref{sec:res-mask}, where the clean and the
-degraded curves separate at low coverage and meet at 50--60\,\%: degradation
+paired clean-against-degraded set below, where the clean and the degraded
+curves separate at low coverage and meet at 50--60\,\%: degradation
 costs least exactly where the score is lowest, because there the tangles rather
 than the gaps set the difficulty.
 Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
@@ -71,14 +71,119 @@ proxy for the length density accompanying it under this generator.
 \end{table}
 
 
+\label{sec:res-mask}%
+How much of that score the input mask fixes, rather than the grouping, is
+separable. On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
+mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
+\PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
+clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
+[\PlectaCleanMinusDegradedFOneCILow{},
+\PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
+irregularities therefore caused a small resolved loss under this generator.
+
+The thickness of the axis mask costs more, and it matters because it is the
+upstream segmenter, not the method, that fixes it: over
+\PlectaSensitivityWidthSceneCount{} development scenes a nominal
+\PlectaSensitivityWidthHigh{}\,px axis mask scored
+\PlectaSensitivityWidthDeltaFOne{} \Fone{}
+[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
+against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
+variant is scored against common fragments rebuilt from its own input mask, so
+the question asked is how well the method groups the skeleton it is handed, and
+the decline with width is a thicker mask skeletonising into a messier graph
+rather than a change in the grouping problem. This is the one density axis that
+does move the score. The rendered silhouette does not, causally and scene by
+scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
+geometry of its axis and not by how much of the frame its bundles fill.
+
+\subsection{Development ablations and downstream rendering}
+\label{sec:res-ablation}
+
+\textbf{Two controls isolate the formulation.} Neither is anyone else's
+method, which is exactly what makes them useful: each holds the evidence
+fixed and varies one thing, so the margin measures the formulation rather
+than two whole systems. They are reported here rather than in
+Section~\ref{sec:res-comparators}, whose subject is published work.
+
+\textbf{Greedy continuation.} The baseline skeletonises the same mask and
+greedily accepts the lowest-turning-angle pairing between branch ends inside
+distance and turning-angle gates fixed by a development sweep. It is ours --
+not a reimplementation of any paper but of the pairing principle shared by
+SIFNE, GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
+is reported as a transparent floor, never as an external result. PLECTA leads
+it by \PlectaGreedySweptDeltaFOne{} \Fone{}
+[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
+the \PlectaGreedySceneCount{} scenes, and by
+\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
+\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
+artefact of mask degradation.
+
+\textbf{Exact against greedy matching, matcher only.} That baseline replaces
+the whole linker; a second arm isolates the claim, keeping the graph, cost,
+admissibility gate and round schedule and replacing only the per-junction
+maximum-weight matching by greedy cheapest-first acceptance. Exactness was
+worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
+\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
+scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
+\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
+\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
+merging, with variation-of-information split rising
+\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
+merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
+resolved exactly falling \PlectaMatcherExactJunctionRate{} to
+\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
+degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
+\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
+peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
+lie; and the greedy arm runs at parameters selected with the exact matcher in
+the loop, a bias in that matcher's favour.
+
+One-at-a-time ablations were evaluated only on the
+\PlectaDevelopmentSceneCount{} development scenes
+(Table~\ref{tab:plecta-ablation}).
+The three largest losses relative to the evaluated configuration were, in
+order, the junction chord-turn term
+(\PlectaAblationTangentTermOnlyDeltaFOne{}), gap matching
+(\PlectaAblationNoGapBridgingDeltaFOne{}) and connector-based junction-cluster
+consolidation (\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}); every other
+component, chain-extended frames and the round schedule included, mattered
+less. These are development values, not held-out effect estimates.
+
+\begin{table}[tbp]
+    \centering
+    \caption{One-at-a-time component ablations, \PlectaDevelopmentSceneCount{}
+    development scenes; $\Delta F_1$ is the loss against the fixed
+    configuration. The matcher row is a formulation control rather than a
+    component, measured on its own \PlectaMatcherSceneCount{} scenes.}
+    \label{tab:plecta-ablation}
+    \small
+    \input{results/plecta_ablation_table}
+\end{table}
+
+The core output is a grouping, not a set of connected curves: accepted gap
+links establish identity but are not painted, so on the development set
+\PlectaCoreDisconnected{} of core strands arrive as more than one disjoint
+pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
+that assumes one connected curve per strand must account for this. The
+optional ribbon rendering of Section~\ref{sec:mm-stage4}, at its defaults,
+scored development \Fone{}=\PlectaStageFourFOne{}, a change of
+\PlectaStageFourDeltaFOne{}, and reduced those fractions to
+\PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}, so rendering buys
+connectivity at a small cost in the identity score without changing chain
+membership. Enabling the separate 0.6 silhouette-absorption rule reduced
+\Fone{} further to \PlectaStageFourAbsorbFOne{}, and because absorption can
+merge identities it remained disabled. None of these topology measurements
+validates apparent width.
+
 \subsection{Published methods on identical masks}
 \label{sec:res-comparators}
 
 Four published methods are scored beside PLECTA on identical masks, through
 the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
-generated after every configuration was fixed; our own controls, which isolate
-parts of the formulation rather than compare against anyone, are in
-Section~\ref{sec:res-ablation} instead. DNAi \citep{playout2026dnai},
+generated after every configuration was fixed. The controls above varied one
+part of PLECTA at a time; these are other people's methods, entire.
+DNAi \citep{playout2026dnai},
 GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
 their own released sources. The fourth, \citet{basu2015extraction}, never
 released an implementation and is reimplemented here; it is marked with a star
@@ -107,17 +212,31 @@ one and how each method fails.
     \input{results/plecta_comparator_table}
 \end{table}
 
-\textbf{DNAi.} Its segmentation network was bypassed and only its
-instance-forming stage used, so grouping is not confounded with segmentation
-quality, and it was run at a development-selected configuration rather than at
-its released defaults. That adaptation is worth a great deal to it: at those
-defaults it scores \Fone{}=\PlectaDNAiShippedFOne{} on these masks against
-\PlectaDNAiFOne{} tuned. Tuned, the paired difference is \PlectaDNAiDeltaFOne{}
-[\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}] over
-\PlectaDNAiSceneCount{} scenes, and \PlectaDNAiCleanDeltaFOne{}
-[\PlectaDNAiCleanDeltaCILow{}, \PlectaDNAiCleanDeltaCIHigh{}] on clean axes,
-the gap widening monotonically with density
-(Figure~\ref{fig:metric-panels}).
+\textbf{The three released methods.} Each has a front end that precedes the
+stage assigning identity -- DNAi a segmentation network, GraFT a Frangi and
+Otsu ridge detector built for greyscale, SIFNE a thinning step -- and in each
+case the mask is injected where that stage begins, so grouping is not
+confounded with segmentation and every stage that assigns identity is their
+own code. Each substitution favours the comparator: run end to end on the
+greyscale instead, GraFT scores \PlectaGraFTNativeFOne{}, its segmentation
+recovering only a third to a half of the reference skeleton. Each was also run
+at a development-selected configuration rather than its defaults, worth
+\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE, and both are
+reported. Tuned, the paired difference favours PLECTA by
+\PlectaDNAiDeltaFOne{} [\PlectaDNAiDeltaCILow{}, \PlectaDNAiDeltaCIHigh{}]
+over DNAi across \PlectaDNAiSceneCount{} scenes and by
+\PlectaGraFTDeltaFOne{} [\PlectaGraFTDeltaCILow{},
+\PlectaGraFTDeltaCIHigh{}] over GraFT in every one of the
+\PlectaGraFTSceneCount{} scenes both completed; \PlectaGraFTFailed{} of the
+densest degraded scenes exceeded a 45-minute budget and are excluded from
+GraFT's means, which flatters it. SIFNE is the strongest of the three, ahead of
+GraFT and of the greedy rule, and its Crossing Fidelity of
+\PlectaSifneCrossingFidelity{} is second only to PLECTA's, so the margin rests
+on a method configured for this data rather than on a default that suits it
+badly. \suppcomparators{} gives each injection point, each selection, the
+sparse-topology re-test SIFNE's own paper validates against, and what was not
+attempted.
 
 \begin{figure}[!t]
   \centering
@@ -147,62 +266,13 @@ at every coverage level. Roughly \PlectaDNAiCoverageShareClean{}\,\% of the
 margin is therefore coverage of cases the comparator cannot attempt, and
 \PlectaDNAiDecisionShareClean{}\,\% the outcome of decisions both methods make.
 
-\textbf{GraFT.} Its published entry point begins with a Frangi and Otsu front
-end for greyscale ridge images, which has nothing to do on a two-valued axis,
-so the mask was injected at its skeleton-to-graph stage, everything downstream
-being its own code unchanged. That substitution favours it: run end to end on
-the greyscale images it scores \PlectaGraFTNativeFOne{}, because its
-segmentation stage recovers only a third to a half of the reference skeleton.
-Its minimum continuation angle was also re-tuned on development scenes. GraFT
-scored \PlectaGraFTFOne{}, a paired difference of \PlectaGraFTDeltaFOne{}
-[\PlectaGraFTDeltaCILow{}, \PlectaGraFTDeltaCIHigh{}] favouring PLECTA in every
-one of the \PlectaGraFTSceneCount{} scenes both methods completed, and
-\PlectaGraFTCleanDeltaFOne{} [\PlectaGraFTCleanDeltaCILow{},
-\PlectaGraFTCleanDeltaCIHigh{}] on clean axes. \PlectaGraFTFailed{} of the
-densest degraded scenes did not finish inside a 45-minute budget and are
-excluded from its means; they are the hardest scenes of the set, so that
-exclusion flatters GraFT. Neither released method establishes a general
-ranking, and Section~\ref{sec:limitations} states what these comparisons leave
-untested.
-
-\textbf{SIFNE.} It is the released method whose junction handling is closest to
-the greedy rule this paper uses as a floor: it excises each crossing, estimates
-tip directions from the stubs left behind, and pairs termini inside an angular
-fan. Everything after its thinning step reads a binary skeleton, so the mask is
-injected where its own pipeline re-enters and every stage that assigns identity
-is its code. One shipped setting is degenerate here and was re-selected on
-development scenes, as DNAi's linkage distance was: its erasure neighbourhood
-is applied at every crossing pixel, and because the erasures multiply with the
-crossings it discards between a third and two thirds of the input mask before
-any pairing is attempted. That change is worth \PlectaSifneShippedFOne{} to
-\PlectaSifneFOne{} \Fone{}, and both are reported. Tuned, it is the strongest
-comparator here, ahead of GraFT and of the greedy rule, and its Crossing
-Fidelity of \PlectaSifneCrossingFidelity{} is second only to PLECTA's. The
-margin against it therefore rests on a method configured for this data rather
-than on a default that suits it badly, which is the comparison worth making.
-On a rebuilt version of the cobweb topology its own paper validates against,
-the two are level where that paper works, \PlectaSifneOwnSparsePlectaFOne{}
-against \PlectaSifneOwnSparseSifneFOne{} at
-\PlectaSifneOwnSparseDensity{} centreline pixels per image pixel, and separate
-only slightly at \PlectaSifneOwnDenseDensity{},
-\PlectaSifneOwnDensePlectaFOne{} against \PlectaSifneOwnDenseSifneFOne{}; that
-its deficit here is far larger at the same density on tangled scenes places the
-difference in the crossing geometry rather than in the density.
-\suppcomparators{} gives the injection point, the selection, the reconstruction
-and what was not attempted.
-
 \textbf{Curvature-priced recombination, reimplemented.} The one prior method
 that both optimises over a neighbourhood and prices its joins on curvature is
 that of \citet{basu2015extraction}, so it is the closest structural relative
-PLECTA's junction matching has. Its software was never released, so it is
-reimplemented here and reported as a floor, exactly as the greedy rule is,
-never as an externally run result. Only its Section~II-B is implemented: a
-spanning tree over the mask points, every bifurcation deleted, and the
-surviving chains recombined by a set-partitioning integer program that prices
-each candidate by the curvature energy of a fitted spline less a fixed bond
-energy per join. Its intensity-guided front end is absent, so the skeleton
-stands in for the particle cloud it would produce, and its two parameters were
-selected on the same development scenes as every other comparator's.
+PLECTA's junction matching has. Its software was never released, so its
+recombination stage is reimplemented here and reported as a floor, exactly as
+the greedy rule is, never as an externally run result. \suppcomparators{}
+gives what was implemented and what was left out.
 
 It reaches \Fone{}=\PlectaBasuFOne{}, above GraFT and below the greedy rule,
 and it over-segments: \PlectaBasuInstanceRatio{} times as many instances as the
@@ -278,95 +348,7 @@ scaling, and the log--log exponents against foreground pixels are
 GraFT's is a lower bound, because the scenes its fit lost to censoring are the
 slowest ones, and only GraFT is heavy-tailed.
 
-\subsection{Development ablations and downstream rendering}
-\label{sec:res-ablation}
-
-\textbf{Two controls isolate the formulation.} Neither is anyone else's
-method, which is exactly what makes them useful: each holds the evidence
-fixed and varies one thing, so the margin measures the formulation rather
-than two whole systems. They are reported here rather than in
-Section~\ref{sec:res-comparators}, whose subject is published work.
-
-\textbf{Greedy continuation.} The baseline skeletonises the same mask and
-greedily accepts the lowest-turning-angle pairing between branch ends inside
-distance and turning-angle gates fixed by a development sweep. It is ours --
-not a reimplementation of any paper but of the pairing principle shared by
-SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic} -- and
-is reported as a transparent floor, never as an external result. PLECTA leads
-it by \PlectaGreedySweptDeltaFOne{} \Fone{}
-[\PlectaGreedySweptDeltaCILow{}, \PlectaGreedySweptDeltaCIHigh{}] paired over
-the \PlectaGreedySceneCount{} scenes, and by
-\PlectaGreedySweptCleanDeltaFOne{} [\PlectaGreedySweptCleanDeltaCILow{},
-\PlectaGreedySweptCleanDeltaCIHigh{}] on clean axes, so the margin is not an
-artefact of mask degradation.
-
-\textbf{Exact against greedy matching, matcher only.} That baseline replaces
-the whole linker; a second arm isolates the claim, keeping the graph, cost,
-admissibility gate and round schedule and replacing only the per-junction
-maximum-weight matching by greedy cheapest-first acceptance. Exactness was
-worth \PlectaMatcherDeltaFOne{} \Fone{} [\PlectaMatcherDeltaCILow{},
-\PlectaMatcherDeltaCIHigh{}] over \PlectaMatcherSceneCount{} development
-scenes, on \PlectaMatcherWinCount{} of \PlectaMatcherSceneCount{} of them, and
-\PlectaMatcherCleanDeltaFOne{} [\PlectaMatcherCleanDeltaCILow{},
-\PlectaMatcherCleanDeltaCIHigh{}] on clean axes; the failure is division, not
-merging, with variation-of-information split rising
-\PlectaMatcherExactVISplit{} to \PlectaMatcherGreedyVISplit{} at unchanged
-merge, \PlectaMatcherInstanceExcess{}\,\% more strands emitted and crossings
-resolved exactly falling \PlectaMatcherExactJunctionRate{} to
-\PlectaMatcherGreedyJunctionRate{}. The relative loss grows monotonically with
-degree, \PlectaMatcherDegreeThreeRelative{}\,\% at degree three to
-\PlectaMatcherDegreeSixRelative{}\,\% at degree six, but in absolute terms
-peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
-lie; and the greedy arm runs at parameters selected with the exact matcher in
-the loop, a bias in that matcher's favour.
-
-One-at-a-time ablations were evaluated only on the
-\PlectaDevelopmentSceneCount{} development scenes
-(Table~\ref{tab:plecta-ablation}).
-The three largest losses relative to the evaluated configuration were, in
-order, the junction chord-turn term
-(\PlectaAblationTangentTermOnlyDeltaFOne{}), gap matching
-(\PlectaAblationNoGapBridgingDeltaFOne{}) and connector-based junction-cluster
-consolidation (\PlectaAblationNoCrossingMergingAtAllDeltaFOne{}); every other
-component, chain-extended frames and the round schedule included, mattered
-less. These are development values, not held-out effect estimates.
-
-\begin{table}[tbp]
-    \centering
-    \caption{One-at-a-time component ablations on the
-    \PlectaDevelopmentSceneCount{}-scene development set. Negative $\Delta F_1$
-    values denote losses relative to the evaluated configuration.\\[2pt]
-    \textsuperscript{\dag}\,The last row is a \emph{formulation control}, not a
-    component: it keeps the graph, the cost, the admissibility gate and the
-    round schedule, and replaces only the exact per-junction matching by greedy
-    cheapest-first acceptance, so the difference isolates the formulation
-    rather than the evidence. It is measured on the
-    \PlectaMatcherSceneCount{} development scenes of that arm and its
-    $\Delta F_1$ is against the exact matcher on those same scenes, not against
-    the \PlectaDevelopmentSceneCount{}-scene configuration above.}
-    \label{tab:plecta-ablation}
-    \small
-    \input{results/plecta_ablation_table}
-\end{table}
-
-The core output is a grouping, not a set of connected curves: accepted gap
-links establish identity but are not painted, so on the development set
-\PlectaCoreDisconnected{} of core strands arrive as more than one disjoint
-pixel run and \PlectaCoreBranched{} contain a branch point. Any downstream step
-that assumes one connected curve per strand must account for this. The
-optional ribbon rendering of Section~\ref{sec:mm-stage4}, at its defaults,
-scored development \Fone{}=\PlectaStageFourFOne{}, a change of
-\PlectaStageFourDeltaFOne{}, and reduced those fractions to
-\PlectaStageFourDisconnected{} and \PlectaStageFourBranched{}, so rendering buys
-connectivity at a small cost in the identity score without changing chain
-membership. Enabling the separate 0.6 silhouette-absorption rule reduced
-\Fone{} further to \PlectaStageFourAbsorbFOne{}, and because absorption can
-merge identities it remained disabled. None of these topology measurements
-validates apparent width.
-
-\subsection{Crossing representation, and where it over-marks}
-\label{sec:res-overlap}
+\label{sec:res-overlap}%
 
 Resolving a crossing and representing one are different things, and only the
 first is what the scores above measure. Which arm continues into which is the
@@ -413,31 +395,122 @@ median, so the rows are typical rather than selected.
     \label{fig:examples}
 \end{figure}
 
-\subsection{Response to the input mask}
-\label{sec:res-mask}
+\subsection{Depth decomposition}
+\label{sec:res-depth}
 
-On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
-mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
-\PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
-clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
-[\PlectaCleanMinusDegradedFOneCILow{},
-\PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
-irregularities therefore caused a small resolved loss under this generator.
+The stages above reconstruct strands in projection. A crossing pixel is
+assigned to both strands that own it, but nothing so far says which of the
+two lies on top. The optional depth stage answers that from the greyscale
+alone -- the continuity of each strand's own brightness across the crossing,
+weighed against the noise measured there -- then imposes one
+globally consistent vertical order and places each strand at a height at
+which nothing interpenetrates. It changes no 2-D strand.
 
-The thickness of the axis mask costs more, and it matters because it is the
-upstream segmenter, not the method, that fixes it: over
-\PlectaSensitivityWidthSceneCount{} development scenes a nominal
-\PlectaSensitivityWidthHigh{}\,px axis mask scored
-\PlectaSensitivityWidthDeltaFOne{} \Fone{}
-[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
-against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
-variant is scored against common fragments rebuilt from its own input mask, so
-the question asked is how well the method groups the skeleton it is handed, and
-the decline with width is a thicker mask skeletonising into a messier graph
-rather than a change in the grouping problem. This is the one density axis that
-does move the score. The rendered silhouette does not, causally and scene by
-scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
-geometry of its axis and not by how much of the frame its bundles fill.
+% Depth re-run 2026-08-23: every macro in this subsection and
+% Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
+% (results/plecta_depth_order.json, via scripts/results/run_depth_order_eval.py
+% -> make_depth_record.py -> make_plecta_results.py). The two markers before the
+% figures remain open: those panels are rendered images, not macros, and were
+% not re-rendered.
+It is evaluated on \PlectaDepthSceneCount{} depth-resolved synthetic scenes at
+two areal coverages, under the measures of
+\suppdepth{}, in two input conditions. Given the
+reference 2-D geometry, the depth decision is measured alone; given only the
+binary axis mask, the same stage runs on PLECTA's own reconstruction and
+carries its error. Table~\ref{tab:depth-order} reports both.
+
+\begin{table}[tbp]
+\centering
+\caption{The depth stage on \PlectaDepthSceneCount{} depth-resolved synthetic
+scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
+six scenes per coverage, plain means, no inference.}
+\label{tab:depth-order}
+\input{results/plecta_depth_order_table}
+\end{table}
+
+The decomposition is the result. Order accuracy over decided crossings spans
+\PlectaDepthDecidedSpan{}
+(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
+and both densities, while accuracy over all crossings spans more than three
+times that, \PlectaDepthAllSpan{}
+(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
+falls by the amount the crossing recovery rate falls,
+\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}: at the denser coverage the
+reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all crossings,
+divided by the given condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces
+its crossing recovery rate \PlectaDepthCleanCovFourZeroMatch{} to within two
+thousandths. The decided figures are only meaningful beside the abstention row
+above them: what the stage declines there are the hard crossings, so a higher
+decided accuracy is a stage answering less often, not a stage deciding better.
+Once a crossing is found, the decision is made at a broadly similar accuracy
+whether the geometry was given or reconstructed, and whether the scene carries
+the sparser crossing load or roughly five times it, though not at the same
+accuracy: the widest gap between the input conditions is
+\PlectaDepthCleanCovTwoZeroDecided{} reconstructed against
+\PlectaDepthOracleCovTwoZeroDecided{} given, at the sparser coverage and in
+favour of the reconstruction, which scores only the crossings it matched and
+abstains on more of them. What limits
+the depth result is the 2-D stage not recovering every crossing, not the
+ordering of the crossings it does recover.
+
+The global stack is weaker than the local decision, and the gap is a property
+of the evidence rather than of the decision. Depth order is recovered at
+\PlectaDepthCleanCovTwoZeroCrossOrder{} over pairs that cross but only
+\PlectaDepthCleanCovTwoZeroAllOrder{} over all pairs, because depth propagates
+solely along crossings: two strands in different components of the crossing
+graph are related by no evidence whatever, and their order is a stated
+tie-break. That is measurable, not merely arguable. Only
+\PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs lie
+within one component, and if the pairs that do are ordered at the
+crossing-pair rate while the rest are a coin flip, the all-pairs figure follows
+arithmetically: at 20\,\% coverage that predicts
+\PlectaDepthCleanCovTwoZeroOrderPred{} against
+\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The arithmetic is an
+approximation in both directions rather than an account that holds at one end
+and fails at the other: it under-predicts at the sparser coverage, where the
+pairs in different components are evidently not quite a coin flip, and
+over-predicts at the denser end, where the measured order falls below the
+prediction by up to
+\PlectaDepthOrderResidual{}, consistent with error accumulating along the long
+transitive chains that large components create. Depth claims are therefore
+scoped to the connected component, and a globally ordered film would need
+evidence that does not travel through crossings, such as defocus, or a second view, rather than a smoothness assumption, which these scenes would not support:
+their heights are drawn independently, so proximity carries no depth
+information by construction.
+
+Layer agreement follows the same pattern, falling from
+\PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
+coverage doubles while the recovered layer count stays close to the reference:
+the ordering is locally right, so the number of layers is about right, while
+small order errors move strands across layer boundaries.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
+\caption{The depth stage on one synthetic scene, reconstructed from the binary
+axis mask. The image the scene was rendered from, that scene re-rendered from
+the reconstruction through a forward SEM model, and the film the reconstruction
+implies. The re-rendered panel is a consistency check on depths and radii, not
+a scored quantity: the difference Table~\ref{tab:depth-order} reports between
+input conditions is a difference in which crossings were \emph{found}, which a
+rendered image cannot show. The table carries that measurement.}
+\label{fig:resem-synth}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
+\caption{The same comparison on a real CNT SEM field, reconstructed from the axis
+of annotator~A's annotation. \textbf{Nothing here is scored.} No depth ground
+truth exists for real
+SEM -- the annotation records which pixels belong to which strand, not which
+strand lies on top, so this shows the stage runs end to end on real
+data and re-renders to something recognisable, not that the depths are right.
+The forward model's appearance parameters are fitted to this micrograph, so the
+residual quoted beneath the panel is in-sample and is a sanity check rather
+than a measure of reconstruction quality.}
+\label{fig:resem-real}
+\end{figure}
 
 \subsection{Proof of concept on real SEM}
 \label{sec:res-real}
@@ -582,120 +655,3 @@ precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
 than fusing strands, which is what panel~(c) of Figure~\ref{fig:real-sem}
 shows.
-
-\subsection{Optional depth decomposition}
-\label{sec:res-depth}
-
-The stages above reconstruct strands in projection. A crossing pixel is
-assigned to both strands that own it, but nothing so far says which of the
-two lies on top. The optional depth stage answers that from the greyscale
-alone -- the continuity of each strand's own brightness across the crossing,
-weighed against the noise measured there -- then imposes one
-globally consistent vertical order and places each strand at a height at
-which nothing interpenetrates. It changes no 2-D strand.
-
-% Depth re-run 2026-08-23: every macro in this subsection and
-% Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
-% (results/plecta_depth_order.json, via scripts/results/run_depth_order_eval.py
-% -> make_depth_record.py -> make_plecta_results.py). The two markers before the
-% figures remain open: those panels are rendered images, not macros, and were
-% not re-rendered.
-It is evaluated on \PlectaDepthSceneCount{} depth-resolved synthetic scenes at
-two areal coverages, under the measures of
-\suppdepth{}, in two input conditions. Given the
-reference 2-D geometry, the depth decision is measured alone; given only the
-binary axis mask, the same stage runs on PLECTA's own reconstruction and
-carries its error. Table~\ref{tab:depth-order} reports both.
-
-\begin{table}[tbp]
-\centering
-\caption{The depth stage on \PlectaDepthSceneCount{} depth-resolved synthetic
-scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
-six scenes per coverage, plain means, no inference.}
-\label{tab:depth-order}
-\input{results/plecta_depth_order_table}
-\end{table}
-
-The decomposition is the result. Order accuracy over decided crossings spans
-\PlectaDepthDecidedSpan{}
-(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
-and both densities, while accuracy over all crossings spans more than three
-times that, \PlectaDepthAllSpan{}
-(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) -- and it
-falls by the amount the crossing recovery rate falls,
-\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}: at the denser coverage the
-reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all crossings,
-divided by the given condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces
-its crossing recovery rate \PlectaDepthCleanCovFourZeroMatch{} to within two
-thousandths. The decided figures are only meaningful beside the abstention row
-above them: what the stage declines there are the hard crossings, so a higher
-decided accuracy is a stage answering less often, not a stage deciding better.
-Once a crossing is found, the decision is made at a broadly similar accuracy
-whether the geometry was given or reconstructed, and whether the scene carries
-the sparser crossing load or roughly five times it, though not at the same
-accuracy: the widest gap between the input conditions is
-\PlectaDepthCleanCovTwoZeroDecided{} reconstructed against
-\PlectaDepthOracleCovTwoZeroDecided{} given, at the sparser coverage and in
-favour of the reconstruction, which scores only the crossings it matched and
-abstains on more of them. What limits
-the depth result is the 2-D stage not recovering every crossing, not the
-ordering of the crossings it does recover.
-
-The global stack is weaker than the local decision, and the gap is a property
-of the evidence rather than of the decision. Depth order is recovered at
-\PlectaDepthCleanCovTwoZeroCrossOrder{} over pairs that cross but only
-\PlectaDepthCleanCovTwoZeroAllOrder{} over all pairs, because depth propagates
-solely along crossings: two strands in different components of the crossing
-graph are related by no evidence whatever, and their order is a stated
-tie-break. That is measurable, not merely arguable. Only
-\PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs lie
-within one component, and if the pairs that do are ordered at the
-crossing-pair rate while the rest are a coin flip, the all-pairs figure follows
-arithmetically: at 20\,\% coverage that predicts
-\PlectaDepthCleanCovTwoZeroOrderPred{} against
-\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The arithmetic is an
-approximation in both directions rather than an account that holds at one end
-and fails at the other: it under-predicts at the sparser coverage, where the
-pairs in different components are evidently not quite a coin flip, and
-over-predicts at the denser end, where the measured order falls below the
-prediction by up to
-\PlectaDepthOrderResidual{}, consistent with error accumulating along the long
-transitive chains that large components create. Depth claims are therefore
-scoped to the connected component, and a globally ordered film would need
-evidence that does not travel through crossings, such as defocus, or a second view, rather than a smoothness assumption, which these scenes would not support:
-their heights are drawn independently, so proximity carries no depth
-information by construction.
-
-Layer agreement follows the same pattern, falling from
-\PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
-coverage doubles while the recovered layer count stays close to the reference:
-the ordering is locally right, so the number of layers is about right, while
-small order errors move strands across layer boundaries.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
-\caption{The depth stage on one synthetic scene, reconstructed from the binary
-axis mask. The image the scene was rendered from, that scene re-rendered from
-the reconstruction through a forward SEM model, and the film the reconstruction
-implies. The re-rendered panel is a consistency check on depths and radii, not
-a scored quantity: the difference Table~\ref{tab:depth-order} reports between
-input conditions is a difference in which crossings were \emph{found}, which a
-rendered image cannot show. The table carries that measurement.}
-\label{fig:resem-synth}
-\end{figure}
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same comparison on a real CNT SEM field, reconstructed from the axis
-of annotator~A's annotation. \textbf{Nothing here is scored.} No depth ground
-truth exists for real
-SEM -- the annotation records which pixels belong to which strand, not which
-strand lies on top, so this shows the stage runs end to end on real
-data and re-renders to something recognisable, not that the depths are right.
-The forward model's appearance parameters are fitted to this micrograph, so the
-residual quoted beneath the panel is in-sample and is a sanity check rather
-than a measure of reconstruction quality.}
-\label{fig:resem-real}
-\end{figure}

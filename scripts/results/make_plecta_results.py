@@ -1437,6 +1437,21 @@ def ablation_table(payload: dict, audit: dict | None = None) -> str:
         r"Development variant & $F_1$ & $\Delta F_1$ & ARI \\",
         r"\midrule",
     ]
+    #  The matcher arm sits directly under the fixed configuration rather than
+    #  at the foot of the table. It is the formulation control, so it belongs
+    #  beside the configuration it is a control on; trailing it after a rule
+    #  needed a footnote to say why it was set apart, and the row name already
+    #  says what it is.
+    matcher_row = None
+    if audit:
+        arms = audit["matcher_ablation"]["degraded"]["arms"]
+        exact, greedy = arms["exact"], arms["greedy_junction"]
+        matcher_row = (
+            r"Greedy per-junction matcher & "
+            f"{fmt(greedy['f1'])} & "
+            f"{float(greedy['f1']) - float(exact['f1']):+.3f} & "
+            f"{fmt(greedy['adjusted_rand_index'])} \\\\"
+        )
     for row in payload["rows"]:
         if row["ablation"] not in selected:
             continue
@@ -1461,16 +1476,11 @@ def ablation_table(payload: dict, audit: dict | None = None) -> str:
             f"{tex_escape(label)} & {fmt(row['f1'])} & "
             f"{delta:+.3f} & {fmt(row['adjusted_rand_index'])} \\\\"
         )
-    if audit:
-        arms = audit["matcher_ablation"]["degraded"]["arms"]
-        exact, greedy = arms["exact"], arms["greedy_junction"]
-        lines.append(r"\addlinespace")
-        lines.append(
-            r"Greedy per-junction matcher\textsuperscript{\dag} & "
-            f"{fmt(greedy['f1'])} & "
-            f"{float(greedy['f1']) - float(exact['f1']):+.3f} & "
-            f"{fmt(greedy['adjusted_rand_index'])} \\\\"
-        )
+    #  Second row, directly under the configuration it is a control on.
+    if matcher_row is not None:
+        head = next(k for k, l in enumerate(lines)
+                    if l.startswith(r"\midrule"))
+        lines.insert(head + 2, matcher_row)
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
 
