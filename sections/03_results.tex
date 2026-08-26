@@ -278,80 +278,6 @@ scaling, and the log--log exponents against foreground pixels are
 GraFT's is a lower bound, because the scenes its fit lost to censoring are the
 slowest ones, and only GraFT is heavy-tailed.
 
-\subsection{Crossing representation, and where it over-marks}
-\label{sec:res-overlap}
-
-Resolving a crossing and representing one are different things, and only the
-first is what the scores above measure. Which arm continues into which is the
-difficult decision, and every score in this paper rewards getting it right.
-Whether the emitted raster \emph{represents} a crossing pixel as belonging to
-both strands is a property of the output format, and the metric cannot see
-it: flattening the emitted layers to a single label image leaves PLECTA's
-\Fone{} unchanged to four decimal places (\PlectaOverlapFlattenCost{}).
-
-The representation is instead verifiable directly: on the comparison set,
-reference strands share \PlectaOverlapReferenceLow{}\,\% of their pixels with
-another strand at 20\% coverage, rising to
-\PlectaOverlapReferenceHigh{}\,\% at 60\%; PLECTA emits
-\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\%, and GraFT,
-whose output is close to a hard partition, about
-\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
-PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
-than one strand, less than half, though the largest such recall here, against
-\PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
-while the greedy baseline, a hard partition, scores zero by construction. It
-does so at a precision of \PlectaSharedPrecision{}, marking
-\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
-the reference contains, because a chain is painted with every pixel of every
-junction cluster it touches. That is a property of the rendering rather than of
-the grouping, and one the \Fone{} neither rewards nor penalises.
-
-Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
-taking at three coverage levels the scene whose \Fone{} is closest to the
-median, so the rows are typical rather than selected.
-
-\begin{figure}[tbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
-    \caption{Reconstruction at three coverage levels, each the scene closest to
-    the median \Fone{} of its stratum, shown as a horizontal window of the
-    512\,px scene rather than the whole of it. Columns: the degraded input
-    mask, the overlap-aware reference, and PLECTA's strands drawn at their
-    fitted widths. What is evaluated in this paper is the grouping of centreline
-    pixels the method produces from the mask alone, and the \Fone{} beside each
-    row is that grouping's score; the width rendering shown here is a
-    downstream step that redraws those strands and cannot move a pixel from
-    one to another. Strand colours are arbitrary and not matched between
-    columns.}
-    \label{fig:examples}
-\end{figure}
-
-\subsection{Response to the input mask}
-\label{sec:res-mask}
-
-On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
-mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
-\PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
-clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
-[\PlectaCleanMinusDegradedFOneCILow{},
-\PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
-irregularities therefore caused a small resolved loss under this generator.
-
-The thickness of the axis mask costs more, and it matters because it is the
-upstream segmenter, not the method, that fixes it: over
-\PlectaSensitivityWidthSceneCount{} development scenes a nominal
-\PlectaSensitivityWidthHigh{}\,px axis mask scored
-\PlectaSensitivityWidthDeltaFOne{} \Fone{}
-[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
-against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
-variant is scored against common fragments rebuilt from its own input mask, so
-the question asked is how well the method groups the skeleton it is handed, and
-the decline with width is a thicker mask skeletonising into a messier graph
-rather than a change in the grouping problem. This is the one density axis that
-does move the score. The rendered silhouette does not, causally and scene by
-scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
-geometry of its axis and not by how much of the frame its bundles fill.
-
 \subsection{Development ablations and downstream rendering}
 \label{sec:res-ablation}
 
@@ -438,6 +364,80 @@ membership. Enabling the separate 0.6 silhouette-absorption rule reduced
 \Fone{} further to \PlectaStageFourAbsorbFOne{}, and because absorption can
 merge identities it remained disabled. None of these topology measurements
 validates apparent width.
+
+\subsection{Crossing representation, and where it over-marks}
+\label{sec:res-overlap}
+
+Resolving a crossing and representing one are different things, and only the
+first is what the scores above measure. Which arm continues into which is the
+difficult decision, and every score in this paper rewards getting it right.
+Whether the emitted raster \emph{represents} a crossing pixel as belonging to
+both strands is a property of the output format, and the metric cannot see
+it: flattening the emitted layers to a single label image leaves PLECTA's
+\Fone{} unchanged to four decimal places (\PlectaOverlapFlattenCost{}).
+
+The representation is instead verifiable directly: on the comparison set,
+reference strands share \PlectaOverlapReferenceLow{}\,\% of their pixels with
+another strand at 20\% coverage, rising to
+\PlectaOverlapReferenceHigh{}\,\% at 60\%; PLECTA emits
+\PlectaOverlapExpressedLow{}--\PlectaOverlapExpressedHigh{}\,\%, and GraFT,
+whose output is close to a hard partition, about
+\PlectaOverlapGraFTHigh{}\,\%. Which pixels those are is less flattering.
+PLECTA recovers \PlectaSharedRecall{} of the pixels the reference gives to more
+than one strand, less than half, though the largest such recall here, against
+\PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
+while the greedy baseline, a hard partition, scores zero by construction. It
+does so at a precision of \PlectaSharedPrecision{}, marking
+\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels than
+the reference contains, because a chain is painted with every pixel of every
+junction cluster it touches. That is a property of the rendering rather than of
+the grouping, and one the \Fone{} neither rewards nor penalises.
+
+Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
+taking at three coverage levels the scene whose \Fone{} is closest to the
+median, so the rows are typical rather than selected.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
+    \caption{Reconstruction at three coverage levels, each the scene closest to
+    the median \Fone{} of its stratum, shown as a horizontal window of the
+    512\,px scene rather than the whole of it. Columns: the degraded input
+    mask, the overlap-aware reference, and PLECTA's strands drawn at their
+    fitted widths. What is evaluated in this paper is the grouping of centreline
+    pixels the method produces from the mask alone, and the \Fone{} beside each
+    row is that grouping's score; the width rendering shown here is a
+    downstream step that redraws those strands and cannot move a pixel from
+    one to another. Strand colours are arbitrary and not matched between
+    columns.}
+    \label{fig:examples}
+\end{figure}
+
+\subsection{Response to the input mask}
+\label{sec:res-mask}
+
+On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
+mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
+\PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
+clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
+[\PlectaCleanMinusDegradedFOneCILow{},
+\PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
+irregularities therefore caused a small resolved loss under this generator.
+
+The thickness of the axis mask costs more, and it matters because it is the
+upstream segmenter, not the method, that fixes it: over
+\PlectaSensitivityWidthSceneCount{} development scenes a nominal
+\PlectaSensitivityWidthHigh{}\,px axis mask scored
+\PlectaSensitivityWidthDeltaFOne{} \Fone{}
+[\PlectaSensitivityWidthDeltaCILow{}, \PlectaSensitivityWidthDeltaCIHigh{}]
+against the \PlectaSensitivityWidthLow{}\,px mask of the same scenes. Each width
+variant is scored against common fragments rebuilt from its own input mask, so
+the question asked is how well the method groups the skeleton it is handed, and
+the decline with width is a thicker mask skeletonising into a messier graph
+rather than a change in the grouping problem. This is the one density axis that
+does move the score. The rendered silhouette does not, causally and scene by
+scene (Section~\ref{sec:res-factorial}), so a mask should be reported by the
+geometry of its axis and not by how much of the frame its bundles fill.
 
 \subsection{Proof of concept on real SEM}
 \label{sec:res-real}
