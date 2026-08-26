@@ -81,14 +81,15 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
 
-\subsection{Development ablations and downstream rendering}
+\subsection{Development ablations}
 \label{sec:res-ablation}
 
-\textbf{Two controls isolate the formulation.} Neither is anyone else's
-method, which is exactly what makes them useful: each holds the evidence
-fixed and varies one thing, so the margin measures the formulation rather
-than two whole systems. They are reported here rather than in
-Section~\ref{sec:res-comparators}, whose subject is published work.
+Everything here is measured on the development scenes and none of it reuses
+the held-out set. Two controls vary one part of PLECTA against the fixed
+configuration, neither of them anyone else's method, so each margin measures
+the formulation rather than two whole systems; the component ablations then
+remove one part at a time; and the optional rendering stage is measured for
+what it costs and what it buys.
 
 \textbf{Greedy continuation.} The baseline skeletonises the same mask and
 greedily accepts the lowest-turning-angle pairing between branch ends inside
@@ -124,10 +125,8 @@ peaks at degree four (\PlectaMatcherDegreeFourAbsolute{}), where most crossings
 lie; and the greedy arm runs at parameters selected with the exact matcher in
 the loop, a bias in that matcher's favour.
 
-One-at-a-time ablations were evaluated only on the
-\PlectaDevelopmentSceneCount{} development scenes
-(Table~\ref{tab:plecta-ablation}).
-The three largest losses relative to the evaluated configuration were, in
+The three largest losses relative to the evaluated configuration
+(Table~\ref{tab:plecta-ablation}) were, in
 order, the junction chord-turn term
 (\PlectaAblationTangentTermOnlyDeltaFOne{}), gap matching
 (\PlectaAblationNoGapBridgingDeltaFOne{}) and connector-based junction-cluster
