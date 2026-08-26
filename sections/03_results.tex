@@ -203,16 +203,11 @@ at every coverage level. Roughly \PlectaDNAiCoverageShareClean{}\,\% of the
 margin is therefore coverage of cases the comparator cannot attempt, and
 \PlectaDNAiDecisionShareClean{}\,\% the outcome of decisions both methods make.
 
-\textbf{Curvature-priced recombination, reimplemented.} The one prior method
-that both optimises over a neighbourhood and prices its joins on curvature is
-that of \citet{basu2015extraction}, so it is the closest structural relative
-PLECTA's junction matching has. No implementation of it was found, so its
-recombination stage is reimplemented here and reported as a floor, exactly as
-the greedy rule is, never as an externally run result. \suppcomparators{}
-gives what was implemented and what was left out.
-
-It reaches \Fone{}=\PlectaBasuFOne{}, above GraFT and below the greedy rule,
-and it over-segments: \PlectaBasuInstanceRatio{} times as many instances as the
+\textbf{Basu et al., reimplemented.} The closest structural relative PLECTA's
+junction matching has is \citet{basu2015extraction}, which also optimises over
+a neighbourhood and prices its joins on curvature. It reaches
+\Fone{}=\PlectaBasuFOne{}, above GraFT and below the greedy rule, and it
+over-segments: \PlectaBasuInstanceRatio{} times as many instances as the
 reference. The informative result is the split between its two scores. On
 Crossing Fidelity it reaches \PlectaBasuCrossingFidelity{}, second only to
 PLECTA and ahead of both released methods, while its pairwise \Fone{} sits far
