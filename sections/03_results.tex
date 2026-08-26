@@ -15,8 +15,8 @@ Mean common-fragment pairwise \Fone{} over the
 \PlectaHeldoutSceneCount{} held-out scenes was
 \PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]);
-Table~\ref{tab:plecta-heldout} gives precision, recall, reference-instance
-recovery, adjusted Rand index and both variation-of-information components,
+Table~\ref{tab:plecta-heldout} gives precision, recall, the
+adjusted Rand index and both variation-of-information components,
 overall and by density. These scenes used unseen seeds from the same
 procedural generator as development data, so this is same-generator
 generalisation and not distribution transfer
@@ -230,20 +230,22 @@ though a topology we rebuilt is weaker evidence than a generator its authors
 released. \suppcomparators{} gives both density series in full.
 
 
-\textbf{What the margin is made of.} An ordering says which method wins, not
-where. The Crossing Fidelity row of Table~\ref{tab:plecta-comparators} says
-where: pooled over the \PlectaJunctionCount{} reference crossings of the
-degraded set, PLECTA partitions \PlectaJunctionPlectaRate{} of them exactly,
-ahead of every comparator, and clean axes order them the same way. That
-measure is far less discriminative than the pairwise score, spanning
-\PlectaJunctionSpreadHigh{} between best and worst method at 60\,\% coverage
-where pairwise \Fone{} spans \PlectaPairwiseSpreadHigh{}, so it is used to say
-what was solved and not to rank. Every method is poor at the busiest nodes:
-above degree four PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no
-comparator does better, while DNAi collapses to
-\PlectaJunctionDNAiDegreeFivePlus{}, which is what its degree-four cap
-predicts. \suppcomparators{} gives the paired margins and the all-unpaired
-baseline the rate is read against.
+\textbf{How many crossings were solved.} The pairwise score counts pairs of
+fragments, which says how much of the grouping is right without saying how
+many crossings a method actually got through. Crossing Fidelity says that: the
+fraction of reference crossings at which a method partitions the arms meeting
+there exactly as the reference does. Pooled over the \PlectaJunctionCount{}
+reference crossings of the degraded set, PLECTA partitions
+\PlectaJunctionPlectaRate{} of them exactly, ahead of every comparator, and
+clean axes order them the same way. It is far less discriminative than the
+pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
+method at 60\,\% coverage where pairwise \Fone{} spans
+\PlectaPairwiseSpreadHigh{}, so it is read as a count of what was solved and
+not as a ranking. Every method is poor at the busiest nodes: above degree four
+PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does
+better, while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is
+what its degree-four cap predicts. \suppcomparators{} gives the paired margins
+and the all-unpaired baseline the rate is read against.
 
 \textbf{Cost.} Accuracy is not the only axis on which these methods differ.
 Per-scene cost was measured warm, single-threaded and pinned to one core,

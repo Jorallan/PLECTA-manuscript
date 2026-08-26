@@ -144,17 +144,6 @@ the mask never brought within reach counts against nobody, so it cannot see a
 strand the mask lost entirely, and it is always quoted with the number of
 decisions each mask posed.
 
-\textbf{Reference-instance recovery} is the fraction of reference strands
-recovered whole by one predicted instance. The dominant predicted instance of a
-strand owns most of its fragments; coverage is that count over the strand's
-fragment count, purity the same count over every fragment that instance owns
-anywhere, and a strand counts as recovered when the dominance is
-\emph{mutual} and both reach 0.8. Purity is what stops a method that merges
-everything from scoring 1.0, and the measure weights every strand equally,
-complementing the pairwise score's quadratic weighting. Blind spot: the two
-thresholds, which make it insensitive to how badly a failing strand was
-reconstructed.
-
 \textbf{Completeness, correctness and quality} characterise the input
 \emph{mask}: no reconstruction is opened to compute them and no method can
 change them. Reference axis and test mask are both skeletonised and each tested
