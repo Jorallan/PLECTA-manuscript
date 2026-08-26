@@ -439,24 +439,16 @@ centrelines the scores are computed on.
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{Reconstructed bundles on two of the annotated SEM fields, one
-    field per row.
+    \caption{Reconstructed bundles on two annotated SEM fields, one per row.
     \textbf{(a)}~annotator~A's annotation; \textbf{(b)}~PLECTA from the
     manual-derived axis; \textbf{(c)}~PLECTA from the nnU-Net axis of
-    Figure~\ref{fig:real-sem-axis}b, the same method and the same parameters,
-    differing only in the mask. All three are drawn at width so that they are
-    the same kind of object: the annotation as the annotator painted it, and
-    the two reconstructions through the optional image layer of
-    Section~\ref{sec:mm-stage4}, which measures a width per strand across the
-    centreline and renders a ribbon. That layer runs after the grouping is
-    fixed and cannot move a pixel from one strand to another, so no score in
-    this paper depends on it. Strand colours correspond across the panels of
-    a row: a predicted strand takes the colour of the annotated strand it
-    was matched to, one matched to none is crimson, and adjacent strands are
-    given different colours, which carry identity within the row and nothing
-    else. Each crop is the window whose local pairwise \Fone{} is jointly
-    closest to that field's whole-field value on both axes, so it is typical of
-    the field rather than selected from it.}
+    Figure~\ref{fig:real-sem-axis}b, the same method and parameters, differing
+    only in the mask. All three are drawn at width, the reconstructions through
+    the optional layer of Section~\ref{sec:mm-stage4}, which runs after the
+    grouping is fixed and moves no pixel between strands. Within a row, a
+    predicted strand takes the colour of the annotated strand it matched;
+    crimson matched none. Each crop is the window whose local pairwise
+    \Fone{} is closest to the whole-field value on both axes.}
     \label{fig:real-sem}
 \end{figure}
 
