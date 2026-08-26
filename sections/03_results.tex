@@ -126,10 +126,15 @@ al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
 
 Four published methods are scored beside PLECTA on identical masks, through
 the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
-generated after every configuration was fixed. DNAi \citep{playout2026dnai},
-GraFT \citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} are run from
-their own released sources. For the fourth, \citet{basu2015extraction}, no
-implementation was found, and it is reimplemented here.
+generated after every configuration was fixed. What is compared is narrow: the
+overlap-aware grouping of a binary axis mask of dense, crossing strands, at
+the coverages and tangling of the scenes described in
+Section~\ref{sec:mm-synth}. Each of these methods was built for a different
+setting, and how it performs in that setting is not what these numbers
+measure. DNAi \citep{playout2026dnai}, GraFT \citep{osterlund2026graft} and
+SIFNE \citep{zhang2017sifne} are run from their own released sources. For the
+fourth, \citet{basu2015extraction}, no implementation was found, and it is
+reimplemented here.
 
 
 \begin{table}[tbp]
@@ -165,8 +170,10 @@ scenes in the set. SIFNE is the strongest of the three, ahead of GraFT and of
 the greedy rule, and its Crossing Fidelity of \PlectaSifneCrossingFidelity{}
 is second only to PLECTA's, so the margin rests on a method configured for
 this data rather than on a default that suits it badly. \suppcomparators{}
-gives each injection point, each selection, the sparse-topology re-test
-SIFNE's own paper validates against, and what was not attempted.
+gives each injection point, each selection, and what was not attempted. None
+of this
+establishes a general ranking of these methods, and
+Section~\ref{sec:limitations} states what the comparison leaves untested.
 
 \begin{figure}[!t]
   \centering
@@ -219,7 +226,8 @@ this comparison exists to draw, and it is why the priced refusal in
 Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
 its own.
 
-\textbf{A second generator.} Every scene above comes from one generator, so the
+\textbf{Each method on its own ground.} Every scene above comes from one
+generator, so the
 comparison was repeated on GraFT's own, run unmodified at its published settings
 over \PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
 strata spanning \PlectaRegimeDensityLow{} to \PlectaRegimeDensityHigh{}
@@ -243,6 +251,16 @@ that arm scored \PlectaRegimeLowGraFTNativeFOne{} and
 almost everywhere, so injecting the mask continues to favour it. The held-out
 result of Section~\ref{sec:res-density} is a same-generator measurement and
 remains one; this comparison is not.
+
+SIFNE was given the same courtesy. On a rebuilt version of the sparse cobweb
+topology its own paper validates against, the two methods are level where that
+paper works, \PlectaSifneOwnSparsePlectaFOne{} against
+\PlectaSifneOwnSparseSifneFOne{} at \PlectaSifneOwnSparseDensity{} centreline
+pixels per image pixel, and separate only slightly at
+\PlectaSifneOwnDenseDensity{}, \PlectaSifneOwnDensePlectaFOne{} against
+\PlectaSifneOwnDenseSifneFOne{}. Its larger deficit on the scenes above, at
+the same density, therefore locates the difference in how tangled the crossings
+are rather than in how much strand the frame holds.
 
 \textbf{Crossings resolved.} The Crossing Fidelity row of
 Table~\ref{tab:plecta-comparators} states the contribution directly, and pooled over the
