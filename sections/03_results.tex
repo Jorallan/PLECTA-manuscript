@@ -258,25 +258,6 @@ the log--log exponents against foreground pixels are
 methods timed to completion; GraFT's is a lower bound, because the scenes
 missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
 
-\label{sec:res-overlap}%
-
-\textbf{Representing a crossing, and where it over-marks.} Resolving a
-crossing and representing one are different things, and only the first is what
-the scores above measure: flattening PLECTA's emitted layers to a single label
-image leaves its \Fone{} unchanged to four decimal places. The representation
-is verifiable on its own, and the result is mixed. PLECTA recovers
-\PlectaSharedRecall{} of the pixels the reference gives to more than one
-strand, less than half, though the largest such recall here, against
-\PlectaSharedGraFTRecall{} for GraFT and \PlectaSharedDNAiRecall{} for DNAi,
-while the greedy baseline, a hard partition, scores zero by construction. It
-does so at a precision of \PlectaSharedPrecision{}, marking
-\PlectaSharedExcess{}--\PlectaSharedCleanExcess{} times more shared pixels
-than the reference contains, because a chain is painted with every pixel of
-every junction cluster it touches. That is a property of the rendering rather
-than of the grouping, and one the \Fone{} neither rewards nor penalises.
-\suppmeasures{} gives the shares emitted against the shares the reference
-carries, by coverage.
-
 \subsection{Depth decomposition}
 \label{sec:res-depth}
 
