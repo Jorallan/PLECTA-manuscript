@@ -109,7 +109,11 @@
    "n_decisions": 13234,
    "detection_f1": 0.9405772495755518,
    "crossing_fidelity": 0.921832884097035,
-   "n_crossings": 371
+   "n_crossings": 371,
+   "adjusted_rand_index": 0.8864986453830431,
+   "vi_split_bits": 0.11227557541427115,
+   "vi_merge_bits": 0.2206849109796804,
+   "vi_total_bits": 0.33296048639395154
   },
   {
    "field": "B58_100",
@@ -187,7 +191,11 @@
    "n_decisions": 24870,
    "detection_f1": 0.9300613496932515,
    "crossing_fidelity": 0.9198664440734557,
-   "n_crossings": 599
+   "n_crossings": 599,
+   "adjusted_rand_index": 0.8360946425843095,
+   "vi_split_bits": 0.13310774575985512,
+   "vi_merge_bits": 0.3069337454698707,
+   "vi_total_bits": 0.4400414912297258
   },
   {
    "field": "B58_110",
@@ -265,7 +273,11 @@
    "n_decisions": 28224,
    "detection_f1": 0.9589905362776024,
    "crossing_fidelity": 0.955810147299509,
-   "n_crossings": 611
+   "n_crossings": 611,
+   "adjusted_rand_index": 0.9468951073887749,
+   "vi_split_bits": 0.06364822258219899,
+   "vi_merge_bits": 0.1407912626511084,
+   "vi_total_bits": 0.20443948523330738
   },
   {
    "field": "B58_300",

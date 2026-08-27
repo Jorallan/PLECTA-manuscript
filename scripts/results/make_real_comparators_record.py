@@ -140,6 +140,23 @@ def main() -> int:
             if tag != "plecta":
                 out.update({k: row.get(k) for k in COMPARATOR_ONLY})
                 out["params"] = row["params"]
+            else:
+                #  PLECTA is quoted rather than re-run, and
+                #  plecta_real_fields.json stores no ARI or VI per field, so
+                #  the study's own record carries none for it either. The
+                #  parity gate does: it re-ran PLECTA through this scoring
+                #  path and recorded them under `not_in_record` precisely
+                #  because the published record had nowhere to put them. They
+                #  are the same run the gate matched at 0.0 on everything the
+                #  published record does store, so they belong to these rows.
+                gate_row = [r for r in gate_payload["rows"]
+                            if r["field"] == key]
+                if len(gate_row) != 1:
+                    raise SystemExit(f"no parity-gate row for {key}")
+                extra = gate_row[0]["not_in_record"]
+                out.update({k: extra[k] for k in
+                            ("adjusted_rand_index", "vi_split_bits",
+                             "vi_merge_bits", "vi_total_bits")})
             rows.append(out)
 
     #  The study's parity gate is re-asserted here rather than trusted: its

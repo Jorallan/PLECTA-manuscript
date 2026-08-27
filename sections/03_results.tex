@@ -97,169 +97,6 @@ median, so the rows are typical rather than selected.
     \label{fig:examples}
 \end{figure}
 
-\subsection{Development ablations}
-\label{sec:res-ablation}
-
-Everything here is measured on the development scenes and none of it reuses
-the held-out set.
-
-\textbf{What each part is worth.} Table~\ref{tab:plecta-ablation} varies one
-thing at a time. Two rows change what a link costs, dropping the junction
-chord-turn term or the curvature term; two change the graph the linker reads,
-leaving neighbouring junction clusters unconsolidated or arms too short to
-merge the crossings they join; two change the iteration, running a single
-round or removing the schedule that relaxes the gates; and one removes gap
-bridging, so identity never crosses a break in the mask. The three largest
-losses are the junction chord-turn term, gap bridging and junction-cluster
-consolidation.
-
-Two rows are controls rather than components. Removing the joint solve leaves
-PLECTA otherwise intact and pairs each node's arms cheapest edge
-first, rather than by whichever complete pairing of that node is cheapest
-overall; a cheap edge taken early can then strand two arms that would have
-paired well together, which is why that arm fails by division rather than by
-merging. It also runs at parameters that were selected with the exact matcher
-in the loop, a bias in the exact matcher's favour. The last row replaces the
-linker outright, skeletonising the same mask and greedily pairing the branch
-ends that turn least inside fixed distance and angle gates, which is the
-pairing principle shared by SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
-
-\begin{table}[tbp]
-    \centering
-    \caption{Component ablations and the two controls, on development scenes.
-    The three blocks use different scene sets, so $n$ is given per row and
-    each $\Delta F_1$ is against PLECTA on that row's own scenes; the column is
-    not comparable across rows of different $n$.}
-    \label{tab:plecta-ablation}
-    \small
-    \input{results/plecta_ablation_table}
-\end{table}
-
-
-\subsection{Published methods on identical masks}
-\label{sec:res-comparators}
-
-Four published methods are scored beside PLECTA on identical masks, through
-the same conversion and metric code, over \PlectaGreedySceneCount{} scenes
-generated after every configuration was fixed. What is compared is narrow: the
-overlap-aware grouping of a binary axis mask of dense, crossing strands, at
-the coverages and tangling of the scenes described in
-Section~\ref{sec:mm-synth}. Each of these methods was built for a different
-setting, and how it performs in that setting is not what these numbers
-measure. DNAi \citep{playout2026dnai}, GraFT \citep{osterlund2026graft} and
-SIFNE \citep{zhang2017sifne} are run from their own released sources. For the
-fourth, \citet{basu2015extraction}, no implementation was found, and it is
-reimplemented here. Running someone else's method on data it was not built for
-takes decisions, and each of those decisions is stated here.
-
-
-\begin{table}[tbp]
-    \centering
-    \caption{PLECTA against four published methods, identical degraded masks
-    and one scorer, ordered by \Fone{}. $n=\PlectaGreedySceneCount{}$ scenes,
-    GraFT over the \PlectaGraFTSceneCount{} it completed. Variation of
-    information in bits, lower better; higher better for the rest.\\[2pt]
-    $^{*}$\,our reimplementation; no implementation of that paper was found.
-    \suppcomparators{} details it, and the timings that column cannot
-    support.}
-    \label{tab:plecta-comparators}
-    \small
-    \input{results/plecta_comparator_table}
-\end{table}
-
-\textbf{How each was run.} Each released method has a front end that precedes
-the stage assigning identity, and in each case the mask is injected where that
-stage begins, so grouping is not confounded with segmentation and every stage
-that assigns identity is their own code. Each was also run at a configuration
-selected on the same \PlectaDevelopmentSceneCount{} development scenes PLECTA
-was configured on rather than at its own defaults. Every one of these
-adaptations favours the comparator, and by a wide margin: run end to end on
-the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
-\PlectaGraFTFOne{} injected, and the re-selected configurations are worth
-\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are reported.
-\suppcomparators{} gives each injection point, each selection, what was not
-attempted, and how each method fails.
-
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
-  \caption{Five methods on identical masks, by coverage stratum:
-    \textbf{(a)} the undegraded axis, \textbf{(b)} the degraded one; columns
-    are pairwise \Fone{}, which counts pairs of fragments, and detection
-    \Fone{} at IoU \PlectaDetectionIoU{} with a
-    \PlectaPlacementTolerance{}\,px tolerance, which counts objects
-    (Section~\ref{sec:mm-metrics}). The two disagree where a method
-    fragments, since only the first is quadratic in fragmentation. Crossing
-    Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes, no
-    interval claimed. $^{*}$\,our reimplementation; none was found.}
-  \label{fig:metric-panels}
-\end{figure}
-
-Favoured in all those ways, the four order as
-Table~\ref{tab:plecta-comparators} shows. SIFNE is the strongest of them, so
-the margin rests on a method configured for this data rather than on a default
-that suits it badly. Two entries read against that ordering. The first is
-DNAi, whose deficit is a limitation of domain and density rather than a
-general ranking: it is built for DNA-fibre micrographs, which are sparse, and
-where the network is sparse and the axis clean it recovers
-\PlectaDNAiCleanSparseFOne{} at 20\% coverage. The second is
-\citet{basu2015extraction}, the closest structural relative PLECTA's junction
-matching has in that it too optimises over a neighbourhood and prices joins on
-curvature. It stands second only to PLECTA on Crossing Fidelity while its
-pairwise \Fone{} sits far below both released methods, so the curvature-priced
-matching does real work at the junctions and what costs it is everything
-around that decision. That is why the priced refusal of
-Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
-its own. \suppcomparators{} gives both in full.
-
-\textbf{Each method on its own ground.} That ordering is drawn from one
-generator, so it was tested in the regimes the two released methods were built
-for. On GraFT's own generator, run unmodified at its published settings over
-\PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
-strata, PLECTA leads at every density and nothing crosses over, including
-inside the range GraFT itself published, and the field-standard measures order
-the three identically. SIFNE released no generator, so the sparse cobweb
-topology its paper validates against was rebuilt here from that description;
-on that reconstruction the two are level where the paper works,
-\PlectaSifneOwnSparsePlectaFOne{} against \PlectaSifneOwnSparseSifneFOne{},
-and part only slightly at the denser end. That places the difference in how
-tangled the crossings are rather than in how much strand the frame holds,
-though a topology we rebuilt is weaker evidence than a generator its authors
-released. \suppcomparators{} gives both density series in full.
-
-
-\textbf{How many crossings were solved.} The pairwise score counts pairs of
-fragments, which says how much of the grouping is right without saying how
-many crossings a method actually got through. Crossing Fidelity says that: the
-fraction of reference crossings at which a method partitions the arms meeting
-there exactly as the reference does. Pooled over the \PlectaJunctionCount{}
-reference crossings of the degraded set, PLECTA partitions
-\PlectaJunctionPlectaRate{} of them exactly, ahead of every comparator, and
-clean axes order them the same way. It is far less discriminative than the
-pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
-method at 60\,\% coverage where pairwise \Fone{} spans
-\PlectaPairwiseSpreadHigh{}, so it is read as a count of what was solved and
-not as a ranking. Every method is poor at the busiest nodes: above degree four
-PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does
-better, while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is
-what its degree-four cap predicts. \suppcomparators{} gives the paired margins
-and the all-unpaired baseline the rate is read against.
-
-\textbf{Cost.} Accuracy is not the only axis on which these methods differ.
-Per-scene cost was measured warm, single-threaded and pinned to one core,
-timing each method's own computation only (Table~\ref{tab:plecta-comparators};
-\RuntimeGraftCovSixtyCensored{} GraFT scenes ran past the
-\RuntimeBudgetSeconds{}~s budget and were stopped rather than timed). These
-are independently optimised codebases, so absolute times measure
-implementation as much as algorithm; the transferable quantity is scaling, and
-the log--log exponents against foreground pixels are
-\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
-\RuntimeGraftScalingExponent{}. PLECTA has the largest exponent among the
-methods timed to completion; GraFT's is a lower bound, because the scenes
-missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
-
 \subsection{Depth decomposition}
 \label{sec:res-depth}
 
@@ -446,11 +283,8 @@ as the centrelines the scores are computed on and at width.
     Section~\ref{sec:mm-metrics}. \emph{Coverage} is the fraction of the frame
     the full-width reference strands cover (Section~\ref{sec:mm-synth}), not
     the thin axis mask's. Detection \Fone{} is at IoU \PlectaDetectionIoU{},
-    tolerance \PlectaPlacementTolerance{}\,px. SIFNE and Basu ran on the
-    manual-derived axis only, on identical masks through one scorer, at
-    parameters selected on synthetic development scenes; nothing was tuned on
-    these fields.\\[2pt]
-    $^{*}$\,our reimplementation; no implementation of that paper was found.}
+    tolerance \PlectaPlacementTolerance{}\,px. How these fields rank PLECTA
+    against other methods is in Section~\ref{sec:res-comparators}, not here.}
     \label{tab:plecta-real-masks}
     \footnotesize
     \input{results/plecta_real_masks_table}
@@ -506,36 +340,204 @@ precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 than fusing strands, which is what panel~(c) of Figure~\ref{fig:real-sem}
 shows.
 
-Two comparators on the same three masks. SIFNE and the Basu Stage-B
-reimplementation of Section~\ref{sec:res-comparators} were run on the
-manual-derived axis of these \PlectaRealFieldCountLower{} fields, on
-byte-identical masks and through the same scoring path, which reproduces
-PLECTA's stored numbers for these fields exactly. Averaged over the
-\PlectaRealFieldCountLower{} fields, SIFNE reaches
-\Fone{}=\PlectaRealSifneFOneMean{} and Basu \PlectaRealBasuFOneMean{}, against
-PLECTA's \PlectaRealManualFOneMean{}. PLECTA leads both, and by far less than
-on synthetic scenes, where the same two methods score
-\PlectaGreedyPlectaFOne{} and \PlectaSifneFOne{} over the
-\PlectaGreedySceneCount{} scenes of Section~\ref{sec:res-comparators}; on one
-field SIFNE takes the pairwise score outright, by less than the table's two
-decimals resolve.
+\subsection{Development ablations}
+\label{sec:res-ablation}
 
-The input is the likely reason, and it is the condition rather than the
-material. A skeleton of a hand annotation is about as clean an axis as a real
-field can supply: unbroken, thin, and placed where a person judged the strand
-to be. What separates these methods on synthetic data is what each does with
-evidence that is fragmented and displaced, and this condition supplies almost
-none of it, so it compresses exactly the differences the comparison is for. An
-automatic mask carries both faults, as Figure~\ref{fig:real-sem-axis} and the
-axis triple above show, and PLECTA alone on that axis falls to
-\PlectaRealUNetFOneMean{}. Whether the separation widens there is an
-expectation and not a measurement: the comparators were not run on the nnU-Net
-axis. Density is at least not the explanation, since these fields carry
+Everything here is measured on the development scenes and none of it reuses
+the held-out set.
+
+\textbf{What each part is worth.} Table~\ref{tab:plecta-ablation} varies one
+thing at a time. Two rows change what a link costs, dropping the junction
+chord-turn term or the curvature term; two change the graph the linker reads,
+leaving neighbouring junction clusters unconsolidated or arms too short to
+merge the crossings they join; two change the iteration, running a single
+round or removing the schedule that relaxes the gates; and one removes gap
+bridging, so identity never crosses a break in the mask. The three largest
+losses are the junction chord-turn term, gap bridging and junction-cluster
+consolidation.
+
+Two rows are controls rather than components. Removing the joint solve leaves
+PLECTA otherwise intact and pairs each node's arms cheapest edge
+first, rather than by whichever complete pairing of that node is cheapest
+overall; a cheap edge taken early can then strand two arms that would have
+paired well together, which is why that arm fails by division rather than by
+merging. It also runs at parameters that were selected with the exact matcher
+in the loop, a bias in the exact matcher's favour. The last row replaces the
+linker outright, skeletonising the same mask and greedily pairing the branch
+ends that turn least inside fixed distance and angle gates, which is the
+pairing principle shared by SIFNE, GraFT's path cover and Wegmayr et
+al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
+
+\begin{table}[tbp]
+    \centering
+    \caption{Component ablations and the two controls, on development scenes.
+    The three blocks use different scene sets, so $n$ is given per row and
+    each $\Delta F_1$ is against PLECTA on that row's own scenes; the column is
+    not comparable across rows of different $n$.}
+    \label{tab:plecta-ablation}
+    \small
+    \input{results/plecta_ablation_table}
+\end{table}
+
+
+\subsection{Published methods on identical masks}
+\label{sec:res-comparators}
+
+The sections above measured PLECTA on its own. This one places it against
+established methods for the same task, on two bodies of material: the
+\PlectaGreedySceneCount{} synthetic scenes the comparison was designed on, and
+the \PlectaRealFieldCountLower{} annotated CNT SEM fields of
+Section~\ref{sec:res-real}, where the manual-derived axis lets the same
+comparison run on real imaging. Four published methods are scored beside
+PLECTA on identical masks, through
+the same conversion and metric code, over scenes
+generated after every configuration was fixed. What is compared is narrow: the
+overlap-aware grouping of a binary axis mask of dense, crossing strands, at
+the coverages and tangling of the scenes described in
+Section~\ref{sec:mm-synth}. Each of these methods was built for a different
+setting, and how it performs in that setting is not what these numbers
+measure. DNAi \citep{playout2026dnai}, GraFT \citep{osterlund2026graft} and
+SIFNE \citep{zhang2017sifne} are run from their own released sources. For the
+fourth, \citet{basu2015extraction}, no implementation was found, and it is
+reimplemented here. Running someone else's method on data it was not built for
+takes decisions, and each of those decisions is stated here.
+
+
+\begin{table}[tbp]
+    \centering
+    \caption{PLECTA against four published methods, identical degraded masks
+    and one scorer, ordered by \Fone{}. $n=\PlectaGreedySceneCount{}$ scenes,
+    GraFT over the \PlectaGraFTSceneCount{} it completed. The lower block is
+    the same comparison on the \PlectaRealFieldCountLower{} annotated CNT SEM
+    fields of Section~\ref{sec:res-real}, from the manual-derived axis, as a
+    plain mean over the \PlectaRealFieldCountLower{}; GraFT and DNAi were not
+    run there, marked~---. Variation of
+    information in bits, lower better; higher better for the rest.\\[2pt]
+    $^{*}$\,our reimplementation; no implementation of that paper was found.
+    \suppcomparators{} details it, and the timings that column cannot
+    support.}
+    \label{tab:plecta-comparators}
+    \small
+    \input{results/plecta_comparator_table}
+\end{table}
+
+\textbf{How each was run.} Each released method has a front end that precedes
+the stage assigning identity, and in each case the mask is injected where that
+stage begins, so grouping is not confounded with segmentation and every stage
+that assigns identity is their own code. Each was also run at a configuration
+selected on the same \PlectaDevelopmentSceneCount{} development scenes PLECTA
+was configured on rather than at its own defaults. Every one of these
+adaptations favours the comparator, and by a wide margin: run end to end on
+the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
+\PlectaGraFTFOne{} injected, and the re-selected configurations are worth
+\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are reported.
+\suppcomparators{} gives each injection point, each selection, what was not
+attempted, and how each method fails.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
+  \caption{Five methods on identical masks, by coverage stratum:
+    \textbf{(a)} the undegraded axis, \textbf{(b)} the degraded one; columns
+    are pairwise \Fone{}, which counts pairs of fragments, and detection
+    \Fone{} at IoU \PlectaDetectionIoU{} with a
+    \PlectaPlacementTolerance{}\,px tolerance, which counts objects
+    (Section~\ref{sec:mm-metrics}). The two disagree where a method
+    fragments, since only the first is quadratic in fragmentation. Crossing
+    Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes, no
+    interval claimed. $^{*}$\,our reimplementation; none was found.}
+  \label{fig:metric-panels}
+\end{figure}
+
+Favoured in all those ways, the four order as
+Table~\ref{tab:plecta-comparators} shows. SIFNE is the strongest of them, so
+the margin rests on a method configured for this data rather than on a default
+that suits it badly. Two entries read against that ordering. The first is
+DNAi, whose deficit is a limitation of domain and density rather than a
+general ranking: it is built for DNA-fibre micrographs, which are sparse, and
+where the network is sparse and the axis clean it recovers
+\PlectaDNAiCleanSparseFOne{} at 20\% coverage. The second is
+\citet{basu2015extraction}, the closest structural relative PLECTA's junction
+matching has in that it too optimises over a neighbourhood and prices joins on
+curvature. It stands second only to PLECTA on Crossing Fidelity while its
+pairwise \Fone{} sits far below both released methods, so the curvature-priced
+matching does real work at the junctions and what costs it is everything
+around that decision. That is why the priced refusal of
+Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
+its own. \suppcomparators{} gives both in full.
+
+\textbf{Each method on its own ground.} That ordering is drawn from one
+generator, so it was tested in the regimes the two released methods were built
+for. On GraFT's own generator, run unmodified at its published settings over
+\PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
+strata, PLECTA leads at every density and nothing crosses over, including
+inside the range GraFT itself published, and the field-standard measures order
+the three identically. SIFNE released no generator, so the sparse cobweb
+topology its paper validates against was rebuilt here from that description;
+on that reconstruction the two are level where the paper works,
+\PlectaSifneOwnSparsePlectaFOne{} against \PlectaSifneOwnSparseSifneFOne{},
+and part only slightly at the denser end. That places the difference in how
+tangled the crossings are rather than in how much strand the frame holds,
+though a topology we rebuilt is weaker evidence than a generator its authors
+released. \suppcomparators{} gives both density series in full.
+
+
+\textbf{How many crossings were solved.} The pairwise score counts pairs of
+fragments, which says how much of the grouping is right without saying how
+many crossings a method actually got through. Crossing Fidelity says that: the
+fraction of reference crossings at which a method partitions the arms meeting
+there exactly as the reference does. Pooled over the \PlectaJunctionCount{}
+reference crossings of the degraded set, PLECTA partitions
+\PlectaJunctionPlectaRate{} of them exactly, ahead of every comparator, and
+clean axes order them the same way. It is far less discriminative than the
+pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
+method at 60\,\% coverage where pairwise \Fone{} spans
+\PlectaPairwiseSpreadHigh{}, so it is read as a count of what was solved and
+not as a ranking. Every method is poor at the busiest nodes: above degree four
+PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does
+better, while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is
+what its degree-four cap predicts. \suppcomparators{} gives the paired margins
+and the all-unpaired baseline the rate is read against.
+
+\textbf{Cost.} Accuracy is not the only axis on which these methods differ.
+Per-scene cost was measured warm, single-threaded and pinned to one core,
+timing each method's own computation only (Table~\ref{tab:plecta-comparators};
+\RuntimeGraftCovSixtyCensored{} GraFT scenes ran past the
+\RuntimeBudgetSeconds{}~s budget and were stopped rather than timed). These
+are independently optimised codebases, so absolute times measure
+implementation as much as algorithm; the transferable quantity is scaling, and
+the log--log exponents against foreground pixels are
+\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
+\RuntimeGraftScalingExponent{}. PLECTA has the largest exponent among the
+methods timed to completion; GraFT's is a lower bound, because the scenes
+missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
+
+\textbf{On real imaging.} The lower block of
+Table~\ref{tab:plecta-comparators} runs the two comparators that read a binary
+axis over the \PlectaRealFieldCountLower{} annotated fields, on the
+manual-derived masks of Section~\ref{sec:res-real} and through the scoring
+path that reproduces PLECTA's stored numbers for those fields exactly.
+Averaged over the \PlectaRealFieldCountLower{}, PLECTA reaches
+\Fone{}=\PlectaRealManualFOneMean{} against \PlectaRealSifneFOneMean{} for
+SIFNE and \PlectaRealBasuFOneMean{} for Basu, and leads on every measure in
+the block. The ordering of the synthetic rows therefore survives on real
+imaging, which is the claim this block is here to support.
+
+It survives by much less, and the input is the likely reason. A skeleton of a
+hand annotation is about as clean an axis as a real field can supply:
+unbroken, thin, and placed where a person judged the strand to be. What
+separates these methods on the synthetic rows is what each does with evidence
+that is fragmented and displaced, and this condition supplies almost none of
+it, so it compresses exactly the differences the comparison is for; on one
+field SIFNE takes the pairwise score outright, by less than two decimals
+resolve. An automatic mask carries both faults, and PLECTA alone on that axis
+falls to \PlectaRealUNetFOneMean{}, but whether the separation widens there is
+an expectation and not a measurement, since the comparators were not run on
+the nnU-Net axis. Density is at least not the explanation: these fields carry
 \PlectaRealCoverageLow{} to \PlectaRealCoverageHigh{}\,\% areal coverage,
-between the two densest synthetic strata.
-
-Two limits bound the comparison either way. Both comparators
-run at parameters selected on synthetic development scenes a sixth of these
-fields' pixel area and applied unchanged, since re-selecting them here would
-select on the data being reported; and Basu Stage~B is our reimplementation, a
-floor rather than an external result.
+between the two densest synthetic strata. Both comparators run here at
+parameters selected on synthetic development scenes a sixth of these fields'
+pixel area and applied unchanged, since re-selecting them on the fields being
+reported would select on the data; and Basu Stage~B remains our
+reimplementation, a floor rather than an external result.
