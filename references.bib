@@ -1,10 +1,10 @@
 %% ============================================================
 %% references.bib
 %% Bibliography for the CNT/filament quantification pipeline paper.
-%% Every entry below was verified via web search / Crossref lookup;
-%% see refs_notes.md for a one-line annotation of each key and a
-%% list of references that were searched for but could NOT be
-%% verified (and are therefore omitted here).
+%% Every entry below is cited by the manuscript, and every DOI was
+%% resolved against CrossRef and compared field by field with the entry
+%% beside it (2026-08-27). Entries that were present but cited nowhere
+%% were removed on that date; git history has them.
 %% ============================================================
 
 
@@ -77,17 +77,6 @@
   pages   = {108751},
   year    = {2023},
   doi     = {10.1016/j.sigpro.2022.108751}
-}
-
-@article{hajilounezhad2021predicting,
-  author  = {Hajilounezhad, Taher and Bao, Rina and Palaniappan, Kannappan and Bunyak, Filiz and
-             Calyam, Prasad and Maschmann, Matthew R.},
-  title   = {Predicting Carbon Nanotube Forest Attributes and Mechanical Properties Using Simulated Images and Deep Learning},
-  journal = {npj Computational Materials},
-  volume  = {7},
-  pages   = {134},
-  year    = {2021},
-  doi     = {10.1038/s41524-021-00603-8}
 }
 
 @inproceedings{nguyen2023cntsegnet,
@@ -167,64 +156,8 @@
 
 
 %% ----------------------------------------------------------------
-%% 3. Hough transform
+%% 3. Skeletonization / thinning / medial axis
 %% ----------------------------------------------------------------
-
-@misc{hough1962patent,
-  author       = {Hough, Paul V. C.},
-  title        = {Method and Means for Recognizing Complex Patterns},
-  howpublished = {U.S. Patent 3,069,654},
-  year         = {1962}
-}
-
-@article{duda1972hough,
-  author  = {Duda, Richard O. and Hart, Peter E.},
-  title   = {Use of the {H}ough Transformation to Detect Lines and Curves in Pictures},
-  journal = {Communications of the ACM},
-  volume  = {15},
-  number  = {1},
-  pages   = {11--15},
-  year    = {1972},
-  doi     = {10.1145/361237.361242}
-}
-
-@article{kiryati1991probabilistic,
-  author  = {Kiryati, Nahum and Eldar, Yuval and Bruckstein, Alfred M.},
-  title   = {A Probabilistic {H}ough Transform},
-  journal = {Pattern Recognition},
-  volume  = {24},
-  number  = {4},
-  pages   = {303--316},
-  year    = {1991},
-  doi     = {10.1016/0031-3203(91)90073-E}
-}
-
-@article{matas2000ppht,
-  author  = {Matas, Ji{\v{r}}{\'i} and Galambos, Charles and Kittler, Josef},
-  title   = {Robust Detection of Lines Using the Progressive Probabilistic {H}ough Transform},
-  journal = {Computer Vision and Image Understanding},
-  volume  = {78},
-  number  = {1},
-  pages   = {119--137},
-  year    = {2000},
-  doi     = {10.1006/cviu.1999.0831}
-}
-
-
-%% ----------------------------------------------------------------
-%% 4. Skeletonization / thinning / medial axis
-%% ----------------------------------------------------------------
-
-@incollection{blum1967transformation,
-  author    = {Blum, Harry},
-  title     = {A Transformation for Extracting New Descriptors of Shape},
-  booktitle = {Models for the Perception of Speech and Visual Form},
-  editor    = {Wathen-Dunn, Weiant},
-  publisher = {MIT Press},
-  address   = {Cambridge, MA},
-  pages     = {362--380},
-  year      = {1967}
-}
 
 @article{zhang1984thinning,
   author  = {Zhang, T. Y. and Suen, C. Y.},
@@ -237,20 +170,8 @@
   doi     = {10.1145/357994.358023}
 }
 
-@article{lee1994skeleton,
-  author  = {Lee, Ta-Chih and Kashyap, Rangasami L. and Chu, Chong-Nam},
-  title   = {Building Skeleton Models via 3-{D} Medial Surface/Axis Thinning Algorithms},
-  journal = {CVGIP: Graphical Models and Image Processing},
-  volume  = {56},
-  number  = {6},
-  pages   = {462--478},
-  year    = {1994},
-  doi     = {10.1006/cgip.1994.1042}
-}
-
-
 %% ----------------------------------------------------------------
-%% 5. Deep learning segmentation used in microscopy
+%% 4. Deep learning segmentation used in microscopy
 %% ----------------------------------------------------------------
 
 @inproceedings{ronneberger2015unet,
@@ -307,21 +228,8 @@
 
 
 %% ----------------------------------------------------------------
-%% 6. Instance segmentation / tracing of overlapping curvilinear objects
+%% 5. Instance segmentation / tracing of overlapping curvilinear objects
 %% ----------------------------------------------------------------
-
-@article{brown2011diadem,
-  author  = {Brown, Kerry M. and Barrionuevo, Germ{\'a}n and Canty, Alison J. and De Paola, Vincenzo and
-             Hirsch, Judith A. and Jefferis, Gregory S. X. E. and Lu, Ju and Snippe, Marjolein and
-             Sugihara, Izumi and Ascoli, Giorgio A.},
-  title   = {The {DIADEM} Data Sets: Representative Light Microscopy Images of Neuronal Morphology to Advance Automation of Digital Reconstructions},
-  journal = {Neuroinformatics},
-  volume  = {9},
-  number  = {2-3},
-  pages   = {143--157},
-  year    = {2011},
-  doi     = {10.1007/s12021-010-9095-5}
-}
 
 @article{gillette2011diademmetric,
   author  = {Gillette, Todd A. and Brown, Kerry M. and Ascoli, Giorgio A.},
@@ -347,43 +255,8 @@
   doi     = {10.3389/fninf.2018.00074}
 }
 
-@article{xiao2013app2,
-  author  = {Xiao, Hang and Peng, Hanchuan},
-  title   = {{APP2}: Automatic Tracing of {3D} Neuron Morphology Based on Hierarchical Pruning of a Gray-Weighted Image Distance-Tree},
-  journal = {Bioinformatics},
-  volume  = {29},
-  number  = {11},
-  pages   = {1448--1454},
-  year    = {2013},
-  doi     = {10.1093/bioinformatics/btt170}
-}
-
-@article{pound2013rootnav,
-  author  = {Pound, Michael P. and French, Andrew P. and Atkinson, Jonathan A. and Wells, Darren M. and
-             Bennett, Malcolm J. and Pridmore, Tony},
-  title   = {{RootNav}: Navigating Images of Complex Root Architectures},
-  journal = {Plant Physiology},
-  volume  = {162},
-  number  = {4},
-  pages   = {1802--1814},
-  year    = {2013},
-  doi     = {10.1104/pp.113.221531}
-}
-
-@article{yang2018crack,
-  author  = {Yang, Xincong and Li, Heng and Yu, Yantao and Luo, Xiaochun and Huang, Ting and Yang, Xu},
-  title   = {Automatic Pixel-Level Crack Detection and Measurement Using Fully Convolutional Network},
-  journal = {Computer-Aided Civil and Infrastructure Engineering},
-  volume  = {33},
-  number  = {12},
-  pages   = {1090--1109},
-  year    = {2018},
-  doi     = {10.1111/mice.12412}
-}
-
-
 %% ----------------------------------------------------------------
-%% 7. Evaluation metrics
+%% 6. Evaluation metrics
 %% ----------------------------------------------------------------
 
 @article{argandacarreras2015crowdsourcing,
@@ -439,35 +312,6 @@
   doi     = {10.1016/j.jmva.2006.11.013}
 }
 
-@article{unnikrishnan2007toward,
-  author  = {Unnikrishnan, Ranjith and Pantofaru, Caroline and Hebert, Martial},
-  title   = {Toward Objective Evaluation of Image Segmentation Algorithms},
-  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
-  volume  = {29},
-  number  = {6},
-  pages   = {929--944},
-  year    = {2007},
-  doi     = {10.1109/TPAMI.2007.1046}
-}
-
-@inproceedings{martin2001database,
-  author    = {Martin, David and Fowlkes, Charless and Tal, Doron and Malik, Jitendra},
-  title     = {A Database of Human Segmented Natural Images and Its Application to Evaluating Segmentation Algorithms and Measuring Ecological Statistics},
-  booktitle = {Proceedings of the 8th IEEE International Conference on Computer Vision ({ICCV} 2001)},
-  pages     = {416--423},
-  year      = {2001},
-  url       = {https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/mftm-iccv01.pdf}
-}
-
-@inproceedings{kirillov2019panoptic,
-  author    = {Kirillov, Alexander and He, Kaiming and Girshick, Ross and Rother, Carsten and Doll{\'a}r, Piotr},
-  title     = {Panoptic Segmentation},
-  booktitle = {2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition ({CVPR})},
-  pages     = {9396--9405},
-  year      = {2019},
-  doi       = {10.1109/CVPR.2019.00963}
-}
-
 @article{amigo2009comparison,
   author  = {Amig{\'o}, Enrique and Gonzalo, Julio and Artiles, Javier and Verdejo, Felisa},
   title   = {A Comparison of Extrinsic Clustering Evaluation Metrics Based on Formal Constraints},
@@ -481,7 +325,7 @@
 
 
 %% ----------------------------------------------------------------
-%% 8. Curve fitting / B-splines / smoothing
+%% 7. Curve fitting / B-splines / smoothing
 %% ----------------------------------------------------------------
 
 @book{dierckx1993curve,
@@ -495,7 +339,7 @@
 }
 
 %% ----------------------------------------------------------------
-%% 9. CNT materials context (properties, alignment, DEM simulation)
+%% 8. CNT materials context (properties, alignment, DEM simulation)
 %% ----------------------------------------------------------------
 
 @article{devolder2013cnt,
@@ -554,24 +398,7 @@
 
 
 %% ----------------------------------------------------------------
-%% 10. Synthetic ground-truth generation for validating microscopy
-%%     image analysis
-%% ----------------------------------------------------------------
-
-@article{wiesmann2017using,
-  author  = {Wiesmann, Veit and Bergler, Matthias and Palmisano, Ralf and Prinzen, Martin and Franz, Daniela and
-             Wittenberg, Thomas},
-  title   = {Using Simulated Fluorescence Cell Micrographs for the Evaluation of Cell Image Segmentation Algorithms},
-  journal = {BMC Bioinformatics},
-  volume  = {18},
-  pages   = {176},
-  year    = {2017},
-  doi     = {10.1186/s12859-017-1591-2}
-}
-
-
-%% ----------------------------------------------------------------
-%% 11. Ancestor workflow (CycleGAN + U-Net for {SEM} particle
+%% 9. Ancestor workflow (CycleGAN + U-Net for {SEM} particle
 %%     segmentation) that the upstream stages of this pipeline
 %%     are adapted from, and the U-Net variants it composes
 %% ----------------------------------------------------------------
@@ -601,7 +428,7 @@
 
 
 %% ----------------------------------------------------------------
-%% 12. Recent fibre / filament instance segmentation and tracing
+%% 10. Recent fibre / filament instance segmentation and tracing
 %%     methods
 %% ----------------------------------------------------------------
 
@@ -825,7 +652,7 @@
 
 
 %% ----------------------------------------------------------------
-%% 12. Mesoscopic modelling of nanotube assemblies
+%% 11. Mesoscopic modelling of nanotube assemblies
 %% ----------------------------------------------------------------
 
 @article{wang2015twisting,
@@ -854,7 +681,7 @@
 
 
 %% ----------------------------------------------------------------
-%% 13. Quantitative microstructure image analysis (Materials Characterization)
+%% 12. Quantitative microstructure image analysis (Materials Characterization)
 %% ----------------------------------------------------------------
 
 @article{stan2020optimizing,
