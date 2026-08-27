@@ -311,9 +311,10 @@ joined by no chain of strands that do, are related by nothing the image
 contains; their order is a stated tie-break, and no method could do better on
 them. Only \PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs
 lie within one connected component of the crossing graph, which is the
-fraction for which any evidence exists at all. The arithmetic follows: order
-the connected pairs at the crossing-pair rate, leave the rest a coin flip, and
-20\,\% coverage predicts \PlectaDepthCleanCovTwoZeroOrderPred{} against
+fraction for which any evidence exists at all. That alone accounts for the
+collapse. Suppose the stage orders the connected pairs at the rate it achieves
+on pairs that cross and guesses the rest: at 20\,\% coverage the two terms come
+to \PlectaDepthCleanCovTwoZeroOrderPred{}, against
 \PlectaDepthCleanCovTwoZeroAllOrder{} measured. It under-predicts at the
 sparser coverage, where the unconnected pairs are evidently not quite a coin
 flip, and over-predicts at the denser end by up to
