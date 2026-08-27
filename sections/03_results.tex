@@ -334,16 +334,12 @@ depth information by construction.
 Two more gaps sit inside the crossing rows themselves, and neither is the
 shortage of evidence just described: at a crossing the two strands do meet, so
 something in the image bears on their order.
-The all-crossings row is lower than the decided row by the amount the 2-D stage
-fails to recover a crossing at
-all: at the denser coverage the reconstructed condition's
-\PlectaDepthCleanCovFourZeroAll{} over all crossings, divided by the given
-condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing
-recovery rate of \PlectaDepthCleanCovFourZeroMatch{}. And the decided row must
-be read beside the declined row, since what the stage declines are the hard
+The all-crossings row is lower than the decided row because it charges the
+stage for crossings the 2-D stage never recovered and for crossings it
+declined, and the table gives each of those its own rate. That is also why the
+decided row must be read beside them: what the stage declines are the hard
 crossings, so a higher decided accuracy can be a stage answering less often
-rather than one deciding better. Both gaps are the stage answering at fewer
-crossings than the reference carries, not the image withholding an answer.
+rather than one deciding better.
 
 Layer agreement degrades the way the global order does, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
@@ -367,15 +363,13 @@ rendered image cannot show. The table carries that measurement.}
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same comparison on a real CNT SEM field, reconstructed from the axis
-of annotator~A's annotation. \textbf{Nothing here is scored.} No depth ground
-truth exists for real
-SEM, because the annotation records which pixels belong to which strand, not which
-strand lies on top, so this shows the stage runs end to end on real
-data and re-renders to something recognisable, not that the depths are right.
-The forward model's appearance parameters are fitted to this micrograph, so the
-residual quoted beneath the panel is in-sample and is a sanity check rather
-than a measure of reconstruction quality.}
+\caption{The same comparison on a real CNT SEM field, reconstructed from the
+axis of annotator~A's annotation. Nothing here is scored: real SEM has no depth
+ground truth, since the annotation records which pixels belong to which strand,
+not which lies on top. It shows that the stage runs end to end and re-renders
+to something recognisable, not that the depths are right. The forward model's
+appearance parameters are fitted to this micrograph, so the residual beneath
+the panel is in-sample.}
 \label{fig:resem-real}
 \end{figure}
 
