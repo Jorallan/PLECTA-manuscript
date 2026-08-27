@@ -1,13 +1,13 @@
 """Figure: where the real-SEM axis mask comes from, and why it is not ours.
 
 Section 3.5 puts PLECTA on a real micrograph, and to do that it needs a binary
-strand-axis mask.  One is produced by Pipeline A --- procedural mask ->
-CycleGAN -> paired synthetic corpus -> nnU-Net -> binary strand-axis mask ---
-and the paragraph that names those five stages is easy to read as a claim that
-they belong to this paper.  They do not.  Pipeline A is upstream of everything
-measured here, it is not a contribution of this manuscript, and it carries its
-own separate evaluation; the caption says so and the drawing has to say it
-too.
+strand-axis mask.  One is produced by the upstream segmenter --- procedural
+mask -> CycleGAN -> paired synthetic corpus -> nnU-Net -> binary strand-axis
+mask --- and the paragraph that names those five stages is easy to read as a
+claim that they belong to this paper.  They do not.  That segmenter is upstream
+of everything measured here, it is not a contribution of this manuscript, and
+it carries its own separate evaluation; the caption says so and the drawing has
+to say it too.
 
 So the figure is built the way Figure 1 is built, and for the same reason: a
 dashed boundary is drawn around the one stage this paper actually measures,
@@ -24,10 +24,10 @@ own heading.
   INFERENCE (bottom row) a real SEM micrograph enters, the trained nnU-Net
       segments it, and the output is a binary strand-axis mask.
 
-  EVALUATED (green band) that mask is PLECTA's input, and PLECTA --- Pipeline
-      B --- is the only stage on the page this paper scores.  The single arrow
-      that crosses the dashed boundary is the whole interface between the two
-      pipelines: one binary mask, nothing else.
+  EVALUATED (green band) that mask is PLECTA's input, and PLECTA is the only
+      stage on the page this paper scores.  The single arrow that crosses the
+      dashed boundary is the whole interface between the segmenter and PLECTA:
+      one binary mask, nothing else.
 
 Learned components are blue, following the palette note in ``_style``; the
 data that passes between them is drawn in the ink colour, and only PLECTA is
@@ -130,12 +130,12 @@ def main() -> int:
 
     # ── A: upstream, and explicitly not this paper's ──────────────────────
     band(ax, x_l, x_r, 1.14, 2.96, BLUE_TINT)
-    head = "Pipeline A"
+    head = "Upstream segmenter"
     ax.text(0.20, 2.85, head, ha="left", va="center",
             fontsize=PT_TITLE, fontweight="bold", color=BLUE, zorder=1)
     ax.text(0.20 + measure(ax, head, PT_TITLE, "bold")[0] + 0.10, 2.85,
-            "makes the mask. Upstream of this paper, not a contribution of "
-            "it, and evaluated separately.",
+            "makes the mask. Not a contribution of this paper, and "
+            "evaluated separately.",
             ha="left", va="center", fontsize=PT_MIN, color=GRAY, zorder=1)
 
     # ── training: the corpus is manufactured, so nothing is annotated ─────
@@ -192,7 +192,7 @@ def main() -> int:
 
     # ── B: the one stage this paper measures ──────────────────────────────
     band(ax, x_l, x_r, 0.06, 1.02, GREEN_TINT)
-    head_b = "Pipeline B"
+    head_b = "PLECTA"
     ax.text(0.20, 0.91, head_b, ha="left", va="center",
             fontsize=PT_TITLE, fontweight="bold", color=GREEN, zorder=1)
     ax.text(0.20 + measure(ax, head_b, PT_TITLE, "bold")[0] + 0.10, 0.91,

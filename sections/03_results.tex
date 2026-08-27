@@ -326,7 +326,9 @@ a second view, rather than a smoothness assumption, which these scenes would
 not support: their heights are drawn independently, so proximity carries no
 depth information by construction.
 
-Two more gaps sit inside the crossing rows themselves, and neither is that one.
+Two more gaps sit inside the crossing rows themselves, and neither is the
+shortage of evidence just described: at a crossing the two strands do meet, so
+something in the image bears on their order.
 The all-crossings row is lower than the decided row by the amount the 2-D stage
 fails to recover a crossing at
 all: at the denser coverage the reconstructed condition's
@@ -335,8 +337,8 @@ condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing
 recovery rate of \PlectaDepthCleanCovFourZeroMatch{}. And the decided row must
 be read beside the abstention row, since what the stage declines are the hard
 crossings, so a higher decided accuracy can be a stage answering less often
-rather than one deciding better. Neither gap is evidence the image withheld;
-both are the stage answering at fewer crossings than the reference carries.
+rather than one deciding better. Both gaps are the stage answering at fewer
+crossings than the reference carries, not the image withholding an answer.
 
 Layer agreement degrades the way the global order does, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
@@ -377,36 +379,36 @@ than a measure of reconstruction quality.}
 \label{sec:res-qualitative}
 
 The claim of this section is one sentence: PLECTA works on real imaging when a
-second technique supplies the mask, and Pipeline~A is such a technique. Nothing
-here is a measurement of Pipeline~A, which carries its own evaluation
-\citep{allan2026cntsem}.
+second technique supplies the mask, and the upstream segmenter is such a
+technique. Nothing here is a measurement of that segmenter, which carries its
+own evaluation \citep{allan2026cntsem}.
 
 %  [!ht] for the reason given at Figure~1: this float belongs beside the
-%  paragraph that names the two pipelines.
+%  paragraph that names the segmenter upstream of PLECTA.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_upstream.pdf}
-    \caption{Where the mask comes from. Pipeline~A trains a segmenter without
-    an annotator: a generator draws a binary mask, a CycleGAN turns it into an
-    SEM-like micrograph, and the mask that made the image is its label, so the
-    pairs an nnU-Net trains on are manufactured rather than drawn by hand. At
-    inference the trained network segments a real micrograph into a binary
-    strand-axis mask. That mask is the whole interface between the two
-    pipelines. Pipeline~A is not a contribution of this paper and is not
-    evaluated in it; it carries its own evaluation
+    \caption{Where the mask comes from. The upstream segmenter is trained
+    without an annotator: a generator draws a binary mask, a CycleGAN turns it
+    into an SEM-like micrograph, and the mask that made the image is its label,
+    so the pairs an nnU-Net trains on are manufactured rather than drawn by
+    hand. At inference the trained network segments a real micrograph into a
+    binary strand-axis mask. That mask is the whole interface between the
+    segmenter and PLECTA. The segmenter is not a contribution of this paper and
+    is not evaluated in it; it carries its own evaluation
     \citep{ruehle2021workflow,allan2026cntsem}. Only the dashed box is measured
     here.}
     \label{fig:pipeline-upstream}
 \end{figure}
 
-Pipeline~A (Figure~\ref{fig:pipeline-upstream}) runs procedural mask
-$\rightarrow$ CycleGAN $\rightarrow$ paired
+The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) runs procedural
+mask $\rightarrow$ CycleGAN $\rightarrow$ paired
 synthetic corpus $\rightarrow$ nnU-Net $\rightarrow$ binary strand-axis mask:
 a generator draws a mask, a CycleGAN translates it into an SEM-like image so
 that image and mask are paired without an annotator, an nnU-Net trained on
 those pairs segments a real micrograph, and its output is a binary axis mask
-\citep{ruehle2021workflow,allan2026cntsem}. Pipeline~B is PLECTA, and it is the
-only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated
+\citep{ruehle2021workflow,allan2026cntsem}. PLECTA reads that mask, and it is
+the only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated
 CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
 annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
 annotation as the reference in both cases, so the two conditions differ only
@@ -423,7 +425,8 @@ centrelines the scores are computed on.
     \caption{The two input axes of field B58\_110, drawn over the micrograph
     they were read from: \textbf{(a)}~the skeleton of annotator~A's annotation
     and
-    \textbf{(b)}~the output of Pipeline~A. These are the binary masks
+    \textbf{(b)}~the output of the upstream segmenter. These are the binary
+    masks
     themselves, before any reconstruction, so there is nothing to tell apart
     within a panel and one colour is sufficient; the comparison the figure
     makes is between them. Everything separating the two conditions of

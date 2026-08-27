@@ -18,8 +18,9 @@ vary and no phrase is stretched across a cell it does not fill.
 letterforms are 6 % wider than the 10 pt cut the manuscript's captions use, and
 the labels were bold, which is a further 15 %. Both are gone; see ``_style``.
 
-What is kept, because it is what the figure exists to say: pipeline A upstream
-and explicitly evaluated elsewhere, pipeline B evaluated here with its boundary
+What is kept, because it is what the figure exists to say: the upstream
+segmenter explicitly evaluated elsewhere, PLECTA evaluated here with its
+boundary
 drawn, either mask in and instances out, and the width stage optional and off
 by default. The ``or`` junction and the round-schedule loop are kept and
 redrawn: the junction is now a labelled node on the path both sources take, and
