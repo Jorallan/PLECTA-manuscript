@@ -1,17 +1,3 @@
-%==============================================================================
-%  PLECTA: supplementary material
-%
-%  What was Appendix A-C of the main manuscript, moved out so the article
-%  itself fits its page budget. The content is unchanged; only the numbering
-%  differs (sections, tables and equations are prefixed S).
-%
-%  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf).
-%
-%  The main text refers here by name -- "Supplementary Section S1" and so on --
-%  through the \supp* commands defined in main.tex, rather than by \ref across
-%  documents. That keeps either file compilable on its own, which matters
-%  because a journal builds them separately.
-%==============================================================================
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
@@ -30,8 +16,6 @@
 \usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
-%  Kept identical to main.tex, which explains the value. The two documents are
-%  built separately, so this has to be changed in both or they diverge.
 \setlength{\parindent}{1.5em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
@@ -41,9 +25,6 @@
   pdfauthor={Oday Allan, Stefan Luding, Igor Ostanin}
 }
 
-%  No stray one-line fragments: these penalties forbid a paragraph breaking so
-%  that a single line is left behind or carried over, and \raggedbottom lets the
-%  resulting slack fall at the foot of the page rather than stretching the text.
 \widowpenalty=10000
 \clubpenalty=10000
 \displaywidowpenalty=10000
@@ -54,8 +35,6 @@
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
 
-%  Defined here as well as in main.tex: the section files are shared between
-%  the two documents, so an undefined command would fail this build.
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{}
 \newcommand{\igorreply}[1]{}
@@ -63,14 +42,11 @@
 \newcommand{\todo}[1]{\ifaq{\color{orange}\textbf{[To do: #1]}}\fi}
 \newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed: #1]}}}
 
-%  The same generated numbers the article uses. Every quantity quoted here is a
-%  macro from this file, never a literal.
 \input{results/plecta_results}
 \input{results/runtime_comparison}
 \input{results/plecta_parameters}
 \input{results/plecta_depth_rule}
 
-%  S-numbering for everything a reader might cite.
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
 \renewcommand{\thefigure}{S\arabic{figure}}
@@ -95,7 +71,6 @@ from binary masks}
 \begin{document}
 \maketitle
 
-%  Technical layer first: mechanism before scoring.
 \input{sections/07_technical}
 
 \input{sections/06_appendix}

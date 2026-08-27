@@ -24,10 +24,6 @@ geometry alone, and the two matching steps are re-made over eight rounds against
 frames re-fitted along the chains assembled so far. Where the mask itself comes
 from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
 
-%  [!ht] rather than [tbp]: under [tbp] this float was placed at the top of the
-%  page, which put it above the section heading that introduces it, so a reader
-%  met the figure before any context for it. The ! overrides the float
-%  fractions relaxed in the preamble.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
@@ -150,19 +146,12 @@ symmetric \PlectaPlacementTolerance{}-px tolerance used throughout, which avoids
 rewarding mask thickness, and reconstruction scores were computed within each
 mask's own visible common-fragment population.
 
-%  Instrument settings below are read from the acquisition blocks embedded in
-%  the source TIFFs of the three fields, not transcribed from a logbook; the
-%  same blocks give HFW 1.6576 um and 1.07917 nm/px, which is where the
-%  1.66 um and 1.08 nm/px quoted above come from.
 The fields were acquired on a Thermo Fisher Helios 5~UX DualBeam with an
 Elstar field-emission column in immersion mode, imaged with the through-lens
 detector at 2.00\,kV and 400\,pA and a working distance of 4.3\,mm. Each
 frame is an integration of 35 passes at 100\,ns dwell with drift correction
 enabled.
 
-%  STILL NEEDED before submission: specimen preparation and the CNT material
-%  identity. Neither is recoverable from the source TIFFs, which carry
-%  instrument settings only. Fold both into the paragraph above once supplied.
 
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
@@ -379,9 +368,6 @@ than that noise, $\lvert s\rvert$ falls below a fixed threshold and the crossing
 rather than by the separation alone, is what makes a confident score mean
 \emph{separated by more than the noise} rather than merely separated.
 
-%  [!ht] rather than [tbp], for the reason given at Figure~1: under [tbp]
-%  this float went to the top of the page, which put it ahead of the
-%  subsection heading that introduces it.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_evidence.pdf}
@@ -421,8 +407,6 @@ their order is a stated tie-break, not a measurement.
 \suppdepthstage{} gives the sampling geometry, the score in full, the
 measurement that replaced an earlier two-channel rule with it, and the solver.
 
-%  [!ht] for the reason given at Figure~1: this float belongs with the
-%  paragraph above it, not at the top of whatever page it lands on.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_order.pdf}
@@ -466,8 +450,6 @@ pairs of fragments the prediction groups as the reference does.
 Figure~\ref{fig:f1-example} works that endpoint through the smallest case that
 has a crossing, including the two ways it can be undefined rather than zero.
 
-%  [!ht] for the reason given at Figure~1: the panel row is only useful
-%  beside the paragraph that defines what it is scoring.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_f1_example.pdf}

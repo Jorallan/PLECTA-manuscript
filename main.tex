@@ -1,17 +1,5 @@
-%==============================================================================
-%  PLECTA: overlap-aware instance reconstruction of dense strand networks
-%
-%  Working format: Materials Characterization research article
-%  (Introduction / Materials and methods / Results / Discussion / Conclusions).
-%
-%  Compile with:  pdflatex -> bibtex -> pdflatex x2   (or latexmk -pdf main.tex).
-%  Uses only standard CTAN packages.
-%
-%  Open author-supplied metadata are flagged with \todo{} or \needed{}.
-%==============================================================================
 \documentclass[11pt,a4paper]{article}
 
-%------------------------------- packages -------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -28,9 +16,6 @@
 \usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
-%  Paragraphs indented rather than separated by a blank line, which is the
-%  target format's convention and is worth about a page and a half at this
-%  length. 1.5em is the class default at 11pt.
 \setlength{\parindent}{1.5em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
@@ -41,15 +26,9 @@
   pdfkeywords={strand networks, instance segmentation, graph matching, carbon nanotubes, scanning electron microscopy}
 }
 
-%------------------------------- style ----------------------------------------
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
-%------------------------------------------------------------------------------
-%  \Igor{...} and \igorreply{...} typeset a numbered margin-style comment and a
-%  reply to it. They are defined here rather than taken from todonotes, which
-%  defines its own \todo and would collide with the one below.
-%------------------------------------------------------------------------------
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{%
   \par\smallskip\refstepcounter{igorcomment}\noindent%
@@ -59,9 +38,6 @@
   \end{minipage}\par\smallskip}
 \newcommand{\igorreply}[1]{\par\noindent{\small\textcolor{green!30!black}{%
   \textbf{[Response]}}~#1}\par\smallskip}
-%  Float packing. The twelve figures are each a third to two thirds of a text
-%  column high, and the stock fractions push them onto pages of their own,
-%  leaving wide bands of white space. These relaxed values change layout only.
 \renewcommand{\topfraction}{0.92}
 \renewcommand{\bottomfraction}{0.75}
 \renewcommand{\textfraction}{0.06}
@@ -70,9 +46,6 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
 
-%  No stray one-line fragments: these penalties forbid a paragraph breaking so
-%  that a single line is left behind or carried over, and \raggedbottom lets the
-%  resulting slack fall at the foot of the page rather than stretching the text.
 \widowpenalty=10000
 \clubpenalty=10000
 \displaywidowpenalty=10000
@@ -83,42 +56,19 @@
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
 
-%------------------------------------------------------------------------------
-%  \todo{...} marks author-supplied submission metadata still to be filled in:
-%  the CRediT roles and the archival DOI. \aqfalse hides every one of them and
-%  produces a clean PDF; set \aqtrue to bring them back while working.
-%  \needed{...} is deliberately independent of that switch, so it stays visible.
-%------------------------------------------------------------------------------
 \newif\ifaq \aqfalse
 \newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
 \newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed before submission: #1]}}}
 
-%------------------------------------------------------------------------------
-%  Generated numerical results.
-%
-%  results/plecta_results.tex is generated from the machine-readable PLECTA
-%  records by scripts/results/make_plecta_results.py. Do not edit it directly.
-%------------------------------------------------------------------------------
 \input{results/plecta_results}
 \input{results/runtime_comparison}
 \input{results/plecta_parameters}
 
-%------------------------------------------------------------------------------
-%  What used to be Appendix A-C is now supplementary.tex, built separately.
-%  The article refers to it by name rather than by \ref, so that either file
-%  compiles on its own -- a journal builds them as two documents, and an \xr
-%  cross-reference would leave the article with dangling numbers whenever the
-%  supplementary .aux is absent. If a section is ever added or reordered there,
-%  these three names are the only thing to update.
-%------------------------------------------------------------------------------
 \newcommand{\supprecon}{Supplementary Section~S1}
 \newcommand{\suppdepthstage}{Supplementary Section~S2}
 \newcommand{\suppmeasures}{Supplementary Section~S3}
 \newcommand{\suppcomparators}{Supplementary Section~S4}
 \newcommand{\suppdepth}{Supplementary Section~S5}
-%  S6 is appended at the END of 06_appendix.tex on purpose: inserting a section
-%  anywhere earlier would renumber S3 to S5 and silently invalidate the four
-%  names above, which are plain text rather than \ref cross-references.
 \newcommand{\suppsplit}{Supplementary Section~S6}
 
 \title{\vspace{-1.2cm}\bfseries PLECTA: Overlap-aware instance
@@ -143,7 +93,6 @@ reconstruction of dense strand networks from binary masks}
 }
 \date{}
 
-%==============================================================================
 \begin{document}
 \maketitle
 
@@ -161,11 +110,6 @@ microscopy.
 \input{sections/03_results}
 \input{sections/04_discussion}
 
-%------------------------------- back matter ----------------------------------
-%  Heading gated with its own content. Under \aqfalse the \todo prints nothing,
-%  and a section heading with nothing under it reads as broken rather than as
-%  pending. When the roles are written, they replace the \todo and the \ifaq
-%  around them goes with it.
 \ifaq
 \section*{CRediT author contribution statement}
 \todo{Fill in each author's CRediT roles before submission, checked against
@@ -214,9 +158,6 @@ publishers require one or the other.}
 The software used is NumPy, SciPy, scikit-image, NetworkX and Matplotlib, and
 the authors thank their maintainers.
 
-%  The reference list is set compactly: no glue between entries, and two sizes
-%  down, as Elsevier's own styles do. This is typographic only; no reference is
-%  removed, shortened, or merged. Reverting to \small costs about one page.
 \setlength{\bibsep}{0pt plus 0.3ex}
 \renewcommand{\bibfont}{\footnotesize}
 \bibliographystyle{unsrtnat}
