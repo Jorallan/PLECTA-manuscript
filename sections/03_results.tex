@@ -387,16 +387,12 @@ own evaluation \citep{allan2026cntsem}.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_pipeline_upstream.pdf}
-    \caption{Where the mask comes from. The upstream segmenter is trained
-    without an annotator: a generator draws a binary mask, a CycleGAN turns it
-    into an SEM-like micrograph, and the mask that made the image is its label,
-    so the pairs an nnU-Net trains on are manufactured rather than drawn by
-    hand. At inference the trained network segments a real micrograph into a
-    binary strand-axis mask. That mask is the whole interface between the
-    segmenter and PLECTA. The segmenter is not a contribution of this paper and
-    is not evaluated in it; it carries its own evaluation
-    \citep{ruehle2021workflow,allan2026cntsem}. Only the dashed box is measured
-    here.}
+    \caption{Where the mask comes from. The segmenter trains on manufactured
+    pairs, so no micrograph is ever hand-annotated, and the binary axis mask it
+    produces is the whole interface to PLECTA. It is not a contribution of this
+    paper and is not evaluated here; it carries its own evaluation
+    \citep{ruehle2021workflow,allan2026cntsem}, and only the dashed box is
+    measured.}
     \label{fig:pipeline-upstream}
 \end{figure}
 
