@@ -456,28 +456,16 @@ as the centrelines the scores are computed on and at width.
     \input{results/plecta_real_masks_table}
 \end{table}
 
-What the \PlectaRealFieldCountLower{} fields say. From the
-manual-derived axis PLECTA reached
-\Fone{}=\PlectaBFiveEightOneZeroZeroManualFOne{},
-\PlectaBFiveEightOneOneZeroManualFOne{} and
-\PlectaBFiveEightThreeZeroZeroManualFOne{}, and resolved
-\PlectaFidelityBFiveEightOneZeroZeroManual{},
-\PlectaFidelityBFiveEightOneOneZeroManual{} and
-\PlectaFidelityBFiveEightThreeZeroZeroManual{} of the reference crossings
-exactly against an all-unpaired baseline of
-\PlectaFidelityBFiveEightThreeZeroZeroManualChance{}
-to \PlectaFidelityBFiveEightOneOneZeroManualChance{}. From the nnU-Net axis the
-same predictions read \PlectaBFiveEightOneOneZeroUNetFOne{} and
-\PlectaBFiveEightThreeZeroZeroUNetFOne{} on B58\_110 and B58\_300, with
-Crossing Fidelity \PlectaFidelityBFiveEightOneOneZeroUNet{} and
-\PlectaFidelityBFiveEightThreeZeroZeroUNet{} and join \Fone{}
-\PlectaJoinBFiveEightOneOneZeroUNetFOne{} and
-\PlectaJoinBFiveEightThreeZeroZeroUNetFOne{}. Those two fields agree with
-each other to within 0.03 on every measure; \PlectaRealFieldCount{} fields
-still cannot estimate a population, and the inferential unit is the field: the
-\PlectaRealCrossingTotal{} reference crossings the crossing measures rest on
-are pooled over six condition-specific evaluations of these
-\PlectaRealFieldCountLower{} fields, a pooled count and not a sample size.
+What the \PlectaRealFieldCountLower{} fields say. Averaged over them, PLECTA
+reaches \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
+\PlectaRealUNetFOneMean{} from the nnU-Net axis, the second over the
+\PlectaRealUNetHeldOutCount{} fields the segmenter was not trained on; the
+third is in its training data, so its nnU-Net score is an upper bound and is
+kept out of that mean. The first figure is what this section exists to
+establish: the grouping holds on axis masks read off real micrographs and not
+only on the generator's. The second is a different claim and a weaker one, and
+the paragraphs below take the two apart. \PlectaRealFieldCount{} fields cannot
+estimate a population, and the inferential unit is the field.
 
 Most of the distance between the two conditions is the mask, and the
 method fails by conservatism rather than by fusing. The axis each field hands
@@ -519,25 +507,31 @@ Two comparators on the same three masks. SIFNE and the Basu Stage-B
 reimplementation of Section~\ref{sec:res-comparators} were run on the
 manual-derived axis of these \PlectaRealFieldCountLower{} fields, on
 byte-identical masks and through the same scoring path, which reproduces
-PLECTA's stored numbers for these fields exactly. PLECTA's pairwise \Fone{}
-margin over SIFNE is \PlectaRealSifneDeltaBFiveEightOneZeroZero{},
-\PlectaRealSifneDeltaBFiveEightOneOneZero{} and
-\PlectaRealSifneDeltaBFiveEightThreeZeroZero{} on the three fields, where the
-same two methods score \PlectaGreedyPlectaFOne{} and \PlectaSifneFOne{} over
-the \PlectaGreedySceneCount{} synthetic scenes: the ordering holds on two
-fields and reverses on the third by less than the table's two decimals resolve,
-where SIFNE takes the pairwise score while PLECTA keeps join \Fone{} and
-detection \Fone{}. Basu trails on every field,
-by \PlectaRealBasuDeltaLow{} to \PlectaRealBasuDeltaHigh{}, and by much less
-on join \Fone{} than on the pairwise score, which is the split
-Section~\ref{sec:res-comparators} reports on synthetic scenes: the quadratic
-weighting charges a shattered strand once for every pair it loses. Join
-\Fone{} compresses all nine rows into
-\PlectaRealManualJoinLow{}--\PlectaRealManualJoinHigh{} for that reason, and
-is not agreement. Density is not what narrows the gap, since these fields
-carry \PlectaRealCoverageLow{} to \PlectaRealCoverageHigh{}\,\% areal
-coverage, between the two densest synthetic strata; what does is not
-established here. Two limits bound the comparison either way. Both comparators
+PLECTA's stored numbers for these fields exactly. Averaged over the
+\PlectaRealFieldCountLower{} fields, SIFNE reaches
+\Fone{}=\PlectaRealSifneFOneMean{} and Basu \PlectaRealBasuFOneMean{}, against
+PLECTA's \PlectaRealManualFOneMean{}. PLECTA leads both, and by far less than
+on synthetic scenes, where the same two methods score
+\PlectaGreedyPlectaFOne{} and \PlectaSifneFOne{} over the
+\PlectaGreedySceneCount{} scenes of Section~\ref{sec:res-comparators}; on one
+field SIFNE takes the pairwise score outright, by less than the table's two
+decimals resolve.
+
+The input is the likely reason, and it is the condition rather than the
+material. A skeleton of a hand annotation is about as clean an axis as a real
+field can supply: unbroken, thin, and placed where a person judged the strand
+to be. What separates these methods on synthetic data is what each does with
+evidence that is fragmented and displaced, and this condition supplies almost
+none of it, so it compresses exactly the differences the comparison is for. An
+automatic mask carries both faults, as Figure~\ref{fig:real-sem-axis} and the
+axis triple above show, and PLECTA alone on that axis falls to
+\PlectaRealUNetFOneMean{}. Whether the separation widens there is an
+expectation and not a measurement: the comparators were not run on the nnU-Net
+axis. Density is at least not the explanation, since these fields carry
+\PlectaRealCoverageLow{} to \PlectaRealCoverageHigh{}\,\% areal coverage,
+between the two densest synthetic strata.
+
+Two limits bound the comparison either way. Both comparators
 run at parameters selected on synthetic development scenes a sixth of these
 fields' pixel area and applied unchanged, since re-selecting them here would
 select on the data being reported; and Basu Stage~B is our reimplementation, a

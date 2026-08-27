@@ -62,10 +62,11 @@ stiff. Sweeping it from \PlectaCurvinessSweepLow{}\,\% to
 curvature from \PlectaCurvinessRadiusHigh{} to \PlectaCurvinessRadiusLow{}\,px
 in a 512\,px frame, changes nothing that can be distinguished from noise: over
 \PlectaCurvinessLevelCount{} settings at two coverage targets and both mask
-conditions, \PlectaCurvinessSceneCount{} scenes each, the level means move by
-less than the scene-to-scene scatter within a level in
-\PlectaCurvinessFlatSeries{} of \PlectaCurvinessSeriesCount{} series. The
-headline numbers do not depend on this parameter across that band. The wavelength over which a bend is
+conditions, \PlectaCurvinessSceneCount{} scenes each, the comparison is between
+two spreads: how far the mean moves as the setting changes, against how far
+scenes drawn at one setting sit from each other. The first is smaller in every
+series, so the setting is doing less to the score than the choice of scenes is.
+The headline numbers do not depend on this parameter across that band. The wavelength over which a bend is
 spread was swept separately, from \PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px
 about a default of \PlectaSmoothDefault{}, with the same result in
 \PlectaSmoothFlatSeries{} of \PlectaSmoothSeriesCount{} series; the fourth

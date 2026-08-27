@@ -789,6 +789,17 @@ def curviness_macros(payload: dict) -> list[str]:
     low, high = payload["swept_fraction_of_default"]
     geo = {g["curviness"]: g for g in payload["geometry"]}
     lo_g, hi_g = geo[min(geo)], geo[max(geo)]
+    #  The discussion states this verbally -- "the first is smaller in every
+    #  series" -- rather than as a count, so nothing in the prose would notice
+    #  if a re-run made it untrue. Fail the build instead of printing a claim
+    #  the record contradicts; if it ever fires, the sentence needs the count
+    #  back, the way the wavelength sentence carries "3 of 4".
+    flat_series = sum(not s["spread_exceeds_noise"] for s in payload["series"])
+    if flat_series != len(payload["series"]):
+        raise SystemExit(
+            f"curviness: {flat_series} of {len(payload['series'])} series have "
+            "a spread below their own noise, but the discussion says every "
+            "one does -- fix the sentence in sections/04_discussion.tex")
     return [
         macro("PlectaCurvinessDefault", "%.2f" % payload["default_curviness"]),
         macro("PlectaCurvinessSweepLow", "%.0f" % (low * 100)),
@@ -814,9 +825,7 @@ def curviness_macros(payload: dict) -> list[str]:
               fmt(head["max_spread_of_level_means"])),
         macro("PlectaCurvinessMinSceneSD", fmt(head["min_within_level_sd"])),
         macro("PlectaCurvinessSeriesCount", str(len(payload["series"]))),
-        macro("PlectaCurvinessFlatSeries",
-              str(sum(not s["spread_exceeds_noise"]
-                      for s in payload["series"]))),
+        macro("PlectaCurvinessFlatSeries", str(flat_series)),
         macro("PlectaCurvinessSceneCount",
               str(payload["series"][0]["per_level"][0]["n"])),
         macro("PlectaCurvinessLevelCount", str(len(payload["geometry"]))),
@@ -901,6 +910,22 @@ def real_fields_macros(payload: dict) -> list[str]:
             ])
     lines.append(macro("PlectaRealCrossingTotal", "%d" % total_crossings))
 
+    #  The nnU-Net mean is over the HELD-OUT fields only. B58_100's image is in
+    #  the training data of every available run, so its nnU-Net score is an
+    #  upper bound; averaging it in would quietly lift the number the section
+    #  reports for what an automatic mask allows. The manual condition has no
+    #  such problem and is averaged over all three, in real_comparators_macros.
+    held = [f for f in payload["fields"] if f["unet_held_out"]]
+    if not held:
+        raise SystemExit("no held-out nnU-Net field: the mean would be an "
+                         "upper bound with nothing saying so")
+    lines.extend([
+        macro("PlectaRealUNetHeldOutCount", str(len(held))),
+        macro("PlectaRealUNetFOneMean",
+              fmt(sum(f["conditions"]["unet"]["pairwise_f1"] for f in held)
+                  / len(held))),
+    ])
+
     #  The PlectaContamination* macros are RETIRED, 2026-08-25, by author
     #  decision, together with the results subsection that used them.
     #
@@ -934,11 +959,22 @@ def real_comparators_macros(payload: dict) -> list[str]:
     fields = sorted({r["field"] for r in payload["rows"]})
     coverages = [100 * payload["coverage"][f]["areal_coverage"] for f in fields]
     joins = [r["join_f1"] for r in payload["rows"]]
+    #  A plain mean over the three fields, which is all the discipline of this
+    #  study allows: three fields, per-field values and a mean, no interval.
+    #  Every method is averaged over the same three, on the same masks.
+    means = {}
+    for method in ("plecta", "sifne", "basu"):
+        vals = [rows[(f, method)]["pairwise_f1"] for f in fields]
+        assert len(vals) == len(fields)
+        means[method] = sum(vals) / len(vals)
     lines = [
         macro("PlectaRealCoverageLow", "%.1f" % min(coverages)),
         macro("PlectaRealCoverageHigh", "%.1f" % max(coverages)),
         macro("PlectaRealManualJoinLow", fmt(min(joins))),
         macro("PlectaRealManualJoinHigh", fmt(max(joins))),
+        macro("PlectaRealManualFOneMean", fmt(means["plecta"])),
+        macro("PlectaRealSifneFOneMean", fmt(means["sifne"])),
+        macro("PlectaRealBasuFOneMean", fmt(means["basu"])),
     ]
     basu_margins = []
     for field in fields:
