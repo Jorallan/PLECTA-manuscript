@@ -315,11 +315,12 @@ fraction for which any evidence exists at all. That alone accounts for the
 collapse. Suppose the stage orders the connected pairs at the rate it achieves
 on pairs that cross and guesses the rest: at 20\,\% coverage the two terms come
 to \PlectaDepthCleanCovTwoZeroOrderPred{}, against
-\PlectaDepthCleanCovTwoZeroAllOrder{} measured. It under-predicts at the
-sparser coverage, where the unconnected pairs are evidently not quite a coin
-flip, and over-predicts at the denser end by up to
-\PlectaDepthOrderResidual{}, consistent with error accumulating along the long
-transitive chains that large components create.
+\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The stage beats that model at
+the sparser coverage, so the unconnected pairs are evidently not quite coin
+flips, and falls short of it at the denser end, by up to
+\PlectaDepthOrderResidual{} in the given-geometry condition, consistent with
+error accumulating along the long transitive chains that large components
+create.
 
 Two things follow for reading the table. The all-crossings row is lower than
 the decided row by the amount the 2-D stage fails to recover a crossing at
