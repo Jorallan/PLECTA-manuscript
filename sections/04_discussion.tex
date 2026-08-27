@@ -1,75 +1,78 @@
-\section{Discussion and conclusions}
+%  One \section, three labels. sec:limitations is referenced from Section 2.3
+%  and three times from Section 3, each time promising that this section
+%  reports what the inter-annotator measurement shows, so the bounds below keep
+%  those numbers rather than deferring them. sec:discussion and sec:conclusions
+%  are kept as aliases so that any reference written against either still
+%  resolves.
+\section{Conclusions}
+\label{sec:conclusions}
 \label{sec:discussion}
 \label{sec:limitations}
-\label{sec:conclusions}
 
-PLECTA addresses a narrow problem: assigning the fragments of a binary
-strand-axis mask to overlapping projected instances, resolving each junction by
-mutual compatibility rather than by the cheapest continuation and re-reading
-that evidence as chains assemble. Explicit geometry recovers substantial
-identity there, reaching \Fone{}=\PlectaHeldoutFOneMean{} over
-\PlectaHeldoutSceneCount{} independently seeded held-out scenes. The evidence
-is directional, which fixes the condition the image must meet: a tangent
-measured on one side of a crossing must predict the arm leaving the other. The
-ablations are consistent with that reading, the two largest losses being the
-junction chord-turn term and gap matching, both purely geometric. That
-is the regime of nanotube bundles and of the cytoskeletal and synthetic-fibre
-networks comparable methods target, and not that of freely flexible chains,
-where the premise fails rather than degrades. The remaining sensitivity belongs
-to the segmenter, since PLECTA can bridge a short omission but cannot infer a
-strand the mask omits, nor reliably reject a false axis introduced upstream.
+PLECTA reconstructs overlapping strand instances from a binary strand-axis mask
+and nothing else. It solves every junction, of any degree, as a single exact
+maximum-weight partial matching in which leaving an arm unmatched carries an
+explicit price, so a strand is allowed to end rather than have a continuation
+invented for it, and a crossing pixel is emitted to every strand that claims
+it.
 
-The held-out scenes share the generator family used in development, so their
-intervals are sampling variation within it and not transfer; the \emph{ranking}
-was checked separately on GraFT's own generator at its published settings and
-held there, so what is untested elsewhere is the level and not the comparison.
-The comparisons are themselves bounded. The greedy rule is our reimplementation
-of a principle rather than of any particular paper, DNAi was run outside the
-domain it was built for, and the metric scores how a crossing is
-\emph{resolved} and not how it is \emph{represented}. The margin over the
-strongest of the four published methods is also the narrowest,
-\PlectaRealManualFOneMean{} against \PlectaRealSifneFOneMean{} for SIFNE on the
-real fields. What they support is mechanical, that pairing endpoints greedily
-or committing with no option to decline loses identity in dense crossings; they
-do not establish that PLECTA is generally superior, which would need released
-implementations run in their own regimes by their authors.
+\begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
+  \item Over \PlectaHeldoutSceneCount{} held-out synthetic scenes from unseen
+        seeds it reaches mean pairwise
+        \Fone{}=\PlectaHeldoutFOneMean{} [\PlectaHeldoutFOneCILow{},
+        \PlectaHeldoutFOneCIHigh{}], falling from
+        \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as
+        areal coverage rises from 20 to 60\,\%.
+  \item On identical masks it leads four published methods at every density,
+        and the ordering holds on a competitor's own generator, run unmodified
+        at its published settings.
+  \item What carries the result is geometric: the largest ablation losses are
+        the junction chord-turn term and gap bridging.
+  \item A secondary stage reads the greyscale to order strands in depth. It is
+        correct on \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the
+        crossings it commits to, against a chance level of
+        \PlectaDepthChance{}, and abstains where the image does not separate
+        the pair by more than the local noise.
+  \item The grouping core uses no random number generator and no training data,
+        and its configuration is published, so one mask yields one answer on
+        every run. The demonstrated SEM route is not training-free: its mask
+        comes from a trained CycleGAN and nnU-Net upstream.
+\end{itemize}
 
-The real material is weaker ground, deliberately so. The carbon-nanotube
-demonstration is a case study of \PlectaRealFieldCountLower{} SEM fields and
-cannot estimate generalisation, however closely any two of them agree; its
-manual-derived masks are an oracle-like input condition, testing grouping where
-the axis evidence is curated rather than automatic SEM-to-instance performance.
-Re-annotation by a second reader shows why more readings would not settle it.
-Scored against the annotator whose skeleton it was given, PLECTA reaches
-\PlectaInterAnnotatorSameFLow{}--\PlectaInterAnnotatorSameFHigh{}, and across
-annotators \PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{};
-annotators~A and~B agree at
-\PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{} with no
-method in the loop, so the cross-annotator scores sit at roughly the ceiling
-human agreement allows, and the automatic-mask condition cannot be separated
-from that disagreement. It is systematic: B exports
-\PlectaInterAnnotatorObjectRatioLow{}--\PlectaInterAnnotatorObjectRatioHigh{}
-times as many objects as A, shorter and far more fragmented: two different
-answers to what an instance \emph{is}, not one reader being wrong. Most
-directly, given B's skeleton rather than the network's output PLECTA reaches
-\PlectaInterAnnotatorBOnAFOneMean{} against A, below what the network's axis
-achieves on every field: a second reader is not, on this material, a better
-source of an axis than the segmenter is. Identity through an occlusion is what
-annotation cannot fix; only in a procedural scene, where identity is assigned
-before rendering, is the answer defined rather than adjudicated.
+\noindent\textbf{Bounds.}
 
-Depth is decided only where crossings supply evidence, so the vertical order it
-imposes is scoped to the connected component of the crossing graph, and
-ordering a whole film would need evidence that does not travel through
-crossings. Rendered width is not validated by a metric that scores ownership of
-centreline fragments, so quantitative diameter claims require matched physical
-measurements; pairwise fragment scores also emphasise instances with many
-fragments, which is why the adjusted Rand index and variation of information
-are reported alongside.
+\begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
+  \item The held-out scenes share the generator family used in development, so
+        their intervals are sampling variation within it and not transfer. What
+        was checked on an external generator is the ranking, not the level.
+  \item The comparison runs four methods on data none of them was built for. It
+        supports a mechanical claim, that pairing endpoints greedily or
+        committing with no option to decline loses identity in dense crossings,
+        and does not establish that PLECTA is generally superior.
+  \item The remaining sensitivity is the segmenter's. PLECTA can bridge a short
+        omission, but it cannot infer a strand the mask omits, nor reliably
+        reject a false axis introduced upstream.
+  \item The real-material demonstration is a case study of
+        \PlectaRealFieldCountLower{} CNT SEM fields and cannot estimate
+        generalisation. Scored against the annotator whose skeleton it was
+        given, PLECTA reaches
+        \PlectaInterAnnotatorSameFLow{}--\PlectaInterAnnotatorSameFHigh{}, and
+        across annotators
+        \PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{},
+        while annotators~A and~B agree at
+        \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}
+        with no method in the loop. The disagreement is systematic rather than
+        error: B exports
+        \PlectaInterAnnotatorObjectRatioLow{}--\PlectaInterAnnotatorObjectRatioHigh{}
+        times as many objects as~A, shorter and far more fragmented, which is
+        two answers to what an instance \emph{is}. A real-data score is
+        therefore bounded by that disagreement rather than by the method, and
+        identity through an occlusion is the part annotation cannot settle.
+  \item Applicability follows the premise. The evidence is directional, so
+        where direction does not survive a crossing, as in freely flexible
+        chains, the method fails rather than degrades.
+\end{itemize}
 
-The method offers an inspectable route to strand instances that uses no random
-number generator and, in its grouping core, no training data; the demonstrated
-SEM route is not training-free, its mask coming from a trained CycleGAN and
-nnU-Net upstream. Broader claims require independent real fields sealed before
-configuration, validated physical widths, further released implementations in a
-matched comparison, and an external-generator benchmark with sealed seeds.
+What would move any of this is independent real fields sealed before
+configuration, validated physical widths, further released implementations run
+in a matched comparison, and an external-generator benchmark with sealed seeds.
