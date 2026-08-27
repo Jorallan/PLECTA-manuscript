@@ -112,7 +112,10 @@
 %
 %  Every other open question the draft carried has been resolved into the text.
 %------------------------------------------------------------------------------
-\newif\ifaq \aqtrue
+%  \aqfalse for a clean PDF to circulate: the two \todo notes below are author
+%  metadata, not open questions about the work, and neither belongs in a copy
+%  someone else reads. Set \aqtrue to bring them back while working.
+\newif\ifaq \aqfalse
 \newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
 \newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed before submission: #1]}}}
 
@@ -185,9 +188,15 @@ microscopy.
 \input{sections/04_discussion}
 
 %------------------------------- back matter ----------------------------------
+%  Heading gated with its own content. Under \aqfalse the \todo prints nothing,
+%  and a section heading with nothing under it reads as broken rather than as
+%  pending. When the roles are written, they replace the \todo and the \ifaq
+%  around them goes with it.
+\ifaq
 \section*{CRediT author contribution statement}
 \todo{Fill in each author's CRediT roles before submission, checked against
 actual contributions; keep the author names and order as listed above.}
+\fi
 
 \section*{Declaration of competing interest}
 The authors declare that they have no known competing financial interests or

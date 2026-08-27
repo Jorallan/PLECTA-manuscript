@@ -260,7 +260,10 @@ def graft_macros(graft: dict) -> list[str]:
         arm = graft["arms"][f"graft|{variant}"]
         lines.extend([
             macro(f"PlectaGraFT{tag}FOne", fmt(arm["overall"]["f1"])),
-            macro(f"PlectaGraFT{tag}SceneCount", str(f1["n"])),
+            #  PlectaGraFT{tag}SceneCount retired 2026-08-27 with Table 5's
+            #  scene-count column, which was its last citation. f1["n"] still
+            #  carries it, and PlectaGraFT{tag}Failed below is the same fact
+            #  from the other side.
             macro(f"PlectaGraFT{tag}DeltaFOne", f"{f1['mean_diff']:+.3f}"),
             macro(f"PlectaGraFT{tag}DeltaCILow", f"{f1['ci95_lo']:+.3f}"),
             macro(f"PlectaGraFT{tag}DeltaCIHigh", f"{f1['ci95_hi']:+.3f}"),
@@ -912,8 +915,11 @@ def real_fields_macros(payload: dict) -> list[str]:
                 macro(f"PlectaJoin{stem}{axis}Precision",
                       fmt(c["join_precision"])),
                 macro(f"PlectaJoin{stem}{axis}Recall", fmt(c["join_recall"])),
-                macro(f"PlectaJoin{stem}{axis}Decisions",
-                      "%d" % c["n_decisions"]),
+                #  PlectaJoin{stem}{axis}Decisions retired 2026-08-27 with the
+                #  sentence in Section 3.3 that quoted two of the six. It gave
+                #  the number of rejoinable breaks each mask poses, which read
+                #  as a denominator and is not one; n_decisions is still in
+                #  plecta_real_fields.json per field and per axis.
                 macro(f"PlectaDetectionF{stem}{axis}", fmt(c["detection_f1"])),
                 macro(f"PlectaFidelity{stem}{axis}",
                       fmt(c["crossing_fidelity"])),
