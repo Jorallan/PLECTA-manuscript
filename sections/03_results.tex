@@ -232,36 +232,23 @@ annotation as the reference in both cases, so the two conditions differ only
 in the mask. The first is an oracle-like input condition rather than an
 end-to-end result, asking what the grouping can do when the axis evidence is
 curated; only the second says what an automatic mask allows.
-Figures~\ref{fig:real-sem-axis} and~\ref{fig:real-sem} show both on one field,
-as the centrelines the scores are computed on and at width.
+Figure~\ref{fig:real-sem} shows both on one field, whole frame, with each input
+axis beside what PLECTA made of it.
 
-\begin{figure}[tbp]
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
-    \caption{The two input axes of field B58\_110, drawn over the micrograph
-    they were read from: \textbf{(a)}~the skeleton of annotator~A's annotation,
-    \textbf{(b)}~the output of the upstream segmenter. These are the input
-    masks themselves, before any reconstruction. Everything separating the two
-    conditions of Table~\ref{tab:plecta-real-masks} is here: the same strands,
-    read by a network rather than by a person, arrive thicker, broken into more
-    pieces, and displaced by a pixel or two almost everywhere. The axis is
-    dilated by one pixel for legibility, which changes no geometry.}
-    \label{fig:real-sem-axis}
-\end{figure}
-
-\begin{figure}[tbp]
+%  [p] because the float is a full text block high: five panels of a
+%  1536x1024 field, and the field is the unit the numbers are computed over.
+\begin{figure}[p]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{Reconstructed bundles on two annotated SEM fields, one per row.
-    \textbf{(a)}~annotator~A's annotation; \textbf{(b)}~PLECTA from the
-    manual-derived axis; \textbf{(c)}~PLECTA from the nnU-Net axis of
-    Figure~\ref{fig:real-sem-axis}b, the same method and parameters, differing
-    only in the mask. All three are drawn at width, the reconstructions through
-    the width layer of Section~\ref{sec:mm-stage4}, which runs after the
-    grouping is fixed and moves no pixel between strands. Within a row, a
-    predicted strand takes the colour of the annotated strand it matched;
-    crimson matched none. Each crop is the window whose local pairwise
-    \Fone{} is closest to the whole-field value on both axes.}
+    \caption{One CNT SEM field, B58\_110, whole frame, a row per mask source.
+    \textbf{(a)}~annotator~A's annotation; \textbf{(b)}~its skeleton, the
+    manual-derived axis, and \textbf{(c)}~PLECTA from it; \textbf{(d)}~the
+    segmenter's axis, and \textbf{(e)}~PLECTA from that, same parameters. (b)
+    and (d) are the input masks, in one colour, dilated a pixel for legibility;
+    the rest are at width, through the layer of Section~\ref{sec:mm-stage4},
+    which runs after the grouping is fixed and moves no pixel between strands.
+    A predicted strand takes the colour of the annotated strand it matched;
+    crimson matched none. B58\_110 is held out of the segmenter's training.}
     \label{fig:real-sem}
 \end{figure}
 
@@ -326,7 +313,7 @@ B58\_110's manual axis against
 the gap without closing it, and its decomposition says what the rest is: a join
 precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
-than fusing strands, which is what panel~(c) of Figure~\ref{fig:real-sem}
+than fusing strands, which is what panel~(e) of Figure~\ref{fig:real-sem}
 shows.
 
 \subsection{Development ablations}
@@ -475,23 +462,6 @@ though a topology we rebuilt is weaker evidence than a generator its authors
 released. \suppcomparators{} gives both density series in full.
 
 
-\textbf{How many crossings were solved.} The pairwise score counts pairs of
-fragments, which says how much of the grouping is right without saying how
-many crossings a method actually got through. Crossing Fidelity says that: the
-fraction of reference crossings at which a method partitions the arms meeting
-there exactly as the reference does. Pooled over the \PlectaJunctionCount{}
-reference crossings of the degraded set, PLECTA partitions
-\PlectaJunctionPlectaRate{} of them exactly, ahead of every comparator, and
-clean axes order them the same way. It is far less discriminative than the
-pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and worst
-method at 60\,\% coverage where pairwise \Fone{} spans
-\PlectaPairwiseSpreadHigh{}, so it is read as a count of what was solved and
-not as a ranking. Every method is poor at the busiest nodes: above degree four
-PLECTA resolves \PlectaJunctionPlectaDegreeFivePlus{} and no comparator does
-better, while DNAi collapses to \PlectaJunctionDNAiDegreeFivePlus{}, which is
-what its degree-four cap predicts. \suppcomparators{} gives the paired margins
-and the all-unpaired baseline the rate is read against.
-
 \textbf{Cost.} Accuracy is not the only axis on which these methods differ.
 Per-scene cost was measured warm, single-threaded and pinned to one core,
 timing each method's own computation only (Table~\ref{tab:plecta-comparators};
@@ -524,12 +494,4 @@ that is fragmented and displaced, and this condition supplies almost none of
 it, so it compresses exactly the differences the comparison is for; on one
 field SIFNE takes the pairwise score outright, by less than two decimals
 resolve. An automatic mask carries both faults, and PLECTA alone on that axis
-falls to \PlectaRealUNetFOneMean{}, but whether the separation widens there is
-an expectation and not a measurement, since the comparators were not run on
-the nnU-Net axis. Density is at least not the explanation: these fields carry
-\PlectaRealCoverageLow{} to \PlectaRealCoverageHigh{}\,\% areal coverage,
-between the two densest synthetic strata. Both comparators run here at
-parameters selected on synthetic development scenes a sixth of these fields'
-pixel area and applied unchanged, since re-selecting them on the fields being
-reported would select on the data; and Basu Stage~B remains our
-reimplementation, a floor rather than an external result.
+falls to \PlectaRealUNetFOneMean{}. Nothing was tuned on these fields.

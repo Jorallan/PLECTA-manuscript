@@ -341,6 +341,16 @@ arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is the
 all-unpaired baseline the rate is read against: a deterministic do-nothing
 policy rather than a chance level.
 
+Two things about that column belong with it. It is far less discriminative
+than the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and
+worst method at 60\,\% coverage where pairwise \Fone{} spans
+\PlectaPairwiseSpreadHigh{}, so it should be read as a count of what was solved
+and not as a ranking. And every method is poor at the busiest nodes: pooled
+over the \PlectaJunctionCount{} reference crossings of the degraded set, PLECTA
+partitions \PlectaJunctionPlectaRate{} exactly, but above degree four it
+resolves only \PlectaJunctionPlectaDegreeFivePlus{}, and no comparator does
+better there.
+
 The restricted DNAi comparison, which scores only the evidence a
 degree-limited, gap-blind method can reach, moves the clean-axis difference
 from \PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
