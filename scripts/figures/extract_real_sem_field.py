@@ -1,31 +1,30 @@
 """Extract the committed asset behind ``fig_real_sem``.
 
-The qualitative real-SEM figure needs three instance labellings of one field --
-the manual annotation, PLECTA on the manual-derived axis, and PLECTA on the
-nnU-Net axis -- with instance colours that correspond across the three.  This
-script runs PLECTA on the *whole* field, matches predicted instances to manual
-ones there, and only then cuts out the crop that is drawn.  Running it on the
-crop instead would change the reconstruction at the crop boundary and the
-picture would no longer be of the run the numbers come from.
+The qualitative real-SEM figure needs, for one field, the manual annotation and
+two reconstructions -- PLECTA on the manual-derived axis and PLECTA on the
+nnU-Net axis -- with instance colours that correspond across the three, plus the
+two input axis masks themselves.  Everything is stored for the **whole field**:
+PLECTA is run on the whole field, matched on the whole field, and drawn on the
+whole field, so nothing in the picture is a window chosen after the fact.
 
-**Which fields.**  B58_110 and B58_300, which are both held out of the nnU-Net
-training run used here.  B58_100 is training-contaminated under every available
-run and is deliberately not drawn: a picture of a field the network memorised
-would show a quality of mask transfer that does not exist.  Two fields also let
-the figure show that the result is not one lucky field.
+**Which field.**  B58_110, which the nnU-Net run used here held out of training.
+B58_100 is training-contaminated under every available real-trained run and is
+deliberately not drawn: a picture of a field the network memorised would show a
+quality of mask transfer that does not exist -- see ``NNUNET_PROVENANCE.md`` in
+the study, which measures it at correlation 0.9999 against ds202's training
+images.  B58_300 is also held out and would serve; B58_110 is the field the text
+already names.  That the result is not one lucky field is a numerical claim, and
+Table 5 makes it over all three fields, which a second picture states weakly.
 
-**Which crop.**  Chosen, not picked: over a grid of windows, the one whose local
-pairwise F1 is jointly closest to that field's whole-field value on *both* axes,
-so the crop is typical of the field rather than selected from it.  This is the
-rule ``fig_plecta_examples`` already uses at scene level ("the scene whose F1 is
-closest to the median").  Local F1 is computed by restricting the common
-fragments to those lying wholly inside the window and rescoring; nothing is
-re-run.
+**No crop.**  An earlier version drew a 512x344 window per field, chosen as the
+one whose local pairwise F1 was jointly closest to the whole-field value on both
+axes.  Choosing a window well is still choosing one; showing the frame the
+number was computed on removes the question.
 
 The stored per-field numbers are reproduced before anything is written, as the
 repository requires of any figure built from a fresh run.
 
-    python scripts/figures/extract_real_sem_crop.py
+    python scripts/figures/extract_real_sem_field.py
 """
 from __future__ import annotations
 
@@ -48,29 +47,69 @@ for path in (Path(r"C:\Repos\comparisons\graft_regime\scripts"),
 
 import _local as L                                            # noqa: E402
 import metrics_lib as ML                                      # noqa: E402
-import common_metric as CM                                    # noqa: E402
 import instance_io as IIO                                     # noqa: E402
+
+
+def _alias_image_layer() -> None:
+    """Let the study's ``width_render`` find PLECTA's image layer.
+
+    The method repository renamed that package ``image_characterization`` ->
+    ``plecta.image`` after this study was written, so ``width_render`` imports a
+    name that no longer resolves.  It is aliased here rather than the comparator
+    study edited: the study is a record of what ran, and this repository is not
+    where it gets revised.
+
+    One signature moved with the rename and is adapted, not guessed at.
+    ``resample_run(pts, aids, tangent_sigma)`` lost its middle argument, which
+    existed only to carry a per-pixel arm id through to an ``aid`` key in the
+    returned dict.  ``width_render`` passes ``np.zeros(len(path))`` for it and
+    reads ``u``, ``valid``, ``r``, ``c``, ``nr`` and ``nc`` back, never ``aid``;
+    the rest of the function is unchanged line for line (``git log -S`` in the
+    method repository).  So dropping the argument is a no-op for this caller,
+    and the wrapper below drops it.  Everything else ``width_render`` calls --
+    ``load_sem``, ``measure_cut``, ``render_ribbon``, ``smooth_polyline``,
+    ``_order_pixels``, ``degree_map``, ``prune_spurs`` -- takes exactly the
+    arguments it passes, and the parameter defaults its own docstring names
+    (``cut_step`` 2, ``node_clear_px`` 6, ``half_len`` 22, ``min_width`` 3,
+    ``max_width`` 40, ``smooth_window`` 9) are the current ones.
+    """
+    import importlib
+    import types
+
+    if str(L.PLECTA_REPO) not in sys.path:
+        sys.path.insert(0, str(L.PLECTA_REPO))
+
+    bundles = importlib.import_module("plecta.image.bundles")
+    resample_run = bundles.resample_run
+
+    shim = types.ModuleType("image_characterization.bundles")
+    shim.__dict__.update(vars(bundles))
+    shim.resample_run = (lambda pts, aids, tangent_sigma:
+                         resample_run(pts, tangent_sigma))
+
+    package = types.ModuleType("image_characterization")
+    package.__path__ = []          # a package, so ``X.Y`` imports resolve
+    sys.modules["image_characterization"] = package
+    for name, module in (("measurement",
+                          importlib.import_module("plecta.image.measurement")),
+                         ("bundles", shim),
+                         ("refine", importlib.import_module("plecta.image.refine"))):
+        setattr(package, name, module)
+        sys.modules["image_characterization." + name] = module
+
+
+_alias_image_layer()
 #  PLECTA's own optional image layer, driven rather than reimplemented: it
 #  measures a width per instance by FWHM across the centreline and stamps a
 #  ribbon. This is the Section 2.5 rendering, and it runs after the grouping is
 #  fixed, so it cannot move a pixel from one instance to another.
 import width_render as WR                                     # noqa: E402
 
-#: Both fields that the nnU-Net run used here held out of training. B58_100 is
-#: contaminated under every available run and is deliberately not drawn: a
-#: picture of a field the network memorised would show mask transfer that does
-#: not exist.
-FIELDS = ("b58_110", "b58_300")
+#: The one field drawn, and the reason is in the docstring.
+FIELD = "b58_110"
 AXES = (("manual", "skel"), ("unet", "nnunet"))
-#: The window is wider than tall because the figure puts two panels side by side
-#: across \linewidth: each is then ~3.1 in wide, and a square crop would make the
-#: figure 3.3 in tall for content that is a texture and reads just as well at
-#: 3:2. That is worth about a fifth of a page on a 22-page budget.
-CROP_H, CROP_W = 344, 512
-STRIDE = 88
 TOL = 2                       # the placement tolerance used throughout
-MIN_REFERENCE = 25            # a window with almost nothing in it is not typical
-OUT = REPO / "results" / "figure_assets" / "real_sem_crop.npz"
+OUT = REPO / "results" / "figure_assets" / "real_sem_field.npz"
 
 
 def load_reference(scene: Path, shape) -> dict:
@@ -106,7 +145,7 @@ def greedy_match(gt: dict, pred: dict, shape) -> dict:
 
 
 def pack_instances(masks: dict, shape, ident_of=None, unmatched=-1) -> dict:
-    """Keep every instance separately, as flat pixel indices over the field.
+    """Keep every instance separately, as CSR over flat pixel indices.
 
     Not a label image.  Flattening instances into one label array makes the last
     one painted win at every crossing, which is exactly where PLECTA's output is
@@ -122,52 +161,17 @@ def pack_instances(masks: dict, shape, ident_of=None, unmatched=-1) -> dict:
     order = sorted(masks)
     colours = np.array([(ident_of.get(k, unmatched) if ident_of is not None
                          else k) for k in order], dtype=np.int32)
-    flat = [np.flatnonzero(np.asarray(masks[k], bool).ravel()) for k in order]
-    return {"colour_ids": colours, "pixels": flat, "shape": shape}
-
-
-def crop_pack(pack: dict, r0: int, c0: int) -> dict:
-    """Restrict a packed instance set to a window, as CSR over crop-local ids.
-
-    Instances left with no pixel inside the window are dropped.  Storing the
-    survivors as ``(colour_ids, indptr, indices)`` is the same shape the study's
-    own ``gt_multilabel.npz`` uses, so the asset needs no bespoke reader.
-    """
-    height, width = pack["shape"]
-    keep_ids, runs = [], []
-    for colour, flat in zip(pack["colour_ids"], pack["pixels"]):
-        rows, cols = np.divmod(flat, width)
-        inside = ((rows >= r0) & (rows < r0 + CROP_H)
-                  & (cols >= c0) & (cols < c0 + CROP_W))
-        if not inside.any():
-            continue
-        local = (rows[inside] - r0) * CROP_W + (cols[inside] - c0)
-        keep_ids.append(int(colour))
-        runs.append(local.astype(np.int32))
+    runs = [np.flatnonzero(np.asarray(masks[k], bool).ravel()).astype(np.int32)
+            for k in order]
     indptr = np.zeros(len(runs) + 1, dtype=np.int64)
     np.cumsum([len(r) for r in runs], out=indptr[1:])
     indices = (np.concatenate(runs) if runs
                else np.zeros(0, dtype=np.int32)).astype(np.int32)
-    return {"colour_ids": np.array(keep_ids, dtype=np.int32),
-            "indptr": indptr, "indices": indices}
-
-
-def fragments_inside(frag: np.ndarray, counts_all: np.ndarray,
-                     r0: int, c0: int) -> set:
-    """Fragment ids lying wholly inside the window at (r0, c0).
-
-    Whole containment rather than centroid membership, so that a fragment cut by
-    the window edge is scored by neither the crop nor the deviation that chose
-    it.
-    """
-    window = frag[r0:r0 + CROP_H, c0:c0 + CROP_W]
-    counts_win = np.bincount(window.ravel(), minlength=counts_all.size)
-    ids = np.flatnonzero(counts_win)
-    return {int(f) for f in ids if f and counts_win[f] == counts_all[f]}
+    return {"colour_ids": colours, "indptr": indptr, "indices": indices}
 
 
 def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
-    """Run both axes of one field, choose its crop, return arrays and metadata."""
+    """Run both axes of one field and return its arrays and metadata."""
     per_axis, sem = {}, None
 
     for key, variant in AXES:
@@ -189,26 +193,23 @@ def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
                 "parity failed on %s %s: got %.17g, stored %.17g"
                 % (field, key, scores["f1"], want["pairwise_f1"]))
 
-        frag = CM.common_fragments(mask)
-        ref_assign = CM.assign_fragments(frag, reference, 0.3, 6.0)
-        pred_assign = CM.assign_fragments(frag, centrelines, 0.3, 6.0)
         match = greedy_match(reference.masks, centrelines.masks, mask.shape)
 
         #  The same instances re-drawn at the width the SEM says each filament
-        #  is. Run on the whole field, like the grouping, and cropped after.
+        #  is, on the whole field, like the grouping.
         widths, width_record = WR.render_all(scene, mask, prediction.masks)
         print("[extract]   width: %d/%d instances measured, scene median %s px"
               % (width_record["n_measured"], width_record["n_instances"],
                  width_record["scene_median_width_px"]))
 
         per_axis[key] = {
-            "mask": mask, "frag": frag,
-            "counts": np.bincount(frag.ravel()),
-            "ref_assign": ref_assign, "pred_assign": pred_assign,
+            "mask": mask,
             "field_f1": scores["f1"],
             "centre_pack": pack_instances(centrelines.masks, mask.shape, match),
             "width_pack": pack_instances(widths, mask.shape, match),
             "width_record": width_record,
+            "n_instances": len(centrelines.masks),
+            "n_matched": len(match),
             "reference": reference,
         }
         if sem is None:
@@ -217,9 +218,9 @@ def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
         print("[extract] %s %-6s field F1 %.4f, %d instances, %d matched"
               % (field, key, scores["f1"], len(centrelines.masks), len(match)))
 
-    #  Two renderings of the annotation, because the two figures compare against
+    #  Two renderings of the annotation, because two panels compare against
     #  different things. Its skeleton is exactly the manual-derived input axis,
-    #  and is what the centreline panels are comparable with; its stored form is
+    #  and is what a centreline panel is comparable with; its stored form is
     #  already painted at the width the annotator drew, which is what the
     #  width-rendered panels are comparable with. Neither is invented.
     from skimage.morphology import skeletonize
@@ -230,45 +231,13 @@ def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
         shape)
     ref_width_pack = pack_instances(reference.masks, shape)
 
-    height, width = per_axis["manual"]["mask"].shape
-    best = None
-    for r0 in range(0, height - CROP_H + 1, STRIDE):
-        for c0 in range(0, width - CROP_W + 1, STRIDE):
-            deviation, local, n_ref = 0.0, {}, 0
-            for key in per_axis:
-                axis = per_axis[key]
-                keep = fragments_inside(axis["frag"], axis["counts"], r0, c0)
-                if not keep:
-                    deviation = float("inf")
-                    break
-                ga = {f: g for f, g in axis["ref_assign"].items() if f in keep}
-                pa = {f: p for f, p in axis["pred_assign"].items() if f in keep}
-                sub = CM.pairwise_scores(ga, pa)
-                local[key] = sub["f1"]
-                n_ref = max(n_ref, len({g for g in ga.values() if g}))
-                deviation += abs(sub["f1"] - axis["field_f1"])
-            if n_ref < MIN_REFERENCE or not np.isfinite(deviation):
-                continue
-            if best is None or deviation < best[0]:
-                best = (deviation, r0, c0, dict(local), n_ref)
-
-    if best is None:
-        raise SystemExit("no candidate window met the criteria on " + field)
-    deviation, r0, c0, local, n_ref = best
-    print("[extract] %s crop at row %d col %d (%dx%d): local F1 %s, "
-          "total deviation %.4f over %d reference filaments"
-          % (field, r0, c0, CROP_W, CROP_H,
-             ", ".join("%s %.4f" % kv for kv in sorted(local.items())),
-             deviation, n_ref))
-
-    sl = (slice(r0, r0 + CROP_H), slice(c0, c0 + CROP_W))
     arrays = {
-        "sem": sem[sl].astype(np.uint8),
+        "sem": np.asarray(sem, np.uint8),
         #  The input axes themselves, as the binary masks PLECTA was handed.
-        #  The axis figure shows these rather than any reconstruction: what
+        #  Panels (b) and (d) show these rather than any reconstruction: what
         #  separates the two conditions is the mask, and this is the mask.
-        "mask_manual": per_axis["manual"]["mask"][sl].astype(bool),
-        "mask_unet": per_axis["unet"]["mask"][sl].astype(bool),
+        "mask_manual": per_axis["manual"]["mask"].astype(bool),
+        "mask_unet": per_axis["unet"]["mask"].astype(bool),
     }
     for name, pack in (("reference", ref_centre_pack),
                        ("reference_width", ref_width_pack),
@@ -276,15 +245,15 @@ def extract_field(field: str, stored: dict) -> tuple[dict, dict]:
                        ("unet", per_axis["unet"]["centre_pack"]),
                        ("manual_width", per_axis["manual"]["width_pack"]),
                        ("unet_width", per_axis["unet"]["width_pack"])):
-        cropped = crop_pack(pack, r0, c0)
-        for part, array in cropped.items():
+        for part, array in pack.items():
             arrays[f"{name}__{part}"] = array
+
     meta = {
-        "crop_row": r0, "crop_col": c0,
-        "crop_h": CROP_H, "crop_w": CROP_W,
+        "shape": [int(shape[0]), int(shape[1])],
+        "n_reference": len(reference.masks),
         "field_f1": {k: per_axis[k]["field_f1"] for k in per_axis},
-        "local_f1": local,
-        "n_reference_in_crop": int(n_ref),
+        "n_instances": {k: per_axis[k]["n_instances"] for k in per_axis},
+        "n_matched": {k: per_axis[k]["n_matched"] for k in per_axis},
         "width_render": {k: per_axis[k]["width_record"] for k in per_axis},
     }
     return arrays, meta
@@ -294,22 +263,19 @@ def main() -> int:
     stored = {row["field"] + "|" + row["axis"]: row for row in
               json.loads((STUDY / "results_v2.json").read_text())["rows"]}
 
-    payload: dict = {}
-    meta: dict = {
-        "fields": list(FIELDS),
-        "stride_px": STRIDE, "tolerance_px": TOL,
+    arrays, field_meta = extract_field(FIELD, stored)
+    payload = {f"{FIELD}__{name}": array for name, array in arrays.items()}
+    meta = {
+        "fields": [FIELD],
+        "tolerance_px": TOL,
         "unmatched_label": -1,
-        "selection": ("per field, the window whose local pairwise F1 is jointly "
-                      "closest to that field's whole-field value on both axes"),
-        "held_out": {f: True for f in FIELDS},
-        "per_field": {},
+        "selection": "the whole field, uncropped",
+        "held_out": {FIELD: True},
+        "held_out_note": ("B58_110 is held out of the nnU-Net run used here "
+                          "(ds202); B58_100 is contaminated under every "
+                          "available real-trained run and is not drawn"),
+        "per_field": {FIELD: field_meta},
     }
-    for field in FIELDS:
-        arrays, field_meta = extract_field(field, stored)
-        for name, array in arrays.items():
-            payload[f"{field}__{name}"] = array
-        meta["per_field"][field] = field_meta
-
     #  Stored as a plain string so the asset loads without allow_pickle.
     payload["meta"] = np.array(json.dumps(meta))
     OUT.parent.mkdir(parents=True, exist_ok=True)

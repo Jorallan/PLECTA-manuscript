@@ -49,6 +49,9 @@ from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 #: ``fig_metric_panels`` used to write two of them, the degraded and the clean
 #: mask condition; they are now the two rows of one figure, which is why the
 #: numbering below closes up after it.
+#: ``fig_real_sem`` used to be two of them, the input axes and the
+#: reconstructions on a crop of each of two fields; they are now the five panels
+#: of one whole-field figure, which is why the numbering closes up after it too.
 SHIPPED = [
     ("fig_pipeline_scope", 1),
     ("fig_plecta_frame_cost", 2),
@@ -56,13 +59,12 @@ SHIPPED = [
     ("fig_depth_evidence", 4),
     ("fig_depth_order", 5),
     ("fig_f1_example", 6),
-    ("fig_metric_panels", 7),
-    ("fig_plecta_examples", 8),
-    ("fig_real_sem_axis", 9),
-    ("fig_real_sem", 10),
-    ("fig_pipeline_upstream", 11),
-    ("fig_resem_synth", 12),
-    ("fig_resem_real", 13),
+    ("fig_plecta_examples", 7),
+    ("fig_resem_synth", 8),
+    ("fig_resem_real", 9),
+    ("fig_pipeline_upstream", 10),
+    ("fig_real_sem", 11),
+    ("fig_metric_panels", 12),
 ]
 
 
@@ -74,10 +76,10 @@ SHIPPED = [
 #: text, the second of them a null; fig_comparators_density carried a third of
 #: what fig_comparators carried; fig_plecta_control and fig_plecta_performance
 #: both drew the width negative control; fig_plecta_task predates
-#: fig_common_fragment_metric; and fig_real_sem_overlay is the three-panel
-#: centreline variant of fig_real_sem_axis, keeping the annotation beside the
-#: two reconstructions, which at this size is near-indistinguishable from
-#: PLECTA on the manual-derived axis.  They are still rendered and still gated, so a
+#: fig_common_fragment_metric; and fig_real_sem_overlay draws the annotation and
+#: the two reconstructions as the centrelines the scores are computed on, where
+#: fig_real_sem draws the same three at width, which is the comparison a reader
+#: can make.  They are still rendered and still gated, so a
 #: shared-style change cannot quietly break one of them, but they are numbered
 #: apart so the table above never suggests the manuscript has fifteen figures.
 SUPERSEDED = [

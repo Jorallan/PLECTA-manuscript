@@ -1,23 +1,42 @@
-"""The qualitative real-SEM figure: reconstructed bundles, at width, on the image.
+"""The qualitative real-SEM figure: one field, five panels, whole frame.
 
-Three panels across ``\\linewidth``: the manual annotation, PLECTA from the
-manual-derived axis, and PLECTA from the nnU-Net axis, each drawn over the
-micrograph it came from and each at the width its filaments were measured to
-have. The same method and the same parameters produced the two reconstructions;
-only the mask differs.
+The annotation on top, then a row per mask source: the binary axis PLECTA was
+handed, and what PLECTA made of it. The same method and the same parameters
+produced the two reconstructions; only the mask differs, and the two axis panels
+are what that difference looks like.
 
-Drawing all three at width is what makes them the same kind of object. The
-annotation is stored painted at the width the annotator drew, and PLECTA's own
-optional image layer (Section 2.5) measures a width per instance by FWHM across
-the centreline and stamps a ribbon, so the comparison is like with like rather
-than a region against a hairline. That layer runs *after* the grouping is fixed
-and cannot move a pixel from one instance to another, which is why no score in
-the paper depends on it -- the caption says so, and the centreline form the
-scores are actually computed on is ``fig_real_sem_axis``.
+    (a) annotator A's annotation, at the width they drew
+    (b) the manual-derived axis      (c) PLECTA from (b)
+    (d) the nnU-Net axis             (e) PLECTA from (d)
 
-Everything drawn comes from ``results/figure_assets/real_sem_crop.npz``, written
-by ``extract_real_sem_crop.py``, which runs PLECTA and the width rendering on
-the whole field and cuts the crop afterwards. Nothing is recomputed here.
+This replaces a pair of figures -- the two input axes, and the annotation beside
+the two reconstructions -- which between them showed the same five things across
+two floats and two crops, with the reader carrying panel (b) of one over to
+panel (c) of the other. Merged, an axis sits beside the reconstruction it
+produced.
+
+**Whole field, not a crop.** The earlier pair drew a 512x344 window chosen as
+the one whose local F1 was jointly closest to the whole-field value on both
+axes. That rule was defensible and the caption had to spend a sentence
+defending it; the frame the number was actually computed on needs no defence.
+
+**All five are the same size.** (a) is the reference the other four are read
+against and it has no counterpart beside it, so it is centred rather than
+enlarged; drawing it larger cost the figure a page of its own and showed
+nothing the same panel does not show at this size.
+
+Drawing (a), (c) and (e) at width is what makes them the same kind of object.
+The annotation is stored painted at the width the annotator drew, and PLECTA's
+own optional image layer (Section 2.5) measures a width per instance by FWHM
+across the centreline and stamps a ribbon, so the comparison is like with like
+rather than a region against a hairline. That layer runs *after* the grouping is
+fixed and cannot move a pixel from one instance to another, which is why no
+score in the paper depends on it. (b) and (d) are the binary masks themselves,
+in one colour, because within an axis panel there is nothing to tell apart.
+
+Everything drawn comes from ``results/figure_assets/real_sem_field.npz``,
+written by ``extract_real_sem_field.py``, which runs PLECTA and the width
+rendering on the field and stores the result whole. Nothing is recomputed here.
 
     python scripts/figures/fig_real_sem.py
 """
@@ -31,26 +50,57 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt                                   # noqa: E402
 import numpy as np                                                # noqa: E402
 
-from _style import (FIG_W, FALSE_INST, INK, PT_TITLE,             # noqa: E402
-                    framed, paint, plecta_style, save_fig, tagged_title)
+from _style import (FIG_W, FALSE_INST, PLECTA, framed,            # noqa: E402
+                    paint, plecta_style, save_fig, tagged_title)
 
 ASSET = os.path.normpath(os.path.join(
     os.path.dirname(__file__), "..", "..", "results", "figure_assets",
-    "real_sem_crop.npz"))
+    "real_sem_field.npz"))
 
-#: Instances are one pixel wide.  Dilated by one for *rendering only*, so that a
-#: centreline stays visible over the texture beneath it; no geometry is changed
-#: and the caption says so.
+#: A binary axis is 2 px thick (manual) or 4 px (nnU-Net), and the whole field
+#: is reduced by about a factor of two into a half-width panel.  Dilated by one
+#: for *rendering only*, so an axis stays visible over the texture beneath it;
+#: no geometry is changed and the caption says so.
 DRAW_DILATION = 1
 #: Two instances closer than this must not be given the same colour.
 COLOUR_SEPARATION = 6
 
+#: Width of panel (a) as a multiple of the four panels below it.  1.0, so all
+#: five are the same size and (a) is simply the one that sits alone, centred.
+#:
+#: An earlier round drew (a) larger, on the argument that the reference the
+#: other four are read against deserves the room.  It does not need it: at this
+#: raster a strand is several pixels wide in every panel, so nothing was gained
+#: that (a) did not already show, and the cost was the whole float.  At 0.87 of
+#: \\linewidth the figure was 8.4 in before its caption, which is a text block,
+#: so it had to be a [p] float on a page of its own; at 1.0 it is 6.8 in and
+#: goes back to being an ordinary [tbp] float on a page with text.  Raising it
+#: again means measuring the ceiling from LaTeX's "Float too large for page by
+#: N pt" warning rather than guessing -- against this caption that ceiling was
+#: 0.905 of \\linewidth -- and putting the figure back on its own page.
+HERO_SCALE = 1.0
+
+#: The raster resolution, in dpi, of the images written into the PDF.  Every
+#: other figure in the set draws vectors and does not care; this one is five
+#: photographs, and at the shared default of 150 a 1536 px field lands in a
+#: half-width panel as 459 px -- a 3.3x reduction, which drops a two-pixel axis
+#: stroke to two thirds of a pixel and breaks it into dashes.  At 220 the same
+#: panel is 673 px, a 2.3x reduction that an antialiased filter carries as a
+#: continuous line.  The PNG is written at 300 dpi by ``save_fig`` either way.
+#:
+#: It has to be given to ``plt.figure``, not to ``fig.set_dpi`` afterwards:
+#: ``savefig`` resolves the default ``savefig.dpi="figure"`` against the dpi the
+#: figure was *constructed* with, so a later ``set_dpi`` changes the figure and
+#: not one pixel of the file.  The page is FIG_W inches wide either way, so the
+#: include scale stays 1.0 and ``check_type_scale`` is satisfied.
+RASTER_DPI = 220
+
 #: How many identity colours to generate.  The shared ``INSTANCE_CYCLE`` has
 #: twelve, which is the right size for a panel holding a handful of instances
-#: and far too few here: a crop of this field carries sixty to ninety, and at
-#: twelve the eye starts reading the repeat as a relationship.  A wider ramp is
-#: generated instead, and the greedy colouring below still guarantees that no
-#: two *adjacent* filaments share one.
+#: and far too few here: the field carries over four hundred, and at twelve the
+#: eye starts reading the repeat as a relationship.  A wider ramp is generated
+#: instead, and the greedy colouring below still guarantees that no two
+#: *adjacent* filaments share one.
 N_IDENTITY_COLOURS = 24
 
 #: Hues within this band are reserved for ``FALSE_INST`` (#C2185B, hue 0.93).
@@ -100,57 +150,70 @@ IDENTITY_CYCLE = identity_palette()
 DARKEST, BRIGHTEST = 0.10, 0.82
 
 
-def dilate(mask: np.ndarray, radius: int) -> np.ndarray:
-    from scipy.ndimage import binary_dilation
-    if radius <= 0:
-        return np.asarray(mask, bool)
-    size = 2 * radius + 1
-    return binary_dilation(np.asarray(mask, bool),
-                           structure=np.ones((size, size), bool))
-
-
 def unpack(data, field: str, layer: str) -> tuple:
-    """``(colour_ids, [pixel index array per instance])`` for one layer."""
+    """``(colour_ids, [flat pixel index array per instance])`` for one layer."""
     prefix = f"{field}__{layer}__"
     ids = data[prefix + "colour_ids"]
     indptr, indices = data[prefix + "indptr"], data[prefix + "indices"]
     return ids, [indices[indptr[k]:indptr[k + 1]] for k in range(len(ids))]
 
 
-def label_image(shape, ids, runs) -> np.ndarray:
-    """A label image, for the colouring pass only.
+def grown_indices(run: np.ndarray, shape, radius: int) -> np.ndarray:
+    """``run`` dilated by a square of ``radius``, still as flat indices.
 
-    Overlap is irrelevant to choosing colours -- two filaments that cross are
-    neighbours either way -- so the adjacency graph is built on a flattened
-    view.  Nothing drawn comes from this.
+    The dilation is done inside the run's own bounding box rather than over the
+    frame.  On a 512x344 crop the difference did not matter; on a 1536x1024
+    field with four hundred instances, dilating each one over the whole frame is
+    several minutes, and this is a couple of seconds.  ``maximum_filter`` on a
+    boolean array is the separable form of a square structuring element, so the
+    result is what ``binary_dilation`` with ``ones((2r+1, 2r+1))`` gives.
     """
-    out = np.zeros(int(np.prod(shape)), np.int32)
-    for ident, run in zip(ids, runs):
-        out[run] = ident
-    return out.reshape(shape)
+    if radius <= 0:
+        return run
+    from scipy.ndimage import maximum_filter
+    height, width = shape
+    rows, cols = np.divmod(run, width)
+    r0 = max(int(rows.min()) - radius, 0)
+    r1 = min(int(rows.max()) + radius + 1, height)
+    c0 = max(int(cols.min()) - radius, 0)
+    c1 = min(int(cols.max()) + radius + 1, width)
+    local = np.zeros((r1 - r0, c1 - c0), bool)
+    local[rows - r0, cols - c0] = True
+    lr, lc = np.nonzero(maximum_filter(local, size=2 * radius + 1))
+    return (lr + r0) * width + (lc + c0)
 
 
-def colour_of_reference(reference: np.ndarray) -> dict:
+def colour_of_reference(shape, ids, runs) -> dict:
     """Greedy graph colouring, so no two nearby filaments share a colour.
 
     A cyclic palette assigned by instance id puts the same colour on adjacent
     filaments often enough to be read as one object.  Colouring the adjacency
-    graph instead costs nothing here (fewer than a hundred instances in the
-    crop) and removes that reading.  Largest instance first, so the assignment
-    is deterministic.
-    """
-    ids = [int(i) for i in np.unique(reference) if i > 0]
-    masks = {i: reference == i for i in ids}
-    grown = {i: dilate(masks[i], COLOUR_SEPARATION) for i in ids}
-    neighbours = {i: set() for i in ids}
-    for i in ids:
-        touching = {int(v) for v in np.unique(reference[grown[i]]) if v > 0}
-        touching.discard(i)
-        neighbours[i] |= touching
-        for j in touching:
-            neighbours[j].add(i)
+    graph instead removes that reading.  Largest instance first, so the
+    assignment is deterministic.
 
-    order = sorted(ids, key=lambda i: (-int(masks[i].sum()), i))
+    Adjacency is read off a label image, on which overlap is irrelevant -- two
+    filaments that cross are neighbours whichever of them a shared pixel is
+    recorded under -- so the last one written wins there and nothing drawn comes
+    from it.
+    """
+    height, width = shape
+    label = np.zeros(height * width, np.int32)
+    for ident, run in zip(ids, runs):
+        label[run] = int(ident)
+    label = label.reshape(shape)
+
+    ids = [int(i) for i in ids]
+    size = {int(i): len(r) for i, r in zip(ids, runs)}
+    neighbours = {i: set() for i in ids}
+    for ident, run in zip(ids, runs):
+        grown = grown_indices(run, shape, COLOUR_SEPARATION)
+        touching = {int(v) for v in np.unique(label.ravel()[grown]) if v > 0}
+        touching.discard(ident)
+        neighbours[ident] |= touching
+        for j in touching:
+            neighbours[j].add(ident)
+
+    order = sorted(ids, key=lambda i: (-size[i], i))
     assigned: dict[int, int] = {}
     used = [0] * len(IDENTITY_CYCLE)
     for i in order:
@@ -167,7 +230,7 @@ def colour_of_reference(reference: np.ndarray) -> dict:
 
 
 def micrograph_ground(sem: np.ndarray) -> np.ndarray:
-    """The SEM crop as a pale grey backdrop, as one RGB image.
+    """The SEM field as a pale grey backdrop, as one RGB image.
 
     Contrast is set on the 2nd and 98th percentiles rather than on the extremes:
     a handful of saturated specks otherwise take the whole range and the ridges
@@ -181,9 +244,22 @@ def micrograph_ground(sem: np.ndarray) -> np.ndarray:
     return np.dstack([grey, grey, grey])
 
 
-def overlay(ax, sem: np.ndarray, ids, runs, colours: dict,
-            unmatched: int, dilation: int = DRAW_DILATION) -> None:
-    """Draw one instance set over the micrograph, in correspondence colours.
+def show(ax, image: np.ndarray) -> None:
+    """Put one finished RGB panel on the page.
+
+    ``interpolation="antialiased"`` rather than ``"nearest"``: the field is
+    reduced by a factor of two or more into every panel, and nearest-neighbour
+    sampling at that reduction keeps one pixel in four or five and throws the
+    rest, which turns a continuous two-pixel axis into a dotted line.  The
+    antialiased filter averages instead, so a stroke narrower than the output
+    pixel survives as a lighter continuous one.
+    """
+    ax.imshow(np.clip(image, 0.0, 1.0), interpolation="antialiased")
+
+
+def instances(sem: np.ndarray, ids, runs, colours: dict, unmatched: int,
+              dilation: int = 0) -> np.ndarray:
+    """One instance set over the micrograph, in correspondence colours.
 
     Instances are accumulated and averaged rather than painted one over another,
     so a pixel two filaments both own is drawn as the mean of their two colours.
@@ -191,91 +267,85 @@ def overlay(ax, sem: np.ndarray, ids, runs, colours: dict,
     genuinely belongs to both filaments, and painting in sequence would show an
     arbitrary winner at exactly the place the method is doing its work.
 
-    ``dilation`` is 1 for centreline panels, where a one-pixel instance would
-    otherwise be invisible, and 0 for width-rendered ones, which already carry
-    the width the image was measured to give them.
+    ``dilation`` is 0 for the width-rendered panels, which already carry the
+    width the image was measured to give them, and 1 for a centreline panel,
+    where a one-pixel instance would otherwise be invisible.
     """
     import matplotlib.colors as mcolors
 
     shape = sem.shape[:2]
-    total = np.zeros(shape + (3,), dtype=float)
-    count = np.zeros(shape, dtype=float)
-    scratch = np.zeros(int(np.prod(shape)), dtype=bool)
+    n = int(np.prod(shape))
+    total = np.zeros((n, 3), dtype=float)
+    count = np.zeros(n, dtype=float)
 
     for ident, run in zip(ids, runs):
-        if ident == unmatched:
+        if int(ident) == unmatched:
             colour = FALSE_INST
         else:
-            #  A prediction can be matched to an annotated filament whose own
-            #  pixels all lie outside the crop.  It is matched, so it must not
-            #  be drawn in the unmatched colour; it just has no neighbour-aware
-            #  slot, so it takes a deterministic one.
+            #  A prediction can be matched to an annotated filament that is
+            #  itself unusual; it is matched, so it must not be drawn in the
+            #  unmatched colour, and it takes a deterministic slot if the
+            #  neighbour-aware pass never saw it.
             colour = colours.get(int(ident),
                                  IDENTITY_CYCLE[int(ident) % len(IDENTITY_CYCLE)])
-        scratch[run] = True
-        #  At dilation 0 ``dilate`` hands back a view of ``scratch`` itself, so
-        #  the accumulation has to happen before the buffer is cleared.  Doing
-        #  it the other way round zeroes the mask under the reader's feet and
-        #  every width-rendered panel comes out empty.
-        mask = dilate(scratch.reshape(shape), dilation)
-        total[mask] += np.asarray(mcolors.to_rgb(colour))
-        count[mask] += 1.0
-        scratch[run] = False
+        #  Indices within one instance are unique, so a plain fancy-indexed
+        #  ``+=`` accumulates each of its pixels exactly once.
+        idx = grown_indices(run, shape, dilation)
+        total[idx] += np.asarray(mcolors.to_rgb(colour))
+        count[idx] += 1.0
 
-    image = micrograph_ground(sem)
+    image = micrograph_ground(sem).reshape(n, 3)
     hit = count > 0
     image[hit] = total[hit] / count[hit, None]
-    ax.imshow(image, interpolation="nearest")
+    return image.reshape(shape + (3,))
 
 
-def panel_grid(fig, rows, unmatched, dilation, gap_frac, label_frac=0.0):
-    """Lay a grid of equal panels across the page and draw each one.
-
-    ``rows`` is a sequence of ``(row_label, sem, colours, panels)``, where
-    ``panels`` is ``[(tag, title, labels), ...]``.  Column titles are written
-    once, above the top row, because every row shows the same three things for a
-    different field; the field name runs up the left edge instead, which costs a
-    strip of width rather than a line of height per row.  Colours travel with
-    the row: each field has its own annotation and so its own assignment.
-
-    The page must come out exactly FIG_W wide: ``check_type_scale`` reads
-    /MediaBox and fails the figure if the include scale is not 1.0, because at
-    any other scale a label specified at n pt does not print at n pt.  So no
-    ``bbox_inches="tight"`` anywhere in this set, and every title has to fit
-    inside its own panel rather than overhang and grow the canvas.
-    """
-    pad, gap, row_gap_in = 0.005, 0.020, 0.075
-    n_cols = len(rows[0][3])
-    left = pad + label_frac
-    panel = (1.0 - pad - left - (n_cols - 1) * gap) / n_cols
-    panel_in = panel * FIG_W
-    crop_h, crop_w = rows[0][1].shape[:2]
-    panel_h_in = panel_in * crop_h / crop_w
-    fig_h = len(rows) * panel_h_in + (len(rows) - 1) * row_gap_in + 0.19
-    fig.set_size_inches(FIG_W, fig_h)
-
-    for r, (row_label, sem, colours, panels) in enumerate(rows):
-        bottom_in = (len(rows) - 1 - r) * (panel_h_in + row_gap_in)
-        for column, (tag, title, (ids, runs)) in enumerate(panels):
-            ax = fig.add_axes([left + column * (panel + gap),
-                               bottom_in / fig_h, panel, panel_h_in / fig_h])
-            framed(ax)
-            overlay(ax, sem, ids, runs, colours, unmatched, dilation)
-            if r == 0:
-                tagged_title(ax, tag, title, dy=1.02, gap=gap_frac)
-        if row_label:
-            fig.text(left - 0.008, (bottom_in + panel_h_in / 2) / fig_h,
-                     row_label, rotation=90, ha="right", va="center",
-                     fontsize=PT_TITLE, color=INK)
+def axis_mask(sem: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """One binary axis over the micrograph, in a single colour."""
+    from scipy.ndimage import maximum_filter
+    image = micrograph_ground(sem)
+    grown = maximum_filter(np.asarray(mask, bool),
+                           size=2 * DRAW_DILATION + 1) if DRAW_DILATION \
+        else np.asarray(mask, bool)
+    return paint(image, grown, PLECTA)
 
 
 def field_label(field: str) -> str:
-    """``b58_110`` as it is written in the text.
+    """``b58_110`` as the manuscript writes it, for the run log.
 
-    No LaTeX escaping: these labels are drawn by matplotlib, not typeset by
-    TeX, so a backslash before the underscore prints as a backslash.
+    The field name is no longer drawn: with one field it belongs in the caption,
+    which is also the only place it can carry the ``B58\\_110`` escaping TeX
+    wants and matplotlib would print literally.
     """
     return field.upper()
+
+
+#  ── page layout ────────────────────────────────────────────────────────────
+#
+#  Laid out top-down in inches and converted to figure fractions once, at the
+#  end.  The page must come out exactly FIG_W wide: ``check_type_scale`` reads
+#  /MediaBox and fails the figure if the include scale is not 1.0, because at
+#  any other scale a label specified at n pt does not print at n pt.  So no
+#  ``bbox_inches="tight"``, and every title has to fit inside its own panel
+#  rather than overhang and grow the canvas.
+
+PAD = 0.005 * FIG_W          # side margin, inches
+COL_GAP = 0.020 * FIG_W      # between the two panels of a row
+ROW_GAP = 0.075              # between rows
+TITLE_H = 0.19               # the strip a row's titles are set in
+TITLE_LIFT = 0.045           # baseline clearance above a panel's top edge
+TAG_GAP = 0.23               # from "(a)" to the first word of the title
+
+
+def add_panel(fig, fig_h: float, left: float, top: float, width: float,
+              height: float, tag: str, title: str):
+    """One framed image panel, placed from its top-left corner in inches."""
+    ax = fig.add_axes([left / FIG_W, (fig_h - top - height) / fig_h,
+                       width / FIG_W, height / fig_h])
+    framed(ax)
+    tagged_title(ax, tag, title, dy=1.0 + TITLE_LIFT / height,
+                 gap=TAG_GAP / width)
+    return ax
 
 
 def main() -> int:
@@ -283,39 +353,54 @@ def main() -> int:
     data = np.load(ASSET)
     meta = json.loads(str(data["meta"]))
     unmatched = int(meta["unmatched_label"])
-    fields = list(meta["fields"])
+    field = list(meta["fields"])[0]
 
-    #  One row per field, three panels each, drawn at the width every instance
-    #  was measured to have, so the annotation and the two reconstructions are
-    #  compared as the same kind of object.  Dilation is 0: these carry width.
-    rows = []
-    for field in fields:
-        sem = data[f"{field}__sem"]
-        reference = unpack(data, field, "reference")
-        rows.append((
-            field_label(field), sem,
-            colour_of_reference(label_image(sem.shape[:2], *reference)),
-            (("a", "Manual annotation", unpack(data, field, "reference_width")),
-             ("b", "PLECTA, manual-derived axis",
-              unpack(data, field, "manual_width")),
-             ("c", "PLECTA, nnU-Net axis", unpack(data, field, "unet_width"))),
-        ))
+    sem = data[f"{field}__sem"]
+    shape = sem.shape[:2]
+    colours = colour_of_reference(shape, *unpack(data, field, "reference"))
 
-    fig = plt.figure()
-    panel_grid(fig, rows, unmatched, dilation=0, gap_frac=0.118,
-               label_frac=0.016)
+    aspect = shape[0] / shape[1]
+    panel_w = (FIG_W - 2 * PAD - COL_GAP) / 2.0
+    panel_h = panel_w * aspect
+    hero_w = HERO_SCALE * panel_w
+    hero_h = hero_w * aspect
+    fig_h = 3 * TITLE_H + hero_h + 2 * panel_h + 2 * ROW_GAP
+    fig = plt.figure(figsize=(FIG_W, fig_h), dpi=RASTER_DPI)
+
+    #  (a), centred: the reference the four panels below are read against.
+    ax = add_panel(fig, fig_h, (FIG_W - hero_w) / 2.0, TITLE_H, hero_w, hero_h,
+                   "a", "Annotator A's annotation")
+    show(ax, instances(sem, *unpack(data, field, "reference_width"),
+                       colours, unmatched))
+
+    #  One row per mask source: the axis PLECTA was handed, then what it made
+    #  of it.  Reading across a row is the whole point of the arrangement.
+    rows = ((("b", "Manual-derived axis", "mask_manual"),
+             ("c", "PLECTA, manual-derived axis", "manual_width")),
+            (("d", "nnU-Net axis", "mask_unet"),
+             ("e", "PLECTA, nnU-Net axis", "unet_width")))
+    for r, ((atag, atitle, akey), (ptag, ptitle, pkey)) in enumerate(rows):
+        top = 2 * TITLE_H + hero_h + ROW_GAP + r * (TITLE_H + panel_h + ROW_GAP)
+        ax = add_panel(fig, fig_h, PAD, top, panel_w, panel_h, atag, atitle)
+        show(ax, axis_mask(sem, data[f"{field}__{akey}"]))
+        ax = add_panel(fig, fig_h, PAD + panel_w + COL_GAP, top,
+                       panel_w, panel_h, ptag, ptitle)
+        show(ax, instances(sem, *unpack(data, field, pkey), colours, unmatched))
+
     save_fig(fig, "fig_real_sem")
     plt.close(fig)
 
-    for field in fields:
-        block = meta["per_field"][field]
-        print("[fig_real_sem] %s crop row %d col %d, %dx%d px; width on %s"
-              % (field, block["crop_row"], block["crop_col"],
-                 block["crop_w"], block["crop_h"],
-                 ", ".join("%s %d/%d at median %.1f px"
-                           % (k, v["n_measured"], v["n_instances"],
-                              v["scene_median_width_px"])
-                           for k, v in sorted(block["width_render"].items()))))
+    block = meta["per_field"][field]
+    print("[fig_real_sem] %s whole field %dx%d px, %d annotated filaments; %s"
+          % (field_label(field), shape[1], shape[0], block["n_reference"],
+             ", ".join("%s F1 %.4f, %d instances, %d matched, width on %d/%d "
+                       "at median %.1f px"
+                       % (k, block["field_f1"][k], block["n_instances"][k],
+                          block["n_matched"][k],
+                          block["width_render"][k]["n_measured"],
+                          block["width_render"][k]["n_instances"],
+                          block["width_render"][k]["scene_median_width_px"])
+                       for k in sorted(block["field_f1"]))))
     return 0
 
 
