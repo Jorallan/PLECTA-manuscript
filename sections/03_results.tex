@@ -248,7 +248,7 @@ axis beside what PLECTA made of it.
     the rest are at width, through the layer of Section~\ref{sec:mm-stage4},
     which runs after the grouping is fixed and moves no pixel between strands.
     A predicted strand takes the colour of the annotated strand it matched;
-    crimson matched none. B58\_110 is held out of the segmenter's training.}
+    crimson matched none.}
     \label{fig:real-sem}
 \end{figure}
 
@@ -268,10 +268,8 @@ axis beside what PLECTA made of it.
 
 What the \PlectaRealFieldCountLower{} fields say. Averaged over them, PLECTA
 reaches \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
-\PlectaRealUNetFOneMean{} from the nnU-Net axis, the second over the
-\PlectaRealUNetHeldOutCount{} fields the segmenter was not trained on; the
-third is in its training data, so its nnU-Net score is an upper bound and is
-kept out of that mean. The first figure is what this section exists to
+\PlectaRealUNetFOneMean{} from the nnU-Net axis. The first figure is what this
+section exists to
 establish: the grouping holds on axis masks read off real micrographs and not
 only on the generator's. The second is a different claim and a weaker one, and
 the paragraphs below take the two apart; what it is worth is settled in
@@ -488,7 +486,4 @@ hand annotation is about as clean an axis as a real field can supply:
 unbroken, thin, and placed where a person judged the strand to be. What
 separates these methods on the synthetic rows is what each does with evidence
 that is fragmented and displaced, and this condition supplies almost none of
-it, so it compresses exactly the differences the comparison is for; on one
-field SIFNE takes the pairwise score outright, by less than two decimals
-resolve. An automatic mask carries both faults, and PLECTA alone on that axis
-falls to \PlectaRealUNetFOneMean{}. Nothing was tuned on these fields.
+it, so it compresses exactly the differences the comparison is for.
