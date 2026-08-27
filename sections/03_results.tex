@@ -396,13 +396,9 @@ own evaluation \citep{allan2026cntsem}.
     \label{fig:pipeline-upstream}
 \end{figure}
 
-The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) runs procedural
-mask $\rightarrow$ CycleGAN $\rightarrow$ paired
-synthetic corpus $\rightarrow$ nnU-Net $\rightarrow$ binary strand-axis mask:
-a generator draws a mask, a CycleGAN translates it into an SEM-like image so
-that image and mask are paired without an annotator, an nnU-Net trained on
-those pairs segments a real micrograph, and its output is a binary axis mask
-\citep{ruehle2021workflow,allan2026cntsem}. PLECTA reads that mask, and it is
+The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) ends in a binary
+strand-axis mask \citep{ruehle2021workflow,allan2026cntsem}, and PLECTA reads
+that mask and nothing else; it is
 the only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated
 CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
 annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
@@ -410,27 +406,20 @@ annotation as the reference in both cases, so the two conditions differ only
 in the mask. The first is an oracle-like input condition rather than an
 end-to-end result, asking what the grouping can do when the axis evidence is
 curated; only the second says what an automatic mask allows.
-Figures~\ref{fig:real-sem}
-and~\ref{fig:real-sem-axis} show both on one field, at width and as the
-centrelines the scores are computed on.
+Figures~\ref{fig:real-sem-axis} and~\ref{fig:real-sem} show both on one field,
+as the centrelines the scores are computed on and at width.
 
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem_axis.pdf}
     \caption{The two input axes of field B58\_110, drawn over the micrograph
-    they were read from: \textbf{(a)}~the skeleton of annotator~A's annotation
-    and
-    \textbf{(b)}~the output of the upstream segmenter. These are the binary
-    masks
-    themselves, before any reconstruction, so there is nothing to tell apart
-    within a panel and one colour is sufficient; the comparison the figure
-    makes is between them. Everything separating the two conditions of
-    Table~\ref{tab:plecta-real-masks} is visible here: the same strands, read
-    a second time by a network rather than by a person, arrive thicker, broken
-    into more pieces, and displaced by a pixel or two almost everywhere. The
-    axis is dilated by one pixel for legibility at this size, which changes no
-    geometry. B58\_300 behaves the same way, as its mask-quality triple in the
-    text records.}
+    they were read from: \textbf{(a)}~the skeleton of annotator~A's annotation,
+    \textbf{(b)}~the output of the upstream segmenter. These are the input
+    masks themselves, before any reconstruction. Everything separating the two
+    conditions of Table~\ref{tab:plecta-real-masks} is here: the same strands,
+    read by a network rather than by a person, arrive thicker, broken into more
+    pieces, and displaced by a pixel or two almost everywhere. The axis is
+    dilated by one pixel for legibility, which changes no geometry.}
     \label{fig:real-sem-axis}
 \end{figure}
 
@@ -454,15 +443,13 @@ centrelines the scores are computed on.
     \centering
     \caption{Reconstruction from the manual-derived and the nnU-Net axis in
     three CNT SEM fields, under the measures of
-    Section~\ref{sec:mm-metrics}. \emph{Coverage} is areal coverage in the
-    sense of Section~\ref{sec:mm-synth}, the fraction of the frame the
-    full-width reference strands cover, measured from the annotation itself
-    and not from the thin axis mask. Detection \Fone{} is at IoU
-    \PlectaDetectionIoU{} with the \PlectaPlacementTolerance{}\,px placement
-    tolerance. SIFNE and Basu ran on the manual-derived axis only, on
-    byte-identical masks and through the same scorer, at parameters selected
-    on synthetic development scenes and applied unchanged; nothing was tuned
-    on these fields.\\[2pt]
+    Section~\ref{sec:mm-metrics}. \emph{Coverage} is the fraction of the frame
+    the full-width reference strands cover (Section~\ref{sec:mm-synth}), not
+    the thin axis mask's. Detection \Fone{} is at IoU \PlectaDetectionIoU{},
+    tolerance \PlectaPlacementTolerance{}\,px. SIFNE and Basu ran on the
+    manual-derived axis only, on identical masks through one scorer, at
+    parameters selected on synthetic development scenes; nothing was tuned on
+    these fields.\\[2pt]
     $^{*}$\,our reimplementation; no implementation of that paper was found.}
     \label{tab:plecta-real-masks}
     \footnotesize
