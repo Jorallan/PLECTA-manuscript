@@ -1291,6 +1291,15 @@ def comparator_table(audit: dict, runtime: dict | None = None,
     #  re-selected, so the mark implied a distinction that does not exist.
     #  Source records: results/plecta_basu_reimplementation.json and
     #  results/plecta_sifne_comparison.json.
+    #  ROWS ARE METHODS, COLUMNS ARE MEASURES, since 2026-08-27. The previous
+    #  orientation put three different units in one column -- a method's column
+    #  ran F1, VI in bits and a span of seconds -- and repeated all five
+    #  measure names for the real-field block, with an em-dash in every GraFT
+    #  and DNAi cell there. Transposed, a column carries one measure and so one
+    #  unit, each measure name is written once, and the real block simply has
+    #  no row for the two methods never run on it, so nothing needs excusing.
+    #  It also matches plecta_heldout_table.tex, which has been rows-are-groups
+    #  since it was written.
     entries: list[dict] = [
         {"key": "plecta", "label": "PLECTA", "src": "audit"},
         {"key": "dnai", "label": "DNAi", "src": "audit"},
@@ -1313,87 +1322,102 @@ def comparator_table(audit: dict, runtime: dict | None = None,
             return junction[e["key"]]["overall"]["exact_rate"]
         return e["rec"]["junction_resolution"]["exact_rate"]
 
+    #  Per row, not as a spanning heading. GraFT completed 47 of the 50 scenes
+    #  and every other method completed all 50, so a block heading reading
+    #  "50 synthetic scenes" would state a false denominator for one row. As a
+    #  column the count cannot be wrong for any row it does not belong to.
+    def n_scenes(e: dict) -> int:
+        if e["src"] == "audit":
+            return int(means[e["key"]]["n_scenes"])
+        return int(e["rec"]["n_scenes"])
+
     entries.sort(key=lambda e: -value(e, "f1"))
 
-    body: list[tuple[str, list[str]]] = []
-    for label, key in (("Common-fragment $F_1$", "f1"),
-                       ("Precision", "precision"),
-                       ("Recall", "recall"),
-                       ("Adjusted Rand index", "adjusted_rand_index"),
-                       (r"Variation of information~$\downarrow$", "vi_total_bits")):
-        body.append((label, [fmt(value(e, key)) for e in entries]))
+    #  Two labelled runtime columns rather than one "0.14--4.1" cell. That cell
+    #  was built from the 20 % and 60 % entries of a five-point series of
+    #  per-density MEDIANS, and setting them either side of an en-dash reads as
+    #  a min-max spread over scenes, which it is not. Split, every cell in the
+    #  table is a plain decimal, the heading says what each number is, and
+    #  PLECTA's climb across the density range -- the steepest here in relative
+    #  terms -- is on the page rather than compressed out of it.
+    def seconds(e: dict, cov: str) -> str:
+        if not runtime:
+            return ""
+        if e["src"] == "audit":
+            block = runtime["per_density_median_seconds"].get(e["key"])
+        else:
+            block = e["rec"].get("runtime", {}).get("median_seconds")
+        if not block or block.get(cov) is None:
+            return "---"
+        return f"{block[cov]:.2f}"
 
-    #  One crossing row, not two. The chance-corrected resolution index used to
-    #  sit under this one; over the real-field rows it correlates with the exact
-    #  rate at Pearson 0.997 and never went negative, so it restated the row
-    #  above it. The chance level belongs in the caption, being a property of
-    #  the reference rather than of any method.
-    resolution = [("Crossing Fidelity", [fmt(crossing(e)) for e in entries])]
-
-    #  Median seconds per scene at the two ends of the density range. Basu* is
-    #  our Python code for one stage, and SIFNE-dagger is MATLAB including
-    #  interpreter start-up; neither is comparable with the other columns and
-    #  the caption says so.
-    timing = []
-    if runtime:
-        medians = runtime["per_density_median_seconds"]
-
-        def span(e: dict) -> str:
-            if e["src"] == "audit":
-                block = medians.get(e["key"])
-            else:
-                block = e["rec"].get("runtime", {}).get("median_seconds")
-            if not block or block.get("cov20") is None or block.get("cov60") is None:
-                return "---"
-            return f"{block['cov20']:.2f}--{block['cov60']:.1f}"
-
-        timing = [(r"Median s per scene, 20/60\%", [span(e) for e in entries])]
-
-    #  The three real CNT SEM fields, on the manual-derived axis, as a plain
-    #  mean per measure. Only three of these methods were run there: GraFT and
-    #  DNAi were not, and their cells say so with a dash rather than being left
-    #  blank, since a blank cell reads as a zero or an oversight. The block is
-    #  separated because it is a different exam on different material -- three
-    #  real fields against fifty synthetic scenes -- and the two must not be
-    #  read as one series.
-    real_block: list[tuple[str, list[str]]] = []
+    real_rows: dict[str, dict] = {}
     if real_comparators:
-        by_method: dict[str, list[dict]] = defaultdict(list)
+        grouped: dict[str, list[dict]] = defaultdict(list)
         for row in real_comparators["rows"]:
-            by_method[row["method"]].append(row)
+            grouped[row["method"]].append(row)
+        real_rows = {k: {m: sum(r[m] for r in v) / len(v) for m in
+                         ("pairwise_f1", "pairwise_precision", "pairwise_recall",
+                          "adjusted_rand_index", "vi_total_bits",
+                          "crossing_fidelity")} | {"n": len(v)}
+                     for k, v in grouped.items()}
 
-        def real(e: dict, key: str) -> str:
-            got = by_method.get(e["key"])
-            if not got:
-                return "---"
-            return fmt(sum(r[key] for r in got) / len(got))
-
-        for label, key in ((r"\quad Common-fragment $F_1$", "pairwise_f1"),
-                           (r"\quad Precision", "pairwise_precision"),
-                           (r"\quad Recall", "pairwise_recall"),
-                           (r"\quad Adjusted Rand index", "adjusted_rand_index"),
-                           (r"\quad Variation of information~$\downarrow$",
-                            "vi_total_bits")):
-            real_block.append((label, [real(e, key) for e in entries]))
-
-    ncol = "r" * len(entries)
-    header = "Measure & " + " & ".join(e["label"] for e in entries)
+    ncols = 10 if runtime else 8
     lines = ["% Generated by scripts/results/make_plecta_results.py; do not edit.",
-             f"\\begin{{tabular}}{{l{ncol}}}", "\\toprule",
-             header + " \\\\",
-             "\\midrule"]
-    for group in (body, resolution, timing, real_block):
-        if not group:
-            continue
-        if group is not body:
-            lines.append("\\addlinespace")
-        if group is real_block:
-            lines.append(
-                "\\multicolumn{%d}{@{}l}{\\emph{Three real CNT SEM fields, "
-                "manual-derived axis}} \\\\" % (len(entries) + 1))
-        for label, values in group:
-            lines.append(f"{label} & " + " & ".join(values) + " \\\\")
-    lines.extend(["\\bottomrule", "\\end{tabular}"])
+             r"\begin{tabular}{@{}lr" + "r" * (ncols - 2) + r"@{}}",
+             r"\toprule"]
+    if runtime:
+        lines.extend([
+            r"& & & & & & & Crossing & \multicolumn{2}{c}{Median s/scene} \\",
+            r"\cmidrule(l){9-10}",
+            r"Method & $n$ & $F_1$ & Precision & Recall & ARI & "
+            r"VI total~$\downarrow$ & fidelity & at 20\,\% & at 60\,\% \\",
+        ])
+    else:
+        lines.append(r"Method & $n$ & $F_1$ & Precision & Recall & ARI & "
+                     r"VI total~$\downarrow$ & Crossing fidelity \\")
+    lines.append(r"\midrule")
+
+    #  Panel headings say what the material IS, never what it lacks: naming a
+    #  count here is what would make them wrong, and naming an absence is what
+    #  would need a caption sentence to excuse.
+    lines.append(r"\multicolumn{%d}{@{}l}{\emph{Synthetic scenes, degraded "
+                 r"axis}} \\" % ncols)
+    for e in entries:
+        cells = [e["label"], str(n_scenes(e)),
+                 fmt(value(e, "f1")), fmt(value(e, "precision")),
+                 fmt(value(e, "recall")),
+                 fmt(value(e, "adjusted_rand_index")),
+                 fmt(value(e, "vi_total_bits")), fmt(crossing(e))]
+        if runtime:
+            cells += [seconds(e, "cov20"), seconds(e, "cov60")]
+        lines.append(" & ".join(cells) + r" \\")
+
+    if real_rows:
+        lines.append(r"\addlinespace")
+        lines.append(r"\multicolumn{%d}{@{}l}{\emph{Real CNT SEM fields, "
+                     r"manual-derived axis}} \\" % ncols)
+        for e in entries:
+            got = real_rows.get(e["key"])
+            if not got:
+                continue
+            cells = [e["label"], str(got["n"]),
+                     fmt(got["pairwise_f1"]), fmt(got["pairwise_precision"]),
+                     fmt(got["pairwise_recall"]),
+                     fmt(got["adjusted_rand_index"]),
+                     fmt(got["vi_total_bits"]), fmt(got["crossing_fidelity"])]
+            #  PLECTA was quoted on these fields rather than re-run, so it was
+            #  never timed there; and the two comparators' real-field seconds
+            #  come from the comparator study's plain wall clock, not the
+            #  runtime study's warm, single-threaded, core-pinned protocol.
+            #  Printing them beside the synthetic medians would put two
+            #  measurement protocols in one column, which is worse than an
+            #  empty cell.
+            if runtime:
+                cells += ["", ""]
+            lines.append(" & ".join(cells) + r" \\")
+
+    lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
 
 

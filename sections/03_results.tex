@@ -394,12 +394,16 @@ takes decisions, and each of those decisions is stated here.
 
 \begin{table}[tbp]
     \centering
-    \caption{PLECTA against four published methods, identical degraded masks
-    and one scorer, ordered by \Fone{}. $n=\PlectaGreedySceneCount{}$ scenes,
-    GraFT over the \PlectaGraFTSceneCount{} it completed. The lower block is
-    the same comparison on the \PlectaRealFieldCountLower{} annotated CNT SEM
-    fields of Section~\ref{sec:res-real}, from the manual-derived axis, as a
-    plain mean over the \PlectaRealFieldCountLower{}. Variation of
+    \caption{PLECTA against four published methods, identical masks and one
+    scorer, ordered by \Fone{}. The upper block is the degraded synthetic
+    scenes, $n$ per method because GraFT was timed and scored over the
+    \PlectaGraFTSceneCount{} it completed of
+    \PlectaGreedySceneCount{}; the lower is the annotated CNT SEM fields of
+    Section~\ref{sec:res-real}, from the manual-derived axis, as a plain mean
+    over the \PlectaRealFieldCountLower{}. The two runtime columns are median
+    seconds per scene at the sparse and dense ends of the coverage range, not a
+    spread; those fields were not timed under the same protocol and are left
+    blank. Variation of
     information in bits, lower better; higher better for the rest.\\[2pt]
     $^{*}$\,our reimplementation; no implementation of that paper was found.
     \suppcomparators{} details it, and the timings that column cannot
