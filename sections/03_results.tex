@@ -303,6 +303,17 @@ What is left is one-sided: on B58\_110's nnU-Net axis a join precision of
 rather than running them together, which is what panel~(e) of
 Figure~\ref{fig:real-sem} shows.
 
+How much of that remainder is the segmenter's, and how much is the reference's,
+this material cannot separate. Given annotator~B's skeleton in place of the
+network's, PLECTA scores \PlectaInterAnnotatorBOnAFOneMean{} against
+annotator~A, below what the network's axis reaches on every field and inside
+the \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{} at
+which the two annotators agree with no method in the loop. A second human
+reading of these strands is therefore no better an axis than the segmenter's,
+and the nnU-Net figure is bounded by how far one annotator's definition of a
+strand can be reproduced at all, which Section~\ref{sec:limitations} takes
+apart.
+
 \subsection{Development ablations}
 \label{sec:res-ablation}
 
