@@ -109,7 +109,7 @@ def macro(name: str, value: str) -> str:
     return f"\\newcommand{{\\{command}}}{{{value}}}"
 
 
-def fmt(value: float, digits: int = 3) -> str:
+def fmt(value: float, digits: int = 2) -> str:
     return f"{float(value):.{digits}f}"
 
 
@@ -643,7 +643,7 @@ def sifne_macros(sifne: dict | None) -> list[str]:
         if not g:
             continue
         lines += [
-            macro(f"PlectaSifneOwn{tag}Density", "%.3f" % g["density"]),
+            macro(f"PlectaSifneOwn{tag}Density", "%.2f" % g["density"]),
             macro(f"PlectaSifneOwn{tag}PlectaFOne", fmt(g["plecta_f1"])),
             macro(f"PlectaSifneOwn{tag}SifneFOne", fmt(g["sifne_f1"])),
         ]
@@ -724,16 +724,16 @@ BLOCK, ROW, SUB = "block", "row", "sub"
 DEPTH_ROWS = (
     (BLOCK, "At each crossing", None, None),
     (ROW, "Projected crossings per scene", "n_gt_crossings", "%.0f"),
-    (ROW, "Crossings recovered", "match_rate", "%.3f"),
-    (ROW, "Order accuracy, all crossings", "coa_all", "%.3f"),
-    (SUB, "restricted to those it decided", "coa_decided", "%.3f"),
-    (ROW, "Declined, of the crossings it found", "abstain_rate", "%.3f"),
+    (ROW, "Crossings recovered", "match_rate", "%.2f"),
+    (ROW, "Order accuracy, all crossings", "coa_all", "%.2f"),
+    (SUB, "restricted to those it decided", "coa_decided", "%.2f"),
+    (ROW, "Declined, of the crossings it found", "abstain_rate", "%.2f"),
     (BLOCK, "In the stacking it outputs", None, None),
-    (ROW, "Depth order, all strand pairs", "order_acc_all_pairs", "%.3f"),
+    (ROW, "Depth order, all strand pairs", "order_acc_all_pairs", "%.2f"),
     (SUB, "restricted to pairs that cross", "order_acc_crossing_pairs",
-     "%.3f"),
+     "%.2f"),
     (ROW, "Pairs within one crossing component",
-     "frac_pairs_within_component", "%.3f"),
+     "frac_pairs_within_component", "%.2f"),
     #  Layer counts are means of small integers over six scenes, so one
     #  decimal is the whole resolution there is; three would invent two.
     #  The reference row repeats across conditions by construction -- the
@@ -741,7 +741,7 @@ DEPTH_ROWS = (
     #  the recovered row means nothing without the count it is close to.
     (ROW, "Layers in the reference", "n_layers_gt", "%.1f"),
     (ROW, "Layers recovered", "n_layers_pred", "%.1f"),
-    (ROW, "Layer agreement", "layer_exact_agreement", "%.3f"),
+    (ROW, "Layer agreement", "layer_exact_agreement", "%.2f"),
 )
 
 
@@ -790,16 +790,22 @@ def curviness_macros(payload: dict) -> list[str]:
     geo = {g["curviness"]: g for g in payload["geometry"]}
     lo_g, hi_g = geo[min(geo)], geo[max(geo)]
     return [
-        macro("PlectaCurvinessDefault", "%.3f" % payload["default_curviness"]),
+        macro("PlectaCurvinessDefault", "%.2f" % payload["default_curviness"]),
         macro("PlectaCurvinessSweepLow", "%.0f" % (low * 100)),
         macro("PlectaCurvinessSweepHigh", "%.0f" % (high * 100)),
         macro("PlectaCurvinessRadiusLow", "%.0f" % hi_g["median_radius_px"]),
         macro("PlectaCurvinessRadiusHigh", "%.0f" % lo_g["median_radius_px"]),
         macro("PlectaCurvinessBendHigh",
               "%.1f" % hi_g["p95_local_bend_20px_deg"]),
+        #  Three decimals, against the manuscript's two: the claim these two
+        #  make is that the spread is BELOW the noise, and at two decimals
+        #  0.048 and 0.050 both print 0.05, so the comparison the sentence
+        #  rests on cannot be checked by the reader.  Same for the wavelength
+        #  pair below.
         macro("PlectaCurvinessMaxSpread",
-              fmt(head["max_spread_of_level_means"])),
-        macro("PlectaCurvinessMinSceneSD", fmt(head["min_within_level_sd"])),
+              fmt(head["max_spread_of_level_means"], 3)),
+        macro("PlectaCurvinessMinSceneSD",
+              fmt(head["min_within_level_sd"], 3)),
         macro("PlectaCurvinessSceneCount",
               str(payload["series"][0]["per_level"][0]["n"])),
         macro("PlectaCurvinessLevelCount", str(len(payload["geometry"]))),
@@ -807,8 +813,9 @@ def curviness_macros(payload: dict) -> list[str]:
         macro("PlectaSmoothDefault", "%.0f" % w["default_px"]),
         macro("PlectaSmoothLow", "%.0f" % min(w["levels_px"])),
         macro("PlectaSmoothHigh", "%.0f" % max(w["levels_px"])),
-        macro("PlectaSmoothMaxSpread", fmt(wh["max_spread_of_level_means"])),
-        macro("PlectaSmoothMinSceneSD", fmt(wh["min_within_level_sd"])),
+        macro("PlectaSmoothMaxSpread",
+              fmt(wh["max_spread_of_level_means"], 3)),
+        macro("PlectaSmoothMinSceneSD", fmt(wh["min_within_level_sd"], 3)),
         macro("PlectaSmoothFlatSeries",
               str(wh["n_series"] - wh["n_series_where_spread_exceeds_noise"])),
         macro("PlectaSmoothSeriesCount", str(wh["n_series"])),
