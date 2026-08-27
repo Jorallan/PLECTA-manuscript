@@ -48,27 +48,16 @@ Section~\ref{sec:res-comparators} measures cost properly, where the
 transferable quantity is the scaling exponent rather than any absolute time.
 
 Areal coverage labels these strata but does not cause the difficulty they
-report. \label{sec:res-factorial}Table~\ref{tab:plecta-factorial} separates the
-two: rendering one geometry at three bundle widths leaves the input axis mask
-and the overlap-aware reference byte-identical while areal coverage varies by
-up to a factor of \PlectaFactorialMaxCoverageRatio{}, and the within-geometry
-\Fone{} range across those renderings was \PlectaFactorialMaxFOneRange{}.
-Centreline length density does move the score, mean \Fone{} falling from
-\PlectaFactorialLowFOne{} to \PlectaFactorialHighFOne{}, and the coverage bands
-of the three densities overlap, so a coverage stratum should be read as a
+report, and it cannot: \label{sec:res-factorial}PLECTA is handed a centreline
+mask and never a width. Rendering one geometry at three bundle widths was
+tested directly on \PlectaFactorialSceneCount{} development scenes, and it
+leaves the input mask and the overlap-aware reference byte-identical while
+areal coverage varies by up to a factor of
+\PlectaFactorialMaxCoverageRatio{}; \Fone{} moved across those renderings by
+\PlectaFactorialMaxFOneRange{}. What does move the score is centreline length
+density, mean \Fone{} falling from \PlectaFactorialLowFOne{} to
+\PlectaFactorialHighFOne{}. A coverage stratum should therefore be read as a
 proxy for the length density accompanying it under this generator.
-
-\begin{table}[tbp]
-    \centering
-    \caption{Bundle width against centreline length density,
-    \PlectaFactorialSceneCount{} development scenes. Within each row the three
-    bundle widths share one byte-identical axis mask and one reference, so the
-    spread in areal coverage carries no score difference. Length density is
-    centreline pixels per image pixel.}
-    \label{tab:plecta-factorial}
-    \small
-    \input{results/plecta_factorial_table}
-\end{table}
 
 
 \label{sec:res-mask}%
@@ -410,8 +399,7 @@ takes decisions, and each of those decisions is stated here.
     GraFT over the \PlectaGraFTSceneCount{} it completed. The lower block is
     the same comparison on the \PlectaRealFieldCountLower{} annotated CNT SEM
     fields of Section~\ref{sec:res-real}, from the manual-derived axis, as a
-    plain mean over the \PlectaRealFieldCountLower{}; GraFT and DNAi were not
-    run there, marked~---. Variation of
+    plain mean over the \PlectaRealFieldCountLower{}. Variation of
     information in bits, lower better; higher better for the rest.\\[2pt]
     $^{*}$\,our reimplementation; no implementation of that paper was found.
     \suppcomparators{} details it, and the timings that column cannot
