@@ -111,12 +111,21 @@ def main():
     z_lo, span = min(zs), max(1e-6, max(zs) - min(zs))
 
     plecta_style()
-    fig = plt.figure(figsize=(FIG_W, 0.38 * FIG_W))
+    #  A strip at the foot for the residual under the middle panel, which the
+    #  caption points the reader at. At bottom=0.005 there was no canvas below
+    #  the axes for it: the label was written and then clipped by the page
+    #  edge, leaving the top halves of its glyphs on the page. The figure grows
+    #  by one line rather than the panels shrinking into it, and the title
+    #  strip keeps the height it had.
+    panels_in, title_in, label_in = 0.38 * FIG_W, 0.10 * 0.38 * FIG_W, 0.21
+    fig_h = panels_in + label_in
+    fig = plt.figure(figsize=(FIG_W, fig_h))
     #  Explicit margins. These panels used to be cropped to their content
     #  at save time, which shrank the page so LaTeX scaled the figure up
     #  and its text printed larger than every other figure in the paper.
     gs = fig.add_gridspec(1, 3, wspace=0.06, left=0.004, right=0.996,
-                          top=0.90, bottom=0.005)
+                          top=1.0 - title_in / fig_h,
+                          bottom=label_in / fig_h)
 
     # The micrograph and its re-render sit side by side, because that pair is
     # the whole claim; the film they imply follows.

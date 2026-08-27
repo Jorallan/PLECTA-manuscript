@@ -179,7 +179,14 @@ coverage doubles while the recovered layer count stays close to the reference:
 the ordering is locally right, so the number of layers is about right, while
 small order errors move strands across layer boundaries.
 
-\begin{figure}[tbp]
+Figure~\ref{fig:resem-synth} shows what the stage produces on one synthetic
+scene, from the binary axis mask through to the film the reconstruction
+implies; Figure~\ref{fig:resem-real} is the same sequence on a real CNT SEM
+field, which no depth ground truth can score.
+
+%  [!ht] for the reason given at Figure~1: under [tbp] this floated out of the
+%  depth subsection entirely, into the real-SEM one that follows it.
+\begin{figure}[!ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
 \caption{The depth stage on one synthetic scene, reconstructed from the binary
@@ -266,7 +273,8 @@ axis beside what PLECTA made of it.
     \input{results/plecta_real_masks_table}
 \end{table}
 
-What the \PlectaRealFieldCountLower{} fields say. Averaged over them, PLECTA
+What the \PlectaRealFieldCountLower{} fields say, per field and per condition,
+is Table~\ref{tab:plecta-real-masks}. Averaged over them, PLECTA
 reaches \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
 \PlectaRealUNetFOneMean{} from the nnU-Net axis. The first figure is what this
 section exists to
@@ -279,27 +287,20 @@ annotator achieves on these same fields, which is less.
 inferential unit is the field.
 
 Most of the distance between the two conditions is the mask, and what the
-method loses to it is joins it declines rather than strands it fuses. The
-nnU-Net axis is a second, independent reading of the same strands, and it
-arrives thicker, broken into more pieces and displaced by a pixel or two
-almost everywhere, which panels~(b) and~(d) of Figure~\ref{fig:real-sem} show
-side by side.
-Fragmentation is what that costs, and the pairwise score charges for it
-twice over: being quadratic in fragments, a strand the mask breaks into
-several pieces is charged once for every pair of pieces it fails to
-rejoin. Join \Fone{} removes that weighting by scoring one decision per
-pair of fragment ends the mask brings within reach, rather than every pair
-of fragments the strand has; it is defined in \suppmeasures{} with the
-rest, and quoted only here, where a difference in fragmentation is what is
-being read. The two masks pose
-\PlectaJoinBFiveEightOneOneZeroManualDecisions{} such decisions on
-B58\_110's manual axis against
-\PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one.
-Counting them once each narrows the gap without closing it, and the
-decomposition says what the remainder is: a join precision of
+method loses to it is joins it declines rather than strands it fuses. Beside
+annotator~A's axis, the nnU-Net axis is a second, independent reading of the
+same strands, and it arrives thicker, broken into more pieces and displaced by
+a pixel or two almost everywhere, which panels~(b) and~(d) of
+Figure~\ref{fig:real-sem} show side by side.
+Fragmentation is what that costs, and the pairwise score charges for it twice
+over: being quadratic in fragments, a strand the mask breaks into several
+pieces is charged once for every pair of pieces it fails to rejoin. Join
+\Fone{}, defined in \suppmeasures{}, charges each break the mask brings within
+rejoining reach once instead, and under it the gap narrows without closing.
+What is left is one-sided: on B58\_110's nnU-Net axis a join precision of
 \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method leaving strands
-apart, not running them together, which is what panel~(e) of
+\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method leaving strands apart
+rather than running them together, which is what panel~(e) of
 Figure~\ref{fig:real-sem} shows.
 
 \subsection{Development ablations}
@@ -417,9 +418,10 @@ attempted, and how each method fails.
 \end{figure}
 
 Favoured in all those ways, the four order as
-Table~\ref{tab:plecta-comparators} shows. SIFNE is the strongest of them, so
-the margin rests on a method configured for this data rather than on a default
-that suits it badly. Two entries read against that ordering. The first is
+Table~\ref{tab:plecta-comparators} shows, and hold that order at every density
+and on both mask conditions (Figure~\ref{fig:metric-panels}). SIFNE is the
+strongest of them, so the margin rests on a method configured for this data
+rather than on a default that suits it badly. Two entries read against that ordering. The first is
 DNAi, whose deficit is a limitation of domain and density rather than a
 general ranking: it is built for DNA-fibre micrographs, which are sparse, and
 where the network is sparse and the axis clean it recovers
