@@ -1,6 +1,12 @@
 \section{Results}
 \label{sec:results}
 
+The results run in the order the evidence allows. PLECTA is measured first
+where the answer is known exactly, then the depth stage that reads the
+greyscale on top of it, then both on real micrographs; the last two
+subsections say what each part of the method contributes and how it stands
+against published alternatives.
+
 \subsection{Reconstruction on synthetic images}
 \label{sec:res-density}
 
@@ -182,7 +188,7 @@ the reconstruction through a forward SEM model, and the film the reconstruction
 implies. The re-rendered panel is a consistency check on depths and radii, not
 a scored quantity: the difference Table~\ref{tab:depth-order} reports between
 input conditions is a difference in which crossings were \emph{found}, which a
-rendered image cannot show. The table carries that measurement.}
+rendered image cannot show.}
 \label{fig:resem-synth}
 \end{figure}
 
@@ -193,7 +199,7 @@ rendered image cannot show. The table carries that measurement.}
 axis of annotator~A's annotation. Nothing here is scored: real SEM has no depth
 ground truth, since the annotation records which pixels belong to which strand,
 not which lies on top. It shows that the stage runs end to end and re-renders
-to something recognisable, not that the depths are right. The forward model's
+to something recognisable. The forward model's
 appearance parameters are fitted to this micrograph, so the residual beneath
 the panel is in-sample.}
 \label{fig:resem-real}
@@ -203,10 +209,8 @@ the panel is in-sample.}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
-The claim of this section is one sentence: PLECTA works on real imaging when a
-second technique supplies the mask, and the upstream segmenter is such a
-technique. Nothing here is a measurement of that segmenter, which carries its
-own evaluation \citep{allan2026cntsem}.
+PLECTA works on real imaging when a second technique supplies the mask, and the
+upstream segmenter is such a technique.
 
 %  [!ht] for the reason given at Figure~1: this float belongs beside the
 %  paragraph that names the segmenter upstream of PLECTA.
@@ -224,8 +228,7 @@ own evaluation \citep{allan2026cntsem}.
 
 The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) ends in a binary
 strand-axis mask \citep{ruehle2021workflow,allan2026cntsem}, and PLECTA reads
-that mask and nothing else; it is
-the only stage evaluated here. \PlectaRealFieldCountWord{} manually annotated
+that mask and nothing else. \PlectaRealFieldCountWord{} manually annotated
 CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
 annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
 annotation as the reference in both cases, so the two conditions differ only
@@ -235,9 +238,7 @@ curated; only the second says what an automatic mask allows.
 Figure~\ref{fig:real-sem} shows both on one field, whole frame, with each input
 axis beside what PLECTA made of it.
 
-%  [p] because the float is a full text block high: five panels of a
-%  1536x1024 field, and the field is the unit the numbers are computed over.
-\begin{figure}[p]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
     \caption{One CNT SEM field, B58\_110, whole frame, a row per mask source.
@@ -259,8 +260,7 @@ axis beside what PLECTA made of it.
     Section~\ref{sec:mm-metrics}. \emph{Coverage} is the fraction of the frame
     the full-width reference strands cover (Section~\ref{sec:mm-synth}), not
     the thin axis mask's. Detection \Fone{} is at IoU \PlectaDetectionIoU{},
-    tolerance \PlectaPlacementTolerance{}\,px. How these fields rank PLECTA
-    against other methods is in Section~\ref{sec:res-comparators}, not here.}
+    tolerance \PlectaPlacementTolerance{}\,px.}
     \label{tab:plecta-real-masks}
     \footnotesize
     \input{results/plecta_real_masks_table}
@@ -278,47 +278,39 @@ annotator achieves on these same fields, which is less.
 \PlectaRealFieldCount{} fields cannot estimate a population, and the
 inferential unit is the field.
 
-Most of the distance between the two conditions is the mask, and the
-method fails by conservatism rather than by fusing. The axis each field hands
-PLECTA is characterised, before any reconstruction is opened, by the tolerant
-completeness/correctness/quality triple: at \PlectaPlacementTolerance{}\,px,
-quality is \PlectaMaskQualityBFiveEightOneZeroZeroQualityTwo{},
-\PlectaMaskQualityBFiveEightOneOneZeroQualityTwo{} and
-\PlectaMaskQualityBFiveEightThreeZeroZeroQualityTwo{}, over completeness
-\PlectaBFiveEightOneZeroZeroAxisRecall{},
-\PlectaBFiveEightOneOneZeroAxisRecall{} and
-\PlectaBFiveEightThreeZeroZeroAxisRecall{}. The tolerance is not a formality:
-quality falls to \PlectaMaskQualityBFiveEightOneZeroZeroQualityOne{},
-\PlectaMaskQualityBFiveEightOneOneZeroQualityOne{} and
-\PlectaMaskQualityBFiveEightThreeZeroZeroQualityOne{} at 1\,px, because the
-annotation and the nnU-Net output are two independent readings of the same
-strands and disagree in placement almost everywhere. That displacement is
-also why detection \Fone{} carries a placement tolerance, and the control that
-makes it a correction rather than an inflation is here: on the manual-derived
-axes, where the input mask is a skeleton of the annotation itself, the
-tolerance moves detection \Fone{} by 0.000, against
-\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} rising to
-\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} on B58\_110's nnU-Net axis.
-Because the pairwise score is quadratic in fragments, a strand the nnU-Net
-mask breaks into several pieces carries every one of its pairs. Join \Fone{}
-removes that weighting by scoring one decision per pair of fragment ends the
-mask brings within reach, rather than every pair of fragments the strand has;
-it is defined in \suppmeasures{} with the rest, and quoted only here, where a
-difference in fragmentation is what is being read. It reports
-\PlectaJoinBFiveEightOneOneZeroManualDecisions{} decisions on
+Most of the distance between the two conditions is the mask, and what the
+method loses to it is joins it declines rather than strands it fuses. The
+nnU-Net axis is a second, independent reading of the same strands, and it
+arrives thicker, broken into more pieces and displaced by a pixel or two
+almost everywhere, which panels~(b) and~(d) of Figure~\ref{fig:real-sem} show
+side by side.
+Fragmentation is what that costs, and the pairwise score charges for it
+twice over: being quadratic in fragments, a strand the mask breaks into
+several pieces is charged once for every pair of pieces it fails to
+rejoin. Join \Fone{} removes that weighting by scoring one decision per
+pair of fragment ends the mask brings within reach, rather than every pair
+of fragments the strand has; it is defined in \suppmeasures{} with the
+rest, and quoted only here, where a difference in fragmentation is what is
+being read. The two masks pose
+\PlectaJoinBFiveEightOneOneZeroManualDecisions{} such decisions on
 B58\_110's manual axis against
-\PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one. It narrows
-the gap without closing it, and its decomposition says what the rest is: a join
-precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
-than fusing strands, which is what panel~(e) of Figure~\ref{fig:real-sem}
-shows.
+\PlectaJoinBFiveEightOneOneZeroUNetDecisions{} on its nnU-Net one.
+Counting them once each narrows the gap without closing it, and the
+decomposition says what the remainder is: a join precision of
+\PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
+\PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method leaving strands
+apart, not running them together, which is what panel~(e) of
+Figure~\ref{fig:real-sem} shows.
 
 \subsection{Development ablations}
 \label{sec:res-ablation}
 
-Everything here is measured on the development scenes and none of it reuses
-the held-out set.
+The sections above measure what PLECTA does. This one asks which of its
+parts the score depends on, by removing one at a time and rescoring, and
+which two of them are not parts of it at all but controls. Everything here
+is measured on the development scenes and none of it reuses the held-out
+set, so the numbers below are diagnostic and are not comparable with the
+held-out result.
 
 \textbf{What each part is worth.} Table~\ref{tab:plecta-ablation} varies one
 thing at a time. Two rows change what a link costs, dropping the junction
@@ -381,15 +373,12 @@ takes decisions, and each of those decisions is stated here.
     \centering
     \caption{PLECTA against four published methods, identical masks and one
     scorer, ordered by \Fone{}. The upper block is the degraded synthetic
-    scenes, GraFT over the \PlectaGraFTSceneCount{} of
-    \PlectaGreedySceneCount{} it completed; the lower is the annotated CNT SEM
+    scenes; the lower is the annotated CNT SEM
     fields of Section~\ref{sec:res-real} on the manual-derived axis, a plain
-    mean over the \PlectaRealFieldCountLower{}, which were not timed under the
-    same protocol. Variation of
+    mean over the \PlectaRealFieldCountLower{}. Variation of
     information in bits, lower better; higher better for the rest.\\[2pt]
     $^{*}$\,our reimplementation; no implementation of that paper was found.
-    \suppcomparators{} details it, and the timings that column cannot
-    support.}
+    \suppcomparators{} details it.}
     \label{tab:plecta-comparators}
     \small
     \input{results/plecta_comparator_table}
@@ -419,8 +408,8 @@ attempted, and how each method fails.
     \PlectaPlacementTolerance{}\,px tolerance, which counts objects
     (Section~\ref{sec:mm-metrics}). The two disagree where a method
     fragments, since only the first is quadratic in fragmentation. Crossing
-    Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes, no
-    interval claimed. $^{*}$\,our reimplementation; none was found.}
+    Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes.
+    $^{*}$\,our reimplementation; none was found.}
   \label{fig:metric-panels}
 \end{figure}
 

@@ -60,8 +60,8 @@ changes the ordering of the four methods.
     \caption{Scorer-constant sensitivity. Stored predictions re-scored under
     one-at-a-time perturbations of the four common-fragment constants;
     $\Delta$ columns are plain paired mean margins, PLECTA minus comparator,
-    over the scenes both methods completed. Sensitivity reporting only, no
-    inference, and the published constants were not changed in response.}
+    over the scenes both methods completed. Sensitivity reporting only; the
+    published constants were not changed in response.}
     \label{tab:scorer-sensitivity}
     \input{results/plecta_scorer_sensitivity_table}
 \end{table}
@@ -110,7 +110,16 @@ intersection being the smaller of the two counts. The tolerance is necessary:
 two independently read one-pixel centrelines two pixels apart intersect in
 \emph{nothing}, so a strict overlap reports placement rather than shape, a
 problem the thin-structure benchmark FISBe states as a design rationale
-\citep{mais2024fisbe}. Counting objects makes it the most forgiving reading of
+\citep{mais2024fisbe}. What keeps that tolerance a correction rather than an
+inflation is measurable, and the real fields supply the control: on their
+manual-derived axes, where the input mask is a skeleton of the annotation
+itself and nothing is displaced, the tolerance moves detection \Fone{} from
+\PlectaDetectionBFiveEightOneOneZeroManualStrict{} to
+\PlectaDetectionBFiveEightOneOneZeroManualTolerant{} on B58\_110, against
+\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} rising to
+\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} on the nnU-Net axis of the
+same field. It pays where two readings disagree in placement and nowhere else.
+Counting objects makes it the most forgiving reading of
 a fragmented mask and the least discriminative measure here. Blind spot: an arm
 swap, which it scores 1.000 where the pairwise score gives 0.000.
 
@@ -209,7 +218,7 @@ Held-out means and density strata are accompanied by 95\% nonparametric
 bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
 stratification by density; the clean-minus-degraded analysis resamples paired
 scene differences within density. Per-coverage points in the comparison figures
-are plain means of ten scenes with no interval drawn and none claimed. On the
+are plain means of ten scenes with no interval claimed. On the
 real SEM fields the inferential unit is the field, and the
 \PlectaRealCrossingTotal{} reference crossings entering the crossing measures
 are a count pooled over six condition-specific evaluations of the three
