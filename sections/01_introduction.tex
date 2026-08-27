@@ -2,7 +2,8 @@
 \label{sec:intro}
 
 Many materials are composed of long, thin strands laid over one another, some
-tangled at random and some deliberately twisted: sheets of carbon nanotubes,
+tangled at random and some deliberately twisted \citep{wang2015twisting}:
+sheets of carbon nanotubes,
 collagen in connective tissue, paper, felt, nonwoven textiles,
 fibre-reinforced composites, aramid fibre ropes and synthetic fibre mats. The
 effective properties of such a material (tensile and flexural stiffness,
@@ -12,7 +13,7 @@ themselves, and often more so: the stiffness and strength of a nanotube
 assembly are bounded by load transfer between tubes rather than by the very
 high modulus of any one of them
 \citep{devolder2013cnt,coleman2006small,volkov2010structural,%
-ostanin2013distinct,wittmaack2018mesoscopic,allan2025rope}. The governing
+ostanin2013distinct,ostanin2019size,wittmaack2018mesoscopic,allan2025rope}. The governing
 descriptors are therefore geometric: the length of each strand, its thickness,
 its orientation, its local curvature, and its connectivity to the strands
 around it. The same descriptors are the measurement target well outside
@@ -25,7 +26,8 @@ follows how its filaments reorganise inside a living cell
 A micrograph shows that network directly. Turning the picture into those
 numbers is the hard part. Routine image analysis measures the network in bulk
 (what fraction of the frame is covered, which way the texture points
-\citep{dong2022detecting,imtiaz2023facile}) and stops there. To measure a
+\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}) and
+stops there. To measure a
 distribution of strand lengths, or to ask how often one strand crosses
 another, something more is needed: every strand must be recovered as a
 separate object, addressable from one end to the other.
@@ -45,9 +47,14 @@ into which?
 
 Existing tools answer part of it. Semantic segmentation is mature, since U-Net and
 its self-configuring descendants reliably separate strand foreground from
-background \citep{ronneberger2015unet,isensee2021nnunet}, but a foreground
-mask carries no identity, so it inherits both failures rather than resolving
-them. General-purpose instance methods assume the objects are compact: bounded
+background \citep{ronneberger2015unet,isensee2021nnunet}, in materials
+imaging as much as anywhere
+\citep{stan2020optimizing,davydzenka2022deep}, and nanotube micrographs
+have their own trained segmenters
+\citep{trujillo2017segmentation,nguyen2023cntsegnet,dedonato2025deep}. But a
+foreground mask carries no identity, so it inherits both failures rather than
+resolving them. Instance methods assume the objects are compact, in materials microscopy
+\citep{he2026instance} as in the general-purpose families: bounded
 blobs, centre-directed flows, star-convex outlines, none of which describes a
 long open curve that may overlap another \citep{stringer2021cellpose,%
 schmidt2018stardist,kirillov2023sam}. Ridge and vesselness filters sharpen
@@ -169,7 +176,7 @@ Reaching real micrographs takes one further component, and the workflow is
 deliberately divided in two. An upstream route turns a raw SEM micrograph into
 a binary strand-axis mask by a synthetic-data-driven CycleGAN/U-Net whose
 training pairs are synthesised rather than annotated
-\citep{ruehle2021workflow,allan2026cntsem}; PLECTA is everything downstream of
+\citep{ruehle2021workflow}; PLECTA is everything downstream of
 that mask. The division is what makes the grouping measurable on its own,
 against references whose identities are known exactly, and it keeps width
 rendering from moving an identity score. The closest complete workflow is that

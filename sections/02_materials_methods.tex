@@ -140,7 +140,7 @@ Two inputs were derived per field. The first is the skeleton of annotator~A's
 strand annotation, an oracle-like condition that asks what the grouping can do
 when the axis evidence is curated. The second is an automatic mask from the
 upstream CycleGAN/nnU-Net segmentation of Section~\ref{sec:res-qualitative}
-\citep{ruehle2021workflow,isensee2021nnunet,allan2026cntsem}, which asks what an
+\citep{ruehle2021workflow,isensee2021nnunet}, which asks what an
 automatic mask allows it to do. That segmentation is a separate contribution
 with its own evaluation; all that matters here is that its output is a binary
 mask produced without seeing any annotation.
@@ -177,8 +177,9 @@ the schedule that repeats the two as chain-level evidence accumulates.
 
 \subsubsection{Skeleton graph and stub frames}
 
-PLECTA skeletonises the mask and prunes the short spurs skeletonisation leaves
-behind. Skeleton pixels where three or more paths meet form junction clusters,
+PLECTA skeletonises the mask, by Zhang and Suen's thinning
+\citep{zhang1984thinning}, and prunes the short spurs skeletonisation
+leaves behind. Skeleton pixels where three or more paths meet form junction clusters,
 and clusters close enough together are merged into a single \emph{node}: a
 crossing seen at this resolution is one blob, not a point, and neighbouring
 crossings often touch. What remains between nodes is an \emph{arm}, an

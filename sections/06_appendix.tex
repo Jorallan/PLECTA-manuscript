@@ -306,7 +306,8 @@ same footing as the greedy continuation baseline, a transparent floor and never
 an external result. Only the geometric half of the method is reimplemented: a
 minimum spanning tree over the centreline pixels, deletion of every bifurcation
 node, and recombination of two- and three-segment groups scored by the
-curvature energy of a fitted cubic spline less a bond energy, chosen by a
+curvature energy of a fitted smoothing cubic spline
+\citep{dierckx1993curve} less a bond energy, chosen by a
 set-partitioning integer program that is re-solved until the segment set stops
 changing. That half reads geometry alone and so accepts an axis mask directly.
 The other half, an intensity filter bank and a reverse diffusion that converges

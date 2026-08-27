@@ -228,13 +228,13 @@ upstream segmenter is such a technique.
     pairs, so no micrograph is ever hand-annotated, and the binary axis mask it
     produces is the whole interface to PLECTA. It is not a contribution of this
     paper and is not evaluated here; it carries its own evaluation
-    \citep{ruehle2021workflow,allan2026cntsem}, and only the dashed box is
+    \citep{ruehle2021workflow}, and only the dashed box is
     measured.}
     \label{fig:pipeline-upstream}
 \end{figure}
 
 The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) ends in a binary
-strand-axis mask \citep{ruehle2021workflow,allan2026cntsem}, and PLECTA reads
+strand-axis mask \citep{ruehle2021workflow}, and PLECTA reads
 that mask and nothing else. \PlectaRealFieldCountWord{} manually annotated
 CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
 annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
