@@ -698,29 +698,57 @@ def depth_order_macros(payload: dict) -> list[str]:
     return lines
 
 
+#: Row kinds for the depth table.  ``BLOCK`` is a family heading spanning the
+#: width, ``SUB`` an indented row that keeps the numerator of the row above it
+#: and narrows the denominator, and ``ROW`` everything else.
+BLOCK, ROW, SUB = "block", "row", "sub"
+
+#: The depth table's two families, and why the split is on the page.
+#:
+#: The crossing rows score the local over/under call at each crossing: the unit
+#: is a crossing event, and the score is taken before the solver reconciles
+#: anything.  The stacking rows score the height field the solver returns once
+#: every call has been pooled: the unit is a pair of strands, so two strands
+#: crossing three times are three crossings and one pair, and a call the solver
+#: overrules is counted one way in the first family and the other way in the
+#: second.  Under the old flat layout the two families sat together under
+#: "Order accuracy, all crossings" and "Depth order, all pairs", near-identical
+#: phrasings for measurements of two different stages, and 0.556 beside 0.852
+#: looked like an inconsistency instead of a call and its outcome.
+#:
+#: Only accuracies are indented.  The abstention rate, the evidence fraction
+#: and the two layer counts stay flush: indentation reads as "of which", and
+#: none of them is a subset of the row above -- the abstention rate is over the
+#: crossings found rather than all of them, and the stage can return more
+#: layers than the reference has, not a subset of them.
+DEPTH_ROWS = (
+    (BLOCK, "At each crossing", None, None),
+    (ROW, "Projected crossings per scene", "n_gt_crossings", "%.0f"),
+    (ROW, "Crossings recovered", "match_rate", "%.3f"),
+    (ROW, "Order accuracy, all crossings", "coa_all", "%.3f"),
+    (SUB, "restricted to those it decided", "coa_decided", "%.3f"),
+    (ROW, "Declined, of the crossings it found", "abstain_rate", "%.3f"),
+    (BLOCK, "In the stacking it outputs", None, None),
+    (ROW, "Depth order, all strand pairs", "order_acc_all_pairs", "%.3f"),
+    (SUB, "restricted to pairs that cross", "order_acc_crossing_pairs",
+     "%.3f"),
+    (ROW, "Pairs within one crossing component",
+     "frac_pairs_within_component", "%.3f"),
+    #  Layer counts are means of small integers over six scenes, so one
+    #  decimal is the whole resolution there is; three would invent two.
+    #  The reference row repeats across conditions by construction -- the
+    #  two conditions are the same scenes -- and is printed anyway, since
+    #  the recovered row means nothing without the count it is close to.
+    (ROW, "Layers in the reference", "n_layers_gt", "%.1f"),
+    (ROW, "Layers recovered", "n_layers_pred", "%.1f"),
+    (ROW, "Layer agreement", "layer_exact_agreement", "%.3f"),
+)
+
+
 def depth_order_table(payload: dict) -> str:
     """The 2x2 grid, generated so no number is retyped into the source."""
     cell = {(g["condition"], g["coverage"]): g for g in payload["grid"]}
     covs = sorted({g["coverage"] for g in payload["grid"]})
-    rows = [
-        ("Projected crossings per scene", "n_gt_crossings", "%.0f"),
-        ("Crossings recovered", "match_rate", "%.3f"),
-        ("Order accuracy, all crossings", "coa_all", "%.3f"),
-        ("Order accuracy, decided only", "coa_decided", "%.3f"),
-        ("Abstained", "abstain_rate", "%.3f"),
-        ("Depth order, crossing pairs", "order_acc_crossing_pairs", "%.3f"),
-        ("Depth order, all pairs", "order_acc_all_pairs", "%.3f"),
-        ("Instance pairs sharing a component", "frac_pairs_within_component",
-         "%.3f"),
-        #  Layer counts are means of small integers over six scenes, so one
-        #  decimal is the whole resolution there is; three would invent two.
-        #  The reference row repeats across conditions by construction -- the
-        #  two conditions are the same scenes -- and is printed anyway, since
-        #  the recovered row means nothing without the count it is close to.
-        ("Layers recovered", "n_layers_pred", "%.1f"),
-        ("Layers in the reference", "n_layers_gt", "%.1f"),
-        ("Layer agreement", "layer_exact_agreement", "%.3f"),
-    ]
     head = " & ".join(c.replace("cov", "") + r"\,\%" for c in covs)
     out = [
         r"\begin{tabular}{lcccc}",
@@ -731,10 +759,16 @@ def depth_order_table(payload: dict) -> str:
         "Areal coverage & " + head + " & " + head + r" \\",
         r"\midrule",
     ]
-    for label, key, fmt_s in rows:
+    for kind, label, key, fmt_s in DEPTH_ROWS:
+        if kind is BLOCK:
+            if out[-1] != r"\midrule":
+                out.append(r"\addlinespace")
+            out.append(r"\multicolumn{5}{@{}l}{\emph{" + label + r"}} \\")
+            continue
         vals = [fmt_s % cell[(c, cov)][key]
                 for c in ("oracle", "clean") for cov in covs]
-        out.append(label + " & " + " & ".join(vals) + r" \\")
+        shown = r"\quad " + label if kind is SUB else label
+        out.append(shown + " & " + " & ".join(vals) + r" \\")
     out += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(out) + "\n"
 

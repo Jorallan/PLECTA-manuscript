@@ -284,7 +284,12 @@ input conditions.
 Given the reference 2-D geometry, the depth decision is measured alone; given
 only the binary axis mask, the same stage runs on PLECTA's own reconstruction
 and carries its error. Table~\ref{tab:depth-order} reports both, under the
-measures \suppdepth{} defines.
+measures \suppdepth{} defines. Its two blocks are not interchangeable. The
+crossing rows score the over/under call at each crossing, one score per
+crossing, taken before anything is reconciled; the stacking rows score the
+height field the solver returns once every call has been pooled, one score per
+pair of strands. Two strands that cross three times are three crossings and
+one pair.
 
 %  [!ht] for the reason given at Figure~1: under [tbp] this table went to the
 %  top of its page, above the subsection heading that introduces it.
@@ -335,7 +340,7 @@ all: at the denser coverage the reconstructed condition's
 \PlectaDepthCleanCovFourZeroAll{} over all crossings, divided by the given
 condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing
 recovery rate of \PlectaDepthCleanCovFourZeroMatch{}. And the decided row must
-be read beside the abstention row, since what the stage declines are the hard
+be read beside the declined row, since what the stage declines are the hard
 crossings, so a higher decided accuracy can be a stage answering less often
 rather than one deciding better. Both gaps are the stage answering at fewer
 crossings than the reference carries, not the image withholding an answer.

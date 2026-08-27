@@ -4,16 +4,19 @@
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 Areal coverage & 20\,\% & 40\,\% & 20\,\% & 40\,\% \\
 \midrule
+\multicolumn{5}{@{}l}{\emph{At each crossing}} \\
 Projected crossings per scene & 28 & 150 & 28 & 150 \\
 Crossings recovered & 1.000 & 1.000 & 0.857 & 0.746 \\
 Order accuracy, all crossings & 0.815 & 0.744 & 0.729 & 0.556 \\
-Order accuracy, decided only & 0.890 & 0.885 & 0.961 & 0.906 \\
-Abstained & 0.085 & 0.161 & 0.117 & 0.179 \\
-Depth order, crossing pairs & 0.863 & 0.856 & 0.915 & 0.852 \\
-Depth order, all pairs & 0.671 & 0.708 & 0.703 & 0.715 \\
-Instance pairs sharing a component & 0.392 & 0.842 & 0.361 & 0.746 \\
-Layers recovered & 5.2 & 8.3 & 5.3 & 8.0 \\
+\quad restricted to those it decided & 0.890 & 0.885 & 0.961 & 0.906 \\
+Declined, of the crossings it found & 0.085 & 0.161 & 0.117 & 0.179 \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{In the stacking it outputs}} \\
+Depth order, all strand pairs & 0.671 & 0.708 & 0.703 & 0.715 \\
+\quad restricted to pairs that cross & 0.863 & 0.856 & 0.915 & 0.852 \\
+Pairs within one crossing component & 0.392 & 0.842 & 0.361 & 0.746 \\
 Layers in the reference & 5.2 & 8.7 & 5.2 & 8.7 \\
+Layers recovered & 5.2 & 8.3 & 5.3 & 8.0 \\
 Layer agreement & 0.656 & 0.418 & 0.702 & 0.382 \\
 \bottomrule
 \end{tabular}
