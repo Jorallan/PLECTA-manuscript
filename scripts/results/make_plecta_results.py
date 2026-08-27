@@ -42,6 +42,11 @@ MASK_QUALITY = RESULTS / "plecta_mask_quality.json"
 GRAFT_REGIME = RESULTS / "plecta_graft_regime.json"
 REAL_FIELD_METRICS = RESULTS / "plecta_real_field_metrics.json"
 REAL_FIELDS = RESULTS / "plecta_real_fields.json"
+#  SIFNE and the Basu Stage-B reimplementation on the same three fields'
+#  manual-derived masks, plus each field's measured areal coverage. Written by
+#  scripts/results/make_real_comparators_record.py, which re-asserts that the
+#  study's PLECTA rows reproduce REAL_FIELDS exactly before writing anything.
+REAL_COMPARATORS = RESULTS / "plecta_real_comparators.json"
 INTERANNOTATOR = RESULTS / "plecta_interannotator.json"
 CURVINESS = RESULTS / "plecta_curviness_sensitivity.json"
 DEPTH_ORDER = RESULTS / "plecta_depth_order.json"
@@ -707,6 +712,13 @@ def depth_order_table(payload: dict) -> str:
         ("Depth order, all pairs", "order_acc_all_pairs", "%.3f"),
         ("Instance pairs sharing a component", "frac_pairs_within_component",
          "%.3f"),
+        #  Layer counts are means of small integers over six scenes, so one
+        #  decimal is the whole resolution there is; three would invent two.
+        #  The reference row repeats across conditions by construction -- the
+        #  two conditions are the same scenes -- and is printed anyway, since
+        #  the recovered row means nothing without the count it is close to.
+        ("Layers recovered", "n_layers_pred", "%.1f"),
+        ("Layers in the reference", "n_layers_gt", "%.1f"),
         ("Layer agreement", "layer_exact_agreement", "%.3f"),
     ]
     head = " & ".join(c.replace("cov", "") + r"\,\%" for c in covs)
@@ -847,6 +859,45 @@ def real_fields_macros(payload: dict) -> list[str]:
     #
     #  Emitting them while nothing cites them would leave ten dead macros in
     #  plecta_results.tex, so they are not emitted.
+    return lines
+
+
+def real_comparators_macros(payload: dict) -> list[str]:
+    """SIFNE and Basu on the three real fields, and what those fields cover.
+
+    The per-field SIFNE margins are emitted **signed**, and all three are
+    emitted, because one of them is negative: SIFNE is fractionally ahead of
+    PLECTA on B58_100's pairwise F1.  Emitting a magnitude and letting the
+    prose carry the direction would let a re-run flip the sign without the
+    sentence noticing.
+
+    Areal coverage is emitted only as the range across the three fields, which
+    is what the prose cites; the per-field values are in the table, and a macro
+    nothing quotes is a macro nobody maintains.
+    """
+    rows = {(r["field"], r["method"]): r for r in payload["rows"]}
+    fields = sorted({r["field"] for r in payload["rows"]})
+    coverages = [100 * payload["coverage"][f]["areal_coverage"] for f in fields]
+    joins = [r["join_f1"] for r in payload["rows"]]
+    lines = [
+        macro("PlectaRealCoverageLow", "%.1f" % min(coverages)),
+        macro("PlectaRealCoverageHigh", "%.1f" % max(coverages)),
+        macro("PlectaRealManualJoinLow", fmt(min(joins))),
+        macro("PlectaRealManualJoinHigh", fmt(max(joins))),
+    ]
+    basu_margins = []
+    for field in fields:
+        plecta = rows[(field, "plecta")]["pairwise_f1"]
+        lines.append(macro(
+            f"PlectaRealSifneDelta{field.replace('_', '')}",
+            f"{plecta - rows[(field, 'sifne')]['pairwise_f1']:+.3f}"))
+        basu_margins.append(plecta - rows[(field, "basu")]["pairwise_f1"])
+    #  Basu gets a range rather than three per-field macros because the prose
+    #  says only that it trails everywhere and by how much at the two ends.
+    lines.extend([
+        macro("PlectaRealBasuDeltaLow", f"{min(basu_margins):+.3f}"),
+        macro("PlectaRealBasuDeltaHigh", f"{max(basu_margins):+.3f}"),
+    ])
     return lines
 
 
@@ -1217,6 +1268,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
                 graft: dict, audit: dict, supplement: dict,
                 mask_quality: dict, graft_regime: dict,
                 real_field_metrics: dict, real_fields: dict,
+                real_comparators: dict,
                 interannotator: dict, curviness: dict,
                 depth_order: dict,
                 metric_panels: dict, sensitivity: dict,
@@ -1356,6 +1408,7 @@ def make_macros(held: dict, robustness: list[dict], ablation: dict,
             *mask_quality_macros(mask_quality),
             *graft_regime_macros(graft_regime),
             *real_fields_macros(real_fields),
+            *real_comparators_macros(real_comparators),
             *interannotator_macros(interannotator),
             *curviness_macros(curviness),
             *depth_order_macros(depth_order),
@@ -1554,36 +1607,61 @@ def scorer_sensitivity_macros(record: dict) -> list[str]:
     ]
 
 
-def real_fields_table(payload: dict) -> str:
-    """Three fields, two mask sources, the five measures of Section 2.6.
+def real_fields_table(payload: dict, comparators: dict) -> str:
+    """Three fields, two mask sources, three methods on the curated one.
+
+    Four columns were dropped on 2026-08-27 to make room for the comparators:
+    the number of join decisions, Crossing Fidelity, its all-unpaired chance
+    level and the number of reference crossings.  Nothing was dropped from the
+    record: ``real_fields_macros`` still emits every one of them per field, and
+    Section 3.5's prose still quotes Crossing Fidelity on each field, the range
+    its chance level spans, the pooled crossing count and the two join-decision
+    counts the mask argument turns on.  Those are read one at a time in a
+    sentence rather than compared down a column, which is why the column was
+    the part that could go.
 
     The held-out column was removed on 2026-08-25 by author decision, together
     with the results subsection that measured what training overlap costs. The
     record `plecta_real_fields.json` still carries `unet_held_out` per field,
     and `plecta_real_masks.json` still carries the contamination experiment, so
     the column can be restored without re-running anything.
+
+    SIFNE and Basu ran on the manual-derived axis only, so the nnU-Net block of
+    each field carries PLECTA alone; that is the study's scope, not a gap.
     """
+    #  The comparator record's own PLECTA rows are checked against this
+    #  payload when it is built.  Re-checking here would only re-run that; what
+    #  matters at this point is that the two records describe the same fields.
+    rows = {(r["field"], r["method"]): r for r in comparators["rows"]}
+    coverage = comparators["coverage"]
+    if {f["image"] for f in payload["fields"]} != set(coverage):
+        raise ValueError("the comparator record covers different fields")
     lines = [
         "% Generated by scripts/results/make_plecta_results.py; do not edit.",
-        r"\begin{tabular}{llrrrrrrr}",
+        r"\begin{tabular}{lrllrrr}",
         r"\toprule",
-        r" & & \multicolumn{3}{c}{Grouping} & "
-        r"\multicolumn{3}{c}{Objects and crossings} & \\",
-        r"\cmidrule(lr){3-5}\cmidrule(lr){6-8}",
-        r"Field & Input axis & $F_1$ & Join $F_1$ & Decisions & "
-        r"Det.\ $F_1$ & CF & Unpaired & Cross. \\",
+        r"Field & Coverage & Input axis & Method & $F_1$ & Join $F_1$ & "
+        r"Det.\ $F_1$ \\",
         r"\midrule",
     ]
-    for field in payload["fields"]:
-        for key, label in (("manual", "Manual-derived"), ("unet", "U-Net")):
-            c = field["conditions"][key]
+    for position, field in enumerate(payload["fields"]):
+        image = field["image"]
+        if position:
+            lines.append(r"\addlinespace")
+        block: list[tuple[str, str, dict]] = [
+            ("Manual-derived", "PLECTA", field["conditions"]["manual"]),
+            ("", "SIFNE", rows[(image, "sifne")]),
+            ("", r"Basu$^{*}$", rows[(image, "basu")]),
+            ("U-Net", "PLECTA", field["conditions"]["unet"]),
+        ]
+        for row_index, (axis, method, values) in enumerate(block):
+            head = (f"{tex_escape(image)} & "
+                    f"{100 * coverage[image]['areal_coverage']:.1f}\\,\\%"
+                    if row_index == 0 else " & ")
             lines.append(
-                f"{tex_escape(field['image'])} & {label} & "
-                f"{fmt(c['pairwise_f1'])} & {fmt(c['join_f1'])} & "
-                f"{c['n_decisions']:,} & {fmt(c['detection_f1'])} & "
-                f"{fmt(c['crossing_fidelity'])} & "
-                f"{fmt(c['crossing_fidelity_chance'])} & "
-                f"{c['n_crossings']} \\\\".replace(",", r"\,")
+                f"{head} & {axis} & {method} & "
+                f"{fmt(values['pairwise_f1'])} & {fmt(values['join_f1'])} & "
+                f"{fmt(values['detection_f1'])} \\\\"
             )
     lines.extend([r"\bottomrule", r"\end{tabular}"])
     return "\n".join(lines) + "\n"
@@ -1646,6 +1724,8 @@ def main() -> None:
     real_field_metrics = json.loads(
         REAL_FIELD_METRICS.read_text(encoding="utf-8"))
     real_fields = json.loads(REAL_FIELDS.read_text(encoding="utf-8"))
+    real_comparators = json.loads(
+        REAL_COMPARATORS.read_text(encoding="utf-8"))
     interannotator = json.loads(
         INTERANNOTATOR.read_text(encoding="utf-8"))
     curviness = json.loads(CURVINESS.read_text(encoding="utf-8"))
@@ -1663,7 +1743,8 @@ def main() -> None:
             held, robustness, ablation, stage4, cc_baseline,
             width_validation, greedy, factorial, dnai, analysis, swept,
             graft, audit, supplement, mask_quality, graft_regime,
-            real_field_metrics, real_fields, interannotator, curviness,
+            real_field_metrics, real_fields, real_comparators,
+            interannotator, curviness,
             depth_order,
             metric_panels, sensitivity,
             scorer_sensitivity, crossing_chance, basu, sifne,
@@ -1693,7 +1774,7 @@ def main() -> None:
         ablation_table(ablation, audit, greedy), encoding="utf-8"
     )
     (RESULTS / "plecta_real_masks_table.tex").write_text(
-        real_fields_table(real_fields), encoding="utf-8"
+        real_fields_table(real_fields, real_comparators), encoding="utf-8"
     )
     (RESULTS / "plecta_depth_order_table.tex").write_text(
         depth_order_table(depth_order), encoding="utf-8"

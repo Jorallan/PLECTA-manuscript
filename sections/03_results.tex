@@ -325,10 +325,10 @@ the decided row by the amount the 2-D stage fails to recover a crossing at
 all: at the denser coverage the reconstructed condition's
 \PlectaDepthCleanCovFourZeroAll{} over all crossings, divided by the given
 condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing
-recovery rate of \PlectaDepthCleanCovFourZeroMatch{} to within two
-thousandths. And the decided row must be read beside the abstention row, since
-what the stage declines are the hard crossings, so a higher decided accuracy
-can be a stage answering less often rather than one deciding better. Depth
+recovery rate of \PlectaDepthCleanCovFourZeroMatch{}. And the decided row must
+be read beside the abstention row, since what the stage declines are the hard
+crossings, so a higher decided accuracy can be a stage answering less often
+rather than one deciding better. Depth
 claims are therefore scoped to the connected component, and a globally ordered
 film would need evidence that does not travel through crossings, such as
 defocus, or a second view, rather than a smoothness assumption, which these
@@ -453,13 +453,16 @@ centrelines the scores are computed on.
     \centering
     \caption{Reconstruction from the manual-derived and the nnU-Net axis in
     three CNT SEM fields, under the measures of
-    Section~\ref{sec:mm-metrics}.
-    \emph{CF} is Crossing Fidelity and \emph{Unpaired} the fidelity of the
-    all-unpaired baseline, the do-nothing policy that leaves every arm
-    unpaired on that field. \emph{Cross.} is the number of reference
-    crossings scored. Detection \Fone{} is at IoU
+    Section~\ref{sec:mm-metrics}. \emph{Coverage} is areal coverage in the
+    sense of Section~\ref{sec:mm-synth}, the fraction of the frame the
+    full-width reference strands cover, measured from the annotation itself
+    and not from the thin axis mask. Detection \Fone{} is at IoU
     \PlectaDetectionIoU{} with the \PlectaPlacementTolerance{}\,px placement
-    tolerance.}
+    tolerance. SIFNE and Basu ran on the manual-derived axis only, on
+    byte-identical masks and through the same scorer, at parameters selected
+    on synthetic development scenes and applied unchanged; nothing was tuned
+    on these fields.\\[2pt]
+    $^{*}$\,our reimplementation; no implementation of that paper was found.}
     \label{tab:plecta-real-masks}
     \footnotesize
     \input{results/plecta_real_masks_table}
@@ -523,3 +526,30 @@ precision of \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} is a method declining joins rather
 than fusing strands, which is what panel~(c) of Figure~\ref{fig:real-sem}
 shows.
+
+\textbf{Two comparators on the same three masks.} SIFNE and the Basu Stage-B
+reimplementation of Section~\ref{sec:res-comparators} were run on the
+manual-derived axis of these \PlectaRealFieldCountLower{} fields, on
+byte-identical masks and through the same scoring path, which reproduces
+PLECTA's stored numbers for these fields exactly. PLECTA's pairwise \Fone{}
+margin over SIFNE is \PlectaRealSifneDeltaBFiveEightOneZeroZero{},
+\PlectaRealSifneDeltaBFiveEightOneOneZero{} and
+\PlectaRealSifneDeltaBFiveEightThreeZeroZero{} on the three fields, where the
+same two methods score \PlectaGreedyPlectaFOne{} and \PlectaSifneFOne{} over
+the \PlectaGreedySceneCount{} synthetic scenes: the ordering holds on two
+fields and reverses on the third, where SIFNE takes the pairwise score while
+PLECTA keeps join \Fone{} and detection \Fone{}. Basu trails on every field,
+by \PlectaRealBasuDeltaLow{} to \PlectaRealBasuDeltaHigh{}, and by much less
+on join \Fone{} than on the pairwise score, which is the split
+Section~\ref{sec:res-comparators} reports on synthetic scenes: the quadratic
+weighting charges a shattered strand once for every pair it loses. Join
+\Fone{} compresses all nine rows into
+\PlectaRealManualJoinLow{}--\PlectaRealManualJoinHigh{} for that reason, and
+is not agreement. Density is not what narrows the gap, since these fields
+carry \PlectaRealCoverageLow{} to \PlectaRealCoverageHigh{}\,\% areal
+coverage, between the two densest synthetic strata; what does is not
+established here. Two limits bound the comparison either way. Both comparators
+run at parameters selected on synthetic development scenes a sixth of these
+fields' pixel area and applied unchanged, since re-selecting them here would
+select on the data being reported; and Basu Stage~B is our reimplementation, a
+floor rather than an external result.
