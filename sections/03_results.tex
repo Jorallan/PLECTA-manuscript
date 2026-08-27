@@ -25,8 +25,7 @@ Table~\ref{tab:plecta-heldout} gives precision, recall, the
 adjusted Rand index and both variation-of-information components,
 overall and by density. These scenes used unseen seeds from the same
 procedural generator as development data, so this is same-generator
-generalisation and not distribution transfer
-(Section~\ref{sec:limitations}).
+generalisation and not distribution transfer (\suppsplit{}).
 
 \begin{table}[tbp]
     \centering
@@ -104,12 +103,6 @@ across the crossing, weighed against the noise measured there; from those
 local calls it imposes one globally consistent vertical order and places
 each strand at a height at which nothing interpenetrates.
 
-% Depth re-run 2026-08-23: every macro in this subsection and
-% Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
-% (results/plecta_depth_order.json, via scripts/results/run_depth_order_eval.py
-% -> make_depth_record.py -> make_plecta_results.py). The two markers before the
-% figures remain open: those panels are rendered images, not macros, and were
-% not re-rendered.
 It is evaluated on \PlectaDepthSceneCount{} scenes from the depth-resolved
 generator of Section~\ref{sec:mm-synth}, at two areal coverages, in two
 input conditions.

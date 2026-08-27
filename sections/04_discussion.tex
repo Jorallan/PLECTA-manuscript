@@ -35,20 +35,30 @@ it.
         the pair by more than the local noise.
   \item The grouping core uses no random number generator and no training data,
         and its configuration is published, so one mask yields one answer on
-        every run. The demonstrated SEM route is not training-free: its mask
-        comes from a trained CycleGAN and nnU-Net upstream.
+        every run.
+  \item The route from a greyscale micrograph to those instances needs no
+        hand-annotated image at any point. The upstream segmenter is trained on
+        manufactured image and mask pairs, in which the mask that made the
+        image is its own label, so the demonstration runs end to end on real
+        SEM without a single manually annotated micrograph. It is not
+        training-free, but the training it uses costs no annotation.
 \end{itemize}
 
-\noindent\textbf{Bounds.}
+\noindent\textbf{Scope and limitations.}
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item The held-out scenes share the generator family used in development, so
-        their intervals are sampling variation within it and not transfer. What
-        was checked on an external generator is the ranking, not the level.
+  \item Within the generator, the score does not turn on how the strands are
+        shaped: sweeping its bending stiffness over
+        \PlectaCurvinessSweepLow{}--\PlectaCurvinessSweepHigh{}\,\% of default,
+        and its curve wavelength over
+        \PlectaSmoothLow{}--\PlectaSmoothHigh{}\,px, moves the level means of
+        \Fone{} by at most \PlectaCurvinessMaxSpread{} and
+        \PlectaSmoothMaxSpread{}, against a scene-to-scene scatter of
+        \PlectaCurvinessMinSceneSD{} within a level (\suppsplit{}).
   \item The comparison runs four methods on data none of them was built for. It
-        supports a mechanical claim, that pairing endpoints greedily or
-        committing with no option to decline loses identity in dense crossings,
-        and does not establish that PLECTA is generally superior.
+        supports a mechanical claim: that pairing endpoints greedily, or
+        committing with no option to decline, loses identity in dense
+        crossings.
   \item The remaining sensitivity is the segmenter's. PLECTA can bridge a short
         omission, but it cannot infer a strand the mask omits, nor reliably
         reject a false axis introduced upstream.

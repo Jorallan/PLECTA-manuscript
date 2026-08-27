@@ -2,11 +2,6 @@
 %  supplementary.tex, not by main.tex. It carries no \appendix declaration of
 %  its own: that command would reset the section counter and impose A/B/C
 %  lettering, overriding the S-numbering the supplementary document sets.
-%
-%  It was previously set \footnotesize, to buy about a page and a half against
-%  the body size while it was still competing for the article's page budget.
-%  It is not competing any more, so it is set at body size and is simply
-%  easier to read. Nothing was shortened for either decision.
 
 \section{Measures}
 \label{app:measures}
@@ -431,6 +426,19 @@ an independent \emph{distribution}: they are fresh draws from the generator
 that produced the development scenes, so their intervals describe sampling
 within that generator and not transfer to another, which is why the article
 re-tests its ranking on a generator built by someone else and on real SEM
-masks. Second, any figure computed on the development scenes, the component
+masks. The generator's own shape parameters were also swept rather than left
+at their defaults. Taking its bending stiffness from
+\PlectaCurvinessSweepLow{} to \PlectaCurvinessSweepHigh{}\,\% of default, which
+moves the median centreline radius from \PlectaCurvinessRadiusHigh{} to
+\PlectaCurvinessRadiusLow{}\,px, moved the level means of \Fone{} by at most
+\PlectaCurvinessMaxSpread{} over \PlectaCurvinessSeriesCount{} series, against
+a within-level scene-to-scene scatter of \PlectaCurvinessMinSceneSD{}; taking
+the curve wavelength from \PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px moved
+them by at most \PlectaSmoothMaxSpread{}, and the one series of
+\PlectaSmoothSeriesCount{} whose spread exceeded its own noise is
+non-monotonic with its minimum at the default, which has no mechanism behind
+it. Both sweeps are development-scene measurements,
+\PlectaCurvinessSceneCount{} scenes per level, reported as plain means.
+Second, any figure computed on the development scenes, the component
 ablations and the width-sensitivity sweep among them, is labelled as such and
 is not a held-out effect estimate.

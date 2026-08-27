@@ -28,14 +28,9 @@
 \usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
-%  Paragraphs are indented rather than separated by a blank line. The draft used
-%  `parskip`, which spends about a line of vertical space on every one of ~130
-%  paragraphs; indenting instead is the target format's own convention and is
-%  worth a page and a half at this length. Typographic only: no text changes.
-%  1.5em, the class default for 11pt, rather than the 1.2em used earlier: the
-%  saving above comes from dropping parskip, not from shrinking the indent, and
-%  at a 1-inch margin on A4 the measure is wide enough that a narrow indent
-%  reads faintly.
+%  Paragraphs indented rather than separated by a blank line, which is the
+%  target format's convention and is worth about a page and a half at this
+%  length. 1.5em is the class default at 11pt.
 \setlength{\parindent}{1.5em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
@@ -50,18 +45,10 @@
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
-%  Retired with this revision, having no remaining call anywhere in the
-%  manuscript: \rev{} (revision marking, which had grown to cover nearly the
-%  whole text and so carried no information), \supervisorcomment{},
-%  \note{}/\reviewnote{}, \aq{}, \missinginfo{} and the four over/under-merge
-%  wrappers. They are gone rather than kept as no-ops, so that what survives in
-%  this preamble is what the manuscript actually uses.
 %------------------------------------------------------------------------------
-%  \Igor{...} - supervisor comments, carried over verbatim from the Overleaf
-%  project (branch overleaf-2026-08-11-0842). Overleaf rendered these through
-%  todonotes; that package defines its own \todo and would collide with ours
-%  below, so they are typeset here instead. Numbered, and never edited.
-%  \igorreply{...} is our response, and is ours, not Igor's.
+%  \Igor{...} and \igorreply{...} typeset a numbered margin-style comment and a
+%  reply to it. They are defined here rather than taken from todonotes, which
+%  defines its own \todo and would collide with the one below.
 %------------------------------------------------------------------------------
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{%
@@ -83,13 +70,9 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
 
-%  No stray one-line fragments. A float can push the tail of a paragraph onto
-%  the next page, where one line under a table reads as a typo rather than as
-%  the end of a sentence from the page before -- the "Section 3.5." case. These
-%  penalties refuse to break a paragraph so that a single line is left behind
-%  (club) or carried over (widow). 10000 is a prohibition rather than a cost,
-%  so TeX moves the whole paragraph instead; \raggedbottom lets the resulting
-%  slack fall at the foot of the page rather than stretching the text.
+%  No stray one-line fragments: these penalties forbid a paragraph breaking so
+%  that a single line is left behind or carried over, and \raggedbottom lets the
+%  resulting slack fall at the foot of the page rather than stretching the text.
 \widowpenalty=10000
 \clubpenalty=10000
 \displaywidowpenalty=10000
@@ -101,20 +84,11 @@
 \newcommand{\Fone}{F\textsubscript{1}}
 
 %------------------------------------------------------------------------------
-%  The two markers that still have live calls, and both are author-supplied
-%  submission metadata rather than open questions about the work:
-%
-%    \todo{...}    ORCIDs, CRediT roles, the archival DOI. Set \aqfalse to hide
-%                  them all and produce a clean PDF.
-%    \needed{...}  instrument and specimen metadata, which cannot be inferred
-%                  from anything in this repository. Deliberately independent of
-%                  the switch above, so it stays visible.
-%
-%  Every other open question the draft carried has been resolved into the text.
+%  \todo{...} marks author-supplied submission metadata still to be filled in:
+%  the CRediT roles and the archival DOI. \aqfalse hides every one of them and
+%  produces a clean PDF; set \aqtrue to bring them back while working.
+%  \needed{...} is deliberately independent of that switch, so it stays visible.
 %------------------------------------------------------------------------------
-%  \aqfalse for a clean PDF to circulate: the two \todo notes below are author
-%  metadata, not open questions about the work, and neither belongs in a copy
-%  someone else reads. Set \aqtrue to bring them back while working.
 \newif\ifaq \aqfalse
 \newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
 \newcommand{\needed}[1]{\textcolor{red}{\textbf{[Needed before submission: #1]}}}

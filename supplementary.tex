@@ -41,13 +41,9 @@
   pdfauthor={Oday Allan, Stefan Luding, Igor Ostanin}
 }
 
-%  No stray one-line fragments. A float can push the tail of a paragraph onto
-%  the next page, where one line under a table reads as a typo rather than as
-%  the end of a sentence from the page before -- the "Section 3.5." case. These
-%  penalties refuse to break a paragraph so that a single line is left behind
-%  (club) or carried over (widow). 10000 is a prohibition rather than a cost,
-%  so TeX moves the whole paragraph instead; \raggedbottom lets the resulting
-%  slack fall at the foot of the page rather than stretching the text.
+%  No stray one-line fragments: these penalties forbid a paragraph breaking so
+%  that a single line is left behind or carried over, and \raggedbottom lets the
+%  resulting slack fall at the foot of the page rather than stretching the text.
 \widowpenalty=10000
 \clubpenalty=10000
 \displaywidowpenalty=10000
@@ -58,9 +54,8 @@
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
 
-%  The main manuscript carries supervisor comments through these; nothing in
-%  the supplementary uses them, but the section files are shared, so they are
-%  defined here too rather than left to fail.
+%  Defined here as well as in main.tex: the section files are shared between
+%  the two documents, so an undefined command would fail this build.
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{}
 \newcommand{\igorreply}[1]{}
