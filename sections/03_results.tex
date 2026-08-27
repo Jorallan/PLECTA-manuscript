@@ -297,57 +297,43 @@ accuracy shown.}
 \input{results/plecta_depth_order_table}
 \end{table}
 
-What limits the depth result is the 2-D stage not recovering every crossing,
-not the ordering of the crossings it does recover. Two accuracies separate the
-two. Over the crossings the stage decides, order accuracy spans only
-\PlectaDepthDecidedSpan{}
-(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both input
-conditions and both densities. Over all crossings it spans more than three
-times that, \PlectaDepthAllSpan{}
-(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}), and that wider span is the
-crossing recovery rate rather than the decision: it falls from
-\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}, and at the denser coverage
-the reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all
-crossings, divided by the given condition's
-\PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing recovery rate of
-\PlectaDepthCleanCovFourZeroMatch{} to within two thousandths.
+The stage is accurate where it has evidence and blind where it has none, and
+the table separates the two. At a crossing it decides, order accuracy runs
+\PlectaDepthDecidedLow{} to \PlectaDepthDecidedHigh{}, a span of only
+\PlectaDepthDecidedSpan{} whether the 2-D geometry was given or reconstructed
+and whether the scene carries the sparser crossing load or roughly five times
+it. Over every pair of strands in the scene it falls to
+\PlectaDepthCleanCovTwoZeroAllOrder{}, close to chance.
 
-The decided figures have to be read beside the abstention row above them,
-because what the stage declines there are the hard crossings: a higher decided
-accuracy can be a stage answering less often rather than one deciding better.
-Read that way, once a crossing is found the decision is made at a broadly
-similar accuracy whether the geometry was given or reconstructed, and whether
-the scene carries the sparser crossing load or roughly five times it. The
-widest gap between the two input conditions is
-\PlectaDepthCleanCovTwoZeroDecided{} reconstructed against
-\PlectaDepthOracleCovTwoZeroDecided{} given, at the sparser coverage and in
-favour of the reconstruction, which scores only the crossings it matched and
-abstains on more of them.
-
-The global stack is weaker than the local decision, and the gap is a property
-of the evidence rather than of the decision. Depth order is recovered at
-\PlectaDepthCleanCovTwoZeroCrossOrder{} over pairs that cross but only
-\PlectaDepthCleanCovTwoZeroAllOrder{} over all pairs, because depth propagates
-solely along crossings: two strands in different components of the crossing
-graph are related by no evidence whatever, and their order is a stated
-tie-break. That is measurable, not merely arguable. Only
-\PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs lie
-within one component, and if the pairs that do are ordered at the
-crossing-pair rate while the rest are a coin flip, the all-pairs figure follows
-arithmetically: at 20\,\% coverage that predicts
-\PlectaDepthCleanCovTwoZeroOrderPred{} against
-\PlectaDepthCleanCovTwoZeroAllOrder{} measured. The arithmetic is an
-approximation in both directions rather than an account that holds at one end
-and fails at the other: it under-predicts at the sparser coverage, where the
-pairs in different components are evidently not quite a coin flip, and
-over-predicts at the denser end, where the measured order falls below the
-prediction by up to
+That collapse is an absence of evidence rather than a failure of the decision.
+Depth propagates only along crossings, so two strands that never meet, and are
+joined by no chain of strands that do, are related by nothing the image
+contains; their order is a stated tie-break, and no method could do better on
+them. Only \PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs
+lie within one connected component of the crossing graph, which is the
+fraction for which any evidence exists at all. The arithmetic follows: order
+the connected pairs at the crossing-pair rate, leave the rest a coin flip, and
+20\,\% coverage predicts \PlectaDepthCleanCovTwoZeroOrderPred{} against
+\PlectaDepthCleanCovTwoZeroAllOrder{} measured. It under-predicts at the
+sparser coverage, where the unconnected pairs are evidently not quite a coin
+flip, and over-predicts at the denser end by up to
 \PlectaDepthOrderResidual{}, consistent with error accumulating along the long
-transitive chains that large components create. Depth claims are therefore
-scoped to the connected component, and a globally ordered film would need
-evidence that does not travel through crossings, such as defocus, or a second view, rather than a smoothness assumption, which these scenes would not support:
-their heights are drawn independently, so proximity carries no depth
-information by construction.
+transitive chains that large components create.
+
+Two things follow for reading the table. The all-crossings row is lower than
+the decided row by the amount the 2-D stage fails to recover a crossing at
+all: at the denser coverage the reconstructed condition's
+\PlectaDepthCleanCovFourZeroAll{} over all crossings, divided by the given
+condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing
+recovery rate of \PlectaDepthCleanCovFourZeroMatch{} to within two
+thousandths. And the decided row must be read beside the abstention row, since
+what the stage declines are the hard crossings, so a higher decided accuracy
+can be a stage answering less often rather than one deciding better. Depth
+claims are therefore scoped to the connected component, and a globally ordered
+film would need evidence that does not travel through crossings, such as
+defocus, or a second view, rather than a smoothness assumption, which these
+scenes would not support: their heights are drawn independently, so proximity
+carries no depth information by construction.
 
 Layer agreement follows the same pattern, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
