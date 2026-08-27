@@ -297,30 +297,32 @@ accuracy shown.}
 \input{results/plecta_depth_order_table}
 \end{table}
 
-The decomposition is the result. Order accuracy over decided crossings spans
+What limits the depth result is the 2-D stage not recovering every crossing,
+not the ordering of the crossings it does recover. Two accuracies separate the
+two. Over the crossings the stage decides, order accuracy spans only
 \PlectaDepthDecidedSpan{}
-(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both conditions
-and both densities, while accuracy over all crossings spans more than three
+(\PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{}) across both input
+conditions and both densities. Over all crossings it spans more than three
 times that, \PlectaDepthAllSpan{}
-(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}), and it
-falls by the amount the crossing recovery rate falls,
-\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}: at the denser coverage the
-reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all crossings,
-divided by the given condition's \PlectaDepthOracleCovFourZeroAll{}, reproduces
-its crossing recovery rate \PlectaDepthCleanCovFourZeroMatch{} to within two
-thousandths. The decided figures are only meaningful beside the abstention row
-above them: what the stage declines there are the hard crossings, so a higher
-decided accuracy is a stage answering less often, not a stage deciding better.
-Once a crossing is found, the decision is made at a broadly similar accuracy
-whether the geometry was given or reconstructed, and whether the scene carries
-the sparser crossing load or roughly five times it, though not at the same
-accuracy: the widest gap between the input conditions is
+(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}), and that wider span is the
+crossing recovery rate rather than the decision: it falls from
+\PlectaDepthMatchHigh{} to \PlectaDepthMatchLow{}, and at the denser coverage
+the reconstructed condition's \PlectaDepthCleanCovFourZeroAll{} over all
+crossings, divided by the given condition's
+\PlectaDepthOracleCovFourZeroAll{}, reproduces its crossing recovery rate of
+\PlectaDepthCleanCovFourZeroMatch{} to within two thousandths.
+
+The decided figures have to be read beside the abstention row above them,
+because what the stage declines there are the hard crossings: a higher decided
+accuracy can be a stage answering less often rather than one deciding better.
+Read that way, once a crossing is found the decision is made at a broadly
+similar accuracy whether the geometry was given or reconstructed, and whether
+the scene carries the sparser crossing load or roughly five times it. The
+widest gap between the two input conditions is
 \PlectaDepthCleanCovTwoZeroDecided{} reconstructed against
 \PlectaDepthOracleCovTwoZeroDecided{} given, at the sparser coverage and in
 favour of the reconstruction, which scores only the crossings it matched and
-abstains on more of them. What limits
-the depth result is the 2-D stage not recovering every crossing, not the
-ordering of the crossings it does recover.
+abstains on more of them.
 
 The global stack is weaker than the local decision, and the gap is a property
 of the evidence rather than of the decision. Depth order is recovered at
