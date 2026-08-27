@@ -547,7 +547,21 @@ def interannotator_macros(payload: dict) -> list[str]:
         return [macro(f"PlectaInterAnnotator{name}Low", fmt(spans[low_key]["min"])),
                 macro(f"PlectaInterAnnotator{name}High", fmt(spans[high_key]["max"]))]
 
-    lines = [macro("PlectaInterAnnotatorFieldCount", str(payload["n_paired_fields"]))]
+    #  One directed comparison, emitted on its own because it is the sharpest
+    #  thing this study says and the pooled Cross range hides it. Both are
+    #  scored against annotator A: the axis a second READER drew, and the axis
+    #  the NETWORK produced. The reader's is lower, on every field, so on this
+    #  material a second annotator is not a better source of an axis than the
+    #  segmenter is. The assertion below is what licenses "on every field".
+    b_on_a = [f["plecta"]["zagh_skel_vs_allan"] for f in payload["fields"]]
+    net_on_a = [f["plecta"]["nnunet_vs_allan"] for f in payload["fields"]]
+    if not all(b < n for b, n in zip(b_on_a, net_on_a)):
+        raise SystemExit(
+            "the discussion says annotator B's axis scores below the network's "
+            "on every field; it no longer does -- fix 04_discussion.tex")
+    lines = [macro("PlectaInterAnnotatorFieldCount", str(payload["n_paired_fields"])),
+             macro("PlectaInterAnnotatorBOnAFOneMean",
+                   fmt(sum(b_on_a) / len(b_on_a)))]
     lines += pair("SameF", "same_reader_f1", "same_reader_f1_high")
     lines += pair("CrossF", "cross_reader_f1", "cross_reader_f1_high")
     lines += pair("AgreeF", "reader_partition_f1", "reader_partition_f1_high")

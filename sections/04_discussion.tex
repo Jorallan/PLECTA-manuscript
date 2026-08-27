@@ -110,6 +110,13 @@ merge-dominant the other. That is two different answers to what an instance
 annotator being wrong. For the same reason the automatic-mask condition, at
 \PlectaInterAnnotatorNetFLow{}--\PlectaInterAnnotatorNetFHigh{} against either
 annotator, cannot be separated from annotator disagreement on this evidence.
+The comparison that says so most directly is between two axes scored against
+the same reader: given annotator~B's skeleton rather than the network's output,
+PLECTA reaches \PlectaInterAnnotatorBOnAFOneMean{} against annotator~A, lower
+than the network's axis achieves on every one of these fields. A second reader
+is not, on this material, a better source of an axis than the segmenter is,
+which is what a low automatic-mask score does and does not license a reader to
+conclude.
 
 This is also the strongest available argument for evaluating on a generator at
 all. Instance identity through an occlusion is precisely the quantity manual
