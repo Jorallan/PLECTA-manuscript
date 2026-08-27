@@ -10,8 +10,8 @@ rather than strand widths. From it PLECTA reconstructs an overlap-aware
 collection $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$, so that every emitted
 pixel is one the mask already carried, and a crossing pixel may belong to
 several strands at once. The evaluated grouping stage uses only
-$M$; a greyscale SEM image is an optional downstream input for width and
-brightness measurement and cannot revise the fixed grouping.
+$M$; where a greyscale SEM image exists it is read downstream, for width
+and brightness, and cannot revise the fixed grouping.
 
 Figure~\ref{fig:scope} places the method. Its five geometric steps read mask
 geometry alone, and the two matching steps are re-made over eight rounds against

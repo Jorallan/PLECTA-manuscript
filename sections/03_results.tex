@@ -265,11 +265,12 @@ missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
 
 The stages above reconstruct strands in projection. A crossing pixel is
 assigned to both strands that own it, but nothing so far says which of the
-two lies on top. The depth stage answers that from the greyscale
-alone, the continuity of each strand's own brightness across the crossing
-weighed against the noise measured there, then imposes one
-globally consistent vertical order and places each strand at a height at
-which nothing interpenetrates. It changes no 2-D strand.
+two lies on top. The depth stage answers that, reading the greyscale after
+the grouping is fixed and leaving every strand exactly as the stages above
+left it. Its evidence is the continuity of each strand's own brightness
+across the crossing, weighed against the noise measured there; from those
+local calls it imposes one globally consistent vertical order and places
+each strand at a height at which nothing interpenetrates.
 
 % Depth re-run 2026-08-23: every macro in this subsection and
 % Table~\ref{tab:depth-order} was regenerated under the shipped evidence rule
@@ -277,20 +278,21 @@ which nothing interpenetrates. It changes no 2-D strand.
 % -> make_depth_record.py -> make_plecta_results.py). The two markers before the
 % figures remain open: those panels are rendered images, not macros, and were
 % not re-rendered.
-It is evaluated on \PlectaDepthSceneCount{} depth-resolved synthetic scenes at
-two areal coverages, under the measures of
-\suppdepth{}, in two input conditions. Given the
-reference 2-D geometry, the depth decision is measured alone; given only the
-binary axis mask, the same stage runs on PLECTA's own reconstruction and
-carries its error. Table~\ref{tab:depth-order} reports both.
+It is evaluated on \PlectaDepthSceneCount{} scenes from the depth-resolved
+generator of Section~\ref{sec:mm-synth}, at two areal coverages, in two
+input conditions.
+Given the reference 2-D geometry, the depth decision is measured alone; given
+only the binary axis mask, the same stage runs on PLECTA's own reconstruction
+and carries its error. Table~\ref{tab:depth-order} reports both, under the
+measures \suppdepth{} defines.
 
 %  [!ht] for the reason given at Figure~1: under [tbp] this table went to the
 %  top of its page, above the subsection heading that introduces it.
 \begin{table}[!ht]
 \centering
-\caption{The depth stage on \PlectaDepthSceneCount{} depth-resolved synthetic
-scenes. Chance is \PlectaDepthChance{} for every accuracy shown. Exploratory,
-six scenes per coverage, plain means, no inference.}
+\caption{The depth stage on \PlectaDepthSceneCount{} synthetic scenes whose
+true vertical order is known. Chance is \PlectaDepthChance{} for every
+accuracy shown.}
 \label{tab:depth-order}
 \input{results/plecta_depth_order_table}
 \end{table}
@@ -451,7 +453,7 @@ centrelines the scores are computed on.
     manual-derived axis; \textbf{(c)}~PLECTA from the nnU-Net axis of
     Figure~\ref{fig:real-sem-axis}b, the same method and parameters, differing
     only in the mask. All three are drawn at width, the reconstructions through
-    the optional layer of Section~\ref{sec:mm-stage4}, which runs after the
+    the width layer of Section~\ref{sec:mm-stage4}, which runs after the
     grouping is fixed and moves no pixel between strands. Within a row, a
     predicted strand takes the colour of the annotated strand it matched;
     crimson matched none. Each crop is the window whose local pairwise

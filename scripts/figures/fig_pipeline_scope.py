@@ -68,7 +68,7 @@ STEPS = (
     ("2", "Frame at\neach stub", False),
     ("3", "Exact matching\nat a junction", True),
     ("4", "Gated bridging\nof mask gaps", True),
-    ("5", "Paint instance layers,\noptionally at width", False),
+    ("5", "Paint instance layers,\nat width if an image allows", False),
 )
 
 
@@ -231,7 +231,7 @@ def main() -> int:
     #    arrived at, or that the greyscale is what arrives at it.
     y_dn = 0.70
     band(ax, 0.06, 6.18, 0.30, 0.96, ORANGE_TINT)
-    ax.text(0.20, 0.88, "Optional: depth", ha="left", va="center",
+    ax.text(0.20, 0.88, "Depth", ha="left", va="center",
             fontsize=PT_MIN, color=ORANGE, zorder=4)
     dn_centres, dn_end = chain(
         ax, 0.96, y_dn,
