@@ -802,10 +802,21 @@ def curviness_macros(payload: dict) -> list[str]:
         #  0.048 and 0.050 both print 0.05, so the comparison the sentence
         #  rests on cannot be checked by the reader.  Same for the wavelength
         #  pair below.
+        #  RETIRED from the prose 2026-08-27, still emitted. These two are a
+        #  cross-series pairing -- the largest spread found in ANY series
+        #  against the smallest noise found in ANY series -- so they describe
+        #  no series that exists. They made the evidence look far weaker than
+        #  it is: quoted together they read 0.048 against 0.050, a near tie,
+        #  while every series compared against its OWN noise clears it by a
+        #  factor of 1.4 to 3. The per-series count below is what the sweep
+        #  actually concluded, and it is what the discussion now quotes.
         macro("PlectaCurvinessMaxSpread",
-              fmt(head["max_spread_of_level_means"], 3)),
-        macro("PlectaCurvinessMinSceneSD",
-              fmt(head["min_within_level_sd"], 3)),
+              fmt(head["max_spread_of_level_means"])),
+        macro("PlectaCurvinessMinSceneSD", fmt(head["min_within_level_sd"])),
+        macro("PlectaCurvinessSeriesCount", str(len(payload["series"]))),
+        macro("PlectaCurvinessFlatSeries",
+              str(sum(not s["spread_exceeds_noise"]
+                      for s in payload["series"]))),
         macro("PlectaCurvinessSceneCount",
               str(payload["series"][0]["per_level"][0]["n"])),
         macro("PlectaCurvinessLevelCount", str(len(payload["geometry"]))),
@@ -813,9 +824,12 @@ def curviness_macros(payload: dict) -> list[str]:
         macro("PlectaSmoothDefault", "%.0f" % w["default_px"]),
         macro("PlectaSmoothLow", "%.0f" % min(w["levels_px"])),
         macro("PlectaSmoothHigh", "%.0f" % max(w["levels_px"])),
-        macro("PlectaSmoothMaxSpread",
-              fmt(wh["max_spread_of_level_means"], 3)),
-        macro("PlectaSmoothMinSceneSD", fmt(wh["min_within_level_sd"], 3)),
+        #  Same cross-series pairing, and retired from the prose for the same
+        #  reason: the one wavelength series that does exceed its noise does so
+        #  at 0.076 against its own 0.071, and quoting 0.076 against another
+        #  series' 0.052 overstated the exceedance rather than understating it.
+        macro("PlectaSmoothMaxSpread", fmt(wh["max_spread_of_level_means"])),
+        macro("PlectaSmoothMinSceneSD", fmt(wh["min_within_level_sd"])),
         macro("PlectaSmoothFlatSeries",
               str(wh["n_series"] - wh["n_series_where_spread_exceeds_noise"])),
         macro("PlectaSmoothSeriesCount", str(wh["n_series"])),
