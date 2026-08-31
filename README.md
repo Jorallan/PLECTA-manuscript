@@ -16,14 +16,30 @@ and nothing from here is mirrored into it.
 
 PLECTA is a deterministic geometry-based method that converts a binary
 filament-axis mask -- and nothing else -- into separated filament instances.
-An optional post-hoc depth stage additionally reads the paired greyscale
+A secondary post-hoc depth stage additionally reads the paired greyscale
 micrograph to decide which filament passes in front at each crossing; the
 greyscale enters nowhere else. The primary evaluation endpoint stops before
 SEM-based width rendering and compares equivalent per-instance centrelines
 against the baselines described in the Results.
 
-Names and author order are Oday Allan, Stefan Luding and Igor Ostanin; Igor
+Names and author order are Oday Allan, Igor Ostanin and Stefan Luding; Igor
 Ostanin is the corresponding author.
+
+## Target venue
+
+**Journal of Microscopy** (decided 2026-08-31, after the supervisor's venue
+comment). Grounds: the two closest method relatives in the bibliography
+published there (FIRE, stein2008fire, network extraction from collagen gels;
+and Depriester 2022, individual fibre separation in tomography), the journal's
+scope is exactly quantitative image-analysis methods for microscopy across
+materials and biology, and the paper's cross-domain framing (CNT bundles,
+actin, collagen, DNA fibres) fits a microscopy-methods venue better than a
+computational-materials one. Ultramicroscopy and Computational Materials
+Science were considered and carry no cited neighbours. The journal imposes no
+hard length limit, so the current size stands. A separate short SoftwareX
+paper describing PLECTA + PLECTA_APP as software, citing this paper for the
+method and its validation, answers the SoftwareX half of the comment without
+cutting the evaluation.
 
 Machine-generated numerical macros live in `results/plecta_results.tex`,
 `results/plecta_parameters.tex`, `results/plecta_depth_rule.tex` and
