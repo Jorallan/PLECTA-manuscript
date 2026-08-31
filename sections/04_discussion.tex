@@ -4,11 +4,10 @@
 \label{sec:limitations}
 
 PLECTA reconstructs overlapping strand instances from a binary strand-axis
-mask alone. It solves every junction, of any degree, as a single exact
-maximum-weight partial matching in which leaving an arm unmatched carries an
-explicit price, so a strand is allowed to end rather than have a continuation
-invented for it, and a crossing pixel is emitted to every strand that claims
-it.
+mask alone. It solves every junction, of any degree, as a single exact maximum-weight
+partial matching with an explicit penalty for unmatched arms, so a strand may
+terminate rather than receive a forced continuation, and a crossing pixel is
+assigned to every strand that passes through it.
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
   \item Over \PlectaHeldoutSceneCount{} held-out synthetic scenes from unseen
@@ -17,11 +16,13 @@ it.
         \PlectaHeldoutFOneCIHigh{}], falling from
         \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as
         areal coverage rises from 20 to 60\,\%.
-  \item On identical masks it leads four published methods at every density,
-        and the ordering holds on a competitor's own generator, run unmodified
-        at its published settings.
-  \item What carries the result is geometric: the largest ablation losses are
-        the junction chord-turn term and gap bridging.
+  \item On identical masks it achieved the highest scores against four
+        published methods at every density, and the ranking is preserved on a
+        competitor's own generator, run unmodified at its published
+        settings.
+  \item The ablation analysis identified the junction chord-turn term and
+        gap bridging as the largest contributors to reconstruction
+        performance.
   \item A secondary stage reads the greyscale to order strands in depth. It is
         correct on \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the
         crossings it commits to, against a chance level of
@@ -41,8 +42,8 @@ it.
 \noindent\textbf{Scope and limitations.}
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item Within the generator, the score does not turn on how the strands are
-        shaped: sweeping its bending stiffness over
+  \item Within the generator, performance was insensitive to the evaluated
+        strand-shape parameters: sweeping its bending stiffness over
         \PlectaCurvinessSweepLow{}--\PlectaCurvinessSweepHigh{}\,\% of default,
         and its curve wavelength over
         \PlectaSmoothLow{}--\PlectaSmoothHigh{}\,px, moves the level means of
@@ -65,11 +66,12 @@ it.
         \PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{},
         while annotators~A and~B agree at
         \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}
-        with no method in the loop. The disagreement is systematic rather than
-        error: B exports
+        without algorithmic processing. The disagreement is systematic rather
+        than error: B exports
         \PlectaInterAnnotatorObjectRatioLow{}--\PlectaInterAnnotatorObjectRatioHigh{}
-        times as many objects as~A, shorter and far more fragmented, which is
-        two answers to what an instance \emph{is}. A real-data score is
+        times as many objects as~A, shorter and far more fragmented, which
+        reflects systematic differences in the operational definition of a
+        strand instance. A real-data score is
         therefore bounded by that disagreement rather than by the method, and
         identity through an occlusion is the part annotation cannot settle.
   \item Applicability follows the premise. The evidence is directional, so

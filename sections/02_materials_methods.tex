@@ -1,11 +1,9 @@
 \section{Materials and methods}
 \label{sec:methods}
 
-This section discusses what the method is given, what it returns, and how both
-are measured: the input mask and the workflow around it, the synthetic and
-real data, the reconstruction itself
-stage by stage, the two stages that read the greyscale, and the measures
-every reported number goes through.
+This section defines the method's inputs and outputs, describes the
+synthetic and experimental data, presents the reconstruction and the
+image-informed stages, and specifies the evaluation metrics.
 
 \subsection{Scope and workflow}
 \label{sec:mm-workflow}
@@ -14,7 +12,7 @@ The input is a binary strand-axis mask $M\in\{0,1\}^{H\times W}$, whose
 foreground $F=\{x:M(x)=1\}$ is one pixel wide and traces strand centrelines
 rather than strand widths. From it PLECTA reconstructs an overlap-aware
 collection $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$, so that every emitted
-pixel is one the mask already carried, and a crossing pixel may belong to
+pixel is one the mask already contains, and a crossing pixel may belong to
 several strands at once. The evaluated grouping stage uses only
 $M$; where a greyscale SEM image exists it is read downstream, for width
 and brightness, and cannot revise the fixed grouping.
@@ -27,28 +25,28 @@ from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_scope}
-    \caption{Where PLECTA sits. A single binary axis mask is the method's only
-    input, and every result in this paper measures the stage inside the dashed
+    \caption{Scope of PLECTA within the complete workflow. A single binary
+    axis mask is the method's only input, and every result in this paper measures the stage inside the dashed
     boundary: one binary mask in, overlapping instance layers out. The two
-    matchings are re-made over eight rounds as frames sharpen along the
-    assembled chains, and the last round is returned. The depth stage reads a
+    matchings are re-made over eight rounds as frame estimates improve along
+    the assembled chains, and the last round is returned. The depth stage reads a
     greyscale image of the same field in addition to the mask, adds a third
     dimension without revising any identity, and abstains at every crossing
     when no image is supplied.}
     \label{fig:scope}
 \end{figure}
 
-What makes the task hard is a single crossing: the mask holds one connected
-blob from which several arms leave, and nothing local states which arm
-continues into which. The output is a set of layers rather than a partition, so
+The central difficulty is the single crossing: the mask contains one
+connected component from which several arms leave, and no local evidence
+states which arm continues into which. The output is a set of layers rather than a partition, so
 a pixel inside that blob is counted in both strands that claim it.
 
 
 \subsection{Synthetic data and evaluation split}
 \label{sec:mm-synth}
 
-Because the scenes are generated rather than annotated, the answer is known
-exactly. For every strand $k$ the generator records its ordered centreline
+Because the scenes are generated rather than annotated, the reference
+identities are known exactly. For every strand $k$ the generator records its ordered centreline
 $\mathcal C_k$ and the pixels it was drawn onto, its support $\Omega_k$. The
 supports are kept one per strand instead of being merged, so a crossing pixel
 belongs to both strands that pass through it and the reference is
@@ -61,18 +59,18 @@ each strand carries its own brightness and a slow variation along its length,
 blurred by one point-spread function over a low-frequency background with
 grain. A depth-resolved variant of the
 generator supplies the missing structure for the depth stage of
-Section~\ref{sec:mm-depth}. It gives every strand a height and a radius,
-refuses to let two interpenetrate, and renders the stack from the top down,
-so the image carries occlusion, defocus that grows with distance from a
-randomised focal plane, and width broadening. Those cues are randomised
+Section~\ref{sec:mm-depth}. The generator assigns each strand a height and a radius, enforces
+non-interpenetration, and renders the stack from the top down, so the image
+exhibits occlusion, defocus that grows with distance from a randomised focal
+plane, and width broadening. Those cues are randomised
 independently of one another, so no single rule such as brighter-is-higher
 recovers the order.
 
 Scenes are labelled throughout by areal coverage, the fraction of the frame the
 full-width strands cover rather than the fraction the thin axis occupies. That
 label reports difficulty without setting it: drawing the same strands thicker
-raises coverage and leaves the score exactly where it was, since neither PLECTA
-nor the metric ever sees how wide a strand was drawn. What makes a scene hard
+raises coverage and leaves the score exactly where it was, since neither
+PLECTA nor the metric receives the drawn width. What makes a scene hard
 is the amount of centreline packed into the frame, which coverage happens to
 follow under this generator, and Section~\ref{sec:res-factorial} separates the
 two.
@@ -159,7 +157,7 @@ enabled.
 This section describes the method itself. It reads the binary axis mask
 and nothing else, and the
 subsections follow the order it runs in: the graph it cuts the mask into,
-the cost that prices one join, the junction solve, the gap bridging, and
+the cost assigned to one join, the junction solve, the gap bridging, and
 the schedule that repeats the two as chain-level evidence accumulates.
 
 \subsubsection{Skeleton graph and stub frames}
@@ -181,12 +179,13 @@ has joined, which is why the method iterates rather than deciding once.
 
 \subsubsection{The pairing cost}
 
-Linking two stubs is priced by asking three geometric questions
-(Figure~\ref{fig:cost}). Do the two directions oppose one another, as they
-would if one strand simply continued into the other? Does each direction
-point at the other's tip, rather than running parallel past it? And does the
-curvature continue, or would the join require a kink? For a gap the distance to
-be spanned is charged as well; at a junction there is no gap to pay for. The
+The pairwise linking cost comprises three geometric terms
+(Figure~\ref{fig:cost}): the reversal between the two outward directions,
+which vanishes when one strand continues into the other; the turns from each
+direction onto the tip-to-tip chord, which penalise parallel arms that run
+past one another; and the continuity of signed curvature, which penalises
+joins that would require a kink. For gap candidates the tip separation is
+charged as well; the distance term is omitted for junction links. The
 cost of linking stubs $a$ and $b$ is therefore
 \begin{equation}
   C_{ab}=w_d\,\theta
@@ -230,46 +229,53 @@ the scale of the angular terms are fixed parameters, listed in
 
 \subsubsection{Candidate gates and exact matching}
 
-Leaving a stub unmatched is priced rather than forbidden, and that price
-serves two purposes: it also fixes what may be offered at all, since an edge costing
-more than the two prices it would save could never be chosen. Exact
+Leaving a stub unmatched carries a penalty rather than a prohibition, and
+that penalty serves two purposes: it also fixes what may be included as a
+candidate at all, since an edge costing more than the two penalties it would
+save could never be chosen. Exact
 maximum-weight partial matching then picks, over disjoint pairs,
 \begin{equation}
   \max \sum_{(i,j)\in\mathcal{M}} \bigl(p_i+p_j-C_{ij}\bigr),
   \qquad \text{admissible iff } C_{ij}<p_i+p_j,
   \label{eq:matching}
 \end{equation}
-which is the same thing as minimising the total link cost plus a price $p_i$
-for every stub left free. Junction and gap links carry different prices, and a
+which is the same as minimising the total link cost plus a penalty $p_i$
+for every stub left unmatched. Junction and gap links carry different
+penalties, and a
 gap link must additionally clear limits on how far it may reach and how far
 either direction may turn, the tighter set, because a gap asserts a
 continuation across evidence that is \emph{missing} rather than merely
-ambiguous. \supprecon{} lists the prices, the limits, and the schedule below.
+ambiguous. \supprecon{} lists the penalties, the limits, and the schedule
+below.
 
 The method does not decide once. It runs the two matchings over several rounds,
 re-fitting every frame along the chains assembled so far before each. Early
-rounds are deliberately conservative: prices are scaled down, which admits
+rounds are deliberately conservative: penalties are scaled down, which
+admits
 fewer edges, and the gap angle limits are narrowed, so only pairings that
 survive the stricter test are committed while the frames are least reliable.
-The constraints relax towards their configured values as the chains sharpen the
-frames, and only the final round runs at the configured parameters. That round
+The constraints relax towards their configured values as the assembling
+chains improve the frame estimates, and only the final round runs at the
+configured parameters. That round
 is the one returned.
 
-Every stub is therefore either paired or pays the unmatched price, and there is
-no third possibility. That priced option is what lets a strand genuinely end,
-and what stops a node with an odd number of arms from inventing a continuation
-for the one left over. No node is classified: a node of any degree is solved by
-the same matching, and an arm ends because leaving it unmatched won the
-objective, not because the node was recognised as a particular kind.
+Every stub is therefore either paired or left unmatched at the stated
+penalty, and there is no third possibility. That option is what permits a
+genuine strand termination, and what prevents a node with an odd number of
+arms from forcing a continuation onto the one left over. No node is classified: a node of any degree is solved by
+the same matching, and an arm ends because the unmatched state maximised
+the objective, not because the node was recognised as a particular kind.
 
 It also removes a parameter rather than adding one. Admissibility in
-Equation~\ref{eq:matching} is not a threshold chosen alongside the price: an
+Equation~\ref{eq:matching} is not a threshold chosen alongside the penalty:
+an
 edge costing $C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective,
 so a maximum-weight \emph{partial} matching could not select it under any
-setting, and declining to offer it removes only edges that could never have
-been chosen. One number therefore states both what a refusal is worth and what
-may be considered, where a method that gates separately must set a cost
-threshold and a price and keep them consistent.
+setting, and excluding it from the candidate set removes only edges that
+could never have been chosen. One number therefore states both the penalty
+for an unmatched arm and what may be considered, where a method that gates
+separately must set a cost threshold and a penalty and keep them
+consistent.
 
 Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
@@ -299,13 +305,14 @@ second that the terms it matches on are not redundant.
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_exact_matching.pdf}
-    \caption{Every decision the linker makes, on the nodes it made them at.
-    Every arm is the skeleton the numbers were measured from, so every angle
-    shown is the one the cost was computed on. \textbf{(a)}~Every pairing the
-    admissibility gate allows at a four-arm crossing, each scored as a whole:
-    its edge costs plus the price $p_i=0.62$ of each arm it leaves free. The
-    green card is the one returned; two further pairs exceed $p_i+p_j=1.24$ and
-    are never offered. \textbf{(b)}~A three-arm node where an admissible edge is
+    \caption{Candidate-link evaluation and matching outcomes, on the nodes
+    where the decisions were made. Every arm is the skeleton the numbers were
+    measured from, so every angle shown is the one the cost was computed on.
+    \textbf{(a)}~Every pairing the admissibility gate allows at a four-arm
+    crossing, each scored as a whole: its edge costs plus the penalty
+    $p_i=0.62$ of each arm it leaves unmatched. The green frame marks the one
+    returned; two further pairs exceed $p_i+p_j=1.24$ and are excluded as
+    candidates. \textbf{(b)}~A three-arm node where an admissible edge is
     declined on the total rather than on its own cost. \textbf{(c)}~A gap link,
     which must clear all four gates at once.}
     \label{fig:matching}
@@ -386,20 +393,20 @@ rather than by the separation alone, is what makes a confident score mean
 
 \textbf{One order for the whole field.} Local decisions need not be mutually
 consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
-$A$, which no assignment of heights satisfies. Each decided crossing therefore
-contributes a directed edge weighted by $\lvert s\rvert$, the strength of its
-own evidence (Figure~\ref{fig:depth-order}), and within each connected
-component of the crossing graph one
-total order over its strands is derived so as to maximise the total
-satisfied weight, which is the same as reversing the lightest set of
-relations that leaves no contradiction behind. That is the minimum-weight
-feedback arc set objective, and it is attained exactly only for components
-small enough to search, larger ones being approached greedily. Every relation is then re-read from that order, which is
-re-derived for the component as a whole rather than only where relations
-conflict, so a relation that nothing contradicts can come back reversed too;
-the relations the order disagrees with are flipped rather than discarded, and
-both the flip and the original local score are recorded, so a reader can see
-how far the global correction moved. Depth
+$A$, which no assignment of heights satisfies. Each decided crossing therefore contributes a directed edge weighted by
+$\lvert s\rvert$, the strength of its own evidence
+(Figure~\ref{fig:depth-order}). Within each connected component of the
+crossing graph, one total order over its strands is estimated by maximising
+the total weight of satisfied edges, which is equivalent to reversing the
+minimum-weight set of relations that leaves no contradiction: the
+minimum-weight feedback arc set objective. The objective is solved exactly
+for components small enough to search and greedily for larger ones. Every
+relation is then re-read from the estimated order, which is re-derived for
+the component as a whole rather than only where relations conflict, so a
+relation that nothing contradicts can also be reversed; relations
+inconsistent with the order are reversed rather than discarded, and both the
+reversal and the original local score are recorded, so a reader can see how
+far the global correction moved. Depth
 propagates only along crossings, so two strands in different components are
 related by no evidence at all and
 their order is a stated tie-break, not a measurement.
@@ -409,15 +416,15 @@ measurement that replaced an earlier two-channel rule with it, and the solver.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_order.pdf}
-    \caption{Why the order is solved for a whole component rather than one
-    crossing at a time, on a contradiction the stage met.
-    \textbf{(a)}~Four strands and the four calls the local evidence made at
-    their crossings. \textbf{(b)}~Those calls as a graph: each arrow points from
+    \caption{Global reconciliation of local depth-order estimates, on a
+    contradiction encountered by the stage.
+    \textbf{(a)}~Four strands and the four local estimates made at
+    their crossings. \textbf{(b)}~Those estimates as a graph: each arrow points from
     the strand called upper to the one called lower, and following them returns
     to where it started, so no stack of heights satisfies all four.
-    \textbf{(c)}~The order satisfying the most evidence by weight keeps the two
-    heaviest calls and reverses the two lightest, which are recorded rather
-    than discarded. Layer numbers are not shown: a strand's layer follows from
+    \textbf{(c)}~The order satisfying the most evidence by weight retains the
+    two heaviest estimates and reverses the two lightest, which are recorded
+    rather than discarded. Layer numbers are not shown: a strand's layer follows from
     its whole component, and these four sit in a scene of seven.}
     \label{fig:depth-order}
 \end{figure}
@@ -452,15 +459,15 @@ has a crossing, including the two ways it can be undefined rather than zero.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_f1_example.pdf}
-    \caption{What the endpoint scores, on the smallest case that has a
-    crossing. Two strands cross; the scorer removes a neighbourhood of the
-    junction (red) and keeps the four arms it separates, then asks of each of
-    the six pairs of arms whether the grouping joins it, or leaves it apart,
-    as the reference does. \textbf{(a)}~is the reference pairing.
+    \caption{Illustration of the endpoint metric on the smallest case that
+    contains a crossing. Two strands cross; the scorer removes a neighbourhood
+    of the junction (red) and keeps the four arms it separates, then
+    evaluates, for each of the six pairs of arms, whether the grouping joins
+    it, or leaves it apart, as the reference does. \textbf{(a)}~is the reference pairing.
     \textbf{(b)}~leaves one strand unlinked, a split, which costs recall
     alone. \textbf{(c)}~merges both strands into one instance, which costs
     precision alone. \textbf{(d)}~pairs the arms the wrong way round and
-    scores zero, having got no pair right. \textbf{(e)}~emits every arm
+    scores zero, containing no correctly grouped arm pair. \textbf{(e)}~emits every arm
     separately, which makes no pair at all, so precision has no denominator
     and $\Fone{}$ is undefined rather than zero, which is one reason the adjusted
     Rand index and variation of information are reported beside it. Every

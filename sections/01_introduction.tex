@@ -23,26 +23,23 @@ two labelled replication tracts along an individual fibre
 follows how its filaments reorganise inside a living cell
 \citep{osterlund2026graft}.
 
-A micrograph shows that network directly. Turning the picture into those
-numbers remains the difficulty. Routine image analysis measures the network in
+Although micrographs directly visualise strand networks, extracting
+quantitative network descriptors remains challenging. Routine image analysis measures the network in
 bulk (what fraction of the frame is covered, which way the texture points
 \citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}) and does
 not resolve individual strands. To measure a distribution of strand lengths,
 or to ask how often one strand crosses another, every strand must first be
 recovered as a separate object, addressable from one end to the other.
 
-That is an instance-segmentation problem, and its geometry is unfavourable.
-The objects are long, thin and open rather than compact and closed; they
-touch, cross and hide one another; and what tells two of them apart is not
-shape or size but which way each was heading. The consequence is a pair of
-failures of opposite character. Where two strands cross, their pixels join
-into a single connected blob, the same blob a genuine merge error would leave,
-and a method that trusts connectivity reports one object where there are two.
-Where the image fades or the segmentation drops out, one strand arrives in
-several disconnected pieces, the same gap a genuine end would leave, and the
-same method reports several objects where there is one. Both situations are
-repaired by answering one question: at this junction, which arm continues into
-which? This paper addresses the step existing tools leave open: given a binary
+That is an instance-segmentation problem with an unfavourable geometry: the
+objects are elongated, open curves whose identities must be inferred from
+directional continuity rather than from shape or size. The consequence is a
+pair of failures of opposite character. Crossings create false connectivity
+between distinct strands, since a crossing produces the same connected
+component that a genuine merge error would; signal gaps fragment one strand
+into disconnected components that are locally indistinguishable from genuine
+ends. Both failures are resolved by answering one question: at this junction,
+which arm continues into which? This paper addresses the step existing tools leave open: given a binary
 strand-axis mask, recover the individual strands through the crossings and the
 gaps.
 
@@ -50,26 +47,25 @@ The contribution is a specific combination, stated here and situated against
 prior work in Section~\ref{sec:related}. From a binary mask alone, PLECTA
 (i)~solves each junction, of \emph{any} degree, as one exact maximum-weight
 \emph{partial} matching in which leaving an arm unmatched is an explicit
-option at a fixed price rather than a parity leftover; (ii)~alternates that
+option with a fixed penalty rather than a parity leftover; (ii)~alternates that
 junction matching with globally gated bridging of mask gaps; (iii)~re-fits its
 tangent and curvature frames along the chains as they assemble; and
-(iv)~emits overlapping strands, so that a crossing pixel belongs to every
-strand that claims it. The individual ingredients, among them skeleton
+(iv)~emits overlapping strands, so that a crossing pixel may be assigned to
+multiple strands. The individual ingredients, among them skeleton
 graphs, junction excision, continuation angles and combinatorial optimisation,
 are established; to our knowledge no prior method combines them, and
-Section~\ref{sec:related} substantiates that claim. Degree-general exact
-matching with a priced refusal is what allows a strand to end rather than
-have a continuation invented for it.
+Section~\ref{sec:related} substantiates that claim. Degree-general exact matching with an explicit unmatched-arm penalty is
+what allows a strand to terminate rather than receive a forced
+continuation.
 
-That claim carries a working condition. The only evidence PLECTA reads at a
-crossing is directional, namely the tangent, the turns onto the chord between
-two tips, and the continuity of signed curvature, each read over tens of
-pixels of arclength, so the method applies where direction survives a crossing
-at that scale, as in semiflexible networks such as nanotube bundles, actin,
-collagen and synthetic fibres. Where that condition fails, as for a freely
-flexible chain whose tangent decorrelates within the junction, the method
-fails rather than degrades; Section~\ref{sec:limitations} returns to this
-limit.
+PLECTA assumes that directional information remains reliable over the
+spatial scale of a junction: the evidence it reads is the tangent, the turns
+onto the chord between two tips, and the continuity of signed curvature, each
+estimated over tens of pixels of arclength. The assumption holds for
+semiflexible networks such as nanotube bundles, actin, collagen and synthetic
+fibres, and the method is not applicable where tangent correlation is lost
+within the junction scale, as for freely flexible chains;
+Section~\ref{sec:limitations} returns to this limit.
 
 We name the method PLECTA, after the Latin \emph{plecta}, a braid. Every
 parameter is fixed in a published configuration and the implementation draws
@@ -80,9 +76,10 @@ Reaching real micrographs takes one further component, and the workflow is
 deliberately divided in two. An upstream route turns a raw SEM micrograph into
 a binary strand-axis mask by a synthetic-data-driven CycleGAN/U-Net whose
 training pairs are synthesised rather than annotated \citep{ruehle2021workflow};
-PLECTA is everything downstream of that mask. The division is what makes the
-grouping measurable on its own, against references whose identities are known
-exactly, and it keeps width rendering from moving an identity score. We
+PLECTA comprises only the reconstruction stages downstream of mask
+generation. This separation enables independent evaluation of instance
+grouping, against references whose identities are known exactly, and prevents
+width rendering from affecting the identity metrics. We
 evaluate PLECTA on \PlectaHeldoutSceneCount{} procedurally generated scenes
 spanning 20 to 60\,\% areal coverage, render a further
 \PlectaRobustnessSceneCount{} scenes once from a clean axis and once from a

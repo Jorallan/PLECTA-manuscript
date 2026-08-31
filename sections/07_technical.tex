@@ -52,10 +52,12 @@ length scale of the gap penalty and the width of the chord fade respectively.
   \input{results/plecta_parameter_table}
 \end{table}
 
-\subsection{Prices, gates and admissibility}
+\subsection{Penalties, gates and admissibility}
 
-Leaving a stub unmatched is priced rather than forbidden, and the price $p_i$
-also fixes admissibility: an edge is offered only when $C_{ij}<p_i+p_j$. Exact
+Leaving a stub unmatched carries a penalty rather than a prohibition, and
+the penalty $p_i$
+also fixes admissibility: an edge is a candidate only when
+$C_{ij}<p_i+p_j$. Exact
 maximum-weight partial matching then maximises $\sum(p_i+p_j-C_{ij})$ over
 disjoint pairs, which minimises total link cost plus $p_i$ for every stub left
 free.
@@ -65,7 +67,7 @@ $C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective, so a
 maximum-weight \emph{partial} matching would never select it, and declining to
 offer it removes an edge that could not have been chosen.
 
-At the configured prices junction stubs carry
+At the configured penalties junction stubs carry
 $p_i=\PlectaParamJunctionPrice{}$, so a junction edge needs
 $C<\PlectaParamJunctionLimit{}$. Gap stubs carry
 $p_i=\PlectaParamGapPrice{}$, so a gap edge needs
@@ -80,13 +82,16 @@ scenes.
 
 Rounds $r=0,\ldots,\PlectaParamRounds{}-1$ apply a schedule fraction
 $\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/7$ that
-scales the unmatched prices and the two gap angle limits, and nothing else.
-Scaling a price \emph{down} admits fewer edges, admissibility being
+scales the unmatched penalties and the two gap angle limits, and nothing
+else.
+Scaling a penalty \emph{down} admits fewer edges, admissibility being
 $C_{ij}<p_i+p_j$, and scaling an angle limit down narrows the gap gates, so
 early rounds are the conservative ones and are deliberately under-linked: while
-the frames are least reliable, only pairings that survive the reduced prices and
+the frames are least reliable, only pairings that survive the reduced
+penalties and
 narrowed gates are committed, and the constraints relax towards their configured
-values as the chains assembled so far sharpen the frames. The final round,
+values as the chains assembled so far improve the frame estimates. The
+final round,
 $\alpha_7=1$, is the only one run at the configured parameters, and is the one
 returned.
 

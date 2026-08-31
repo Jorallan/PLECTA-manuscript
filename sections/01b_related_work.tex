@@ -1,13 +1,13 @@
 \section{Related work}
 \label{sec:related}
 
-The problem of Section~\ref{sec:intro} touches several branches of prior
-work: tools that measure strand images without resolving instances, methods
-that recover instances by greedy continuation, methods that decide a whole
-neighbourhood at once, complete micrograph-to-measurement workflows, and depth
-ordering from a single view. This section takes them in turn.
+Prior work relevant to the problem of Section~\ref{sec:intro} can be
+grouped into five categories: network-level measurement tools, greedy
+instance-reconstruction methods, joint neighbourhood-optimisation methods,
+complete micrograph-to-measurement workflows, and monocular depth-ordering
+methods.
 
-\subsection{Tools that stop short of instances}
+\subsection{Network-level methods without instance reconstruction}
 \label{sec:rel-tools}
 
 Existing tools answer part of the problem. Semantic segmentation is mature,
@@ -18,7 +18,7 @@ imaging as much as anywhere
 \citep{stan2020optimizing,davydzenka2022deep}, and nanotube micrographs
 have their own trained segmenters
 \citep{trujillo2017segmentation,nguyen2023cntsegnet,dedonato2025deep}. But a
-foreground mask carries no identity, so it inherits both failures rather than
+foreground mask encodes no identity, so it inherits both failures rather than
 resolving them. Instance methods assume the objects are compact, in materials microscopy
 \citep{he2026instance} as in the general-purpose families: bounded
 blobs, centre-directed flows, star-convex outlines, none of which describes a
@@ -40,11 +40,10 @@ since two strands that cross genuinely share the same pixels.
 \label{sec:rel-greedy}
 
 Recovering strands through crossings has been addressed repeatedly. Existing
-methods
-differ in two ways that matter: what evidence they read, and whether a pairing
-once made can later be undone. On both counts the field clusters.
+methods differ primarily in the evidence used for continuation and in whether
+earlier pairings can subsequently be revised.
 
-The largest cluster follows one recipe. These methods skeletonise the mask, cut
+A large class of methods follows a common procedure: skeletonise the mask, cut
 the crossing out,
 and pair the arms left behind by how nearly each continues the direction of
 another. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
@@ -57,7 +56,7 @@ it suffices. Its weakness is structural: once an arm is paired, a later arm
 that contradicts the choice cannot reopen it.
 
 Two remedies have been tried. The first is to bring in more evidence
-than a mask carries. The stronger of Wegmayr et al.'s two variants drops the
+than a mask contains. The stronger of Wegmayr et al.'s two variants drops the
 angle rule and
 learns pixel embeddings on patches around each junction; it reads the greyscale
 image, and it must be trained on crops in which every fibre is already labelled
@@ -88,8 +87,8 @@ settles; a join that a later fit contradicts can therefore still be undone
 \citep{basu2015extraction}. DeFiNe covers an already-built weighted graph with
 the smoothest paths it can find, and lets two paths share an edge, so a
 crossing pixel can belong to both strands instead of being awarded to one
-\citep{breuer2015define}. Neither, though, starts from an axis mask: one wants
-intensities, the other a graph some earlier stage has already produced. Both
+\citep{breuer2015define}. Neither, however, starts from an axis mask: Basu et al.\ require image
+intensities, whereas DeFiNe requires a graph produced by an upstream stage. Both
 also reassemble at most three pieces at a time, which limits how much of a
 shattered neighbourhood a single round can repair. Deciding broadly and
 starting from a mask have so far been alternatives.
