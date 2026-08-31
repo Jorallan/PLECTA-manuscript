@@ -49,7 +49,7 @@ costs least exactly where the score is lowest, because there the tangles rather
 than the gaps set the difficulty.
 Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
-Section~\ref{sec:res-comparators} measures cost properly, where the
+Section~\ref{sec:res-comparators} measures cost systematically, where the
 transferable quantity is the scaling exponent rather than any absolute time.
 
 Areal coverage labels these strata but does not cause the difficulty they
@@ -129,8 +129,8 @@ The stage is accurate where it has evidence and blind where it has none, and
 the table separates the two. At a crossing it decides, order accuracy runs
 \PlectaDepthDecidedLow{} to \PlectaDepthDecidedHigh{} whether the 2-D geometry
 was given or reconstructed and whether the scene carries the sparser crossing
-load or roughly five times it. That is what the decision is worth wherever the
-image speaks to a pair of strands. How often it does is the rest of the table.
+load or roughly five times it. That is the accuracy of the decision wherever the
+image bears on a pair of strands. How often it does is the rest of the table.
 
 Over every pair of strands in the scene, order accuracy falls to
 \PlectaDepthCleanCovTwoZeroAllOrder{}, and that is an absence of evidence
@@ -145,8 +145,8 @@ collapse. Suppose the stage orders the connected pairs at the rate it achieves
 on pairs that cross and guesses the rest: at 20\,\% coverage the two terms come
 to \PlectaDepthCleanCovTwoZeroOrderPred{}, against
 \PlectaDepthCleanCovTwoZeroAllOrder{} measured. At the sparser coverage the
-stage beats that model, so the unconnected pairs are evidently not quite coin
-flips; at the denser end it falls short, which is what error accumulating
+stage beats that model, so the unconnected pairs are evidently not entirely
+uninformative; at the denser end it falls short, which is what error accumulating
 along the long transitive chains of a large component would do. Depth claims
 are therefore scoped to the connected component, and a globally ordered film
 would need evidence that does not travel through crossings, such as defocus, or
@@ -260,14 +260,14 @@ axis beside what PLECTA made of it.
     \input{results/plecta_real_masks_table}
 \end{table}
 
-What the \PlectaRealFieldCountLower{} fields say, per field and per condition,
-is Table~\ref{tab:plecta-real-masks}. Averaged over them, PLECTA
+Table~\ref{tab:plecta-real-masks} reports the \PlectaRealFieldCountLower{}
+fields, per field and per condition. Averaged over them, PLECTA
 reaches \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
 \PlectaRealUNetFOneMean{} from the nnU-Net axis. The first figure is what this
 section exists to
 establish: the grouping holds on axis masks read off real micrographs and not
 only on the generator's. The second is a different claim and a weaker one, and
-the paragraphs below take the two apart; what it is worth is settled in
+the paragraphs below distinguish the two; its weight is settled in
 Section~\ref{sec:limitations}, where it is read against what a second human
 annotator achieves on these same fields, which is less.
 \PlectaRealFieldCount{} fields cannot estimate a population, and the
@@ -298,8 +298,7 @@ the \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{} at
 which the two annotators agree with no method in the loop. A second human
 reading of these strands is therefore no better an axis than the segmenter's,
 and the nnU-Net figure is bounded by how far one annotator's definition of a
-strand can be reproduced at all, which Section~\ref{sec:limitations} takes
-apart.
+strand can be reproduced at all, which Section~\ref{sec:limitations} examines.
 
 \subsection{Development ablations}
 \label{sec:res-ablation}
@@ -311,7 +310,7 @@ is measured on the development scenes and none of it reuses the held-out
 set, so the numbers below are diagnostic and are not comparable with the
 held-out result.
 
-\textbf{What each part is worth.} Table~\ref{tab:plecta-ablation} varies one
+\textbf{Contribution of each component.} Table~\ref{tab:plecta-ablation} varies one
 thing at a time. Two rows change what a link costs, dropping the junction
 chord-turn term or the curvature term; two change the graph the linker reads,
 leaving neighbouring junction clusters unconsolidated or arms too short to
@@ -324,7 +323,7 @@ consolidation.
 Two rows are controls rather than components. Removing the joint solve leaves
 PLECTA otherwise intact and pairs each node's arms cheapest edge
 first, rather than by whichever complete pairing of that node is cheapest
-overall; a cheap edge taken early can then strand two arms that would have
+overall; a cheap edge taken early can then leave unpaired two arms that would have
 paired well together, which is why that arm fails by division rather than by
 merging. It also runs at parameters that were selected with the exact matcher
 in the loop, a bias in the exact matcher's favour. The last row replaces the
@@ -416,7 +415,7 @@ Favoured in all those ways, the four order as
 Table~\ref{tab:plecta-comparators} shows, and hold that order at every density
 and on both mask conditions (Figure~\ref{fig:metric-panels}). SIFNE is the
 strongest of them, so the margin rests on a method configured for this data
-rather than on a default that suits it badly. Two entries read against that ordering. The first is
+rather than on a default that suits it badly. Two entries qualify that ordering. The first is
 DNAi, whose deficit is a limitation of domain and density rather than a
 general ranking: it is built for DNA-fibre micrographs, which are sparse, and
 where the network is sparse and the axis clean it recovers
@@ -425,12 +424,12 @@ where the network is sparse and the axis clean it recovers
 matching has in that it too optimises over a neighbourhood and prices joins on
 curvature. It stands second only to PLECTA on Crossing Fidelity while its
 pairwise \Fone{} sits far below both released methods, so the curvature-priced
-matching does real work at the junctions and what costs it is everything
-around that decision. That is why the priced refusal of
+matching is effective at the junctions, and the deficit arises in the
+stages around that decision. That is why the priced refusal of
 Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than on
 its own. \suppcomparators{} gives both in full.
 
-\textbf{Each method on its own ground.} That ordering is drawn from one
+\textbf{Each method in its own regime.} That ordering is drawn from one
 generator, so it was tested in the regimes the two released methods were built
 for. On GraFT's own generator, run unmodified at its published settings over
 \PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
@@ -472,7 +471,7 @@ SIFNE and \PlectaRealBasuFOneMean{} for Basu, and leads on every measure
 reported. The ordering established on synthetic scenes therefore holds on
 masks read off real micrographs.
 
-It survives by much less, and the input is the likely reason. A skeleton of a
+The margin is much narrower there, and the input is the likely reason. A skeleton of a
 hand annotation is about as clean an axis as a real field can supply:
 unbroken, thin, and placed where a person judged the strand to be. What
 separates these methods on the synthetic rows is what each does with evidence

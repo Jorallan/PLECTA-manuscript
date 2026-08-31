@@ -154,7 +154,8 @@ enabled.
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
 
-The method proper. It reads the binary axis mask and nothing else, and the
+This section describes the method itself. It reads the binary axis mask
+and nothing else, and the
 subsections follow the order it runs in: the graph it cuts the mask into,
 the cost that prices one join, the junction solve, the gap bridging, and
 the schedule that repeats the two as chain-level evidence accumulates.
@@ -227,8 +228,8 @@ are listed in \supprecon{}.
 
 \subsubsection{Candidate gates and exact matching}
 
-Leaving a stub unmatched is priced rather than forbidden, and that price does
-double duty: it also fixes what may be offered at all, since an edge costing
+Leaving a stub unmatched is priced rather than forbidden, and that price
+serves two purposes: it also fixes what may be offered at all, since an edge costing
 more than the two prices it would save could never be chosen. Exact
 maximum-weight partial matching then picks, over disjoint pairs,
 \begin{equation}
@@ -270,7 +271,7 @@ threshold and a price and keep them consistent.
 
 Solving a junction as one matching rather than one edge at a time is the
 distinction claimed in Section~\ref{sec:intro}, and Figure~\ref{fig:matching}
-shows what it buys on real nodes, alongside the other two decisions the linker
+shows what it achieves on real nodes, alongside the other two decisions the linker
 makes. A locally attractive edge can be declined, as at the three-arm node of
 Figure~\ref{fig:matching}b. Joint and sequential solutions coincide at plain
 crossings and diverge only as nodes grow dense: they never disagree at nodes of
@@ -287,7 +288,7 @@ masks and the same local geometry and differs only in pairing greedily instead
 of jointly, so the \PlectaGreedySweptDeltaFOne{} \Fone{} between them isolates
 the formulation rather than the evidence. The component ablations reported
 alongside it then ask the complementary question, whether the rest of the
-combination is load-bearing or decorative, and find that removing the junction
+combination contributes measurably, and find that removing the junction
 chord-turn term costs \PlectaAblationTangentTermOnlyDeltaFOne{} and removing
 gap matching \PlectaAblationNoGapBridgingDeltaFOne{}. Neither measurement
 alone would do: the first says the matching is worth its complexity, the
