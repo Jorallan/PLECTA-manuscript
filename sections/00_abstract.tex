@@ -1,47 +1,25 @@
-Instance segmentation on a dense network of long, thin strands is difficult
-because it can fail in two opposite ways: a loose reconnect algorithm ends up
-fusing the wrong strands, and a strict one ends up fragmenting them, so that
-each strand is split into multiple pieces. A non-perfect binary mask, such as
-one from machine-learning segmentation, makes both failures harder to avoid,
-because it poses the same two ambiguities at every junction and every gap: a
-true crossing, where separate strands legitimately fuse into one connected
-component, cannot be told apart from an erroneous merge, and a true end
-cannot be told apart from a break left by a fading segmentation. Resolving
-either ambiguity takes the same judgement: which arm continues into which.
-
-We present PLECTA, which makes that judgement from a binary strand-axis mask
-and nothing else. It cuts the skeleton into arms and junctions and solves each
-junction, of any degree, as one exact maximum-weight \emph{partial} matching in
-which leaving an arm unmatched carries an explicit price: a strand may end
-rather than have a continuation invented for it. Crossing pixels go to every
-strand that claims them, so the output is overlapping layers rather than a hard
-partition. The evidence is purely directional, tangent and curvature either
-side of the discontinuity, so the method applies wherever direction survives a
-crossing: nanotube bundles, actin and collagen, synthetic fibres, but not
-freely flexible chains.
-
-On \PlectaHeldoutSceneCount{} synthetic scenes from unseen seeds, PLECTA
-reaches mean pairwise \Fone{}\,=\,\PlectaHeldoutFOneMean{}, falling from
-\PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as coverage
-rises from 20 to 60\,\%. Run from their own sources on identical masks, three
-released implementations trail it at every density, and repeating the
-comparison over \PlectaRegimeSceneCount{} scenes from an independently
-published generator, used unmodified at its own settings, leaves that ordering
-unchanged.
-
-A secondary depth stage then reads the greyscale to decide which strand lies on
-top at each crossing and stacks the network into layers, an ordering otherwise
-obtained by destructive sectioning. It is correct on at least
-\PlectaDepthDecidedLow{} of the crossings it commits to, against a chance level
-of \PlectaDepthChance{}, because it abstains where the image does not separate
-the two by more than the local noise; declining up to
-\PlectaDepthAbstainHigh{}\,\% of crossings and counting every one of those as
-an error, it remains correct on at least \PlectaDepthAllLow{} of all reference
-crossings. The method uses no random number generator and its configuration is
-published, so a mask yields the same strands on every run. We demonstrate the
-whole pipeline on \PlectaRealFieldCountLower{} carbon-nanotube SEM fields, from
-greyscale micrograph to stacked instances, with the upstream binary
-segmentation trained on manufactured image and mask pairs so that no annotation
-enters the route; the manual annotations on those fields are the reference, not
-an input. The ordering survives on real masks, and we state plainly what that
-evidence does not support.
+Many materials and tissues are built from long, thin strands laid over one
+another: carbon-nanotube sheets, collagen networks, paper, nonwoven textiles.
+Their effective properties are governed by the architecture of the strand
+network, so that architecture must be measured from micrographs, with every
+strand recovered as a separate object that remains addressable through every
+crossing. This remains unsolved where strands cross densely: where two strands
+cross, their pixels merge into one connected region, and a method that trusts
+connectivity fuses them into one object, while where the image fades a single
+strand arrives in pieces and a cautious method leaves it fragmented. We
+present PLECTA, a deterministic method that reconstructs individual strands
+from a binary strand-axis mask, a two-valued image marking the pixels on
+strand centrelines as produced by any upstream segmentation, and from nothing
+else. Its originality lies in how junctions are decided: each junction, of any
+degree, is solved as a single exact maximum-weight partial matching in which
+leaving an arm unmatched carries an explicit price, so a strand may end rather
+than have a continuation invented for it, and crossing pixels belong to every
+strand that claims them, so the output is overlapping layers rather than a
+partition. On held-out synthetic scenes PLECTA leads three released
+alternatives at every density tested, and the ordering is unchanged on an
+independently published generator run at its own settings. A secondary stage
+reads the paired greyscale micrograph to order the strands in depth at each
+crossing, abstaining where the image does not separate the pair from the local
+noise. The paper demonstrates the complete route on scanning electron
+micrographs of carbon-nanotube sheets, from raw image to stacked strand
+instances, with no manually annotated image anywhere in the pipeline.
