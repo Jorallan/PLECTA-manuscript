@@ -43,7 +43,11 @@
      each, and the last round is returned};
 
   % ---- what the method reads, stated once --------------------------------
-  \node[note, anchor=south] at (27, 10)
+  %  Anchored at the mask box's own left edge (x = 8), not centred on the
+  %  box: centred, the note's left half stuck out past the drawing's left
+  %  margin, widened the bounding box to 166 mm, and the whole picture
+  %  overflowed \linewidth by 35 pt.
+  \node[note, anchor=south west] at (8, 10)
     {procedural, or segmented from a micrograph
      (Section~\ref{sec:res-real})};
 

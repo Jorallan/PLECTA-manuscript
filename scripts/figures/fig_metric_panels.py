@@ -119,6 +119,10 @@ def panel(ax, cells, key, densities):
                 mfc="white", mew=1.2, zorder=4, label=label, clip_on=False)
     for y in (0.25, 0.50, 0.75):
         ax.axhline(y, color=GRAY, lw=0.4, alpha=0.30, zorder=1)
+    #  Vertical counterparts at the coverage strata, same weight, so a value
+    #  can be read down to its stratum as well as across to its level.
+    for x in densities:
+        ax.axvline(x, color=GRAY, lw=0.4, alpha=0.30, zorder=1)
     ax.set_xticks(list(densities))
     ax.set_xticklabels(["%d" % d for d in densities])
     ax.set_xlim(min(densities) - 3, max(densities) + 3)

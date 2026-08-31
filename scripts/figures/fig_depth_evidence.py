@@ -203,9 +203,18 @@ def panel_decision(ax, d, m, m_c, sigma):
     ax.barh([1], [dj], height=0.42, color=FIL_B, zorder=3)
     ax.barh([0], [di], height=0.42, color=FIL_A, zorder=3)
     for yy, v in ((1, dj), (0, di)):
-        ax.annotate("%.3f" % v, (v, yy), xytext=(3, 0),
-                    textcoords="offset points", fontsize=PT_ANNOT, color=INK,
-                    va="center")
+        #  A long bar carries its value inside, right-aligned in white:
+        #  outside, the label of the longer distance ran into the dashed
+        #  contrast line drawn a few pixels beyond the bar's end.  The short
+        #  bar keeps its label outside, where nothing is drawn near it.
+        if v > 0.55 * denom:
+            ax.annotate("%.3f" % v, (v, yy), xytext=(-4, 0),
+                        textcoords="offset points", fontsize=PT_ANNOT,
+                        color="white", ha="right", va="center", zorder=4)
+        else:
+            ax.annotate("%.3f" % v, (v, yy), xytext=(3, 0),
+                        textcoords="offset points", fontsize=PT_ANNOT,
+                        color=INK, va="center")
     ax.set_yticks([0, 1])
     ax.set_yticklabels(["$|m_c-m_i|$", "$|m_c-m_j|$"], fontsize=PT_ANNOT)
 

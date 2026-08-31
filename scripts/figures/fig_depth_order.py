@@ -125,12 +125,25 @@ def arrow(ax, p, q, colour, lw=1.2, shrink=13, style="-|>"):
                                  mutation_scale=7, zorder=3))
 
 
+def _badge_text_colour(fill):
+    """Dark digits on a light fill, white on a dark one.
+
+    White on the amber of strand 31 (MISSED_INST) was below 2:1 contrast,
+    which is the kind of thing a reviewer notices in print.  The 0.6 luma
+    threshold sends amber to ink and the blue, orange and green to white.
+    """
+    import matplotlib.colors as mcolors
+    r, g, b = mcolors.to_rgb(fill)
+    return INK if 0.299 * r + 0.587 * g + 0.114 * b > 0.6 else "white"
+
+
 def draw_nodes(ax, places):
     for sid, (x, y) in places.items():
         colour = STRAND_STYLE[sid][0]
         ax.plot([x], [y], "o", ms=15, mfc=colour, mec=INK, mew=0.8,
                 alpha=0.85, zorder=4)
-        ax.text(x, y, str(sid), fontsize=PT_ANNOT, color="white",
+        ax.text(x, y, str(sid), fontsize=PT_ANNOT,
+                color=_badge_text_colour(colour),
                 fontweight="bold", ha="center", va="center", zorder=5)
     ax.set_xlim(-0.28, 1.28)
     ax.set_ylim(-0.30, 1.30)
@@ -162,7 +175,8 @@ def panel_scene(ax, d):
             #  their labels in the same place.
             frac = (0.10, 0.26, 0.10, 0.52)[GROUP.index(sid)]
             at = inside[min(len(inside) - 1, max(1, int(frac * len(inside))))]
-            ax.annotate(str(sid), at, fontsize=PT_ANNOT, color="white",
+            ax.annotate(str(sid), at, fontsize=PT_ANNOT,
+                        color=_badge_text_colour(STRAND_STYLE[sid][0]),
                         fontweight="bold", ha="center", va="center",
                         bbox=dict(boxstyle="circle,pad=0.16",
                                   fc=STRAND_STYLE[sid][0], ec="white",
