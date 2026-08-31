@@ -5,16 +5,18 @@ network, so that architecture must be measured from micrographs, with every
 strand recovered as a separate object that remains addressable through every
 crossing. Dense crossings remain challenging because intersecting strands form a
 single connected component, whereas signal loss can divide one strand into
-multiple disconnected fragments. We present PLECTA, a deterministic method that reconstructs individual
-strands using only a binary mask of strand centrelines, as produced by an
-upstream segmentation method. At each junction, irrespective of degree, PLECTA solves an exact
+multiple disconnected fragments. We present PLECTA, a deterministic method
+that reconstructs individual strands using only a binary image in which
+foreground pixels mark strand centrelines. At each junction, irrespective of
+degree, PLECTA solves an exact
 maximum-weight partial-matching problem with an explicit penalty for
 unmatched arms. This formulation permits genuine strand terminations and
 produces overlapping instance layers in which crossing pixels may be assigned
-to multiple strands. On held-out synthetic scenes, PLECTA achieved the highest strand-grouping
-accuracy among three released alternatives at every evaluated density, and the method
-ranking was preserved on an independently published generator evaluated at
-its original settings. A secondary image-informed stage uses the corresponding greyscale
+to multiple strands. On held-out synthetic scenes, PLECTA reconstructed strand
+identities more accurately than three released alternatives across all
+evaluated densities, and this ranking was preserved on an independently
+published generator evaluated using its original settings. A secondary
+image-informed stage uses the corresponding greyscale
 micrograph to estimate the depth order at each crossing and abstains when the
 intensity evidence does not exceed the local noise. The complete workflow is demonstrated on scanning electron micrographs of
 carbon-nanotube sheets, from raw image to stacked strand instances, without
