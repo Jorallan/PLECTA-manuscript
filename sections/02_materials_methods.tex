@@ -206,8 +206,8 @@ offset, so two parallel arms that never meet are penalised. And because it is
 the chord terms that degrade over short separations, the fade $q(d)$ withdraws
 them as the tips approach rather than letting an unstable angle dominate. The
 weights, the scales $\ell_0$ and $d_0$, and the constant placing curvature on
-the scale of the angular terms are all fixed in the released configuration and
-are listed in \supprecon{}.
+the scale of the angular terms are fixed parameters, listed in
+\supprecon{}.
 
 \begin{figure}[tbp]
     \centering
@@ -313,11 +313,9 @@ second that the terms it matches on are not redundant.
 
 Connected components of accepted arm links define strands. PLECTA
 paints every arm pixel and every junction cluster touched by a chain into that
-strand, so intersecting strands share crossing pixels. An isolated one-arm
-component shorter than 6 px is omitted. Accepted gap links determine identity
-but are not painted into the fixed centreline output. All effective parameters,
-including values previously inherited as code defaults, are materialised in the
-fixed JSON configuration.
+strand, so intersecting strands share crossing pixels. Accepted gap links determine identity
+but are not painted into the fixed centreline output. All parameters are fixed in a
+published configuration (\supprecon{}).
 
 \subsection{Image-informed reconstruction}
 \label{sec:mm-image}
@@ -327,8 +325,8 @@ Where a greyscale image of the same field exists, three further stages can
 read it: two give each strand a width, and one orders the strands at their
 crossings. All three run after the grouping is fixed and none can move a pixel
 from one strand to another, so no identity score in this paper depends on any
-of them. All are governed by limits recorded in the fixed configuration, and
-none is specific to SEM: they take whatever image accompanies the mask, and
+of them. All are governed by fixed parameters (\supprecon{}), and none is specific
+to SEM: they take whatever image accompanies the mask, and
 SEM is simply the case demonstrated here.
 
 \subsubsection{Width and ribbon rendering}
