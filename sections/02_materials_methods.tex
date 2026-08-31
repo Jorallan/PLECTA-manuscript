@@ -460,19 +460,14 @@ has a crossing, including the two ways it can be undefined rather than zero.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_f1_example.pdf}
     \caption{Illustration of the endpoint metric on the smallest case that
-    contains a crossing. Two strands cross; the scorer removes a neighbourhood
-    of the junction (red) and keeps the four arms it separates, then
-    evaluates, for each of the six pairs of arms, whether the grouping joins
-    it, or leaves it apart, as the reference does. \textbf{(a)}~is the reference pairing.
-    \textbf{(b)}~leaves one strand unlinked, a split, which costs recall
-    alone. \textbf{(c)}~merges both strands into one instance, which costs
-    precision alone. \textbf{(d)}~pairs the arms the wrong way round and
-    scores zero, containing no correctly grouped arm pair. \textbf{(e)}~emits every arm
-    separately, which makes no pair at all, so precision has no denominator
-    and $\Fone{}$ is undefined rather than zero, which is one reason the adjusted
-    Rand index and variation of information are reported beside it. Every
-    value is computed by the scorer of \suppmeasures{}, not worked out by
-    hand.}
+    contains a crossing. The scorer removes a neighbourhood of the junction
+    (red) and evaluates, for each of the six pairs of the four remaining
+    arms, whether the grouping joins it as the reference~(a) does. Splits~(b)
+    reduce recall and merges~(c) reduce precision; the all-separate
+    grouping~(e) produces no pair, so precision and \Fone{} are undefined
+    rather than zero, one reason the adjusted Rand index and variation of
+    information are reported alongside. All values are computed by the
+    scorer of \suppmeasures{}.}
     \label{fig:f1-example}
 \end{figure}
 

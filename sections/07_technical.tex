@@ -194,7 +194,7 @@ in grey levels, far below the noise of any of these images. The consequence was
 structural rather than statistical: a maximal score was then
 reachable on a separation smaller than the noise, and a maximal score exceeded
 any abstention threshold, so the rule could not abstain on such a crossing
-whatever the evidence actually was. Nor was that regime rare: a substantial
+regardless of the evidence. Nor was that regime rare: a substantial
 fraction of crossings saturated this way, and among the saturated ones those
 whose separation fell below the noise were markedly less accurate than those
 separated by more than it. Those supporting measurements were made on the
@@ -278,8 +278,8 @@ here. Within each connected component of the crossing graph one total order
 over its instances is derived so as to maximise the total satisfied weight,
 and every relation in the component is then re-read from that order: the ones
 the order disagrees with are flipped rather than discarded, and both the flip
-and the original local score are recorded, so a reader can see how much the
-global correction moved. Which relations that turns out to be is the subject of
+and the original local score are recorded, to quantify how much the global
+correction moved. Which relations that turns out to be is the subject of
 the paragraph below.
 
 Maximising satisfied weight is the minimum-weight feedback arc set objective,
@@ -316,8 +316,7 @@ exact-solver size limit) is carried in a single released parameter file,
 grouped by the stage it belongs to, with the 2-D grouping section checked
 against the frozen record that produced the published numbers.
 Table~\ref{tab:cost-weights} gives that file's 2-D half;
-Table~\ref{tab:depth-params} gives its depth half, so both are shown rather
-than asserted. Every value in either table, and every parameter this section
+Table~\ref{tab:depth-params} gives its depth half. Every value in either table, and every parameter this section
 quotes in passing, is read from the released file when this document is built.
 
 \begin{table}[tbp]

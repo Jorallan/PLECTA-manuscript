@@ -219,9 +219,9 @@ set.
 \section{Comparator configuration}
 \label{app:comparators}
 
-The article's comparator section states each adaptation and its cost; this is
-the mechanism behind it, for a reader checking that the comparison was run
-fairly. \textbf{DNAi} clusters junction pixels by single linkage and erases a
+The article's comparator section states each adaptation and its cost; this
+section documents the mechanism behind each, so that the comparison can be
+verified. \textbf{DNAi} clusters junction pixels by single linkage and erases a
 disk at each cluster. At its released 10\,px linkage distance, crossings closer
 than that chain into one cluster, which at 60\,\% coverage reaches 89\,px across
 and is replaced by a single small erasure disk, leaving a whole tangle as one
@@ -409,11 +409,13 @@ were tuned on the same ones.
 
 The evaluation set is \PlectaHeldoutSceneCount{} scenes, 32 at each of 20, 30,
 40 and 60\,\% coverage, generated from seed blocks disjoint from development.
-Disjointness is not asserted but checked: a compact manifest records every seed
+Disjointness is verified programmatically: a compact manifest records every
+seed
 block, and an executable verifier confirms the counts, the disjointness and the
 scene metadata it can reach. A further 125-scene locked set exists and
 \emph{remains unevaluated}; it is reserved against the possibility that the
-evaluation set above is eventually read too often to stay honest.
+evaluation set above is eventually reused often enough to compromise its
+held-out status.
 
 Two qualifications follow from this design and are stated wherever they bear on
 a number. First, the evaluation scenes are an independent \emph{sample} but not
