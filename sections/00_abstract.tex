@@ -11,12 +11,11 @@ upstream segmentation method. At each junction, irrespective of degree, PLECTA s
 maximum-weight partial-matching problem with an explicit penalty for
 unmatched arms. This formulation permits genuine strand terminations and
 produces overlapping instance layers in which crossing pixels may be assigned
-to multiple strands. On held-out synthetic scenes, PLECTA achieved the highest performance among
-three released alternatives at every evaluated density, and the method
+to multiple strands. On held-out synthetic scenes, PLECTA achieved the highest strand-grouping
+accuracy among three released alternatives at every evaluated density, and the method
 ranking was preserved on an independently published generator evaluated at
-its original settings. A secondary stage
-reads the paired greyscale micrograph to order the strands in depth at each
-crossing, abstaining where the image does not separate the pair from the local
-noise. The paper demonstrates the complete route on scanning electron
-micrographs of carbon-nanotube sheets, from raw image to stacked strand
-instances, with no manually annotated image anywhere in the pipeline.
+its original settings. A secondary image-informed stage uses the corresponding greyscale
+micrograph to estimate the depth order at each crossing and abstains when the
+intensity evidence does not exceed the local noise. The complete workflow is demonstrated on scanning electron micrographs of
+carbon-nanotube sheets, from raw image to stacked strand instances, without
+manually annotated images used for training or as pipeline inputs.

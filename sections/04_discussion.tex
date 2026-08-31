@@ -11,14 +11,14 @@ assigned to every strand that passes through it.
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
   \item Over \PlectaHeldoutSceneCount{} held-out synthetic scenes from unseen
-        seeds it reaches mean pairwise
+        seeds it achieved mean pairwise
         \Fone{}=\PlectaHeldoutFOneMean{} [\PlectaHeldoutFOneCILow{},
         \PlectaHeldoutFOneCIHigh{}], falling from
         \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as
         areal coverage rises from 20 to 60\,\%.
   \item On identical masks it achieved the highest scores against four
-        published methods at every density, and the ranking is preserved on a
-        competitor's own generator, run unmodified at its published
+        published methods at every density, and the ranking was preserved on
+        a competitor's own generator, run unmodified at its published
         settings.
   \item The ablation analysis identified the junction chord-turn term and
         gap bridging as the largest contributors to reconstruction
@@ -31,12 +31,11 @@ assigned to every strand that passes through it.
   \item The grouping core uses no random number generator and no training data,
         and its configuration is published, so one mask yields one answer on
         every run.
-  \item The route from a greyscale micrograph to those instances needs no
-        hand-annotated image at any point. The upstream segmenter is trained on
-        manufactured image and mask pairs, in which the mask that made the
-        image is its own label, so the demonstration runs end to end on real
-        SEM without a single manually annotated micrograph. It is not
-        training-free, but the training it uses costs no annotation.
+  \item The end-to-end workflow does not require manually annotated
+        training images: the upstream segmenter is trained on synthetic image
+        and mask pairs in which the generating mask provides the label. The
+        workflow therefore requires training, but not manual training
+        annotations.
 \end{itemize}
 
 \noindent\textbf{Scope and limitations.}
@@ -47,11 +46,11 @@ assigned to every strand that passes through it.
         \PlectaCurvinessSweepLow{}--\PlectaCurvinessSweepHigh{}\,\% of default,
         and its curve wavelength over
         \PlectaSmoothLow{}--\PlectaSmoothHigh{}\,px, moves the level means of
-        \Fone{} by at most \PlectaCurvinessMaxSpread{} and
+        \Fone{} by at most \PlectaCurvinessMaxSpread{} and, respectively,
         \PlectaSmoothMaxSpread{}, against a scene-to-scene scatter of
         \PlectaCurvinessMinSceneSD{} within a level (\suppsplit{}).
   \item The comparison runs four methods on data none of them was built for. It
-        supports a mechanical claim: that pairing endpoints greedily, or
+        supports a methodological claim: that pairing endpoints greedily, or
         committing with no option to decline, loses identity in dense
         crossings.
   \item The remaining sensitivity is the segmenter's. PLECTA can bridge a short
@@ -60,7 +59,7 @@ assigned to every strand that passes through it.
   \item The real-material demonstration is a case study of
         \PlectaRealFieldCountLower{} CNT SEM fields and cannot estimate
         generalisation. Scored against the annotator whose skeleton it was
-        given, PLECTA reaches
+        given, PLECTA achieved
         \PlectaInterAnnotatorSameFLow{}--\PlectaInterAnnotatorSameFHigh{}, and
         across annotators
         \PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{},
@@ -74,11 +73,13 @@ assigned to every strand that passes through it.
         strand instance. A real-data score is
         therefore bounded by that disagreement rather than by the method, and
         identity through an occlusion is the part annotation cannot settle.
-  \item Applicability follows the premise. The evidence is directional, so
-        where direction does not survive a crossing, as in freely flexible
-        chains, the method fails rather than degrades.
+  \item Applicability is limited to networks in which directional
+        continuity persists across the junction scale; reconstruction fails
+        rather than degrades when that assumption is violated, as for freely
+        flexible chains.
 \end{itemize}
 
-Strengthening any of these conclusions would require independent real
-fields sealed before configuration, validated physical widths, further released implementations run
-in a matched comparison, and an external-generator benchmark with sealed seeds.
+Stronger conclusions would require an independent real-image test set
+defined before parameter selection, validated physical-width measurements,
+further released implementations evaluated under matched conditions, and an
+external-generator benchmark using previously unseen seeds.

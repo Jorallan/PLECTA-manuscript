@@ -126,11 +126,11 @@ accuracy shown.}
 \end{table}
 
 Accuracy is high where image evidence exists and substantially lower where
-it does not, and the table separates the two. At a crossing it decides, order accuracy runs
-\PlectaDepthDecidedLow{} to \PlectaDepthDecidedHigh{} whether the 2-D geometry
-was given or reconstructed and whether the scene carries the sparser crossing
-load or roughly five times it. That is the accuracy of the decision wherever the
-image bears on a pair of strands. How often it does is the rest of the table.
+it does not, and the table separates the two. Among crossings for which an
+order was assigned, accuracy ranged from \PlectaDepthDecidedLow{} to
+\PlectaDepthDecidedHigh{}, whether the 2-D geometry was given or
+reconstructed and at both crossing densities. The remaining rows report the
+recovery and abstention rates.
 
 Over every pair of strands in the scene, order accuracy falls to
 \PlectaDepthCleanCovTwoZeroAllOrder{}, and that is an absence of evidence
@@ -155,15 +155,11 @@ a second view, rather than a smoothness assumption, which these scenes would
 not support: their heights are drawn independently, so proximity carries no
 depth information by construction.
 
-Two more gaps sit inside the crossing rows themselves, and neither is the
-shortage of evidence just described: at a crossing the two strands do meet, so
-something in the image bears on their order.
-The all-crossings row is lower than the decided row because it charges the
-stage for crossings the 2-D stage never recovered and for crossings it
-declined, and the table gives each of those its own rate. That is also why the
-decided row must be read beside them: what the stage declines are the
-ambiguous crossings, so a higher decided accuracy can reflect a stage
-answering less often rather than one deciding better.
+All-crossings accuracy is additionally reduced by crossings the 2-D stage
+never recovered and by abstentions, and the table gives each its own rate.
+Decided-crossing accuracy must therefore be read together with the recovery
+and abstention rates, because increased abstention can raise conditional
+accuracy without improving overall performance.
 
 Layer agreement degrades the way the global order does, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
@@ -206,15 +202,17 @@ the panel is in-sample.}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
-PLECTA works on real imaging when a second technique supplies the mask, and the
-upstream segmenter is such a technique.
+Application to real SEM images requires an upstream mask-generation method;
+here the binary axes are supplied by the segmenter of
+Figure~\ref{fig:pipeline-upstream}.
 
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_upstream}
-    \caption{Where the mask comes from. In training the pair is manufactured,
+    \caption{Upstream generation of the strand-axis mask. In training the
+    pair is manufactured,
     the mask that made the image being its own label, so no annotator is
-    involved at any point; at inference the trained segmenter reads the
+    involved in training; at inference the trained segmenter reads the
     micrograph, never an annotation, and ends in the binary strand-axis mask
     that is the whole interface to PLECTA. The segmenter is not a contribution
     of this paper and is not evaluated here; it carries its own evaluation
@@ -265,7 +263,7 @@ axis beside what PLECTA made of it.
 
 Table~\ref{tab:plecta-real-masks} reports the \PlectaRealFieldCountLower{}
 fields, per field and per condition. Averaged over them, PLECTA
-reaches \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
+achieved \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
 \PlectaRealUNetFOneMean{} from the nnU-Net axis. The first condition evaluates grouping from curated real-image geometry,
 and establishes that the grouping holds on axis masks derived from real
 micrographs and not only on the generator's. The second quantifies
@@ -322,12 +320,11 @@ bridging, so identity never crosses a break in the mask. The three largest
 losses are the junction chord-turn term, gap bridging and junction-cluster
 consolidation.
 
-Two rows are controls rather than components. Removing the joint solve leaves
-PLECTA otherwise intact and pairs each node's arms cheapest edge
-first, rather than by whichever complete pairing of that node is cheapest
-overall; a cheap edge taken early can then leave two arms unpaired that would have
-paired well together, thereby causing fragmentation rather than erroneous
-merging. It also runs at parameters that were selected using the exact
+Two rows are controls rather than components. The greedy control retains
+all other PLECTA components but pairs each node's arms in ascending order of
+edge cost, rather than by whichever complete pairing of that node is cheapest
+overall; an early low-cost selection can preclude a later mutually compatible
+pairing, thereby causing fragmentation rather than erroneous merging. It also runs at parameters that were selected using the exact
 matcher, a bias in the exact matcher's favour. The last row replaces the
 linker outright, skeletonising the same mask and greedily pairing the branch
 ends that turn least inside fixed distance and angle gates, which is the
@@ -386,15 +383,15 @@ methodological choices, and each of those choices is stated here.
 
 \textbf{How each was run.} Each released method has a front end that precedes
 the stage assigning identity, and in each case the mask is injected where that
-stage begins, so grouping is not confounded with segmentation and every stage
-that assigns identity is their own code. Each was also run at a configuration
+stage begins, so grouping is not confounded with segmentation and all
+identity-assignment stages run the original authors' code. Each was also run at a configuration
 selected on the same \PlectaDevelopmentSceneCount{} development scenes PLECTA
-was configured on rather than at its own defaults. Every one of these
-adaptations favours the comparator, and by a wide margin: run end to end on
-the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
-\PlectaGraFTFOne{} injected, and the re-selected configurations are worth
-\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are reported.
+was configured on rather than at its own defaults. These adaptations favour the comparators, and by a wide margin: run end to
+end on the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
+\PlectaGraFTFOne{} injected, and reconfiguration increased \Fone{} from
+\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and from
+\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are
+reported.
 \suppcomparators{} gives each injection point, each selection, what was not
 attempted, and how each method fails.
 
@@ -437,7 +434,8 @@ for. On GraFT's own generator, run unmodified at its published settings over
 \PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
 strata, PLECTA achieved the highest \Fone{} at every density and no rank
 reversals occurred, including inside the range GraFT itself published, and
-the field-standard measures order the three identically. Overall it reaches
+the field-standard measures order the three identically. Overall it
+achieved
 \Fone{}=\PlectaRegimeOverallPlectaFOne{} there, against
 \PlectaRegimeOverallGraFTFOne{} for GraFT on its own scenes and
 \PlectaRegimeOverallDNAiFOne{} for DNAi. SIFNE released no generator, so the sparse cobweb
@@ -469,15 +467,14 @@ missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
 over the \PlectaRealFieldCountLower{} annotated fields as well, on the
 manual-derived masks of Section~\ref{sec:res-real} and through the scoring
 path that reproduces PLECTA's stored numbers for those fields exactly.
-Averaged over the \PlectaRealFieldCountLower{}, PLECTA reaches
-\Fone{}=\PlectaRealManualFOneMean{} against \PlectaRealSifneFOneMean{} for
-SIFNE and \PlectaRealBasuFOneMean{} for Basu, and achieved the highest
-value on every measure reported. The ordering established on synthetic scenes therefore holds on
+Averaged over the \PlectaRealFieldCountLower{}, PLECTA achieved
+\Fone{}=\PlectaRealManualFOneMean{}, against \PlectaRealSifneFOneMean{} for
+SIFNE and \PlectaRealBasuFOneMean{} for Basu, and the highest value on every
+measure reported. The ordering established on synthetic scenes therefore holds on
 masks read off real micrographs.
 
-The margin is much narrower there, and the input is the likely reason. A skeleton of a
-hand annotation is about as clean an axis as a real field can supply:
-unbroken, thin, and placed where a person judged the strand to be. What
-separates these methods on the synthetic rows is what each does with evidence
-that is fragmented and displaced, and this condition supplies almost none of
-it, so it compresses exactly the differences the comparison is for.
+The margin is narrower than on the synthetic scenes, which likely reflects
+the quality of the manually derived axes: a skeleton of a hand annotation is
+unbroken, thin and placed where a person judged the strand to be, so it
+contains few of the fragmentation and displacement artefacts responsible for
+the differences observed in the synthetic evaluation.

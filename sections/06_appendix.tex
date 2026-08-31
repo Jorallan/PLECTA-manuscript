@@ -139,8 +139,8 @@ precision, recall and their harmonic mean are taken over decisions. Being
 linear rather than quadratic in fragmentation, and conditioned on the mask, it
 asks two mask sources comparably hard questions, and splitting and merging
 appear separately as low recall and low precision. Blind spot: a fragment pair
-the mask never brought within reach counts against nobody, so it cannot see a
-strand the mask lost entirely, and it is always quoted with the number of
+the mask never brought within reach counts against nobody, so the measure
+is insensitive to a strand the mask lost entirely, and it is always quoted with the number of
 decisions each mask posed.
 
 \textbf{Completeness, correctness and quality} characterise the input
@@ -158,8 +158,8 @@ placement rather than geometry, so it is never quoted without one.
 \textbf{Shared-pixel precision and recall} are precision and recall over the
 pixels the reference gives to more than one instance, computed on the raw
 instance masks. They exist because the pairwise measure discards junction
-pixels and cannot see whether a crossing pixel was marked as jointly owned at
-all: only a method emitting overlapping layers can score above zero on the
+pixels and is insensitive to whether a crossing pixel was marked as jointly
+owned at all: only a method emitting overlapping layers can score above zero on the
 recall, and one emitting a hard partition scores exactly zero by construction.
 Blind spot: neither component distinguishes a pixel shared for the right reason
 from one shared because a chain was painted with a whole junction cluster.

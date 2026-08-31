@@ -38,10 +38,10 @@ pair of failures of opposite character. Crossings create false connectivity
 between distinct strands, since a crossing produces the same connected
 component that a genuine merge error would; signal gaps fragment one strand
 into disconnected components that are locally indistinguishable from genuine
-ends. Both failures are resolved by answering one question: at this junction,
-which arm continues into which? This paper addresses the step existing tools leave open: given a binary
-strand-axis mask, recover the individual strands through the crossings and the
-gaps.
+ends. Resolving both failure modes requires determining which pairs of arms
+represent continuous strands at each junction. This paper addresses that
+step: the reconstruction of individual strands across crossings and gaps from
+a binary strand-axis mask.
 
 The contribution is a specific combination, stated here and situated against
 prior work in Section~\ref{sec:related}. From a binary mask alone, PLECTA
@@ -87,12 +87,12 @@ degraded one so that the cost of degradation is measured on unchanged
 geometry, and demonstrate both stages together on \PlectaRealFieldCount{}
 annotated CNT-sheet SEM fields.
 
-Beyond the plane, a crossing carries a second question the grouping does not
-answer: which strand lies on top. PLECTA answers it non-destructively, from
-the greyscale already available. What separates the two strands at a crossing
-is the continuity of each one's own brightness: the upper strand keeps the
-appearance it has on either side of the crossing, while the lower strand's is
-overwritten by the strand above it. The stage abstains where that difference
+Depth ordering constitutes a separate task: determining which strand is
+uppermost at each crossing. PLECTA estimates this order non-destructively
+from the corresponding greyscale image, using the continuity of each strand's
+own brightness: the upper strand keeps the appearance it has on either side
+of the crossing, while the lower strand's is overwritten by the strand above
+it. The stage abstains where that difference
 is no larger than the local image noise. To our knowledge this is the first
 depth decomposition of a strand network from a single micrograph; it is
 reported as a demonstration with a measured accuracy, not as a validated

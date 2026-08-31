@@ -75,7 +75,7 @@ Liu et al., which likewise reads a mask, reconnects across gaps and permits
 overlapping output, but pairs termini greedily and depends on a trained
 orientation network \citep{liu2019intersection}.
 
-\subsection{Deciding a whole neighbourhood at once}
+\subsection{Joint neighbourhood optimisation}
 \label{sec:rel-joint}
 
 A second remedy is to stop deciding one pairing at a time. Basu et al.\ and
@@ -117,12 +117,13 @@ therefore all established; none is claimed as new in this paper.
 The closest complete workflow is that of Peters et al., who join a U-Net-like
 segmentation trained on over a thousand annotated SEM micrographs to
 algorithms that trace fibres through intersections, and validate against human
-evaluators on fibre number, length and width \citep{peters2026fibre}. That
-work and this one divide the task at the same joint and differ in what the
-instance step is asked to prove: their tracer substitutes for human counting
-and measurement, while PLECTA is isolated behind a binary mask and scored on
-identity through crossings against overlap-aware references in which every
-pairing is known.
+evaluators on fibre number, length and width \citep{peters2026fibre}. Both
+workflows separate semantic segmentation from instance reconstruction but
+evaluate the reconstruction stage differently: Peters et al.\ assess the
+replacement of human counting and measurement, whereas PLECTA is isolated
+behind a binary mask and evaluated on the preservation of strand identity
+across crossings, against overlap-aware references in which every pairing is
+known.
 
 Which strand lies on top at a crossing is a further question, and for
 nanostructured networks it is normally answered destructively, by

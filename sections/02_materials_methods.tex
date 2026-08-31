@@ -17,17 +17,19 @@ several strands at once. The evaluated grouping stage uses only
 $M$; where a greyscale SEM image exists it is read downstream, for width
 and brightness, and cannot revise the fixed grouping.
 
-Figure~\ref{fig:scope} places the method. Its stages read mask
-geometry alone, and the two matching steps are re-made over eight rounds against
-frames re-fitted along the chains assembled so far. Where the mask itself comes
-from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
+Figure~\ref{fig:scope} defines the scope of PLECTA within the complete
+workflow. The method uses only mask geometry; the junction and gap matchings
+are recomputed over eight rounds, with frame parameters refitted from the
+currently assembled chains before each round. Mask generation is described in
+Section~\ref{sec:res-qualitative}.
 
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_scope}
     \caption{Scope of PLECTA within the complete workflow. A single binary
-    axis mask is the method's only input, and every result in this paper measures the stage inside the dashed
-    boundary: one binary mask in, overlapping instance layers out. The two
+    axis mask is the method's only input, and every result in this paper
+    measures the stage inside the dashed boundary, which maps one binary mask
+    to a set of overlapping instance layers. The two
     matchings are re-made over eight rounds as frame estimates improve along
     the assembled chains, and the last round is returned. The depth stage reads a
     greyscale image of the same field in addition to the mask, adds a third
@@ -66,14 +68,12 @@ plane, and width broadening. Those cues are randomised
 independently of one another, so no single rule such as brighter-is-higher
 recovers the order.
 
-Scenes are labelled throughout by areal coverage, the fraction of the frame the
-full-width strands cover rather than the fraction the thin axis occupies. That
-label reports difficulty without setting it: drawing the same strands thicker
-raises coverage and leaves the score exactly where it was, since neither
-PLECTA nor the metric receives the drawn width. What makes a scene hard
-is the amount of centreline packed into the frame, which coverage happens to
-follow under this generator, and Section~\ref{sec:res-factorial} separates the
-two.
+Scenes are labelled throughout by areal coverage, the fraction of the frame
+the full-width strands cover rather than the fraction the thin axis occupies.
+Coverage serves as a proxy for scene difficulty but does not directly affect
+either the input or the metric, both of which operate on centreline geometry.
+Under this generator, coverage correlates with centreline length density, and
+Section~\ref{sec:res-factorial} separates the two effects.
 
 Every parameter was fixed on a separate development set and never on the scenes
 reported here; the \PlectaHeldoutSceneCount{} evaluation scenes, 32 at each of
@@ -102,24 +102,25 @@ $1.08~\mathrm{nm\,px^{-1}}$. Each annotation is one human interpretation of
 projected, locally ambiguous crossings.
 
 The reference annotations were drawn with an in-house interactive
-instance-segmentation tool for greyscale SEM of thin, crossing strands,
-whose data model is per-instance masks rather than a flat label image, so a
-pixel may belong to several strands at once; that is what makes the
-reference overlap-aware and comparable with PLECTA's output. The file the tool
-saves is the file the evaluation reads, with no export or conversion step in
-between. The annotator paints each visible bundle as its own strand, and the
-tool assists without deciding: strokes may snap onto the local intensity ridge,
-with polarity calibrated from the existing annotation, and may be re-rendered
-through a smoothing-spline fit whose centreline is shifted onto the measured
-intensity crest only where that crest is consistent; widths come from perpendicular full-width-at-half-maximum profiles
-referenced to the local minima either side of the peak and reported as twice
-the nearer half-width, so a crossing strand fusing into the profile does not
-bias the measurement wide. Candidate gap bridges, collinear endpoint pairs of
+instance-segmentation tool for greyscale SEM of thin, crossing strands. Its
+data model is per-instance masks rather than a flat label image, so a pixel
+may belong to several strands at once, which makes the reference
+overlap-aware and comparable with PLECTA's output. The file the tool saves is
+the file the evaluation reads, with no export or conversion step in between.
+The annotator paints each visible bundle as its own strand, with two forms of
+assistance: strokes may snap onto the local intensity ridge, with polarity
+calibrated from the existing annotation, and may be re-rendered through a
+smoothing-spline fit whose centreline is shifted onto the measured intensity
+crest only where that crest is consistent. Widths are measured from
+perpendicular full-width-at-half-maximum profiles, referenced to the local
+minima on either side of the peak and reported as twice the nearer
+half-width, so a crossing strand fusing into the profile does not bias the
+measurement wide. Candidate gap bridges, collinear endpoint pairs of
 different strands, are suggested but never applied automatically; each is
 accepted or rejected by the annotator, so identity through every crossing is
-a human decision, machine-assisted but not machine-made.
+a human decision.
 
-The protocol's limits are stated rather than implied. The reference
+The following limitations apply to the annotation protocol. The reference
 annotations were drawn by the first author (O.A.), hereafter annotator~A.
 These are manual references, not the ground truth. A second annotator, B, who
 is not an author, has annotated \PlectaInterAnnotatorFieldCount{} of these
@@ -162,20 +163,20 @@ the schedule that repeats the two as chain-level evidence accumulates.
 
 \subsubsection{Skeleton graph and stub frames}
 
-PLECTA skeletonises the mask, by Zhang and Suen's thinning
-\citep{zhang1984thinning}, and prunes the short spurs skeletonisation
-leaves behind. Skeleton pixels where three or more paths meet form junction clusters,
-and clusters close enough together are merged into a single \emph{node}: a
-crossing seen at this resolution is one blob, not a point, and neighbouring
-crossings often touch. What remains between nodes is an \emph{arm}, an
+PLECTA skeletonises the mask using the Zhang--Suen thinning algorithm
+\citep{zhang1984thinning} and removes the short spurs skeletonisation
+produces. Skeleton pixels where three or more paths meet form junction
+clusters, and clusters close enough together are merged into a single
+\emph{node}: at this resolution a crossing is an extended cluster rather
+than a point, and neighbouring crossings often touch. What remains between nodes is an \emph{arm}, an
 unambiguous run of strand, carrying a \emph{stub} at each end.
 
-Each stub is given a frame: its tip, the direction the strand is heading as
-it leaves, and how it is curving. Both are fitted over a short run of arclength
-back from the tip, and a stub too short to yield a reliable direction is marked
-as such rather than guessed at. That support widens once arms are linked into
-chains, so a stub with no direction of its own borrows one from the chain it
-has joined, which is why the method iterates rather than deciding once.
+Each stub is given a frame comprising its tip position, outward tangent and
+curvature, estimated over a short arclength interval behind the tip. A stub
+whose support is too short to yield a reliable direction is marked as
+unreliable rather than estimated. Once arms are linked into chains, the
+frames are re-estimated over the expanded chain-level support, which is why
+the method iterates rather than deciding once.
 
 \subsubsection{The pairing cost}
 
@@ -365,12 +366,13 @@ strand and not the union. One channel is read on both: median intensity. The
 physical argument is occlusion. Whichever strand lies on top presents the same
 surface through the crossing as it does beside it, so its core matches its own
 flanks in brightness; the lower strand is overwritten there, so its own
-continuity breaks. The strand whose flank brightness the core matches better
-is called upper, and by how much, divided by the larger of the two strands'
-brightness separation and the noise measured at that crossing, is the score $s$
-that decides it. Where the two strands genuinely look alike, or differ by less
-than that noise, $\lvert s\rvert$ falls below a fixed threshold and the crossing
-\emph{abstains} rather than being decided by noise. Dividing by the noise,
+continuity breaks. For each strand, the difference between the pooled core intensity and its
+own flank intensity is computed, and the strand with the smaller difference
+is assigned as upper. The score $s$ quantifies the difference between the two
+matches, normalised by the larger of the inter-strand brightness separation
+and the noise measured at that crossing. No order is assigned when
+$\lvert s\rvert$ falls below a fixed threshold: the crossing \emph{abstains}
+rather than being decided by noise. Dividing by the noise,
 rather than by the separation alone, is what makes a confident score mean
 \emph{separated by more than the noise} rather than merely separated.
 
@@ -400,13 +402,11 @@ crossing graph, one total order over its strands is estimated by maximising
 the total weight of satisfied edges, which is equivalent to reversing the
 minimum-weight set of relations that leaves no contradiction: the
 minimum-weight feedback arc set objective. The objective is solved exactly
-for components small enough to search and greedily for larger ones. Every
-relation is then re-read from the estimated order, which is re-derived for
-the component as a whole rather than only where relations conflict, so a
-relation that nothing contradicts can also be reversed; relations
-inconsistent with the order are reversed rather than discarded, and both the
-reversal and the original local score are recorded, so a reader can see how
-far the global correction moved. Depth
+for components small enough to search and greedily for larger ones. All
+pairwise relations are then derived from the component-level order, so even a
+relation not involved in any local contradiction may be reversed. Each
+reversal and its original local score are retained, to quantify how far the
+global reconciliation moved. Depth
 propagates only along crossings, so two strands in different components are
 related by no evidence at all and
 their order is a stated tie-break, not a measurement.
@@ -478,14 +478,15 @@ has a crossing, including the two ways it can be undefined rather than zero.
 
 \suppmeasures{} gives the construction and the assignment rule in
 full. Because junction pixels are deleted before
-fragments are labelled, the measure cannot see whether an emitted crossing
-pixel is given one owner or two, only whether the arms meeting there are
-grouped as the reference groups them.
+fragments are labelled, the measure is insensitive to whether an emitted
+crossing pixel is given one owner or two; it registers only whether the arms
+meeting there are grouped as the reference groups them.
 
-No one measure is quoted alone, because each is blind to something another
-sees: pairwise \Fone{} scores relationships between pieces and is quadratic in
-fragmentation, while object detection scores existence and cannot see an arm
-swap at a crossing, which it rates 1.000 where pairwise scores 0.000. The
+No single metric is quoted alone, because the metrics are sensitive to
+different error types: pairwise \Fone{} evaluates relationships between
+fragments and is quadratic in fragmentation, while object-detection metrics
+evaluate object existence and are insensitive to an arm exchange at a
+crossing, which they rate 1.000 where the pairwise score is 0.000. The
 adjusted Rand index and variation of information
 \citep{hubert1985comparing,meila2007comparing} are therefore quoted beside the
 pairwise score, with detection \Fone{} and Crossing Fidelity. The input masks themselves are characterised
@@ -494,8 +495,8 @@ correctness and quality in the thin-structure literature, matched within a
 tolerance
 rather than pixel for pixel, because two skeletonisations of one strand
 seldom fall on the same pixels.
-\suppmeasures{} defines each in full, with its equation, what it rewards and
-what it cannot see.
+\suppmeasures{} defines each in full, with its equation, what it rewards
+and what it is insensitive to.
 
 \suppmeasures{} states the interval construction, the resampling unit and
 the cases where no inference is drawn.
