@@ -66,8 +66,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from _style import (BLUE, FIG_W, FONE, GRAY, GREEN, INK, ORANGE, PT_AXIS,
-                    PT_LEGEND, PT_TICK, ROSE, VIOLET, plecta_style, save_fig,
-                    tagged_title)
+                    PT_LEGEND, PT_TICK, PT_TITLE, ROSE, VIOLET, panel_tag,
+                    plecta_style, save_fig)
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -91,19 +91,21 @@ SERIES = (
 #: no other home in the synthetic comparison, so it stays. The record still
 #: carries `crossing_fidelity` per stratum; nothing was recomputed.
 COLUMNS = (
-    ("f1", "pairwise " + FONE),
-    ("detection_f1", "detection " + FONE),
+    ("f1", "Pairwise " + FONE),
+    ("detection_f1", "Detection " + FONE),
 )
 
-#: Top row first: the clean axis above the degraded one, tagged a and b.
-ROWS = (("clean", "a", "clean masks"), ("degraded", "b", "degraded masks"))
+#: Top row first: the clean axis above the degraded one.  Panels are tagged
+#: (a)-(d) reading order; the column headings are shared, written once above
+#: the top row, and the row identity is the y-axis label.
+ROWS = (("clean", "Clean masks"), ("degraded", "Degraded masks"))
 
 #: Inches, laid out left to right and bottom up.  The panels share one 0--1
 #: scale, so the tick labels are written once per row, in the first column;
 #: the left margin is wide enough for those and for the row's own label.
 LEFT, PANEL_W, GAP = 0.62, 2.675, 0.215
 BOTTOM, PANEL_H, ROW_GAP = 0.58, 1.66, 0.46
-FIG_H = BOTTOM + 2 * PANEL_H + ROW_GAP + 0.30
+FIG_H = BOTTOM + 2 * PANEL_H + ROW_GAP + 0.52
 
 
 def read():
@@ -139,8 +141,14 @@ def draw(payload, name):
     densities = payload["densities"]
     fig = plt.figure(figsize=(FIG_W, FIG_H))
 
+    #  Shared column headings, once, above the top row.
+    for column, (_key, title) in enumerate(COLUMNS):
+        x = (LEFT + column * (PANEL_W + GAP) + 0.5 * PANEL_W) / FIG_W
+        fig.text(x, (FIG_H - 0.17) / FIG_H, title, ha="center", va="bottom",
+                 fontsize=PT_TITLE, color=INK)
+
     first = None
-    for row, (condition, row_tag, row_label) in enumerate(ROWS):
+    for row, (condition, row_label) in enumerate(ROWS):
         cells = payload["panels"][condition]
         bottom = BOTTOM + (len(ROWS) - 1 - row) * (PANEL_H + ROW_GAP)
         for column, (key, title) in enumerate(COLUMNS):
@@ -148,8 +156,7 @@ def draw(payload, name):
                     PANEL_W / FIG_W, PANEL_H / FIG_H]
             ax = fig.add_axes(rect)
             panel(ax, cells, key, densities)
-            tagged_title(ax, "%s%d" % (row_tag, column + 1), title, dy=1.02,
-                         gap=0.170)
+            panel_tag(ax, "abcd"[row * len(COLUMNS) + column], dy=1.02)
             if column == 0:
                 ax.set_ylabel(row_label, fontsize=PT_AXIS, labelpad=2.5)
                 if first is None:
@@ -174,7 +181,7 @@ def main() -> int:
     plecta_style()
     payload = read()
     draw(payload, "fig_metric_panels")
-    for condition, _tag, _label in ROWS:
+    for condition, _label in ROWS:
         cells = payload["panels"][condition]
         print("--", condition)
         for key, title in COLUMNS:

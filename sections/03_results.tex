@@ -181,15 +181,17 @@ the reconstruction through a forward SEM model, and the film the reconstruction
 implies. The re-rendered panel is a consistency check on depths and radii, not
 a scored quantity: the difference Table~\ref{tab:depth-order} reports between
 input conditions is a difference in which crossings were \emph{found}, which a
-rendered image cannot show.}
+rendered image cannot show. The scene is 512\,px across, in the
+generator's pixel units.}
 \label{fig:resem-synth}
 \end{figure}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same comparison on a real CNT SEM field, reconstructed from the
-axis of annotator~A's annotation. Nothing here is scored: real SEM has no depth
+\caption{The same comparison on a real CNT SEM field, reconstructed from
+the axis of annotator~A's annotation; the crop is 512\,px across, about
+0.55\,\um{} of field B58\_100. Nothing here is scored: real SEM has no depth
 ground truth, since the annotation records which pixels belong to which strand,
 not which lies on top. It shows that the stage runs end to end and re-renders
 to something recognisable. The forward model's
@@ -209,10 +211,10 @@ Figure~\ref{fig:pipeline-upstream}.
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_upstream}
-    \caption{Upstream generation of the strand-axis mask. In training the
-    pair is manufactured,
-    the mask that made the image being its own label, so no annotator is
-    involved in training; at inference the trained segmenter reads the
+    \caption{Upstream generation of the strand-axis mask. In training,
+    image and mask pairs are generated procedurally and the procedural mask
+    serves as the corresponding training label, so no annotator is involved
+    in training; at inference the trained segmenter reads the
     micrograph, never an annotation, and ends in the binary strand-axis mask
     that is the whole interface to PLECTA. The segmenter is not a contribution
     of this paper and is not evaluated here; it carries its own evaluation
@@ -236,8 +238,9 @@ axis beside what PLECTA made of it.
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{One CNT SEM field, B58\_110, whole frame, a row per mask source.
-    \textbf{(a)}~the reference annotation (annotator~A); \textbf{(b)}~its skeleton, the
+    \caption{One CNT SEM field, B58\_110, whole frame, a row per mask
+    source; the scale bar in (a) is 500\,nm, and every panel shows the same
+    field. \textbf{(a)}~the reference annotation (annotator~A); \textbf{(b)}~its skeleton, the
     manual-derived axis, and \textbf{(c)}~PLECTA from it; \textbf{(d)}~the
     segmenter's axis, and \textbf{(e)}~PLECTA from that, same parameters. (b)
     and (d) are the input masks, in one colour, dilated a pixel for legibility;
@@ -398,10 +401,11 @@ attempted, and how each method fails.
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
-  \caption{Five methods on identical masks, by coverage stratum:
-    \textbf{(a)} the undegraded axis, \textbf{(b)} the degraded one; columns
-    are pairwise \Fone{}, which counts pairs of fragments, and detection
-    \Fone{} at IoU \PlectaDetectionIoU{} with a
+  \caption{Five methods on identical masks, by coverage stratum. Rows: the
+    undegraded axis, panels \textbf{(a)} and \textbf{(b)}, above the
+    degraded one, panels \textbf{(c)} and \textbf{(d)}. Columns: pairwise
+    \Fone{}, which counts pairs of fragments, and detection \Fone{} at IoU
+    \PlectaDetectionIoU{} with a
     \PlectaPlacementTolerance{}\,px tolerance, which counts objects
     (Section~\ref{sec:mm-metrics}). The two disagree where a method
     fragments, since only the first is quadratic in fragmentation. Crossing

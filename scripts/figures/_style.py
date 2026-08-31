@@ -59,7 +59,7 @@ def apply_style():
     )
 
 
-def save_fig(fig, name, subdir=None, **kwargs):
+def save_fig(fig, name, subdir=None, pdf_dpi=600, **kwargs):
     """Save fig as both PDF and PNG (300dpi) into paper/figures/.
 
     ``subdir="archive"`` writes into ``figures/archive/`` instead.  That is
@@ -67,6 +67,12 @@ def save_fig(fig, name, subdir=None, **kwargs):
     it stays runnable and stays gated, but it does not leave a file beside the
     nine the manuscript actually includes, where the next reader has to work out
     which is which.
+
+    ``pdf_dpi`` sets the resolution of *rasterised artists* inside the PDF
+    (vector content is unaffected, and embedded image arrays keep their native
+    resolution regardless).  600 by default per the figure review; the two
+    3-D depth panels pass 300, where the review asked for exactly that to keep
+    the file small.
     """
     out_dir = FIGURES_DIR if subdir is None else os.path.join(FIGURES_DIR,
                                                               subdir)
@@ -80,6 +86,7 @@ def save_fig(fig, name, subdir=None, **kwargs):
     #  nothing. With it, a figure PDF changes when, and only when, the picture
     #  does. Caller metadata wins, so a generator can still override.
     pdf_kwargs = dict(kwargs)
+    pdf_kwargs["dpi"] = pdf_dpi
     pdf_kwargs["metadata"] = {"CreationDate": None, **kwargs.get("metadata", {})}
     fig.savefig(pdf_path, **pdf_kwargs)
     fig.savefig(png_path, dpi=300, **kwargs)

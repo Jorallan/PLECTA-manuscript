@@ -106,20 +106,20 @@ def main():
 
     ax = fig.add_subplot(gs[0, 0]); bare(ax)
     ax.imshow(reference, cmap="gray", interpolation="nearest")
-    tagged_title(ax, "a", "reference image", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax, "a", "Reference image", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered, cmap="gray", interpolation="nearest")
-    tagged_title(ax, "b", "re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax, "b", "Re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax3 = fig.add_subplot(gs[0, 2], projection="3d")
     draw_tubes_shaded(ax3, tubes, z_lo, span,
                       extent=reference.shape[0], zoom=2.05,
                       elev=20, azim=-62, colour="grey",
                       z_stretch=span / reference.shape[0])
-    tagged_title(ax3, "c", "depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax3, "c", "Depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
-    save_fig(fig, "fig_resem_synth", bbox_inches=None)
+    save_fig(fig, "fig_resem_synth", pdf_dpi=300, bbox_inches=None)
     print("wrote fig_resem_synth")
     return 0
 

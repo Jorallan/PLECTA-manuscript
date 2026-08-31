@@ -131,11 +131,11 @@ def main():
     # the whole claim; the film they imply follows.
     ax = fig.add_subplot(gs[0, 0]); bare(ax)
     ax.imshow(sem[box], cmap="gray", interpolation="nearest")
-    tagged_title(ax, "a", "micrograph", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax, "a", "Micrograph", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered[box], cmap="gray", interpolation="nearest")
-    tagged_title(ax, "b", "re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax, "b", "Re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
     if residual:
         key = next((k for k in ("rmse", "mae", "l1") if k in residual), None)
         if key:
@@ -144,12 +144,12 @@ def main():
 
     ax3 = fig.add_subplot(gs[0, 2], projection="3d")
     draw_tubes_shaded(ax3, tubes, z_lo, span,
-                      extent=max(sem.shape), zoom=2.05,
+                      extent=max(sem.shape), zoom=2.45,
                       elev=20, azim=-62, colour="grey",
                       z_stretch=span / max(sem.shape))
-    tagged_title(ax3, "c", "depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
+    tagged_title(ax3, "c", "Depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
-    save_fig(fig, "fig_resem_real", bbox_inches=None)
+    save_fig(fig, "fig_resem_real", pdf_dpi=300, bbox_inches=None)
     print("wrote fig_resem_real")
     print("  in-sample tune fit :", fit)
     print("  independent residual:", residual)

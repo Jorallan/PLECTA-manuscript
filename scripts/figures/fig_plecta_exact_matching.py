@@ -447,7 +447,7 @@ def main() -> int:
                cost4, j4["price"], cfg["total"], chosen=(i == 0),
                free_label="free")
     title(fig, 0.040, fy(0.24), "a",
-         "every admissible pairing at one crossing, each scored as a whole")
+         "Every admissible pairing at one crossing, each scored as a whole")
 
     # ── row 2: the priced free option, and what solving jointly buys ──────
     row2 = fy(3.05)
@@ -457,8 +457,8 @@ def main() -> int:
                cost3, j3["price"], cfg["total"], chosen=(i == 0),
                free_label="free" if cfg["pairs"] else "all free")
     panel_gap(fig, overlay, [0.606, row2, 0.140, h], [0.762, row2, 0.208, h], data)
-    title(fig, 0.040, fy(1.94), "b", "an arm left unmatched, and its price")
-    title(fig, 0.604, fy(1.94), "c", "a gap bridged")
+    title(fig, 0.040, fy(1.94), "b", "Unmatched-arm penalty")
+    title(fig, 0.604, fy(1.94), "c", "Gap bridging")
 
     save_fig(fig, "fig_plecta_exact_matching", bbox_inches=None)
     plt.close(fig)

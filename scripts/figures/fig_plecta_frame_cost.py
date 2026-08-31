@@ -39,8 +39,13 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, FancyArrowPatch
 
 from _style import (FIG_W, PT_ANNOT, PT_AXIS, PT_TICK, PT_TITLE,
-                    FIL_A, FIL_B, GEOM, CHORD, INK,
+                    FIL_A, FIL_B, GEOM, CHORD as _CHORD_SHARED, INK,
                     load_figure_data, plecta_style, save_fig)
+
+#  One step darker than the shared CHORD grey (#718096): the review found
+#  the grey annotation layer of this figure slightly faint at print size.
+CHORD = "#4A5568"
+del _CHORD_SHARED
 
 FIG_H = 2.85
 DEG = math.pi / 180.0
@@ -297,10 +302,10 @@ def main() -> int:
     #  Lower case, and the title itself in the regular weight: the bold tag
     #  carries the hierarchy, and Latin Modern bold sets about 15 % wider than
     #  its regular, so a fully bold title reads as stretched beside body text.
-    title(fig, 0.030, 0.918, "a", "the frame at a stub")
-    title(fig, 0.490, 0.918, "b", r"tangent reversal  $\theta$")
-    title(fig, 0.030, 0.452, "c", r"chord turns  $\varphi_a,\ \varphi_b$")
-    title(fig, 0.515, 0.452, "d", r"chord fade  $q(d)$")
+    title(fig, 0.030, 0.918, "a", "Frame at a stub")
+    title(fig, 0.490, 0.918, "b", r"Tangent reversal  $\theta$")
+    title(fig, 0.030, 0.452, "c", r"Chord turns  $\varphi_a,\ \varphi_b$")
+    title(fig, 0.515, 0.452, "d", r"Chord fade  $q(d)$")
 
     save_fig(fig, "fig_plecta_frame_cost", bbox_inches=None)
     plt.close(fig)

@@ -53,9 +53,9 @@ CROP = 2.0 / 3.0
 #  the set, and are lower case in the regular weight.  Without the tags this
 #  was the only figure a caption could not refer to by letter.
 COLUMNS = (
-    ("mask", "input mask"),
-    ("reference", "reference"),
-    ("plecta_rendered", "PLECTA, at width"),
+    ("mask", "Input mask"),
+    ("reference", "Reference"),
+    ("plecta_rendered", "PLECTA reconstruction"),
 )
 
 
@@ -93,26 +93,37 @@ def main(argv=None) -> int:
     keys = [k for k, _ in COLUMNS if k in panels[0]]
     heads = [t for k, t in COLUMNS if k in panels[0]]
 
-    # right < 1 by enough that the widest column heading, which is centred on
-    # its column, still lands inside the canvas: bbox_inches is None, so
-    # anything past the figure edge is simply cut off.
-    left, right = 0.082, 0.984
+    #  The rotated per-row labels of an earlier round were hard to scan, per
+    #  the figure review; each row now carries a horizontal one-line heading
+    #  above it, and the left margin the rotated labels occupied returns to
+    #  the panels.
+    left, right = 0.014, 0.984
     cell = (right - left) / len(keys)
     side_in = cell * FIG_W
-    head_in, foot_in = 0.20, 0.05      # one-line headings now, not two
+    head_in, row_head_in, foot_in = 0.22, 0.17, 0.05
     # Each scene is square, so nine square panels at full text width force a
     # figure taller than it is wide and the page it lands on carries almost no
     # text. A horizontal window of each scene shows the same thing -- these are
     # qualitative examples, not measurements -- at two thirds the height, and
     # keeps all three densities and all three columns. The caption says it is
     # a crop.
-    fig_h = len(panels) * side_in * CROP + head_in + foot_in
+    panel_in = side_in * CROP
+    fig_h = head_in + len(panels) * (row_head_in + panel_in) + foot_in
     fig = plt.figure(figsize=(FIG_W, fig_h))
-    cell_h = side_in * CROP / fig_h
-    top = 1.0 - head_in / fig_h
+    cell_h = panel_in / fig_h
+
+    #  Column headings once, at the top, in the set's tag convention: the
+    #  bold ``(a)`` and the heading in the regular weight beside it.
+    for c, head in enumerate(heads):
+        x0 = left + c * cell + 0.003
+        y = 1.0 - (head_in - 0.05) / fig_h
+        fig.text(x0, y, "(%s)" % "abc"[c], fontsize=PT_TITLE,
+                 fontweight="bold", color=DARK, ha="left", va="bottom")
+        fig.text(x0 + 0.030, y, head, fontsize=PT_TITLE, color=DARK,
+                 ha="left", va="bottom")
 
     for r, panel in enumerate(panels):
-        y0 = top - (r + 1) * cell_h
+        y0 = 1.0 - (head_in + (r + 1) * (row_head_in + panel_in)) / fig_h
         for c, key in enumerate(keys):
             img = mask_rgb(panel[key]) if key == "mask" \
                 else label_rgb(panel[key])
@@ -124,23 +135,11 @@ def main(argv=None) -> int:
             for s in ax.spines.values():
                 s.set_color(GRAY)
                 s.set_linewidth(0.5)
-            if r == 0:
-                #  ``(a)`` bold, the heading beside it in the regular weight --
-                #  the set's convention.  set_title cannot split the two, and
-                #  plecta_style's axes.titleweight would bold both.
-                tagged_title(ax, "abc"[c], heads[c], dy=1.0 + 3.5 / 72.0, gap=0.175)
-        #  .format() binds to the last operand of a concatenation, so the
-        #  scene and coverage placeholders were never substituted and the
-        #  figure printed a literal {0} and {1}%. Format the whole label.
-        #  FONE carries braces of its own, so only the parts holding
-        #  placeholders are formatted; formatting the concatenation would
-        #  read those braces as fields.
-        label = ("{0}\ncoverage {1}%\n".format(
-                     panel["scene"], panel["density"])
-                 + FONE + " = " + "{:.3f}".format(panel["plecta_f1"]))
-        fig.text(left - 0.010, y0 + cell_h / 2.0, label,
-                 rotation=90, ha="right", va="center", fontsize=PT_ANNOT,
-                 color=DARK, linespacing=1.45)
+        label = ("{0}% coverage,  ".format(panel["density"])
+                 + FONE + " = " + "{:.3f}".format(panel["plecta_f1"])
+                 + "   (scene {0})".format(panel["scene"]))
+        fig.text(left + 0.003, y0 + cell_h + 0.030 / fig_h, label,
+                 ha="left", va="bottom", fontsize=PT_ANNOT, color=DARK)
 
     save_fig(fig, "fig_plecta_examples", bbox_inches=None)
     plt.close(fig)

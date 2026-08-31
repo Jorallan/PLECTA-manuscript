@@ -60,7 +60,11 @@ def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
         norm[norm < 1e-9] = 1.0
         n = n / norm[:, None]
         lam = np.clip(n @ light, 0.0, 1.0)
-        shade = 0.42 + 0.58 * lam
+        #  A narrower shading range than plain Lambert (was 0.42 + 0.58 lam):
+        #  the full range read as glossy, and the figure review asked for a
+        #  flatter, more neutral material.  The ceiling stays below 1 so the
+        #  top of a tube never blows out to white.
+        shade = 0.55 + 0.40 * lam
         if colour == "grey":
             base = np.array([0.72, 0.72, 0.74])
         elif colour == "instance":
@@ -82,6 +86,10 @@ def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
                                 facecolors=all_cols,
                                 edgecolors=all_cols, linewidths=0.35)
         coll.set_zsort("average")
+        #  Rasterise the tube mesh in vector output. Tens of thousands of
+        #  quads made fig_resem_real.pdf about 16 MB on its own; rasterised at
+        #  save_fig's pdf_dpi the panel is visually identical and small.
+        coll.set_rasterized(True)
         ax.add_collection3d(coll)
     ax.set_xlim(0, extent)
     ax.set_ylim(extent, 0)

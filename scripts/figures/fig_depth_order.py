@@ -248,9 +248,9 @@ def main() -> int:
     panel_cycle(ax_b, d, places)
     panel_resolved(ax_c, d, places)
 
-    for x0, letter, text in ((0.015, "a", "four strands, four local decisions"),
-                             (0.360, "b", "the decisions contradict"),
-                             (0.705, "c", "the order retaining most weight")):
+    for x0, letter, text in ((0.015, "a", "Local estimates"),
+                             (0.360, "b", "Cyclic relation graph"),
+                             (0.705, "c", "Reconciled acyclic order")):
         fig.text(x0, 0.940, "(%s)" % letter, fontsize=PT_TITLE,
                  fontweight="bold", color=INK)
         fig.text(x0 + 0.034, 0.940, text, fontsize=PT_TITLE, color=INK)

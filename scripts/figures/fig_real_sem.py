@@ -50,7 +50,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt                                   # noqa: E402
 import numpy as np                                                # noqa: E402
 
-from _style import (FIG_W, FALSE_INST, PLECTA, framed,            # noqa: E402
+from _style import (FIG_W, FALSE_INST, PLECTA, PT_ANNOT, framed,  # noqa: E402
                     paint, plecta_style, save_fig, tagged_title)
 
 ASSET = os.path.normpath(os.path.join(
@@ -296,7 +296,11 @@ def instances(sem: np.ndarray, ids, runs, colours: dict, unmatched: int,
 
     image = micrograph_ground(sem).reshape(n, 3)
     hit = count > 0
-    image[hit] = total[hit] / count[hit, None]
+    #  Slightly translucent overlay, per the figure review: enough of the
+    #  micrograph shows through that the ridge under each painted strand
+    #  stays visible, without costing the identity colours their separation.
+    MIX = 0.82
+    image[hit] = MIX * (total[hit] / count[hit, None]) + (1.0 - MIX) * image[hit]
     return image.reshape(shape + (3,))
 
 
@@ -369,14 +373,24 @@ def main() -> int:
 
     #  (a), centred: the reference the four panels below are read against.
     ax = add_panel(fig, fig_h, (FIG_W - hero_w) / 2.0, TITLE_H, hero_w, hero_h,
-                   "a", "reference annotation (annotator A)")
+                   "a", "Reference annotation (annotator A)")
     show(ax, instances(sem, *unpack(data, field, "reference_width"),
                        colours, unmatched))
+    #  Scale bar on the hero panel; all five panels show the same field at the
+    #  same scale, and the caption says so.  500 nm at the stored pixel pitch
+    #  of 1.0807 nm/px (1.66 um across the 1536 px width, Section 2.3).
+    H, W = sem.shape[:2]
+    bar_px = 500.0 / (1660.0 / W)
+    x1, y_bar = W - 0.03 * W, H - 0.05 * H
+    ax.plot([x1 - bar_px, x1], [y_bar, y_bar], color="white", lw=2.2,
+            solid_capstyle="butt", zorder=10)
+    ax.text(x1 - bar_px / 2.0, y_bar - 0.018 * H, "500 nm", color="white",
+            fontsize=PT_ANNOT, ha="center", va="bottom", zorder=10)
 
     #  One row per mask source: the axis PLECTA was handed, then what it made
     #  of it.  Reading across a row is the whole point of the arrangement.
     #  Lower case, matching the convention the rest of the set now uses.
-    rows = ((("b", "manual-derived axis", "mask_manual"),
+    rows = ((("b", "Manual-derived axis", "mask_manual"),
              ("c", "PLECTA, manual-derived axis", "manual_width")),
             (("d", "nnU-Net axis", "mask_unet"),
              ("e", "PLECTA, nnU-Net axis", "unet_width")))

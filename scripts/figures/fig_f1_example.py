@@ -72,16 +72,18 @@ EXTRA = (VIOLET, ROSE, "#8A6A3A", "#4CA3C7")
 REFERENCE = (("A_TL", "A_BR"), ("B_TR", "B_BL"))
 REF_COLOUR = (FIL_A, FIL_B)
 
+#  Compact single-line headings, per the figure review: the panels carry the
+#  content, and the caption carries the explanation.
 GROUPINGS = (
-    ("a", "matches the\nreference",
+    ("a", "Correct",
      (("A_TL", "A_BR"), ("B_TR", "B_BL"))),
-    ("b", "one strand\nnot linked",
+    ("b", "Split",
      (("A_TL",), ("A_BR",), ("B_TR", "B_BL"))),
-    ("c", "both strands\nmerged",
+    ("c", "Merge",
      (("A_TL", "A_BR", "B_TR", "B_BL"),)),
-    ("d", "arms\nmis-paired",
+    ("d", "Incorrect pairing",
      (("A_TL", "B_TR"), ("A_BR", "B_BL"))),
-    ("e", "every arm\nseparate",
+    ("e", "All arms separate",
      (("A_TL",), ("A_BR",), ("B_TR",), ("B_BL",))),
 )
 
@@ -202,9 +204,14 @@ def main() -> int:
     sc = scene()
     d = measure(sc)
 
-    PANEL_IN = 1.00
-    BAND = (("top", 0.06), ("tag", 0.34), ("row", PANEL_IN), ("f1", 0.26),
-            ("pr", 0.21), ("gap", 0.06), ("prose", 0.52), ("bottom", 0.03))
+    #  The explanatory paragraph that used to sit under the score rows is
+    #  gone: it repeated the caption, and the space it took is returned to
+    #  the panels.  1.06 rather than 1.12: the two long single-line headings,
+    #  Incorrect pairing and All arms separate, need the wider title pitch or
+    #  they touch.
+    PANEL_IN = 1.06
+    BAND = (("top", 0.06), ("tag", 0.20), ("row", PANEL_IN), ("f1", 0.26),
+            ("pr", 0.21), ("bottom", 0.05))
     fig_h = sum(v for _k, v in BAND)
     at, run = {}, 0.0
     for key, height in BAND:                 # distance from the top, inches
@@ -224,9 +231,13 @@ def main() -> int:
     for i, p in enumerate(d["panels"]):
         x = left + i * step
         panel(fig, [x, row_y, w, h], sc, d, p["groups"])
+        #  Bold tag, regular-weight title: the set's convention, and what
+        #  lets the two long headings fit side by side at this panel pitch.
+        #  Latin Modern bold sets ~15 % wider, and the fully bold headings
+        #  this figure used to draw touched at (d)/(e).
         fig.text(x + w / 2.0, row_y + h + 0.012,
-                 "(%s) %s" % (p["letter"], p["title"]), fontsize=PT_TITLE,
-                 fontweight="bold", color=INK, ha="center", va="bottom",
+                 r"$\mathbf{(%s)}$ %s" % (p["letter"], p["title"]),
+                 fontsize=PT_TITLE, color=INK, ha="center", va="bottom",
                  linespacing=1.30)
 
         s = p["scores"]
@@ -240,17 +251,6 @@ def main() -> int:
                  ("P %.2f   R %.2f" % (s["precision"], s["recall"])) if finite
                  else "P undefined   R %.2f" % s["recall"],
                  fontsize=PT_ANNOT, color=GRAY, ha="center", va="baseline")
-
-    n_pairs = 6
-    fig.text(left, 1.0 - (at["prose"] + 0.02) * IN,
-             ("Two strands cross.  The scorer deletes the junction pixels "
-              "(red) and keeps the four arms they separate, then scores\n"
-              "the %d pairs of arms: a pair is right when the grouping joins "
-              "it, or leaves it apart, as the reference does.  The\n"
-              "reference is the pairing in (a); P and R are the precision and "
-              "recall of those %d pair decisions." % (n_pairs, n_pairs)),
-             fontsize=PT_ANNOT, color=INK, ha="left", va="top",
-             linespacing=1.50)
 
     save_fig(fig, "fig_f1_example", bbox_inches=None)
     plt.close(fig)

@@ -259,9 +259,9 @@ def main() -> int:
     #  (a)/(b) the caption uses.  This figure and fig_depth_order were the
     #  only two that set a bare letter.  Titles are de-idiomed with the prose
     #  (reviewer comment 5): "what it returns", "what decides".
-    for x0, letter, text in ((0.018, "a", "where the greyscale is sampled"),
-                             (0.372, "b", "the levels it returns"),
-                             (0.760, "c", "the decision rule")):
+    for x0, letter, text in ((0.018, "a", "Sampling regions"),
+                             (0.372, "b", "Measured intensity profiles"),
+                             (0.760, "c", "Depth-order decision")):
         fig.text(x0, 0.935, "(%s)" % letter, fontsize=PT_TITLE,
                  fontweight="bold", color=INK)
         fig.text(x0 + 0.034, 0.935, text, fontsize=PT_TITLE, color=INK)
