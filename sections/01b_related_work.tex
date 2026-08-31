@@ -1,0 +1,140 @@
+\section{Related work}
+\label{sec:related}
+
+The problem of Section~\ref{sec:intro} touches several branches of prior
+work: tools that measure strand images without resolving instances, methods
+that recover instances by greedy continuation, methods that decide a whole
+neighbourhood at once, complete micrograph-to-measurement workflows, and depth
+ordering from a single view. This section takes them in turn.
+
+\subsection{Tools that stop short of instances}
+\label{sec:rel-tools}
+
+Existing tools answer part of the problem. Semantic segmentation is mature,
+since U-Net and
+its self-configuring descendants reliably separate strand foreground from
+background \citep{ronneberger2015unet,isensee2021nnunet}, in materials
+imaging as much as anywhere
+\citep{stan2020optimizing,davydzenka2022deep}, and nanotube micrographs
+have their own trained segmenters
+\citep{trujillo2017segmentation,nguyen2023cntsegnet,dedonato2025deep}. But a
+foreground mask carries no identity, so it inherits both failures rather than
+resolving them. Instance methods assume the objects are compact, in materials microscopy
+\citep{he2026instance} as in the general-purpose families: bounded
+blobs, centre-directed flows, star-convex outlines, none of which describes a
+long open curve that may overlap another \citep{stringer2021cellpose,%
+schmidt2018stardist,kirillov2023sam}. Ridge and vesselness filters sharpen
+curvilinear signal but assign nothing across a junction
+\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and the
+established fibre-analysis packages return network statistics rather than
+resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
+flormann2021finta,hotaling2015diameterj}. Where the imaging is volumetric the
+problem is different in kind, because strands that appear to meet occupy
+disjoint volumes: in X-ray tomography of fibrous solids and of twisted ropes,
+individual fibres are separated by seeded watershed and morphological
+reasoning on the reconstructed volume
+\citep{depriester2022fibre,allan2025rope}. A projection has no such recourse,
+since two strands that cross genuinely share the same pixels.
+
+\subsection{Greedy continuation from a mask}
+\label{sec:rel-greedy}
+
+Recovering strands through crossings has been addressed repeatedly. Existing
+methods
+differ in two ways that matter: what evidence they read, and whether a pairing
+once made can later be undone. On both counts the field clusters.
+
+The largest cluster follows one recipe. These methods skeletonise the mask, cut
+the crossing out,
+and pair the arms left behind by how nearly each continues the direction of
+another. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
+directions from the excised stubs and recovers dense microtubule networks from
+the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
+by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
+Frangi-filtered skeleton greedily, longest path first
+\citep{osterlund2026graft}. This is inexpensive, and where crossings are rare
+it suffices. Its weakness is structural: once an arm is paired, a later arm
+that contradicts the choice cannot reopen it.
+
+Two remedies have been tried. The first is to bring in more evidence
+than a mask carries. The stronger of Wegmayr et al.'s two variants drops the
+angle rule and
+learns pixel embeddings on patches around each junction; it reads the greyscale
+image, and it must be trained on crops in which every fibre is already labelled
+individually. Even then it recovers tangled fibres at about half the precision
+of isolated ones, in data where two thirds of fibres cross nothing at all.
+Methods that pair ends with an orientation network, detect fibres with a
+region-based detector, or trace them recurrently
+\citep{liu2019intersection,frei2020fiber,liu2023picktrace} need the same
+labelled training data. Reading a mask and nothing else avoids that cost, a
+trade-off adopted in this paper. DNAi keeps to the mask and searches more
+widely,
+enumerating every pairing a junction allows from its endpoint angles; it does
+so exhaustively at degree three and four, and not at all above
+\citep{playout2026dnai}. The closest single prior method to PLECTA is that of
+Liu et al., which likewise reads a mask, reconnects across gaps and permits
+overlapping output, but pairs termini greedily and depends on a trained
+orientation network \citep{liu2019intersection}.
+
+\subsection{Deciding a whole neighbourhood at once}
+\label{sec:rel-joint}
+
+A second remedy is to stop deciding one pairing at a time. Basu et al.\ and
+DeFiNe both weigh a whole neighbourhood at once, which is what a dense node
+requires. Basu et al.\ delete every branch point from a spanning tree over
+centreline points, then reassemble the pieces with an integer program that
+prices each join by how sharply it bends, repeating until the set of pieces
+settles; a join that a later fit contradicts can therefore still be undone
+\citep{basu2015extraction}. DeFiNe covers an already-built weighted graph with
+the smoothest paths it can find, and lets two paths share an edge, so a
+crossing pixel can belong to both strands instead of being awarded to one
+\citep{breuer2015define}. Neither, though, starts from an axis mask: one wants
+intensities, the other a graph some earlier stage has already produced. Both
+also reassemble at most three pieces at a time, which limits how much of a
+shattered neighbourhood a single round can repair. Deciding broadly and
+starting from a mask have so far been alternatives.
+
+One method combines both properties, and comes closest to the present
+approach. De
+et al.\ reason globally and do start from a mask. Branches and junction
+contacts become a graph, and
+labels spread across it so that a decision at one node constrains its
+neighbours rather than resting on that node's own angles \citep{de2016graph}.
+The labels have to start somewhere, however. In their images they start at
+anatomical roots, the stained cell bodies of neurons or the optic disc of a
+retina, and the method returns as many strands as there are roots. A tangle of
+open-ended strands offers no such starting point, and how many strands it
+holds is precisely the unknown. Reasoning globally from a mask alone, with no
+seed and no strand count supplied in advance, is the problem addressed in this
+paper. Four of these methods are measured against PLECTA directly in
+Section~\ref{sec:res-comparators}, on identical masks and through one scorer.
+Skeleton graphs, junction excision, continuation angles, distance gates,
+combinatorial optimisation, iterative refitting and overlapping output are
+therefore all established; none is claimed as new in this paper.
+
+\subsection{Complete workflows, and depth from a single view}
+\label{sec:rel-workflows}
+
+The closest complete workflow is that of Peters et al., who join a U-Net-like
+segmentation trained on over a thousand annotated SEM micrographs to
+algorithms that trace fibres through intersections, and validate against human
+evaluators on fibre number, length and width \citep{peters2026fibre}. That
+work and this one divide the task at the same joint and differ in what the
+instance step is asked to prove: their tracer substitutes for human counting
+and measurement, while PLECTA is isolated behind a binary mask and scored on
+identity through crossings against overlap-aware references in which every
+pairing is known.
+
+Which strand lies on top at a crossing is a further question, and for
+nanostructured networks it is normally answered destructively, by
+focused-ion-beam sectioning and tomographic reconstruction
+\citep{gabbett2024fibsem}, because a micrograph's intensities record surface
+topography rather than height. Monocular depth ordering has long derived
+pairwise depth from local occlusion evidence, assembled those relations into a
+depth-order graph and corrected the contradictions among them
+\citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
+resolves the layering of intersecting strands by analogous reasoning
+\citep{chai2012singleview}. Those methods read the shape of the outlines where
+two objects overlap, which a bundle a few pixels across in a noisy micrograph
+does not reliably provide; the evidence used in this paper is instead the
+continuity of each strand's own brightness across the crossing.

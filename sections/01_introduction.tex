@@ -24,196 +24,88 @@ follows how its filaments reorganise inside a living cell
 \citep{osterlund2026graft}.
 
 A micrograph shows that network directly. Turning the picture into those
-numbers is the hard part. Routine image analysis measures the network in bulk
-(what fraction of the frame is covered, which way the texture points
-\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}) and
-stops there. To measure a
-distribution of strand lengths, or to ask how often one strand crosses
-another, something more is needed: every strand must be recovered as a
-separate object, addressable from one end to the other.
+numbers remains the difficulty. Routine image analysis measures the network in
+bulk (what fraction of the frame is covered, which way the texture points
+\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}) and does
+not resolve individual strands. To measure a distribution of strand lengths,
+or to ask how often one strand crosses another, every strand must first be
+recovered as a separate object, addressable from one end to the other.
 
-That is an instance-segmentation problem, and it has an awkward geometry. The
-objects are long, thin and open rather than compact and closed; they touch,
-cross and hide one another; and what tells two of them apart is not shape or
-size but which way each was heading. The consequence is a pair of failures that
-pull in opposite directions. Where two strands cross, their pixels join into
-a single connected blob, the same blob a genuine merge error would leave, and
-a method that trusts connectivity reports one object where there are two.
+That is an instance-segmentation problem, and its geometry is unfavourable.
+The objects are long, thin and open rather than compact and closed; they
+touch, cross and hide one another; and what tells two of them apart is not
+shape or size but which way each was heading. The consequence is a pair of
+failures of opposite character. Where two strands cross, their pixels join
+into a single connected blob, the same blob a genuine merge error would leave,
+and a method that trusts connectivity reports one object where there are two.
 Where the image fades or the segmentation drops out, one strand arrives in
-several disconnected pieces, the same gap a genuine end would leave, and
-the same method reports several objects where there is one. Both situations
-are repaired by answering one question: at this junction, which arm continues
-into which?
+several disconnected pieces, the same gap a genuine end would leave, and the
+same method reports several objects where there is one. Both situations are
+repaired by answering one question: at this junction, which arm continues into
+which? This paper addresses the step existing tools leave open: given a binary
+strand-axis mask, recover the individual strands through the crossings and the
+gaps.
 
-Existing tools answer part of it. Semantic segmentation is mature, since U-Net and
-its self-configuring descendants reliably separate strand foreground from
-background \citep{ronneberger2015unet,isensee2021nnunet}, in materials
-imaging as much as anywhere
-\citep{stan2020optimizing,davydzenka2022deep}, and nanotube micrographs
-have their own trained segmenters
-\citep{trujillo2017segmentation,nguyen2023cntsegnet,dedonato2025deep}. But a
-foreground mask carries no identity, so it inherits both failures rather than
-resolving them. Instance methods assume the objects are compact, in materials microscopy
-\citep{he2026instance} as in the general-purpose families: bounded
-blobs, centre-directed flows, star-convex outlines, none of which describes a
-long open curve that may overlap another \citep{stringer2021cellpose,%
-schmidt2018stardist,kirillov2023sam}. Ridge and vesselness filters sharpen
-curvilinear signal but assign nothing across a junction
-\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and the
-established fibre-analysis packages return network statistics rather than
-resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
-flormann2021finta,hotaling2015diameterj}. Where the imaging is volumetric the
-problem is different in kind, because strands that appear to meet occupy
-disjoint volumes: in X-ray tomography of fibrous solids and of twisted ropes,
-individual fibres are separated by seeded watershed and morphological
-reasoning on the reconstructed volume
-\citep{depriester2022fibre,allan2025rope}. A projection has no such recourse,
-since two strands that cross genuinely share the same pixels. This paper
-addresses the step those leave open: given a binary strand-axis mask, recover
-the individual strands through the crossings and the gaps.
+The contribution is a specific combination, stated here and situated against
+prior work in Section~\ref{sec:related}. From a binary mask alone, PLECTA
+(i)~solves each junction, of \emph{any} degree, as one exact maximum-weight
+\emph{partial} matching in which leaving an arm unmatched is an explicit
+option at a fixed price rather than a parity leftover; (ii)~alternates that
+junction matching with globally gated bridging of mask gaps; (iii)~re-fits its
+tangent and curvature frames along the chains as they assemble; and
+(iv)~emits overlapping strands, so that a crossing pixel belongs to every
+strand that claims it. The individual ingredients, among them skeleton
+graphs, junction excision, continuation angles and combinatorial optimisation,
+are established; to our knowledge no prior method combines them, and
+Section~\ref{sec:related} substantiates that claim. Degree-general exact
+matching with a priced refusal is what allows a strand to end rather than
+have a continuation invented for it.
 
-Recovering strands through crossings is well-trodden ground. Existing methods
-differ in two ways that matter: what evidence they read, and whether a pairing
-once made can later be undone. On both counts the field clusters.
+That claim carries a working condition. The only evidence PLECTA reads at a
+crossing is directional, namely the tangent, the turns onto the chord between
+two tips, and the continuity of signed curvature, each read over tens of
+pixels of arclength, so the method applies where direction survives a crossing
+at that scale, as in semiflexible networks such as nanotube bundles, actin,
+collagen and synthetic fibres. Where that condition fails, as for a freely
+flexible chain whose tangent decorrelates within the junction, the method
+fails rather than degrades; Section~\ref{sec:limitations} returns to this
+limit.
 
-The largest cluster follows one recipe. These methods skeletonise the mask, cut
-the crossing out,
-and pair the arms left behind by how nearly each continues the direction of
-another. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
-directions from the excised stubs and recovers dense microtubule networks from
-the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
-by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
-Frangi-filtered skeleton greedily, longest path first
-\citep{osterlund2026graft}. This is cheap, and where crossings are rare it is
-enough. Its weakness is structural: once an arm is paired, a later arm that
-contradicts the choice cannot reopen it.
-
-Two ways out of that have been tried. The first is to bring in more evidence
-than a mask carries. Wegmayr et al.'s stronger arm drops the angle rule and
-learns pixel embeddings on patches around each junction; it reads the greyscale
-image, and it must be trained on crops in which every fibre is already labelled
-individually. Even then it recovers tangled fibres at about half the precision
-of isolated ones, in data where two thirds of fibres cross nothing at all.
-Methods that pair ends with an orientation network, detect fibres with a
-region-based detector, or trace them recurrently
-\citep{liu2019intersection,frei2020fiber,liu2023picktrace} need the same
-labelled training data. Reading a mask and nothing else avoids that cost, which
-is the trade this paper takes. DNAi keeps to the mask and simply looks harder,
-enumerating every pairing a junction allows from its endpoint angles; it does
-so exhaustively at degree three and four, and not at all above
-\citep{playout2026dnai}.
-
-The second way out is to stop deciding one pairing at a time. Basu et al.\ and
-DeFiNe both weigh a whole neighbourhood at once, which is what a busy node
-needs. Basu et al.\ delete every branch point from a spanning tree over
-centreline points, then reassemble the pieces with an integer program that
-prices each join by how sharply it bends, repeating until the set of pieces
-settles; a join that a later fit contradicts can therefore still be undone
-\citep{basu2015extraction}. DeFiNe covers an already-built weighted graph with
-the smoothest paths it can find, and lets two paths share an edge, so a
-crossing pixel can belong to both strands instead of being awarded to one
-\citep{breuer2015define}. Neither, though, starts from an axis mask: one wants
-intensities, the other a graph some earlier stage has already produced. Both
-also reassemble at most three pieces at a time, which limits how much of a
-shattered neighbourhood a single round can repair. Deciding broadly and
-starting from a mask have so far been alternatives.
-
-One method has them both, and it comes closest to the position taken here. De
-et al.\ reason globally and do start from a mask. Branches and junction contacts become a graph, and
-labels spread across it so that a decision at one node constrains its
-neighbours rather than resting on that node's own angles \citep{de2016graph}.
-The labels have to start somewhere, however. In their images they start at
-anatomical roots, the stained cell bodies of neurons or the optic disc of a
-retina, and the method returns as many strands as there are roots. A tangle of
-open-ended strands offers no such starting point, and how many strands it holds
-is precisely the unknown. Reasoning globally from a mask alone, with no seed
-and no strand count supplied in advance, is where this paper begins. Four of
-these methods are measured against it directly in
-Section~\ref{sec:res-comparators}, on identical masks and through one scorer.
-
-Skeleton graphs, junction excision, continuation angles, distance gates,
-combinatorial optimisation, iterative refitting and overlapping output are
-therefore all prior art, and none is claimed here. What is new is narrower, and
-it is a combination: from a binary mask alone, PLECTA solves each junction of
-\emph{any} degree as one exact maximum-weight \emph{partial} matching in which
-leaving an arm unmatched is an explicit option at a fixed price rather than a
-parity leftover, alternates that with globally gated gap matching, re-fits its
-tangent and curvature frames along the chains as they assemble, and emits
-overlapping strands. Each element exists somewhere above; no method there
-combines them.
-Degree-general exact matching with a priced refusal is what lets a strand
-genuinely end rather than have a continuation invented for it. The closest
-single prior method is that of Liu et al., which likewise reads a mask,
-reconnects across gaps and permits overlapping output, but pairs termini
-greedily and depends on a trained orientation network
-\citep{liu2019intersection}.
-That claim carries a condition, worth stating as scope rather than leaving to
-be inferred. The only evidence PLECTA has at a crossing is directional: the
-angle between two outward tangents, the turns onto the chord between them, and
-the continuity of signed curvature, each read over tens of pixels of arclength.
-The working condition is therefore a property of the image: direction must
-persist across the junction at that scale, or the continuation is not decidable
-from geometry at all. Bending stiffness is what most directly produces such
-persistence, which is why the semiflexible regime is the method's home ground:
-nanotube bundles sit there, and so do the actin, collagen and synthetic-fibre
-networks the methods above were built for. Stiffness contributes to the
-condition rather than uniquely causing it, since tension, adhesion, confinement
-or bundling can hold a direction just as straight. Where the condition fails,
-as for a freely flexible chain whose tangent decorrelates within the junction,
-no continuation is more plausible than another, and no amount of matching
-recovers what the image no longer distinguishes.
-
-We introduce PLECTA, after the Latin \emph{plecta}, a braid. It decomposes a skeleton
-into arms, endpoint stubs and merged junction nodes, alternates exact per-node
-continuation matching with globally gated gap matching while tangent and
-curvature estimates expand from local arms to assembled chains, and returns
-projected 2-D strand layers in which crossing pixels may be shared. Every
-parameter is fixed in a published configuration and the implementation draws on
-no random number generator, so a given mask yields the same strands on every
-run; that is the only sense in which it is called deterministic here.
+We name the method PLECTA, after the Latin \emph{plecta}, a braid. Every
+parameter is fixed in a published configuration and the implementation draws
+on no random number generator, so a given mask yields the same strands on
+every run; that is the only sense in which it is called deterministic here.
 
 Reaching real micrographs takes one further component, and the workflow is
 deliberately divided in two. An upstream route turns a raw SEM micrograph into
 a binary strand-axis mask by a synthetic-data-driven CycleGAN/U-Net whose
-training pairs are synthesised rather than annotated
-\citep{ruehle2021workflow}; PLECTA is everything downstream of
-that mask. The division is what makes the grouping measurable on its own,
-against references whose identities are known exactly, and it keeps width
-rendering from moving an identity score. The closest complete workflow is that
-of Peters et al., who join a U-Net-like segmentation trained on over a thousand
-annotated SEM micrographs to algorithms that trace fibres through
-intersections, and validate against human evaluators on fibre number, length
-and width \citep{peters2026fibre}. That work and this one divide the task at
-the same joint and differ in what the instance step is asked to prove: their
-tracer stands in for human counting and measurement, while PLECTA is isolated
-behind a binary mask and scored on identity through crossings against
-overlap-aware references in which every pairing is known. We evaluate PLECTA on
-\PlectaHeldoutSceneCount{} procedurally generated scenes spanning 20 to
-60\,\% areal coverage. A further \PlectaRobustnessSceneCount{} scenes are
-rendered twice, once from a clean axis and once from a degraded one, so that
-what degradation costs is measured on unchanged geometry. Both stages are then
-demonstrated together on \PlectaRealFieldCount{} annotated CNT-sheet SEM
-fields.
+training pairs are synthesised rather than annotated \citep{ruehle2021workflow};
+PLECTA is everything downstream of that mask. The division is what makes the
+grouping measurable on its own, against references whose identities are known
+exactly, and it keeps width rendering from moving an identity score. We
+evaluate PLECTA on \PlectaHeldoutSceneCount{} procedurally generated scenes
+spanning 20 to 60\,\% areal coverage, render a further
+\PlectaRobustnessSceneCount{} scenes once from a clean axis and once from a
+degraded one so that the cost of degradation is measured on unchanged
+geometry, and demonstrate both stages together on \PlectaRealFieldCount{}
+annotated CNT-sheet SEM fields.
 
 Beyond the plane, a crossing carries a second question the grouping does not
-answer: which strand lies on top. For nanostructured networks that is
-normally obtained destructively, by focused-ion-beam sectioning and tomographic
-reconstruction \citep{gabbett2024fibsem}, because a micrograph's intensities
-record surface topography rather than height. PLECTA answers it
-non-destructively from the greyscale already in hand. The machinery is
-deliberately conventional: monocular depth ordering has long derived pairwise
-depth from local occlusion evidence, assembled those relations into a
-depth-order graph and corrected the contradictions among them
-\citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
-resolves the layering of intersecting strands in much the same spirit
-\citep{chai2012singleview}. What differs is the evidence available. Those
-methods read the shape of the outlines where two objects overlap, which a
-bundle a few pixels across in a noisy micrograph does not present reliably.
-What separates the two strands here is instead the continuity of each
-one's own brightness: the upper strand keeps the appearance it has on either
-side of the crossing, while the lower strand's is overwritten by the strand
-above it. The stage abstains where that difference is no larger than the local
-image noise. To our knowledge this is
-the first depth decomposition of a strand network from a single micrograph;
-it is reported as a demonstration with a measured accuracy, not as a validated
+answer: which strand lies on top. PLECTA answers it non-destructively, from
+the greyscale already available. What separates the two strands at a crossing
+is the continuity of each one's own brightness: the upper strand keeps the
+appearance it has on either side of the crossing, while the lower strand's is
+overwritten by the strand above it. The stage abstains where that difference
+is no larger than the local image noise. To our knowledge this is the first
+depth decomposition of a strand network from a single micrograph; it is
+reported as a demonstration with a measured accuracy, not as a validated
 three-dimensional reconstruction.
+
+The remainder of the paper is organised as follows.
+Section~\ref{sec:related} reviews the neighbouring branches of the literature
+and places the present method among them. Section~\ref{sec:methods} describes
+the synthetic and SEM data, the reconstruction itself, and the evaluation
+protocol. Section~\ref{sec:results} reports accuracy on held-out synthetic
+scenes, a comparison with four published methods on identical masks,
+ablations, the depth stage, and a proof of concept on real SEM fields.
+Section~\ref{sec:conclusions} states conclusions, scope and limitations.
