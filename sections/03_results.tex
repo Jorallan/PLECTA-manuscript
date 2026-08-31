@@ -13,8 +13,8 @@ the held-out
 synthetic scenes, under the measures of Section~\ref{sec:mm-metrics} and
 against the overlap-aware reference the generator recorded when it drew them.
 Table~\ref{tab:plecta-heldout} reports every measure overall and by density
-stratum; the paragraphs below take the headline score, how it moves with
-density, and what that density label does and does not mean.
+stratum; the text then analyses the overall score, its dependence on
+density, and the interpretation of the density label.
 
 Mean common-fragment pairwise \Fone{} over the
 \PlectaHeldoutSceneCount{} held-out scenes was
@@ -43,9 +43,9 @@ coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
 monotonically through the intermediate strata. The same decline appears on the
 paired clean-against-degraded set below, where the clean and the degraded
-curves separate at low coverage and meet at 50--60\,\%: degradation
-costs least exactly where the score is lowest, because there the tangles rather
-than the gaps set the difficulty.
+curves separate at low coverage and meet at 50--60\,\%: the effect of degradation was
+smallest at high density, where junction ambiguity dominates gap-related
+error.
 Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
 Section~\ref{sec:res-comparators} measures cost systematically, where the
@@ -140,11 +140,10 @@ joined by no chain of strands that do, are related by nothing the image
 contains; their order is a stated tie-break, since the available crossing evidence
 does not determine their relative order. Only \PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs
 lie within one connected component of the crossing graph, which is the
-fraction for which any evidence exists at all. That alone accounts for the
-collapse. Suppose the stage orders the connected pairs at the rate it achieves
-on pairs that cross and guesses the rest: at 20\,\% coverage the two terms come
-to \PlectaDepthCleanCovTwoZeroOrderPred{}, against
-\PlectaDepthCleanCovTwoZeroAllOrder{} measured. At the sparser coverage the
+fraction for which any evidence exists at all. This fraction largely accounts for the reduction. A model that orders
+connected pairs at the decided-crossing accuracy and assigns unconnected
+pairs at chance predicts \PlectaDepthCleanCovTwoZeroOrderPred{} at 20\,\%
+coverage, against \PlectaDepthCleanCovTwoZeroAllOrder{} measured. At the sparser coverage the
 stage exceeds that prediction, so the unconnected pairs are evidently not
 entirely
 uninformative; at the denser end it falls short, which is what error accumulating
@@ -164,7 +163,8 @@ accuracy without improving overall performance.
 Layer agreement degrades the way the global order does, falling from
 \PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
 coverage doubles while the recovered layer count stays close to the reference:
-the ordering is locally right, so the number of layers is about right, while
+local ordering remained sufficiently accurate to recover a similar number
+of layers, while
 small order errors move strands across layer boundaries.
 
 Figure~\ref{fig:resem-synth} shows what the stage produces on one synthetic
@@ -282,11 +282,11 @@ erroneous strand mergers. Beside annotator~A's axis, the nnU-Net axis is a
 second, independent reading of the same strands, and it is thicker, broken
 into more pieces and displaced by a pixel or two almost everywhere, which panels~(b) and~(d) of
 Figure~\ref{fig:real-sem} show side by side.
-The consequence is fragmentation, which the pairwise score charges twice
-over: being quadratic in fragments, a strand the mask breaks into several
-pieces is charged once for every pair of pieces it fails to rejoin. Join
-\Fone{}, defined in \suppmeasures{}, charges each break the mask brings within
-rejoining reach once instead, and under it the gap narrows without closing.
+The consequence is fragmentation, which pairwise \Fone{} weights
+quadratically: a strand broken into several pieces is penalised once for
+every pair of pieces left unjoined. Join \Fone{}, defined in
+\suppmeasures{}, assigns one error to each recoverable break instead; under
+it the difference between the conditions is reduced but not eliminated.
 What is left is one-sided: on B58\_110's nnU-Net axis a join precision of
 \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{} indicates missed links rather
@@ -306,9 +306,9 @@ strand can be reproduced at all, which Section~\ref{sec:limitations} examines.
 \subsection{Development ablations}
 \label{sec:res-ablation}
 
-The sections above measure what PLECTA does. This one asks which of its
-parts the score depends on, by removing one at a time and rescoring, and
-which two of them are not parts of it at all but controls. Everything here
+Component contributions were evaluated by removing one component at a time
+and rescoring, together with two controls that are not components of the
+method. Everything here
 is measured on the development scenes and none of it reuses the held-out
 set, so the numbers below are diagnostic and are not comparable with the
 held-out result.
@@ -349,15 +349,13 @@ al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
 \subsection{Published methods on identical masks}
 \label{sec:res-comparators}
 
-The sections above measured PLECTA on its own. This one places it against
-established methods for the same task, on two bodies of material: the
+PLECTA was compared with four published methods on two data sets: the
 \PlectaGreedySceneCount{} synthetic scenes the comparison was designed on, and
 the \PlectaRealFieldCountLower{} annotated CNT SEM fields of
 Section~\ref{sec:res-real}, where the manual-derived axis lets the same
-comparison run on real imaging. Four published methods are scored beside
-PLECTA on identical masks, through
-the same conversion and metric code, over scenes
-generated after every configuration was fixed. What is compared is narrow: the
+comparison run on real imaging. All four are scored beside PLECTA on identical masks, through the same
+conversion and metric code, over scenes generated after every configuration
+was fixed. What is compared is narrow: the
 overlap-aware grouping of a binary axis mask of dense, crossing strands, at
 the coverages and tangling of the scenes described in
 Section~\ref{sec:mm-synth}. Each of these methods was built for a different

@@ -129,6 +129,12 @@ def main(argv=None) -> int:
                 else label_rgb(panel[key])
             ax = fig.add_axes([left + c * cell + 0.003, y0 + 0.0022,
                                cell - 0.006, cell_h - 0.0044])
+            #  Equal-aspect images letterbox inside a rect whose aspect is
+            #  not exactly theirs, and matplotlib centres the shrunken box,
+            #  which pushed every panel right of the headings and row labels
+            #  that share the rect's own left edge.  Anchoring south-west
+            #  pins the panel to that edge instead.
+            ax.set_anchor("SW")
             ax.imshow(img, interpolation="nearest")
             ax.set_xticks([])
             ax.set_yticks([])

@@ -29,8 +29,8 @@ assigned to every strand that passes through it.
         \PlectaDepthChance{}, and abstains where the image does not separate
         the pair by more than the local noise.
   \item The grouping core uses no random number generator and no training data,
-        and its configuration is published, so one mask yields one answer on
-        every run.
+        and its configuration is published, so identical input masks produce
+        identical outputs.
   \item The end-to-end workflow does not require manually annotated
         training images: the upstream segmenter is trained on synthetic image
         and mask pairs in which the generating mask provides the label. The
@@ -53,8 +53,8 @@ assigned to every strand that passes through it.
         supports a methodological claim: that pairing endpoints greedily, or
         committing with no option to decline, loses identity in dense
         crossings.
-  \item The remaining sensitivity is the segmenter's. PLECTA can bridge a short
-        omission, but it cannot infer a strand the mask omits, nor reliably
+  \item Performance remains sensitive to errors in upstream segmentation.
+        PLECTA can bridge a short omission, but it cannot infer a strand the mask omits, nor reliably
         reject a false axis introduced upstream.
   \item The real-material demonstration is a case study of
         \PlectaRealFieldCountLower{} CNT SEM fields and cannot estimate
@@ -71,12 +71,13 @@ assigned to every strand that passes through it.
         times as many objects as~A, shorter and far more fragmented, which
         reflects systematic differences in the operational definition of a
         strand instance. A real-data score is
-        therefore bounded by that disagreement rather than by the method, and
-        identity through an occlusion is the part annotation cannot settle.
+        therefore bounded by that disagreement rather than by the method,
+        and manual annotation cannot uniquely determine strand identity
+        through locally ambiguous occlusions.
   \item Applicability is limited to networks in which directional
-        continuity persists across the junction scale; reconstruction fails
-        rather than degrades when that assumption is violated, as for freely
-        flexible chains.
+        continuity persists across the junction scale; reconstruction
+        accuracy may decrease substantially when that assumption is violated,
+        as for freely flexible chains.
 \end{itemize}
 
 Stronger conclusions would require an independent real-image test set

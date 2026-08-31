@@ -10,12 +10,12 @@ methods.
 \subsection{Network-level methods without instance reconstruction}
 \label{sec:rel-tools}
 
-Existing tools answer part of the problem. Semantic segmentation is mature,
+Existing methods address complementary aspects of the problem. Semantic segmentation is mature,
 since U-Net and
 its self-configuring descendants reliably separate strand foreground from
-background \citep{ronneberger2015unet,isensee2021nnunet}, in materials
-imaging as much as anywhere
-\citep{stan2020optimizing,davydzenka2022deep}, and nanotube micrographs
+background \citep{ronneberger2015unet,isensee2021nnunet}, including in
+materials imaging \citep{stan2020optimizing,davydzenka2022deep}, and
+nanotube micrographs
 have their own trained segmenters
 \citep{trujillo2017segmentation,nguyen2023cntsegnet,dedonato2025deep}. But a
 foreground mask encodes no identity, so it inherits both failures rather than
@@ -28,13 +28,13 @@ curvilinear signal but assign nothing across a junction
 \citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}, and the
 established fibre-analysis packages return network statistics rather than
 resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
-flormann2021finta,hotaling2015diameterj}. Where the imaging is volumetric the
-problem is different in kind, because strands that appear to meet occupy
-disjoint volumes: in X-ray tomography of fibrous solids and of twisted ropes,
-individual fibres are separated by seeded watershed and morphological
-reasoning on the reconstructed volume
-\citep{depriester2022fibre,allan2025rope}. A projection has no such recourse,
-since two strands that cross genuinely share the same pixels.
+flormann2021finta,hotaling2015diameterj}. Where the imaging is volumetric, strands that appear to meet in projection
+occupy disjoint volumes, and that separation is exploitable: in X-ray
+tomography of fibrous solids and of twisted ropes, individual fibres are
+separated by seeded watershed and morphological reasoning on the
+reconstructed volume \citep{depriester2022fibre,allan2025rope}. In a
+projection this separation is unavailable, because two crossing strands
+genuinely share the same pixels.
 
 \subsection{Greedy continuation from a mask}
 \label{sec:rel-greedy}
@@ -43,10 +43,9 @@ Recovering strands through crossings has been addressed repeatedly. Existing
 methods differ primarily in the evidence used for continuation and in whether
 earlier pairings can subsequently be revised.
 
-A large class of methods follows a common procedure: skeletonise the mask, cut
-the crossing out,
-and pair the arms left behind by how nearly each continues the direction of
-another. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
+A large class of methods follows a common procedure: skeletonise the mask,
+remove the junction pixels, and pair the resulting arms according to
+directional continuity. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
 directions from the excised stubs and recovers dense microtubule networks from
 the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
 by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
@@ -55,8 +54,8 @@ Frangi-filtered skeleton greedily, longest path first
 it suffices. Its weakness is structural: once an arm is paired, a later arm
 that contradicts the choice cannot reopen it.
 
-Two remedies have been tried. The first is to bring in more evidence
-than a mask contains. The stronger of Wegmayr et al.'s two variants drops the
+Two remedies have been tried. The first is to incorporate additional image
+evidence beyond the mask. The stronger of Wegmayr et al.'s two variants drops the
 angle rule and
 learns pixel embeddings on patches around each junction; it reads the greyscale
 image, and it must be trained on crops in which every fibre is already labelled
@@ -66,9 +65,9 @@ Methods that pair ends with an orientation network, detect fibres with a
 region-based detector, or trace them recurrently
 \citep{liu2019intersection,frei2020fiber,liu2023picktrace} need the same
 labelled training data. Reading a mask and nothing else avoids that cost, a
-trade-off adopted in this paper. DNAi keeps to the mask and searches more
-widely,
-enumerating every pairing a junction allows from its endpoint angles; it does
+trade-off adopted in this paper. DNAi also uses only the mask but evaluates a larger set of candidate
+pairings, enumerating every pairing a junction allows from its endpoint
+angles; it does
 so exhaustively at degree three and four, and not at all above
 \citep{playout2026dnai}. The closest single prior method to PLECTA is that of
 Liu et al., which likewise reads a mask, reconnects across gaps and permits

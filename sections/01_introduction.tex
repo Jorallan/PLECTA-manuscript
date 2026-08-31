@@ -43,20 +43,18 @@ represent continuous strands at each junction. This paper addresses that
 step: the reconstruction of individual strands across crossings and gaps from
 a binary strand-axis mask.
 
-The contribution is a specific combination, stated here and situated against
-prior work in Section~\ref{sec:related}. From a binary mask alone, PLECTA
-(i)~solves each junction, of \emph{any} degree, as one exact maximum-weight
-\emph{partial} matching in which leaving an arm unmatched is an explicit
-option with a fixed penalty rather than a parity leftover; (ii)~alternates that
-junction matching with globally gated bridging of mask gaps; (iii)~re-fits its
-tangent and curvature frames along the chains as they assemble; and
-(iv)~emits overlapping strands, so that a crossing pixel may be assigned to
-multiple strands. The individual ingredients, among them skeleton
-graphs, junction excision, continuation angles and combinatorial optimisation,
-are established; to our knowledge no prior method combines them, and
-Section~\ref{sec:related} substantiates that claim. Degree-general exact matching with an explicit unmatched-arm penalty is
-what allows a strand to terminate rather than receive a forced
-continuation.
+The essential original component of PLECTA is degree-general exact
+maximum-weight \emph{partial} matching at each junction, with an explicit
+penalty for leaving an arm unmatched: junctions of any degree are solved by
+one formulation, and a strand may genuinely terminate rather than receive a
+forced continuation. From a binary mask alone, that matching is integrated
+with globally gated bridging of mask gaps, iterative re-fitting of tangent
+and curvature frames along the assembling chains, and overlapping instance
+output, in which a crossing pixel may be assigned to multiple strands. The
+individual ingredients, among them skeleton graphs, junction excision,
+continuation angles and combinatorial optimisation, are established; to our
+knowledge no prior method combines them, and Section~\ref{sec:related}
+substantiates that claim.
 
 PLECTA assumes that directional information remains reliable over the
 spatial scale of a junction: the evidence it reads is the tangent, the turns
@@ -97,6 +95,13 @@ is no larger than the local image noise. To our knowledge this is the first
 depth decomposition of a strand network from a single micrograph; it is
 reported as a demonstration with a measured accuracy, not as a validated
 three-dimensional reconstruction.
+
+Anticipating the results: across held-out synthetic scenes, PLECTA
+preserved strand identity more accurately than the evaluated alternatives at
+all tested densities; performance decreased with centreline density and
+remained sensitive to the quality of the upstream mask. The image-informed
+extension recovered depth order reliably where sufficient local intensity
+evidence was available, and abstained otherwise.
 
 The remainder of the paper is organised as follows.
 Section~\ref{sec:related} reviews the neighbouring branches of the literature

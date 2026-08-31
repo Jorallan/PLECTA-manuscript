@@ -249,8 +249,8 @@ continuation across evidence that is \emph{missing} rather than merely
 ambiguous. \supprecon{} lists the penalties, the limits, and the schedule
 below.
 
-The method does not decide once. It runs the two matchings over several rounds,
-re-fitting every frame along the chains assembled so far before each. Early
+The two matching stages are applied iteratively, over several rounds, with
+every frame re-fitted along the chains assembled so far before each round. Early
 rounds are deliberately conservative: penalties are scaled down, which
 admits
 fewer edges, and the gap angle limits are narrowed, so only pairings that
@@ -288,10 +288,10 @@ degree two to four, disagree at roughly a fifth of nodes with five to eight
 stubs, and at two thirds of nodes with nine or more, where the joint solution
 is the cheaper one; \supprecon{} gives the counts. That comparison
 holds one node's costs fixed. Run inside the rounds, where each matching sets
-the frames the next is scored against, a cheap early choice propagates and the
+the frames the next is scored against, an early low-cost selection propagates and the
 difference is no longer confined to dense nodes.
 
-Two measurements test that claim rather than assert it. The greedy
+Two measurements evaluate that claim. The greedy
 continuation baseline of Section~\ref{sec:res-ablation} reads the \emph{same}
 masks and the same local geometry and differs only in pairing greedily instead
 of jointly, so the \PlectaGreedySweptDeltaFOne{} \Fone{} between them isolates
@@ -299,9 +299,9 @@ the formulation rather than the evidence. The component ablations reported
 alongside it then ask the complementary question, whether the rest of the
 combination contributes measurably, and find that removing the junction
 chord-turn term costs \PlectaAblationTangentTermOnlyDeltaFOne{} and removing
-gap matching \PlectaAblationNoGapBridgingDeltaFOne{}. Neither measurement
-alone would do: the first says the matching is worth its complexity, the
-second that the terms it matches on are not redundant.
+gap matching \PlectaAblationNoGapBridgingDeltaFOne{}. The two measurements
+are complementary: the first evaluates the joint formulation itself, and the
+second whether the terms it matches on are redundant.
 
 \begin{figure}[tbp]
     \centering
@@ -354,8 +354,8 @@ result.
 \subsubsection{Depth decomposition}
 \label{sec:mm-depth}
 
-A projected crossing has an owner in each of two strands but no order between
-them. This stage supplies one.
+A projected crossing belongs to both intersecting strands but does not
+encode their relative depth. The depth stage estimates that order.
 
 \textbf{Evidence at one crossing} (Figure~\ref{fig:depth-evidence}).
 Where two strand centrelines intersect, a
@@ -437,8 +437,8 @@ then placed at a height that respects its order and keeps strands from
 interpenetrating at their measured radii, with the stack compacted so that the
 film is as thin as those constraints allow.
 
-Without a greyscale image every crossing abstains, the ordering has nothing to
-satisfy, and the output degenerates to the tie-break: the stage requires image
+Without a greyscale image no local depth relations are estimated and the
+predefined tie-break determines the output order: the stage requires image
 evidence and reports how much of it was usable.
 Section~\ref{sec:res-depth} evaluates it, and
 \suppdepth{} defines the measures used, which are
