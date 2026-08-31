@@ -246,12 +246,16 @@ def main() -> int:
     m, m_c, sigma = panel_levels(ax_b, d)
     di, dj, contrast, floor = panel_decision(ax_c, d, m, m_c, sigma)
 
-    for x0, letter, text in ((0.018, "a", "where the grey is read"),
-                             (0.372, "b", "what it returns"),
-                             (0.760, "c", "what decides")):
-        fig.text(x0, 0.935, letter, fontsize=PT_TITLE, fontweight="bold",
-                 color=INK)
-        fig.text(x0 + 0.026, 0.935, text, fontsize=PT_TITLE, color=INK)
+    #  Panel tags are parenthesised, matching the rest of the set and the
+    #  (a)/(b) the caption uses.  This figure and fig_depth_order were the
+    #  only two that set a bare letter.  Titles are de-idiomed with the prose
+    #  (reviewer comment 5): "what it returns", "what decides".
+    for x0, letter, text in ((0.018, "a", "where the greyscale is sampled"),
+                             (0.372, "b", "the levels it returns"),
+                             (0.760, "c", "the decision rule")):
+        fig.text(x0, 0.935, "(%s)" % letter, fontsize=PT_TITLE,
+                 fontweight="bold", color=INK)
+        fig.text(x0 + 0.034, 0.935, text, fontsize=PT_TITLE, color=INK)
 
     save_fig(fig, "fig_depth_evidence", bbox_inches=None)
     plt.close(fig)

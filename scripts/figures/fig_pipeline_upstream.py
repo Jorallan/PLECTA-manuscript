@@ -1,5 +1,9 @@
 """Figure: where the real-SEM axis mask comes from, and why it is not ours.
 
+SUPERSEDED 2026-08-31: the manuscript now draws this figure in TikZ, at
+figures/fig_pipeline_upstream.tex, following the reviewer request for structure diagrams in native
+LaTeX. This generator stays runnable and writes to figures/archive/.
+
 Section 3.5 puts PLECTA on a real micrograph, and to do that it needs a binary
 strand-axis mask.  One is produced by the upstream segmenter --- procedural
 mask -> CycleGAN -> paired synthetic corpus -> nnU-Net -> binary strand-axis
@@ -219,7 +223,7 @@ def main() -> int:
             ha="left", va="center", fontsize=PT_MIN, color=GREEN, zorder=6,
             linespacing=1.34)
 
-    save_fig(fig, "fig_pipeline_upstream", bbox_inches=None)
+    save_fig(fig, "fig_pipeline_upstream", subdir="archive", bbox_inches=None)
     plt.close(fig)
     print("fig_pipeline_upstream  %.3f x %.3f in" % (FIG_W, FIG_H))
     return 0

@@ -210,12 +210,14 @@ upstream segmenter is such a technique.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_pipeline_upstream.pdf}
-    \caption{Where the mask comes from. The segmenter trains on manufactured
-    pairs, so no micrograph is ever hand-annotated, and the binary axis mask it
-    produces is the whole interface to PLECTA. It is not a contribution of this
-    paper and is not evaluated here; it carries its own evaluation
-    \citep{ruehle2021workflow}, and only the dashed box is
+    \input{figures/fig_pipeline_upstream}
+    \caption{Where the mask comes from. In training the pair is manufactured,
+    the mask that made the image being its own label, so no annotator is
+    involved at any point; at inference the trained segmenter reads the
+    micrograph, never an annotation, and ends in the binary strand-axis mask
+    that is the whole interface to PLECTA. The segmenter is not a contribution
+    of this paper and is not evaluated here; it carries its own evaluation
+    \citep{ruehle2021workflow}, and only the stage in the dashed boundary is
     measured.}
     \label{fig:pipeline-upstream}
 \end{figure}
@@ -236,7 +238,7 @@ axis beside what PLECTA made of it.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
     \caption{One CNT SEM field, B58\_110, whole frame, a row per mask source.
-    \textbf{(a)}~annotator~A's annotation; \textbf{(b)}~its skeleton, the
+    \textbf{(a)}~the reference annotation (annotator~A); \textbf{(b)}~its skeleton, the
     manual-derived axis, and \textbf{(c)}~PLECTA from it; \textbf{(d)}~the
     segmenter's axis, and \textbf{(e)}~PLECTA from that, same parameters. (b)
     and (d) are the input masks, in one colour, dilated a pixel for legibility;

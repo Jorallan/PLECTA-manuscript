@@ -35,7 +35,7 @@ from PIL import Image  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _style import (FIG_W, PT_ANNOT, PT_TITLE, bare,  # noqa: E402
-                    plecta_style, save_fig)
+                    plecta_style, save_fig, tagged_title)
 from _tube3d import draw_tubes_shaded, tube_mesh  # noqa: E402
 
 DEFAULT_SCENE = (r"C:\Repos\comparisons\real_sem_study\scenes_v2"
@@ -131,11 +131,11 @@ def main():
     # the whole claim; the film they imply follows.
     ax = fig.add_subplot(gs[0, 0]); bare(ax)
     ax.imshow(sem[box], cmap="gray", interpolation="nearest")
-    ax.set_title("micrograph", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax, "a", "micrograph", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered[box], cmap="gray", interpolation="nearest")
-    ax.set_title("re-rendered", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax, "b", "re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
     if residual:
         key = next((k for k in ("rmse", "mae", "l1") if k in residual), None)
         if key:
@@ -147,7 +147,7 @@ def main():
                       extent=max(sem.shape), zoom=2.05,
                       elev=20, azim=-62, colour="grey",
                       z_stretch=span / max(sem.shape))
-    ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax3, "c", "depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     save_fig(fig, "fig_resem_real", bbox_inches=None)
     print("wrote fig_resem_real")

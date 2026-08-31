@@ -36,7 +36,7 @@ from PIL import Image  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _style import (FIG_W, PT_ANNOT, PT_TITLE, bare,  # noqa: E402
-                    plecta_style, save_fig)
+                    plecta_style, save_fig, tagged_title)
 from _tube3d import draw_tubes_shaded, tube_mesh  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -106,18 +106,18 @@ def main():
 
     ax = fig.add_subplot(gs[0, 0]); bare(ax)
     ax.imshow(reference, cmap="gray", interpolation="nearest")
-    ax.set_title("reference image", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax, "a", "reference image", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered, cmap="gray", interpolation="nearest")
-    ax.set_title("re-rendered", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax, "b", "re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     ax3 = fig.add_subplot(gs[0, 2], projection="3d")
     draw_tubes_shaded(ax3, tubes, z_lo, span,
                       extent=reference.shape[0], zoom=2.05,
                       elev=20, azim=-62, colour="grey",
                       z_stretch=span / reference.shape[0])
-    ax3.set_title("depth reconstruction", fontsize=PT_TITLE, pad=3)
+    tagged_title(ax3, "c", "depth reconstruction", dy=1.0 + 3.0 / 72.0, gap=0.100)
 
     save_fig(fig, "fig_resem_synth", bbox_inches=None)
     print("wrote fig_resem_synth")

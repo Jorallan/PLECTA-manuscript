@@ -16,6 +16,8 @@
 \usepackage{float}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
 \setlength{\parindent}{1.5em}
 \usepackage{url}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
@@ -29,6 +31,45 @@
 \definecolor{fsblue}{HTML}{2B6CB0}
 \definecolor{fsorange}{HTML}{DD6B20}
 \definecolor{fsgreen}{HTML}{2F855A}
+
+% ── TikZ vocabulary for the two structure figures ──────────────────────────
+%  figures/fig_pipeline_scope.tex and figures/fig_pipeline_upstream.tex are
+%  drawn in the document's own face at the document's own size, per the
+%  reviewer request for structure diagrams in native LaTeX.  Everything is
+%  achromatic except one accent, used only for the boundary of what the paper
+%  evaluates.  \footnotesize is 9 pt and \scriptsize 8 pt at this class
+%  option, so the 7 pt floor that check_type_scale.py polices for the
+%  matplotlib figures holds here structurally.
+\definecolor{pkink}{HTML}{1A202C}     % box rules and text
+\definecolor{pksoft}{HTML}{6B7785}    % secondary notes; stages outside the contribution
+\definecolor{pkacc}{HTML}{2F855A}     % the one accent: the evaluated boundary
+\tikzset{
+  pk/.style = {
+    font=\footnotesize,
+    >={Stealth[length=4.5pt,width=3.2pt]},
+    every node/.style={inner sep=0pt, outer sep=0pt},
+  },
+  stage/.style = {
+    draw=pkink, line width=.5pt, rounded corners=1.2pt,
+    align=center, inner xsep=4pt, inner ysep=5pt,
+    text width=#1, minimum height=9.5mm, text=pkink,
+  },
+  stage/.default = 30mm,
+  io/.style = {stage=#1, line width=.9pt},
+  io/.default = 30mm,
+  ext/.style = {stage=#1, draw=pksoft, text=pksoft},
+  ext/.default = 30mm,
+  flow/.style = {->, draw=pkink, line width=.5pt},
+  flowsoft/.style = {->, draw=pksoft, line width=.5pt},
+  loop/.style = {->, draw=pkink, line width=.5pt, dashed,
+                 dash pattern=on 2pt off 1.6pt},
+  note/.style = {font=\scriptsize, text=pksoft, align=left, inner sep=2pt},
+  scope/.style = {
+    draw=pkacc, line width=.6pt, dashed, dash pattern=on 2.6pt off 2pt,
+    rounded corners=2pt, inner sep=6pt,
+  },
+  scopelab/.style = {font=\scriptsize, text=pkacc, inner sep=2pt},
+}
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{%
   \par\smallskip\refstepcounter{igorcomment}\noindent%

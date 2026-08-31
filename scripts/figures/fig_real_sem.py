@@ -369,13 +369,14 @@ def main() -> int:
 
     #  (a), centred: the reference the four panels below are read against.
     ax = add_panel(fig, fig_h, (FIG_W - hero_w) / 2.0, TITLE_H, hero_w, hero_h,
-                   "a", "Annotator A's annotation")
+                   "a", "reference annotation (annotator A)")
     show(ax, instances(sem, *unpack(data, field, "reference_width"),
                        colours, unmatched))
 
     #  One row per mask source: the axis PLECTA was handed, then what it made
     #  of it.  Reading across a row is the whole point of the arrangement.
-    rows = ((("b", "Manual-derived axis", "mask_manual"),
+    #  Lower case, matching the convention the rest of the set now uses.
+    rows = ((("b", "manual-derived axis", "mask_manual"),
              ("c", "PLECTA, manual-derived axis", "manual_width")),
             (("d", "nnU-Net axis", "mask_unet"),
              ("e", "PLECTA, nnU-Net axis", "unet_width")))

@@ -22,17 +22,27 @@ score of each admissible configuration, the declined-but-admissible edge at a
 real three-arm node, and the accepted gap with its separation.  All of it is
 read from ``results/plecta_figure_data.json``.
 
-VISUAL TREATMENT.  Unlike the other nine figures in this set, this one does not
-call ``plecta_style()`` and does not draw in the manuscript's Latin Modern body
-face or the shared muted palette -- that is a deliberate, scoped exception, not
-a drift.  It uses a flat, saturated accent palette and Segoe UI, laid out as
-elevated white cards on a light page, each with a soft fake-blurred shadow
-built from stacked translucent rounded rects (matplotlib has no native blur).
+VISUAL TREATMENT.  This figure used to be the one exception in the set: it did
+not call ``plecta_style()``, and drew in Segoe UI on a flat Apple system
+palette, laid out as elevated white cards on a light grey page with soft fake
+shadows stacked from translucent rounded rects.  Reviewer comment 4 named it as
+the presentation-style image, and the exception is now removed by exactly the
+route the old docstring recorded: ``plecta_style()`` is reapplied, and
+FIL_A/FIL_B/JUNCTION/CHORD/PLECTA come from ``_style`` in place of the ACCENT_*
+palette.  Concretely, what changed is colour, type, and the chosen-answer
+highlight:
+
+  * Latin Modern Roman at the shared 8.5/7.5 pt scale, replacing Segoe UI at
+    9.5/8.0/7.6/7.3 -- four sizes that existed nowhere else in the set.
+  * hairline rules on white in place of cards, shadows and the #F5F5F7 page.
+  * the chosen configuration is marked by a heavier rule, not a green tint:
+    the same "this is the answer" signal without the tile reading as UI.
+  * panel titles use the set's ``(a)`` bold-tag convention rather than a
+    white letter in a coloured circle.
+
 Every geometric quantity -- arm directions, hub positions, costs, gate
-thresholds -- is untouched; only colour, type, and the chosen-answer highlight
-changed. If the set's shared look is ever restored here, reapply
-``plecta_style()`` and the FIL_A/FIL_B/JUNCTION/CHORD/PLECTA constants from
-``_style`` in place of the ACCENT_* palette below.
+thresholds -- is untouched, as it was under the old treatment.  Nothing below
+the drawing layer was edited, so the numbers on the page are the same numbers.
 
     python scripts/figures/fig_plecta_exact_matching.py
 """
@@ -48,10 +58,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as pe
 from matplotlib.patches import Circle, FancyBboxPatch
 
-from _style import FIG_W, load_figure_data, save_fig, unpack
+from _style import (CHORD, FIG_W, FIL_A, FIL_B, GRAY, INK, JUNCTION,
+                    LIGHT_GRAY, PLECTA, PT_ANNOT, PT_MIN, PT_TITLE,
+                    load_figure_data, plecta_style, save_fig, unpack)
 
 FIG_H = 3.56
 LETTERS = "abcd"
@@ -61,32 +72,23 @@ LETTERS = "abcd"
 #: the subject.
 ARM_PX = 26
 
-# ── the Apple-style accent palette (flat, saturated system colours) ────────
-ACCENT_BLUE = "#0A84FF"
-ACCENT_ORANGE = "#FF9F0A"
-ACCENT_GREEN = "#30D158"
-ACCENT_RED = "#FF375F"
-INK = "#1D1D1F"
-SUBTLE = "#6E6E73"
-NEUTRAL = "#AEAEB2"
-PAGE_BG = "#F5F5F7"
-CARD_BG = "#FFFFFF"
-CHOSEN_TINT = "#EAFBEF"
+# ── the shared palette and type scale ──────────────────────────────────────
+#  FIL_A, FIL_B, PLECTA, JUNCTION, CHORD, INK come from ``_style`` and mean the
+#  same thing here as in every other figure: A and B are the two filaments, the
+#  green is a link PLECTA takes, the red is the junction cluster, the grey is a
+#  candidate not taken.  SUBTLE is the set's secondary text grey.
+SUBTLE = GRAY
+CARD_EDGE = LIGHT_GRAY
 
-FIL_A = ACCENT_BLUE
-FIL_B = ACCENT_ORANGE
-PLECTA = ACCENT_GREEN
-JUNCTION = ACCENT_RED
-CHORD = NEUTRAL
+#  Three sizes, all from the set's scale: 8.5 bold for a panel title, 7.5 for
+#  annotation, 7.0 for the dense arithmetic under each configuration.  The old
+#  treatment used 9.5/8.0/7.6/7.3, none of which appears anywhere else.
+PT_CAPTION = PT_ANNOT
+PT_TAG = PT_MIN
 
-PT_BADGE = 8.0
-PT_TITLE = 9.5
-PT_ANNOT = 8.0
-PT_CAPTION = 7.6
-PT_TAG = 7.3
-
-LINE_SHADOW = [pe.SimpleLineShadow(offset=(1.0, -1.1), alpha=0.20,
-                                   shadow_color="#000000"), pe.Normal()]
+#  Was a stacked-translucent drop shadow under every arm.  Nothing replaces it:
+#  the arms carry their own weight against a white ground.
+LINE_SHADOW = None
 
 
 def fy(inches):
@@ -94,27 +96,19 @@ def fy(inches):
     return 1.0 - inches / FIG_H
 
 
-def apple_style():
-    plt.rcParams.update({
-        "figure.facecolor": PAGE_BG,
-        "savefig.facecolor": PAGE_BG,
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Segoe UI", "Segoe UI Semibold", "Arial",
-                            "Helvetica Neue", "DejaVu Sans"],
-        "mathtext.fontset": "dejavusans",
-        "text.color": INK,
-        "pdf.fonttype": 42,
-        "ps.fonttype": 42,
-    })
+def title(fig, x, y, letter, text):
+    """``(a)`` bold, the title beside it in the regular weight.
 
-
-def title(fig, x, y, letter, text, accent=ACCENT_BLUE):
-    """A round accent badge carrying the panel letter, plus the title text."""
-    fig.text(x, y, letter, fontsize=PT_BADGE, fontweight="bold", color="white",
-             ha="center", va="center", zorder=6,
-             bbox=dict(boxstyle="circle,pad=0.42", fc=accent, ec="none"))
-    fig.text(x + 0.026, y, text, fontsize=PT_TITLE, fontweight="bold",
+    The set's convention, and the same one ``_style.tagged_title`` applies in
+    axes coordinates; this figure places its titles in figure coordinates, so
+    the two lines are written out rather than delegated.  Latin Modern bold
+    sets about 15 % wider than its regular, so a whole title in bold reads as
+    stretched next to body text -- the tag carries the hierarchy on its own.
+    """
+    fig.text(x, y, "(%s)" % letter, fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="center", zorder=6)
+    fig.text(x + 0.032, y, text, fontsize=PT_TITLE, color=INK, ha="left",
+             va="center", zorder=6)
 
 
 def letter_map(node):
@@ -202,38 +196,29 @@ def walk(pixels, start):
     return np.asarray(out, float)
 
 
-# ── cards: a soft fake-blurred shadow, then a flat rounded tile ────────────
+# ── panels: a hairline rule on white, and nothing else ─────────────────────
+#
+#  What this replaced: a six-layer fake-blurred drop shadow (matplotlib has no
+#  native blur, so the old code stacked translucent rounded rects at growing
+#  radius) under a flat rounded tile, tinted #EAFBEF when chosen.  That is the
+#  card idiom of a slide deck, and it is what the reviewer's comment 4 is
+#  about.  A journal figure separates panels with a rule or with white space.
+#
+#  The chosen configuration still has to be findable at a glance, so it keeps a
+#  heavier rule in PLECTA green -- one weight step and one hue, against a
+#  hairline grey.  No fill, no shadow, no tint.
 
 
-def soft_shadow(overlay, rect, layers=6, spread_in=0.075, offset_in=(0.020, -0.026),
-                base_alpha=0.055, colour="#000000", rounding=0.05):
-    x, y, w, h = rect
-    ox, oy = offset_in[0] / FIG_W, offset_in[1] / FIG_H
-    for i in range(layers, 0, -1):
-        grow = spread_in * (i / layers)
-        gx, gy = grow / FIG_W, grow / FIG_H
-        alpha = base_alpha * (1.0 - (i - 1) / layers)
-        overlay.add_patch(FancyBboxPatch(
-            (x - gx + ox, y - gy + oy), w + 2 * gx, h + 2 * gy,
-            boxstyle=f"round,pad=0,rounding_size={rounding + grow}",
-            linewidth=0, facecolor=colour, edgecolor="none",
-            alpha=alpha, zorder=1))
-
-
-def card(fig, overlay, rect, pad_in=0.050, chosen=False, rounding=0.045):
-    """Shadow + flat rounded tile behind ``rect``; returns the padded rect."""
+def card(fig, overlay, rect, pad_in=0.050, chosen=False, rounding=0.015):
+    """A hairline rounded frame behind ``rect``; returns the padded rect."""
     px, py = pad_in / FIG_W, pad_in / FIG_H
     padded = [rect[0] - px, rect[1] - py, rect[2] + 2 * px, rect[3] + 2 * py]
-    soft_shadow(overlay, padded, rounding=rounding,
-                colour=ACCENT_GREEN if chosen else "#000000",
-                base_alpha=0.09 if chosen else 0.055,
-                spread_in=0.09 if chosen else 0.07)
     overlay.add_patch(FancyBboxPatch(
         (padded[0], padded[1]), padded[2], padded[3],
         boxstyle=f"round,pad=0,rounding_size={rounding}",
-        linewidth=1.6 if chosen else 0.8,
-        edgecolor=ACCENT_GREEN if chosen else "#E5E5EA",
-        facecolor=CHOSEN_TINT if chosen else CARD_BG, zorder=2))
+        linewidth=1.1 if chosen else 0.6,
+        edgecolor=PLECTA if chosen else CARD_EDGE,
+        facecolor="white", zorder=2))
     return padded
 
 
@@ -385,11 +370,13 @@ def panel_gap(fig, overlay, rect, chip_rect, data):
             lw=1.9, ls=(0, (3.2, 2.2)), zorder=5)
     for t in tips:
         marker(ax, (t[1], t[0]), FIL_A, ms=5.4)
-    ax.annotate("d = %.1f px" % case["d"],
-                (0.5 * (tips[0][1] + tips[1][1]), 0.5 * (tips[0][0] + tips[1][0])),
-                textcoords="offset points", xytext=(-8.0, 0.0), ha="right",
-                va="center", fontsize=PT_ANNOT, fontweight="bold",
-                color=PLECTA, zorder=7)
+    #  Pinned to the panel's top-left corner rather than offset from the gap's
+    #  midpoint.  The old placement hung the label off the left of the midpoint,
+    #  which was clear when panels had no border and straddles the frame now
+    #  that they do.  The strand runs bottom-left to top-right, so this corner
+    #  is empty in the crop.
+    ax.text(0.05, 0.95, "d = %.1f px" % case["d"], transform=ax.transAxes,
+            ha="left", va="top", fontsize=PT_ANNOT, color=PLECTA, zorder=7)
 
     #  The four-gate checklist as its own card: a short list of pass conditions,
     #  each led by a small accent-green "cleared" dot rather than bare text.
@@ -412,26 +399,26 @@ def panel_gap(fig, overlay, rect, chip_rect, data):
     #  is what gets centred in the card's height.
     block_h = header_h + header_gap + (len(lines) - 1) * row_h + row_h / 2.0
     y = cy + ch / 2.0 + block_h / 2.0
-    fig.text(cx + cw / 2.0, y, "requires all four:", fontsize=PT_CAPTION,
+    fig.text(cx + cw / 2.0, y, "all four are required", fontsize=PT_CAPTION,
             color=SUBTLE, ha="center", va="top", zorder=6)
     y -= header_h + header_gap
     for line in lines:
-        #  The green bullet is the bbox of an empty label, so the label's own
-        #  size only sets the dot's scale. It was 4.5 pt, which put a glyph
-        #  below check_type_scale's 7.0 pt floor even though a space draws
-        #  nothing; the size is raised to the floor and the padding reduced to
-        #  keep the dot the diameter it was.
-        fig.text(x0 + 0.011, y, " ", fontsize=PT_TAG, color=INK, ha="center",
-                va="center", zorder=6,
-                bbox=dict(boxstyle="circle,pad=0.31", fc=ACCENT_GREEN,
-                          ec="none"))
-        fig.text(x0 + 0.040, y, line, fontsize=PT_ANNOT, color=INK, ha="left",
+        #  Was a filled green "cleared" dot per row -- a traffic light, and the
+        #  most deck-like element on the page: it asserts a pass/fail state the
+        #  panel does not measure, since these are the gate values, not four
+        #  results.  A plain rule sets the list off instead.  The dot was drawn
+        #  as the bbox of a single space, which also meant check_type_scale had
+        #  to police a glyph that draws nothing; that problem goes with it.
+        overlay.add_patch(plt.Rectangle(
+            (x0 + 0.004, y - 0.0015), 0.016, 0.003, transform=fig.transFigure,
+            facecolor=CHORD, edgecolor="none", zorder=6))
+        fig.text(x0 + 0.032, y, line, fontsize=PT_ANNOT, color=INK, ha="left",
                 va="center", zorder=6)
         y -= row_h
 
 
 def main() -> int:
-    apple_style()
+    plecta_style()
     data = load_figure_data()
     j4, j3 = data["junction4"], data["junction3"]
     names4 = letter_map(j4)
@@ -441,7 +428,7 @@ def main() -> int:
     cost3 = {frozenset((p["a"], p["b"])): p["cost"] for p in j3["pairs"]}
 
     fig = plt.figure(figsize=(FIG_W, FIG_H))
-    fig.patch.set_facecolor(PAGE_BG)
+    fig.patch.set_facecolor("white")
     overlay = fig.add_axes([0, 0, 1, 1], zorder=0)
     overlay.set_xlim(0, 1)
     overlay.set_ylim(0, 1)
@@ -459,8 +446,8 @@ def main() -> int:
         option(fig, overlay, rect, arms4, hub4, [tuple(p) for p in cfg["pairs"]],
                cost4, j4["price"], cfg["total"], chosen=(i == 0),
                free_label="free")
-    title(fig, 0.040, fy(0.24), "a", "Every pairing of one crossing, scored as a whole",
-         accent=ACCENT_BLUE)
+    title(fig, 0.040, fy(0.24), "a",
+         "every admissible pairing at one crossing, each scored as a whole")
 
     # ── row 2: the priced free option, and what solving jointly buys ──────
     row2 = fy(3.05)
@@ -470,9 +457,8 @@ def main() -> int:
                cost3, j3["price"], cfg["total"], chosen=(i == 0),
                free_label="free" if cfg["pairs"] else "all free")
     panel_gap(fig, overlay, [0.606, row2, 0.140, h], [0.762, row2, 0.208, h], data)
-    title(fig, 0.040, fy(1.94), "b", "An arm left free, and its price",
-         accent=ACCENT_BLUE)
-    title(fig, 0.604, fy(1.94), "c", "A gap bridged", accent=ACCENT_BLUE)
+    title(fig, 0.040, fy(1.94), "b", "an arm left unmatched, and its price")
+    title(fig, 0.604, fy(1.94), "c", "a gap bridged")
 
     save_fig(fig, "fig_plecta_exact_matching", bbox_inches=None)
     plt.close(fig)

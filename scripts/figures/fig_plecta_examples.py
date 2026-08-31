@@ -40,7 +40,8 @@ import matplotlib.pyplot as plt
 
 from _style import (DARK, FIG_W, FONE, GRAY, INSTANCE_CYCLE, PT_ANNOT,
                     PT_TITLE,
-                    plecta_style, save_fig, unpack, unpack_labels)
+                    plecta_style, save_fig, tagged_title, unpack,
+                    unpack_labels)
 
 REPO = Path(__file__).resolve().parents[2]
 BG = "#101216"
@@ -48,10 +49,13 @@ BG = "#101216"
 #: Vertical fraction of each square scene that is drawn, centred.
 CROP = 2.0 / 3.0
 
+#  Column headings carry a panel tag like every other multi-panel figure in
+#  the set, and are lower case in the regular weight.  Without the tags this
+#  was the only figure a caption could not refer to by letter.
 COLUMNS = (
-    ("mask", "Input mask"),
-    ("reference", "Reference"),
-    ("plecta_rendered", "PLECTA + rendering"),
+    ("mask", "input mask"),
+    ("reference", "reference"),
+    ("plecta_rendered", "PLECTA, at width"),
 )
 
 
@@ -121,8 +125,10 @@ def main(argv=None) -> int:
                 s.set_color(GRAY)
                 s.set_linewidth(0.5)
             if r == 0:
-                ax.set_title(heads[c], fontsize=PT_TITLE, fontweight="bold",
-                             color=DARK, pad=3.5, linespacing=1.35)
+                #  ``(a)`` bold, the heading beside it in the regular weight --
+                #  the set's convention.  set_title cannot split the two, and
+                #  plecta_style's axes.titleweight would bold both.
+                tagged_title(ax, "abc"[c], heads[c], dy=1.0 + 3.5 / 72.0, gap=0.175)
         #  .format() binds to the last operand of a concatenation, so the
         #  scene and coverage placeholders were never substituted and the
         #  figure printed a literal {0} and {1}%. Format the whole label.

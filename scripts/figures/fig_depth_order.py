@@ -194,7 +194,7 @@ def panel_cycle(ax, d, places):
                     fontsize=PT_ANNOT, color=INK, ha="center", va="center",
                     bbox=dict(boxstyle="round,pad=0.14", fc="white",
                               ec="none", alpha=0.9), zorder=6)
-    ax.annotate("follow the arrows and\nthey come back", (0.5, -0.30),
+    ax.annotate("the arrows form a cycle", (0.5, -0.30),
                 fontsize=PT_ANNOT, color=JUNCTION, ha="center", va="top")
 
 
@@ -213,7 +213,7 @@ def panel_resolved(ax, d, places):
                                   ec="none", alpha=0.9), zorder=6)
     kept = sum(c["weight"] for c in d["calls"] if not c["flipped"])
     lost = sum(c["weight"] for c in d["calls"] if c["flipped"])
-    ax.annotate("keeps %.2f of %.2f,\nand now reads as an order"
+    ax.annotate("retains %.2f of %.2f,\nand is now acyclic"
                 % (kept, kept + lost), (0.5, -0.30), fontsize=PT_ANNOT,
                 color=INK, ha="center", va="top")
 
@@ -234,12 +234,12 @@ def main() -> int:
     panel_cycle(ax_b, d, places)
     panel_resolved(ax_c, d, places)
 
-    for x0, letter, text in ((0.015, "a", "four strands, four local calls"),
-                             (0.360, "b", "they contradict"),
-                             (0.705, "c", "the order that keeps most")):
-        fig.text(x0, 0.940, letter, fontsize=PT_TITLE, fontweight="bold",
-                 color=INK)
-        fig.text(x0 + 0.026, 0.940, text, fontsize=PT_TITLE, color=INK)
+    for x0, letter, text in ((0.015, "a", "four strands, four local decisions"),
+                             (0.360, "b", "the decisions contradict"),
+                             (0.705, "c", "the order retaining most weight")):
+        fig.text(x0, 0.940, "(%s)" % letter, fontsize=PT_TITLE,
+                 fontweight="bold", color=INK)
+        fig.text(x0 + 0.034, 0.940, text, fontsize=PT_TITLE, color=INK)
 
     save_fig(fig, "fig_depth_order", bbox_inches=None)
     plt.close(fig)

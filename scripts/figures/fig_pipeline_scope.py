@@ -1,5 +1,9 @@
 """Figure 1: what this paper contributes, and where the evidence stops.
 
+SUPERSEDED 2026-08-31: the manuscript now draws this figure in TikZ, at
+figures/fig_pipeline_scope.tex, following the reviewer request for structure diagrams in native
+LaTeX. This generator stays runnable and writes to figures/archive/.
+
 Redrawn a third time. The complaint was that the text looked horizontally
 elongated, and the first thing to say is what that was *not*: the PDF embeds
 Latin Modern Roman, not a fallback, and its MediaBox is exactly ``\\linewidth``,
@@ -252,7 +256,7 @@ def main() -> int:
             ha="center", va="center", fontsize=PT_MIN, color=GRAY,
             style="italic", zorder=4)
 
-    save_fig(fig, "fig_pipeline_scope", bbox_inches=None)
+    save_fig(fig, "fig_pipeline_scope", subdir="archive", bbox_inches=None)
     plt.close(fig)
     print("fig_pipeline_scope  %.3f x %.3f in" % (FIG_W, FIG_H))
     return 0

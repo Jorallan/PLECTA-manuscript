@@ -1,0 +1,54 @@
+% ---------------------------------------------------------------------------
+%  Figure of Section 4.3.  Drawn in TikZ, in the document's own face at the
+%  document's own size, replacing the matplotlib
+%  figures/fig_pipeline_upstream.pdf whose generator now writes to
+%  figures/archive/.
+%
+%  The upstream route is grey and the evaluated stage is not, which carries
+%  the "not a contribution of this paper" distinction with line colour rather
+%  than a filled region.  The training and inference clauses of the old
+%  drawing live in the caption.
+%
+%  Requires the pk vocabulary defined in main.tex's preamble.
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[pk, x=1mm, y=1mm]
+
+  % ---- training: the pair is manufactured --------------------------------
+  \node[ext=32mm] (pmask)   at ( 30,   0) {Procedural\\binary mask};
+  \node[ext=24mm] (gan)     at ( 79.5, 0) {CycleGAN};
+  \node[ext=32mm] (semlike) at (129,   0) {SEM-like\\micrograph};
+
+  \draw[flowsoft] (pmask) -- (gan);
+  \draw[flowsoft] (gan)   -- (semlike);
+
+  \node[ext=54mm] (corpus) at (79.5, -18)
+    {Paired corpus: the mask that made\\the image is its own label};
+
+  \draw[flowsoft] (pmask.south)   |- (corpus.west);
+  \draw[flowsoft] (semlike.south) |- (corpus.east);
+
+  % ---- inference: the segmenter never sees an annotation -----------------
+  \node[ext=32mm] (sem)    at ( 30,  -38) {Real SEM\\micrograph};
+  \node[ext=24mm] (nnunet) at ( 79.5,-38) {Trained\\nnU-Net};
+  \node[io=32mm]  (bmask)  at (129,  -38) {Binary strand-\\axis mask};
+
+  \draw[flowsoft] (sem)    -- (nnunet);
+  \draw[flowsoft] (nnunet) -- (bmask);
+  \draw[flowsoft] (corpus.south) -- (nnunet.north);
+  \node[note, anchor=west] at (82.5, -28.5) {trains};
+
+  % ---- the stage this paper evaluates ------------------------------------
+  \node[stage=32mm] (plecta) at (129, -56) {PLECTA};
+  \draw[flow] (bmask) -- (plecta);
+
+  \begin{scope}[on background layer]
+    \node[scope, fit=(plecta)] (core) {};
+  \end{scope}
+  \node[scopelab, anchor=east, align=right] at (105, -56)
+    {evaluated in this paper:\\reads that mask and nothing else};
+
+  % ---- row labels, in the margin ------------------------------------------
+  \node[note, anchor=south west] at (2,   8) {\textsc{training}};
+  \node[note, anchor=south west] at (2, -31) {\textsc{inference}};
+
+\end{tikzpicture}

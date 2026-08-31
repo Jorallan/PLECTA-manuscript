@@ -52,19 +52,22 @@ from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 #: ``fig_real_sem`` used to be two of them, the input axes and the
 #: reconstructions on a crop of each of two fields; they are now the five panels
 #: of one whole-field figure, which is why the numbering closes up after it too.
+#: ``fig_pipeline_scope`` and ``fig_pipeline_upstream`` left this list on
+#: 2026-08-31: the manuscript now draws both structure diagrams in TikZ
+#: (figures/fig_pipeline_scope.tex, figures/fig_pipeline_upstream.tex), whose
+#: type is the document's own and needs no gate.  The generators moved to
+#: SUPERSEDED below and write to figures/archive/.
 SHIPPED = [
-    ("fig_pipeline_scope", 1),
-    ("fig_plecta_frame_cost", 2),
-    ("fig_plecta_exact_matching", 3),
-    ("fig_depth_evidence", 4),
-    ("fig_depth_order", 5),
-    ("fig_f1_example", 6),
-    ("fig_plecta_examples", 7),
-    ("fig_resem_synth", 8),
-    ("fig_resem_real", 9),
-    ("fig_pipeline_upstream", 10),
-    ("fig_real_sem", 11),
-    ("fig_metric_panels", 12),
+    ("fig_plecta_frame_cost", 1),
+    ("fig_plecta_exact_matching", 2),
+    ("fig_depth_evidence", 3),
+    ("fig_depth_order", 4),
+    ("fig_f1_example", 5),
+    ("fig_plecta_examples", 6),
+    ("fig_resem_synth", 7),
+    ("fig_resem_real", 8),
+    ("fig_real_sem", 9),
+    ("fig_metric_panels", 10),
 ]
 
 
@@ -83,6 +86,8 @@ SHIPPED = [
 #: shared-style change cannot quietly break one of them, but they are numbered
 #: apart so the table above never suggests the manuscript has fifteen figures.
 SUPERSEDED = [
+    ("fig_pipeline_scope", 111),
+    ("fig_pipeline_upstream", 112),
     ("fig_common_fragment_metric", 100),
     ("fig_plecta_gates", 105),
     ("fig_plecta_task", 101),

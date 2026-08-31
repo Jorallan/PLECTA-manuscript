@@ -107,7 +107,7 @@ def stage(fig, rect, xspan=1.0):
 def title(fig, x, y, letter, text):
     fig.text(x, y, f"({letter})", fontsize=PT_TITLE, fontweight="bold",
              color=INK, ha="left", va="bottom")
-    fig.text(x + 0.040, y, text, fontsize=PT_TITLE, fontweight="bold",
+    fig.text(x + 0.040, y, text, fontsize=PT_TITLE,
              color=INK, ha="left", va="bottom")
 
 
@@ -294,10 +294,13 @@ def main() -> int:
     panel_phi(ax_c)
     panel_q(ax_d, separations)
 
-    title(fig, 0.030, 0.918, "a", "Frame at a stub")
-    title(fig, 0.490, 0.918, "b", r"Tangent reversal  $\theta$")
-    title(fig, 0.030, 0.452, "c", r"Chord turns  $\varphi_a,\ \varphi_b$")
-    title(fig, 0.515, 0.452, "d", r"Chord fade  $q(d)$")
+    #  Lower case, and the title itself in the regular weight: the bold tag
+    #  carries the hierarchy, and Latin Modern bold sets about 15 % wider than
+    #  its regular, so a fully bold title reads as stretched beside body text.
+    title(fig, 0.030, 0.918, "a", "the frame at a stub")
+    title(fig, 0.490, 0.918, "b", r"tangent reversal  $\theta$")
+    title(fig, 0.030, 0.452, "c", r"chord turns  $\varphi_a,\ \varphi_b$")
+    title(fig, 0.515, 0.452, "d", r"chord fade  $q(d)$")
 
     save_fig(fig, "fig_plecta_frame_cost", bbox_inches=None)
     plt.close(fig)

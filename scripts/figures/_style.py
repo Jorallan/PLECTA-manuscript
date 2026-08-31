@@ -564,11 +564,19 @@ def tagged_title(ax, letter, text, dy=1.0, gap=0.030, **kw):
     Latin Modern bold sets 15 % wider than its regular, so a whole title in
     bold reads as horizontally stretched next to body text that is not.  The
     tag carries the hierarchy on its own; the words do not need to.
+
+    Works on a 3-D axes too.  ``Axes3D.text`` takes ``(x, y, z, s)``, so the
+    two-argument call below raises there; ``text2D`` is the 3-D equivalent that
+    draws in axes coordinates, and the depth panels of fig_resem_synth and
+    fig_resem_real need it.  Without this branch those two figures were the
+    only ones in the set that could not use the shared helper, which is how
+    they came to carry bare ``set_title`` headings in the first place.
     """
-    ax.text(0.0, dy, f"({letter})", transform=ax.transAxes, ha="left",
-            va="bottom", fontsize=PT_TITLE, fontweight="bold", color=INK, **kw)
-    ax.text(gap, dy, text, transform=ax.transAxes, ha="left", va="bottom",
-            fontsize=PT_TITLE, color=INK, **kw)
+    draw = getattr(ax, "text2D", None) or ax.text
+    draw(0.0, dy, f"({letter})", transform=ax.transAxes, ha="left",
+         va="bottom", fontsize=PT_TITLE, fontweight="bold", color=INK, **kw)
+    draw(gap, dy, text, transform=ax.transAxes, ha="left", va="bottom",
+         fontsize=PT_TITLE, color=INK, **kw)
 
 
 # ── page layout ────────────────────────────────────────────────────────────

@@ -19,20 +19,22 @@ several strands at once. The evaluated grouping stage uses only
 $M$; where a greyscale SEM image exists it is read downstream, for width
 and brightness, and cannot revise the fixed grouping.
 
-Figure~\ref{fig:scope} places the method. Its five geometric steps read mask
+Figure~\ref{fig:scope} places the method. Its stages read mask
 geometry alone, and the two matching steps are re-made over eight rounds against
 frames re-fitted along the chains assembled so far. Where the mask itself comes
 from is a separate question, taken up in Section~\ref{sec:res-qualitative}.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_pipeline_scope.pdf}
+    \input{figures/fig_pipeline_scope}
     \caption{Where PLECTA sits. A single binary axis mask is the method's only
-    input, and every result in this paper measures the dashed green box.
-    Steps~3 and~4 are the only decisions it makes and are drawn heavier for it;
-    the rest is bookkeeping. The depth stage adds a third dimension
-    without revising any identity. Colours: green, a PLECTA geometric step;
-    orange, a dependency on the greyscale image; dark, a data object.}
+    input, and every result in this paper measures the stage inside the dashed
+    boundary: one binary mask in, overlapping instance layers out. The two
+    matchings are re-made over eight rounds as frames sharpen along the
+    assembled chains, and the last round is returned. The depth stage reads a
+    greyscale image of the same field in addition to the mask, adds a third
+    dimension without revising any identity, and abstains at every crossing
+    when no image is supplied.}
     \label{fig:scope}
 \end{figure}
 

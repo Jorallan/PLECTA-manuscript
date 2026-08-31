@@ -1,0 +1,71 @@
+% ---------------------------------------------------------------------------
+%  Figure 1.  Drawn in TikZ, in the document's own face at the document's own
+%  size, replacing the matplotlib figures/fig_pipeline_scope.pdf whose
+%  generator now writes to figures/archive/.
+%
+%  Layout notes:
+%    * Row 2 runs right to left, so the reading order over both rows is the
+%      order the method runs in: graph, frames, junction matching, gap
+%      bridging, output.
+%    * The dashed boundary fits only the four method stages.  The input mask
+%      and the output box share column 1, so fitting either would sweep the
+%      rectangle over the other; with both outside, the two arrows crossing
+%      the dashed edge are the method's input and output.
+%    * The depth row is grey and ends at the global order; layer and height
+%      bookkeeping is left to the text (Section 2.5.2).
+%    * All three depth boxes sit on the top grid's own columns, so the arrow
+%      from the output box down to the first of them is exactly vertical.
+%
+%  Requires the pk vocabulary defined in main.tex's preamble.
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[pk, x=1mm, y=1mm]
+
+  % ---- the core, two rows of three ---------------------------------------
+  \node[io=38mm]    (mask)   at ( 27,   0) {Binary axis mask};
+  \node[stage=38mm] (graph)  at ( 81.5, 0) {Arms, stubs and\\junction nodes};
+  \node[stage=38mm] (frame)  at (136,   0) {Tangent and curvature\\frame at each stub};
+
+  \node[io=38mm]    (out)    at ( 27,  -26) {Overlapping\\instance layers};
+  \node[stage=38mm] (bridge) at ( 81.5,-26) {Gated bridging\\of mask gaps};
+  \node[stage=38mm] (match)  at (136,  -26) {Exact partial matching\\at each junction};
+
+  \draw[flow] (mask)   -- (graph);
+  \draw[flow] (graph)  -- (frame);
+  \draw[flow] (frame)  -- (match);
+  \draw[flow] (match)  -- (bridge);
+  \draw[flow] (bridge) -- (out);
+
+  % ---- the round schedule, drawn as the cycle it is ----------------------
+  \draw[loop] (bridge.north) -- (graph.south);
+  \node[note, anchor=west] at (87, -13)
+    {eight rounds; frames are re-fitted\\
+     along the assembled chains before\\
+     each, and the last round is returned};
+
+  % ---- what the method reads, stated once --------------------------------
+  \node[note, anchor=south] at (27, 10)
+    {procedural, or segmented from a micrograph
+     (Section~\ref{sec:res-real})};
+
+  % ---- the evaluated boundary -------------------------------------------
+  \begin{scope}[on background layer]
+    \node[scope, fit=(graph)(frame)(match)(bridge)] (core) {};
+  \end{scope}
+  \node[scopelab, anchor=north east] at (156.4, -35.5)
+    {evaluated in this paper: one binary mask in, overlapping instances out};
+
+  % ---- the depth stage ----------------------------------------------------
+  %  Centred to the right of the output arrow's x so the two never cross.
+  \node[note, anchor=center] at (94, -44)
+    {reads a greyscale image of the same field as well as the mask; with no
+     image every crossing abstains};
+
+  \node[ext=38mm] (cross) at ( 27,  -52) {Crossings in\\projection};
+  \node[ext=38mm] (ou)    at ( 81.5,-52) {Over or under,\\from brightness};
+  \node[ext=38mm] (order) at (136,  -52) {One global order,\\cycles removed};
+
+  \draw[flowsoft] (cross) -- (ou);
+  \draw[flowsoft] (ou)    -- (order);
+  \draw[flowsoft] (out.south) -- (cross.north);
+
+\end{tikzpicture}
