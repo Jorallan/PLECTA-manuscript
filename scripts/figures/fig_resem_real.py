@@ -136,11 +136,9 @@ def main():
     ax = fig.add_subplot(gs[0, 1]); bare(ax)
     ax.imshow(rendered[box], cmap="gray", interpolation="nearest")
     tagged_title(ax, "b", "Re-rendered", dy=1.0 + 3.0 / 72.0, gap=0.100)
-    if residual:
-        key = next((k for k in ("rmse", "mae", "l1") if k in residual), None)
-        if key:
-            ax.set_xlabel(f"{key.upper()} {residual[key]:.3f}",
-                          fontsize=PT_ANNOT)
+    #  The fit residual is no longer printed under the panel: the caption
+    #  states that nothing here is evaluated quantitatively, and a number in
+    #  the figure contradicted it (figure review, 2026-09-01).
 
     ax3 = fig.add_subplot(gs[0, 2], projection="3d")
     draw_tubes_shaded(ax3, tubes, z_lo, span,

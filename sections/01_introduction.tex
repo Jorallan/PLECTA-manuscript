@@ -65,14 +65,14 @@ fibres, and the method is not applicable where tangent correlation is lost
 within the junction scale, as for freely flexible chains;
 Section~\ref{sec:limitations} returns to this limit.
 
-We name the method PLECTA, after the Latin \emph{plecta}, a braid. Every
-parameter is fixed in a published configuration and the implementation draws
-on no random number generator, so a given mask yields the same strands on
-every run; that is the only sense in which it is called deterministic here.
+We name the method PLECTA, after the Latin \emph{plecta}, a braid. PLECTA
+is deterministic in the sense that identical input masks produce identical
+outputs: every parameter is fixed in a published configuration and the
+implementation uses no random number generator.
 
-Reaching real micrographs takes one further component, and the workflow is
-divided in two. An upstream route turns a raw SEM micrograph into
-a binary strand-axis mask by a synthetic-data-driven CycleGAN/U-Net whose
+Application to real micrographs requires one additional component, and the
+workflow is divided in two. An upstream route turns a raw SEM micrograph into
+a binary strand-axis mask by a synthetic-data-driven CycleGAN/nnU-Net whose
 training pairs are synthesised rather than annotated \citep{ruehle2021workflow};
 PLECTA comprises only the reconstruction stages downstream of mask
 generation. This separation enables independent evaluation of instance
@@ -96,9 +96,9 @@ depth decomposition of a strand network from a single micrograph; it is
 reported as a demonstration with a measured accuracy, not as a validated
 three-dimensional reconstruction.
 
-Anticipating the results: across held-out synthetic scenes, PLECTA
-preserved strand identity more accurately than the evaluated alternatives at
-all tested densities; performance decreased with centreline density and
+In evaluation, PLECTA preserved strand identity more accurately than the
+compared alternatives across held-out synthetic scenes at all tested
+densities; performance decreased with centreline density and
 remained sensitive to the quality of the upstream mask. The image-informed
 extension recovered depth order reliably where sufficient local intensity
 evidence was available, and abstained otherwise.

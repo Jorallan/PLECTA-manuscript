@@ -119,7 +119,7 @@ def main(argv=None) -> int:
         y = 1.0 - (head_in - 0.05) / fig_h
         fig.text(x0, y, "(%s)" % "abc"[c], fontsize=PT_TITLE,
                  fontweight="bold", color=DARK, ha="left", va="bottom")
-        fig.text(x0 + 0.030, y, head, fontsize=PT_TITLE, color=DARK,
+        fig.text(x0 + 0.037, y, head, fontsize=PT_TITLE, color=DARK,
                  ha="left", va="bottom")
 
     for r, panel in enumerate(panels):

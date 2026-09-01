@@ -74,9 +74,9 @@ clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
 irregularities therefore caused a small resolved loss under this generator.
 
-Figure~\ref{fig:examples} shows what the score corresponds to scene by scene,
-taking at three coverage levels the scene whose \Fone{} is closest to the
-median, so the rows are typical rather than selected.
+Figure~\ref{fig:examples} shows what the score corresponds to scene by
+scene, showing at each of three coverage levels the scene whose \Fone{} is
+closest to the stratum median.
 
 \begin{figure}[tbp]
     \centering
@@ -191,12 +191,11 @@ generator's pixel units.}
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
 \caption{The same comparison on a real CNT SEM field, reconstructed from
 the axis of annotator~A's annotation; the crop is 512\,px across, about
-0.55\,\um{} of field B58\_100. Nothing here is scored: real SEM has no depth
-ground truth, since the annotation records which pixels belong to which strand,
-not which lies on top. It shows that the stage runs end to end and re-renders
-to something recognisable. The forward model's
-appearance parameters are fitted to this micrograph, so the residual beneath
-the panel is in-sample.}
+0.55\,\um{} of field B58\_100. The depth order is not evaluated quantitatively here: real SEM provides no
+depth ground truth, since the annotation records which pixels belong to
+which strand, not which lies on top. The panels demonstrate the stage
+running end to end on real imaging; the forward model's appearance
+parameters are fitted to this micrograph.}
 \label{fig:resem-real}
 \end{figure}
 
@@ -232,8 +231,8 @@ annotation as the reference in both cases, so the two conditions differ only
 in the mask. The first is an oracle-like input condition rather than an
 end-to-end result, asking what the grouping can do when the axis evidence is
 curated; only the second says what an automatic mask allows.
-Figure~\ref{fig:real-sem} shows both on one field, whole frame, with each input
-axis beside what PLECTA made of it.
+Figure~\ref{fig:real-sem} shows both on one field, whole frame, with each
+input axis beside the corresponding PLECTA reconstruction.
 
 \begin{figure}[tbp]
     \centering
@@ -287,10 +286,10 @@ quadratically: a strand broken into several pieces is penalised once for
 every pair of pieces left unjoined. Join \Fone{}, defined in
 \suppmeasures{}, assigns one error to each recoverable break instead; under
 it the difference between the conditions is reduced but not eliminated.
-What is left is one-sided: on B58\_110's nnU-Net axis a join precision of
+The residual errors are predominantly missed links: on B58\_110's nnU-Net
+axis, a join precision of
 \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneOneZeroUNetRecall{} indicates missed links rather
-than erroneous mergers, which is what panel~(e) of
+\PlectaJoinBFiveEightOneOneZeroUNetRecall{}, which panel~(e) of
 Figure~\ref{fig:real-sem} shows.
 
 These data do not permit separate estimation of segmentation error and
@@ -308,10 +307,7 @@ strand can be reproduced at all, which Section~\ref{sec:limitations} examines.
 
 Component contributions were evaluated by removing one component at a time
 and rescoring, together with two controls that are not components of the
-method. Everything here
-is measured on the development scenes and none of it reuses the held-out
-set, so the numbers below are diagnostic and are not comparable with the
-held-out result.
+method. All ablations are measured on the development scenes.
 
 \textbf{Contribution of each component.} Table~\ref{tab:plecta-ablation} varies one
 thing at a time. Two rows change what a link costs, dropping the junction
@@ -415,8 +411,8 @@ attempted, and how each method fails.
 Under these comparator-favouring settings, the ranking of
 Table~\ref{tab:plecta-comparators} remained constant across density levels
 and mask conditions (Figure~\ref{fig:metric-panels}). SIFNE is the
-strongest of them, so the margin rests on a method configured for this data
-rather than on a default that suits it badly. Two entries qualify that ordering. The first is
+strongest of them, so the margin is measured against a method configured for
+this data rather than against an unsuitable default. Two entries qualify that ordering. The first is
 DNAi, whose deficit is a limitation of domain and density rather than a
 general ranking: it is built for DNA-fibre micrographs, which are sparse, and
 where the network is sparse and the axis clean it recovers
@@ -424,7 +420,7 @@ where the network is sparse and the axis clean it recovers
 \citet{basu2015extraction}, the closest structural relative PLECTA's junction
 matching has in that it too optimises over a neighbourhood and penalises
 joins by curvature. It stands second only to PLECTA on Crossing Fidelity while its
-pairwise \Fone{} sits far below both released methods, so the curvature-priced
+pairwise \Fone{} is substantially below both released methods, so the curvature-priced
 matching is effective at the junctions, and the deficit arises in the
 stages around that decision. That is why the unmatched-arm penalty of
 Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than
@@ -446,29 +442,26 @@ on that reconstruction the two methods are level in the regime the SIFNE
 publication addresses,
 \PlectaSifneOwnSparsePlectaFOne{} against \PlectaSifneOwnSparseSifneFOne{},
 and separate only slightly at the denser end. That places the difference in
-how tangled the crossings are rather than in the total strand content of the
-frame,
+the degree of crossing entanglement rather than in the total strand content
+of the frame,
 though a topology we rebuilt is weaker evidence than a generator its authors
 released. \suppcomparators{} gives both density series in full.
 
 
-\textbf{Cost.} Accuracy is not the only axis on which these methods differ.
-Per-scene cost was measured warm, single-threaded and pinned to one core,
-timing each method's own computation only (Table~\ref{tab:plecta-comparators};
-\RuntimeGraftCovSixtyCensored{} GraFT scenes ran past the
-\RuntimeBudgetSeconds{}~s budget and were stopped rather than timed). These
+\textbf{Cost.} The methods differ in computational cost as well as in
+accuracy. Per-scene cost was measured warm, single-threaded and pinned to
+one core, timing each method's own computation only
+(Table~\ref{tab:plecta-comparators}). These
 are independently optimised codebases, so absolute times measure
 implementation as much as algorithm; the transferable quantity is scaling, and
 the log--log exponents against foreground pixels are
-\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at least
-\RuntimeGraftScalingExponent{}. PLECTA has the largest exponent among the
-methods timed to completion; GraFT's is a lower bound, because the scenes
-missing from its fit are the slowest ones, and only GraFT is heavy-tailed.
+\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and
+\RuntimeGraftScalingExponent{}.
 
 \textbf{On real imaging.} The two comparators that read a binary axis were run
 over the \PlectaRealFieldCountLower{} annotated fields as well, on the
-manual-derived masks of Section~\ref{sec:res-real} and through the scoring
-path that reproduces PLECTA's stored numbers for those fields exactly.
+manual-derived masks of Section~\ref{sec:res-real} and through the same
+scoring pipeline as PLECTA on those fields.
 Averaged over the \PlectaRealFieldCountLower{}, PLECTA achieved
 \Fone{}=\PlectaRealManualFOneMean{}, against \PlectaRealSifneFOneMean{} for
 SIFNE and \PlectaRealBasuFOneMean{} for Basu, and the highest value on every

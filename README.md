@@ -91,3 +91,17 @@ equivalent where Perl is available.
 `CLAUDE.md` in this directory carries the working rules that matter most:
 never hand-edit a generated file, never write a measured number into the prose
 as a literal, and never tune on the locked evaluation set.
+
+## Before submission (moved here from the removed in-source todos, 2026-09-01)
+
+- **CRediT statement**: add each author's roles, checked against actual
+  contributions; keep the author names and order as in `main.tex`.
+- **Archival DOIs**: create a tagged archival release of the PLECTA repository
+  and cite its DOI; replace "will be deposited in 4TU.ResearchData" with the
+  actual deposit DOI once it exists. Do not preassign either.
+- **Funding statement**: name funders and grant numbers, or state explicitly
+  that no specific grant was received. Most publishers require one.
+- **Specimen provenance**: whoever supplied and imaged the CNT material
+  belongs in the acknowledgements, and the specimen provenance in
+  Section 3.3 is unresolved.
+- Annotator B is thanked unnamed by their own preference; leave it that way.

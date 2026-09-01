@@ -40,8 +40,9 @@ Section~\ref{sec:res-qualitative}.
 
 The central difficulty is the single crossing: the mask contains one
 connected component from which several arms leave, and no local evidence
-states which arm continues into which. The output is a set of layers rather than a partition, so
-a pixel inside that blob is counted in both strands that claim it.
+states which arm continues into which. The output is a set of layers rather than a
+partition, so a pixel inside that component is counted in both strands that
+contain it.
 
 
 \subsection{Synthetic data and evaluation split}
@@ -78,8 +79,8 @@ Section~\ref{sec:res-factorial} separates the two effects.
 Every parameter was fixed on a separate development set and never on the scenes
 reported here; the \PlectaHeldoutSceneCount{} evaluation scenes, 32 at each of
 20, 30, 40 and 60\,\% coverage, use seeds that appear nowhere in that
-development set. \suppsplit{} gives the seed blocks, the verifier that checks
-their disjointness, and the locked set that remains unevaluated.
+development set. \suppsplit{} gives the seed blocks and the verifier that
+checks their disjointness.
 
 A separate controlled paired set of \PlectaRobustnessSceneCount{} scenes,
 ten at each of 20, 30, 40, 50, and 60\% coverage, was scored once from each
@@ -156,10 +157,9 @@ enabled.
 \label{sec:mm-plecta}
 
 This section describes the method itself. It reads the binary axis mask
-and nothing else, and the
-subsections follow the order it runs in: the graph it cuts the mask into,
-the cost assigned to one join, the junction solve, the gap bridging, and
-the schedule that repeats the two as chain-level evidence accumulates.
+and nothing else, and the subsections follow the order of execution: the
+skeleton graph derived from the mask, the pairing cost, the junction
+matching, the gap bridging, and the iteration schedule.
 
 \subsubsection{Skeleton graph and stub frames}
 
@@ -381,7 +381,8 @@ rather than by the separation alone, is what makes a confident score mean
     \includegraphics[width=\linewidth]{figures/fig_depth_evidence.pdf}
     \caption{What the depth stage measures, at one crossing where two strands
     meet at $83.8^{\circ}$, chosen as a legible example rather than at random.
-    Every position and grey level was read back from the stage itself.
+    All positions and grey levels were obtained directly from the stage
+    output.
     \textbf{(a)}~The core arc shared by the two strands, and each strand's own
     flanks, which the window keeps clear of the other's stroke; open dots are
     core samples, filled ones flanks. \textbf{(b)}~The same samples against
@@ -453,8 +454,9 @@ reads neither the reference nor any prediction, so every method compared is cut
 into the same pieces; each fragment then takes a reference and a predicted
 identity by one rule applied to both sides alike, and the score counts the
 pairs of fragments the prediction groups as the reference does.
-Figure~\ref{fig:f1-example} works that endpoint through the smallest case that
-has a crossing, including the two ways it can be undefined rather than zero.
+Figure~\ref{fig:f1-example} illustrates the endpoint on the smallest case
+that contains a crossing, including the two conditions under which it is
+undefined rather than zero.
 
 \begin{figure}[!ht]
     \centering
@@ -466,8 +468,7 @@ has a crossing, including the two ways it can be undefined rather than zero.
     reduce recall and merges~(c) reduce precision; the all-separate
     grouping~(e) produces no pair, so precision and \Fone{} are undefined
     rather than zero, one reason the adjusted Rand index and variation of
-    information are reported alongside. All values are computed by the
-    scorer of \suppmeasures{}.}
+    information are reported alongside.}
     \label{fig:f1-example}
 \end{figure}
 

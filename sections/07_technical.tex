@@ -1,9 +1,9 @@
 \section{Reconstruction: cost function, gates and schedule}
 \label{supp:recon}
 
-This section gives the arithmetic behind Section~2.4 of the article. Values are
-those of the released configuration; nothing here was tuned on held-out or
-locked data.
+This section gives the arithmetic behind Section~2.4 of the article. Values
+are those of the released configuration, selected exclusively on development
+data.
 
 \subsection{Skeleton graph}
 
@@ -44,10 +44,9 @@ length scale of the gap penalty and the width of the chord fade respectively.
 
 \begin{table}[tbp]
   \centering
-  \caption{Cost weights and scales, read from the frozen configuration that
-  produced every published number. Junction and gap links are scored with
-  separate sets; the gap set alone carries a length term, a junction having no
-  gap to pay for.}
+  \caption{Cost weights and scales of the released configuration. Junction
+  and gap links are scored with separate sets; only the gap set carries a
+  length term.}
   \label{tab:cost-weights}
   \input{results/plecta_parameter_table}
 \end{table}
@@ -123,8 +122,9 @@ and at 69\,\% of nodes with 9 or more ($n=233$), where the joint solution was
 better by a median of 0.90 in total cost.
 
 That comparison holds one node's costs fixed. Run inside the rounds, where each
-matching sets the frames the next is scored against, a cheap early choice
-propagates and the difference is no longer confined to dense nodes.
+matching sets the frames the next is scored against, an early low-cost
+choice affects subsequent frame estimates and the difference is no longer
+confined to dense nodes.
 
 \subsection{Instance output}
 
@@ -197,9 +197,7 @@ any abstention threshold, so the rule could not abstain on such a crossing
 regardless of the evidence. Nor was that regime rare: a substantial
 fraction of crossings saturated this way, and among the saturated ones those
 whose separation fell below the noise were markedly less accurate than those
-separated by more than it. Those supporting measurements were made on the
-removed rule, which no configuration of the shipped code restores, so they are
-recorded outside this manuscript rather than reported here. Flooring at
+separated by more than it. Flooring at
 $2\hat\sigma$ instead makes a confident score mean \emph{separated by more than
 the noise} rather than merely separated, and restores the stage's ability to
 abstain where it should.
@@ -233,9 +231,9 @@ every set used to develop either rule and to choose between them. Its
 constants are a weaker claim: the flat core half-size
 (\PlectaParamCorePx{}\,px) was settled by a sweep run on this same set, and
 the abstention threshold's flatness was checked on it, so with respect to
-those two values the set is not held out. Neither was invented here --
+those two values the set is not held out. Both values are inherited rather than newly selected:
 \PlectaParamCorePx{}\,px is exactly what the previous rule's radius-free
-fallback already computed, and both values sit on a plateau rather than a
+fallback already computed, and both sit on a plateau rather than a
 peak, a flat core being no worse than oracle per-rod radii anywhere over
 6--14\,px and the accuracy unchanged across a band of thresholds around
 \PlectaParamAbstainScore{}, so nothing below turns on either value, but
@@ -244,9 +242,8 @@ the comparison is in-sample with respect to them.
 At matched coverage, meaning both rules made to answer as often as the shipped
 one does at \PlectaDepthRuleCovShipped{}\,\%, the one-channel rule matches the
 two-channel rule's accuracy: the difference is $\PlectaDepthRuleAccDelta{}$,
-95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no difference, and no claim of
-higher accuracy is made. One reading does go against the replacement and is
-reported rather than omitted: forced to decide \emph{every} crossing, including
+95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no difference. One reading
+goes against the replacement: forced to decide \emph{every} crossing, including
 those it would decline, the one-channel rule is worse by
 $\PlectaDepthRuleAccDeltaFull{}$, CI $\PlectaDepthRuleAccFullCI{}$. That is the
 expected direction, because abstention is exactly where an ordered confidence
@@ -263,11 +260,6 @@ wherever more abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
 \PlectaDepthRuleCovAPct{}\,\% coverage and $\PlectaDepthRuleAccAtCovB{}$ at
 \PlectaDepthRuleCovBPct{}\,\%. The claim is therefore the same accuracy with
 better-ordered confidence, from a simpler evidence path.
-
-A second channel, axial continuity along each strand, was built and measured
-on the same held-out set. It was inert, and is deliberately not included. That
-measurement was made on code that was never merged and cannot be rerun here, so
-it is recorded outside this manuscript rather than reported in it.
 
 \subsection{One order for the whole field}
 
@@ -296,7 +288,7 @@ solver would leave untouched, the pass still reverses 24 relations across the
 $0.886$ where it should reach $1.000$; a condense-then-order variant, which
 orders the condensation of the strongly connected components and reorders only
 inside genuine cycles, reverses none of them but measured worse on the actual
-noisy predictions and is not what ships.
+noisy predictions and is not used in the released implementation.
 
 \subsection{Layers and metric height}
 
@@ -313,11 +305,10 @@ constraints allow.
 Every tunable quantity of both stages (the cost weights and gates above, the
 core and window sizes, the abstention threshold in score units, and the
 exact-solver size limit) is carried in a single released parameter file,
-grouped by the stage it belongs to, with the 2-D grouping section checked
-against the frozen record that produced the published numbers.
-Table~\ref{tab:cost-weights} gives that file's 2-D half;
-Table~\ref{tab:depth-params} gives its depth half. Every value in either table, and every parameter this section
-quotes in passing, is read from the released file when this document is built.
+grouped by the stage it belongs to. Table~\ref{tab:cost-weights} gives that
+file's 2-D half; Table~\ref{tab:depth-params} gives its depth half. Every
+value in either table, and every parameter this section quotes, is taken
+from the released file.
 
 \begin{table}[tbp]
   \centering

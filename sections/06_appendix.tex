@@ -31,8 +31,9 @@ above are shared with the method (the article's metrics section), the stored
 predictions of all four methods were re-scored under one-at-a-time
 perturbations of each constant, with the grid frozen in writing before any
 result was computed: spur pruning 2--4\,px, minimum fragment length
-4--8\,px, overlap threshold 0.20--0.50, fallback distance 3--9\,px. Nothing
-was re-run and no configuration was changed in response.
+4--8\,px, overlap threshold 0.20--0.50, fallback distance 3--9\,px. The
+perturbations affect scoring only; every stored prediction and every
+configuration predates them.
 Table~\ref{tab:scorer-sensitivity} reports PLECTA's mean \Fone{} and its
 plain paired margins over each comparator at every perturbation, over the
 \PlectaGreedySceneCount{} degraded comparison scenes. Across the
@@ -121,8 +122,8 @@ partitions are identical. Nodes are the junction clusters of the same pruned
 skeleton and a node's arms are the fragments 8-adjacent to it. Only nodes whose
 arms carry at least two distinct reference strands are scored, since a node
 where every arm belongs to one strand is a skeletonisation artefact and
-scoring it would reward doing nothing. It is an in-house diagnostic, not an
-established metric, though it follows measures that score correctness at
+scoring it would reward doing nothing. It is a study-specific diagnostic,
+not an established metric, though it follows measures that score correctness at
 branch points rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}. Blind spots, both of which govern its use: it is far less
 discriminative than the pairwise score, so it says what was solved and is never
 a ranking axis; and crossings carry no information about \emph{gaps}, so it is
@@ -197,9 +198,9 @@ A reference is therefore admitted only if it reproduces itself, that is, only
 if scoring it as though it were a prediction of itself returns a perfect score
 on every measure. Anything less means the reference disagrees with its own
 fragment assignment, and the shortfall bounds what any method could score
-against it. The check is cheap and it is not redundant: it caught a defect that
-the completeness, correctness and quality triple all passed, because those
-characterise a mask and this characterises the identities carried on it.
+against it. The completeness, correctness and quality triple cannot serve
+this purpose, because those characterise a mask while this check
+characterises the identities carried on it.
 
 
 \subsection{Statistical analysis}
@@ -254,13 +255,13 @@ unattended, and its manual-correction stage is never invoked, since every
 comparator here runs without a human in the loop. One shipped default is
 degenerate at these densities and is re-selected on development scenes.
 
-The mechanism is measured rather than inferred. Its erasure neighbourhood is
+The erasure neighbourhood is
 \PlectaSifneShippedJuncSize{} pixels square, applied at every pixel whose
-eight-connected neighbourhood sum reaches three, so the erasures multiply with
-the crossings: on scenes at 20, 40 and 60\,\% coverage the surviving mask is
-51, 44 and 31\,\% of what was handed in, and the evidence is gone before any
-pairing is attempted. On the sparse single-molecule fields the method was built
-for this costs almost nothing. Selection was staged and both grids were fixed
+eight-connected neighbourhood sum reaches three, so the erasures multiply
+with the crossings: on scenes at 20, 40 and 60\,\% coverage the surviving
+mask is 51, 44 and 31\,\% of the input mask, and the evidence is removed
+before any pairing is attempted. On the sparse single-molecule fields the
+method was built for, the erased fraction is small. Selection was staged and both grids were fixed
 before either ran: first the three settings that govern how much mask survives,
 then the linkage gates at the winner of the first. Only the ten development
 scenes were read, never the comparison set. The chosen configuration reduces
@@ -273,8 +274,7 @@ above it. On the comparison set the same change is worth
 Two further points bear on reading its column. The search-fan angle turns out
 to be inert at the selected angular gate, because the gate is the stricter of
 the two tests for every fan wider than sixty degrees and therefore binds first;
-this was checked against the source rather than assumed from three identical
-sweep rows. And the neighbourhood radius that its front end uses for
+as verified in the source code. And the neighbourhood radius that its front end uses for
 orientation filtering is \emph{not} inert once the mask is injected, because
 the same value sets the arclength over which every tip direction is estimated,
 which is the whole evidence its pairing sees.
@@ -291,9 +291,8 @@ a method that assigns no crossing pixel to anything.
 only code its authors published covers the earlier centreline-localisation
 paper, at a departmental address that no longer resolves and that no archive
 captured. What is measured here is therefore a reimplementation of the
-published principle rather than the authors' program, and it is reported on the
-same footing as the greedy continuation baseline, a transparent floor and never
-an external result. Only the geometric half of the method is reimplemented: a
+published principle rather than the authors' program, and it is reported as
+a reimplementation baseline rather than as an external result. Only the geometric half of the method is reimplemented: a
 minimum spanning tree over the centreline pixels, deletion of every bifurcation
 node, and recombination of two- and three-segment groups scored by the
 curvature energy of a fitted smoothing cubic spline
@@ -302,8 +301,8 @@ set-partitioning integer program that is re-solved until the segment set stops
 changing. That half reads geometry alone and so accepts an axis mask directly.
 The other half, an intensity filter bank and a reverse diffusion that converges
 particles onto brightness crests, is not reimplemented, because scoring our own
-front end would measure our filter bank rather than their idea; the consequence
-is that this arm speaks to the recombination logic only.
+front end would measure the reimplementation rather than the published
+method; this arm therefore evaluates the recombination logic only.
 
 Its two user parameters, the maximum linking distance and the maximum tangent
 mismatch, were selected on the same ten development scenes and by the same
@@ -338,18 +337,18 @@ Crossing Fidelity, paired against PLECTA over the degraded set:
 [\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}] over DNAi.
 On clean axes PLECTA resolves \PlectaJunctionCleanPlectaRate{}. Leaving every
 arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is the
-all-unpaired baseline the rate is read against: a deterministic do-nothing
-policy rather than a chance level.
+all-unpaired baseline the rate is read against: a deterministic
+all-unpaired policy rather than a chance level.
 
 Two things about that column belong with it. It is far less discriminative
 than the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and
 worst method at 60\,\% coverage where pairwise \Fone{} spans
 \PlectaPairwiseSpreadHigh{}, so it should be read as a count of what was solved
-and not as a ranking. And every method is poor at the busiest nodes: pooled
-over the \PlectaJunctionCount{} reference crossings of the degraded set, PLECTA
-partitions \PlectaJunctionPlectaRate{} exactly, but above degree four it
-resolves only \PlectaJunctionPlectaDegreeFivePlus{}, and no comparator does
-better there.
+and not as a ranking. Resolution rates decline for every method at the
+highest-degree nodes: pooled over the \PlectaJunctionCount{} reference
+crossings of the degraded set, PLECTA partitions
+\PlectaJunctionPlectaRate{} exactly, but above degree four it resolves only
+\PlectaJunctionPlectaDegreeFivePlus{}, and no comparator is higher there.
 
 The restricted DNAi comparison, which scores only the evidence a
 degree-limited, gap-blind method can reach, moves the clean-axis difference
@@ -398,8 +397,8 @@ reference layer, is therefore reported separately.
 \section{Evaluation split and seeds}
 \label{app:split}
 
-The article states only that every parameter was fixed on a separate
-development set and never on the scenes it reports. This is the mechanism.
+This section documents how every parameter was fixed on a separate
+development set and never on the scenes the article reports.
 
 Development used \PlectaDevelopmentSceneCount{} scenes spanning 20--60\,\%
 coverage. Every parameter of the reconstruction, every gate and price, and the
@@ -411,20 +410,14 @@ The evaluation set is \PlectaHeldoutSceneCount{} scenes, 32 at each of 20, 30,
 40 and 60\,\% coverage, generated from seed blocks disjoint from development.
 Disjointness is verified programmatically: a compact manifest records every
 seed
-block, and an executable verifier confirms the counts, the disjointness and the
-scene metadata it can reach. A further 125-scene locked set exists and
-\emph{remains unevaluated}; it is reserved against the possibility that the
-evaluation set above is eventually reused often enough to compromise its
-held-out status.
+block, and an executable verifier confirms the counts, the disjointness and
+the scene metadata it can reach.
 
-Two qualifications follow from this design and are stated wherever they bear on
-a number. First, the evaluation scenes are an independent \emph{sample} but not
-an independent \emph{distribution}: they are fresh draws from the generator
-that produced the development scenes, so their intervals describe sampling
-within that generator and not transfer to another, which is why the article
-re-tests its ranking on a generator built by someone else and on real SEM
-masks. The generator's own shape parameters were also swept rather than left
-at their defaults. Taking its bending stiffness from
+The evaluation scenes are fresh draws from the generator that produced the
+development scenes, so their intervals describe sampling within that
+generator; the ranking is therefore re-tested on an independently published
+generator and on real SEM masks. The generator's own shape parameters were
+also swept. Taking its bending stiffness from
 \PlectaCurvinessSweepLow{} to \PlectaCurvinessSweepHigh{}\,\% of default, which
 moves the median centreline radius from \PlectaCurvinessRadiusHigh{} to
 \PlectaCurvinessRadiusLow{}\,px, moved the level means of \Fone{} by at most
@@ -433,9 +426,6 @@ a within-level scene-to-scene scatter of \PlectaCurvinessMinSceneSD{}; taking
 the curve wavelength from \PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px moved
 them by at most \PlectaSmoothMaxSpread{}, and the one series of
 \PlectaSmoothSeriesCount{} whose spread exceeded its own noise is
-non-monotonic with its minimum at the default, which has no mechanism behind
-it. Both sweeps are development-scene measurements,
+non-monotonic with its minimum at the default, for which no mechanistic
+explanation was identified. Both sweeps are development-scene measurements,
 \PlectaCurvinessSceneCount{} scenes per level, reported as plain means.
-Second, any figure computed on the development scenes, the component
-ablations and the width-sensitivity sweep among them, is labelled as such and
-is not a held-out effect estimate.

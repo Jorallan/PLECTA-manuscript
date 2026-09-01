@@ -34,8 +34,7 @@
 
 % ── TikZ vocabulary for the two structure figures ──────────────────────────
 %  figures/fig_pipeline_scope.tex and figures/fig_pipeline_upstream.tex are
-%  drawn in the document's own face at the document's own size, per the
-%  reviewer request for structure diagrams in native LaTeX.  Everything is
+%  drawn in the document's own face at the document's own size.  Everything is
 %  achromatic except one accent, used only for the boundary of what the paper
 %  evaluates.  \footnotesize is 9 pt and \scriptsize 8 pt at this class
 %  option, so the 7 pt floor that check_type_scale.py polices for the
@@ -97,9 +96,6 @@
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
 
-\newif\ifaq \aqfalse
-\newcommand{\todo}[1]{\ifaq{\color{fsorange}\textbf{[To do: #1]}}\fi}
-
 \input{results/plecta_results}
 \input{results/runtime_comparison}
 \input{results/plecta_parameters}
@@ -151,12 +147,6 @@ microscopy.
 \input{sections/03_results}
 \input{sections/04_discussion}
 
-\ifaq
-\section*{CRediT author contribution statement}
-\todo{Fill in each author's CRediT roles before submission, checked against
-actual contributions; keep the author names and order as listed above.}
-\fi
-
 \section*{Declaration of competing interest}
 The authors declare that they have no known competing financial interests or
 personal relationships that could have appeared to influence the work reported
@@ -165,36 +155,23 @@ in this paper.
 \section*{Data and code availability}
 The PLECTA source, complete fixed configuration, compact seed manifest,
 and aggregate machine-readable evidence are available at
-\url{https://github.com/Jorallan/PLECTA}. A graphical application that runs the
-same reconstruction on a supplied mask, for readers who would rather not call
-the library directly, is at \url{https://github.com/Jorallan/PLECTA_APP}. The
+\url{https://github.com/Jorallan/PLECTA}. A graphical application that
+performs the same reconstruction on a supplied mask is available at
+\url{https://github.com/Jorallan/PLECTA_APP}. The
 annotation tool of Section~\ref{sec:mm-real} is at
 \url{https://github.com/Jorallan/ImageAnnotator}; it is listed because the
 machine-assisted annotation protocol described there is implemented in it.
 The manual annotations of the
 \PlectaRealFieldCountLower{} SEM fields, from both annotators and in the form
-the scorer reads, will be deposited in 4TU.ResearchData. Generated scenes,
-detailed per-scene
-records, and development diagnostics are retained locally.
-\todo{Create a tagged archival release and add its DOI before submission; do
-not infer or preassign a DOI. The same applies to the 4TU deposit: replace
-``will be deposited'' with the DOI once it exists, since a promise is not a
-data availability statement.}
+the scorer reads, will be deposited in 4TU.ResearchData. Generated scenes
+and detailed per-scene records are available from the corresponding author
+on reasonable request.
 
 \section*{Acknowledgements}
 The authors thank the second annotator (annotator~B of
 Section~\ref{sec:mm-real}), who prefers to remain unnamed, for the independent
 re-annotation of \PlectaInterAnnotatorFieldCount{} fields on which the
 reader-agreement bound in Section~\ref{sec:limitations} rests.
-\ifaq
-\todo{Annotator~B is thanked unnamed by their own preference; leave it that
-way. Still open: whoever supplied and imaged the CNT material belongs in this
-paragraph, and the specimen provenance is unresolved at
-Section~\ref{sec:mm-real}.}
-\todo{Funding: name the funders and grant numbers, or state explicitly that
-this research received no specific grant from any funding agency. Most
-publishers require one or the other.}
-\fi
 The software used is NumPy, SciPy, scikit-image, NetworkX and Matplotlib, and
 the authors thank their maintainers.
 

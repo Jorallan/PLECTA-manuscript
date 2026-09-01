@@ -51,8 +51,8 @@ the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
 by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
 Frangi-filtered skeleton greedily, longest path first
 \citep{osterlund2026graft}. This is inexpensive, and where crossings are rare
-it suffices. Its weakness is structural: once an arm is paired, a later arm
-that contradicts the choice cannot reopen it.
+it suffices. Its weakness is structural: once an arm is paired, a later
+contradictory candidate cannot revise the pairing.
 
 Two remedies have been tried. The first is to incorporate additional image
 evidence beyond the mask. The stronger of Wegmayr et al.'s two variants drops the
@@ -81,15 +81,15 @@ A second remedy is to stop deciding one pairing at a time. Basu et al.\ and
 DeFiNe both weigh a whole neighbourhood at once, which is what a dense node
 requires. Basu et al.\ delete every branch point from a spanning tree over
 centreline points, then reassemble the pieces with an integer program that
-prices each join by how sharply it bends, repeating until the set of pieces
-settles; a join that a later fit contradicts can therefore still be undone
+penalises each join by its bending, iterating until the assignment
+converges; a join that a later fit contradicts can therefore still be undone
 \citep{basu2015extraction}. DeFiNe covers an already-built weighted graph with
 the smoothest paths it can find, and lets two paths share an edge, so a
 crossing pixel can belong to both strands instead of being awarded to one
 \citep{breuer2015define}. Neither, however, starts from an axis mask: Basu et al.\ require image
 intensities, whereas DeFiNe requires a graph produced by an upstream stage. Both
 also reassemble at most three pieces at a time, which limits how much of a
-shattered neighbourhood a single round can repair. Deciding broadly and
+fragmented neighbourhood a single round can repair. Deciding broadly and
 starting from a mask have so far been alternatives.
 
 One method combines both properties, and comes closest to the present
@@ -98,7 +98,7 @@ et al.\ reason globally and do start from a mask. Branches and junction
 contacts become a graph, and
 labels spread across it so that a decision at one node constrains its
 neighbours rather than resting on that node's own angles \citep{de2016graph}.
-The labels have to start somewhere, however. In their images they start at
+The labels, however, require initialisation. In their images they start at
 anatomical roots, the stained cell bodies of neurons or the optic disc of a
 retina, and the method returns as many strands as there are roots. A tangle of
 open-ended strands offers no such starting point, and how many strands it
