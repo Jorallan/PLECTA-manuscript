@@ -175,15 +175,30 @@ def colour_of(groups):
 # ── the page ───────────────────────────────────────────────────────────────
 
 
+#  One marker shape per instance, so the grouping each panel asserts survives
+#  greyscale printing: arms carrying the same shape belong to the same
+#  instance.  Shapes sit at the arm tips, where the marker is legible at panel
+#  scale; per-pixel shapes would print at under 3 pt and read as noise.
+GROUP_MARKERS = ("o", "s", "^", "D")
+
+
 def panel(fig, rect, sc, d, groups):
     ax = pixel_axes(fig, rect, N)
     img = blank_rgb(sc["mask"].shape)
     paint(img, sc["mask"], MASK_GREY)
     colour = colour_of(groups)
     by_arm = {d["arm_of"][k]: k for k in d["arm_of"]}
-    for g in groups:
+    jys, jxs = np.nonzero(d["junction"])
+    jc = np.array([jxs.mean(), jys.mean()])
+    for gi, g in enumerate(groups):
         for name in g:
             paint(img, d["frag"] == by_arm[name], colour[g])
+            #  The arm's outermost pixel carries the group's marker.
+            ys, xs = np.nonzero(d["frag"] == by_arm[name])
+            tip = int(np.argmax(np.hypot(xs - jc[0], ys - jc[1])))
+            ax.plot([xs[tip]], [ys[tip]], GROUP_MARKERS[gi],
+                    ms=4.6, mfc=colour[g], mec="white", mew=0.6, zorder=5,
+                    clip_on=False)
     ax.imshow(img, interpolation="nearest", zorder=2)
     #  The deleted set is drawn as one smooth disc rather than as its six
     #  individual pixels. The pixels are jagged and read as an artefact of
