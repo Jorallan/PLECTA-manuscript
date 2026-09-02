@@ -1,49 +1,38 @@
 \section{Materials and methods}
 \label{sec:methods}
 
-This section defines the method's inputs and outputs, describes the
-synthetic and experimental data, presents the reconstruction and the
-image-informed stages, and specifies the evaluation metrics.
-
 \subsection{Scope and workflow}
 \label{sec:mm-workflow}
 
-The input is a binary strand-axis mask $M\in\{0,1\}^{H\times W}$, whose
-foreground $F=\{x:M(x)=1\}$ is one pixel wide and traces strand centrelines
-rather than strand widths. From it PLECTA reconstructs an overlap-aware
-collection $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$, so that every emitted
-pixel is one the mask already contains, and a crossing pixel may belong to
-several strands at once. The evaluated grouping stage uses only
-$M$; where a greyscale SEM image exists it is read downstream, for width
-and brightness, and cannot revise the fixed grouping.
+PLECTA maps a one-pixel-wide binary strand-axis mask
+$M\in\{0,1\}^{H\times W}$, with foreground $F=\{x:M(x)=1\}$, to an
+overlap-aware set $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$. Every output
+pixel therefore comes from the mask, while a crossing pixel may belong to
+several instances. Grouping reads only $M$; optional image-informed stages run
+afterwards and cannot change strand identity.
 
-Figure~\ref{fig:scope} defines the scope of PLECTA within the complete
-workflow. The method uses only mask geometry; the junction and gap matchings
-are recomputed over eight rounds, with frame parameters refitted from the
-currently assembled chains before each round. Mask generation is described in
-Section~\ref{sec:res-qualitative}.
+The workflow proceeds as follows (Figure~\ref{fig:scope}). First, the mask
+is generated synthetically or derived from an SEM image
+(Sections~\ref{sec:mm-synth} and~\ref{sec:mm-real}). PLECTA then builds a graph
+of arms, stubs and junction nodes and fits a tangent and curvature frame to
+each stub (Section~\ref{sec:mm-graph}). It scores candidate continuations
+(Section~\ref{sec:mm-cost}), solves exact partial matchings at junctions and
+across admissible gaps over eight frame-refitting rounds
+(Section~\ref{sec:mm-matching}), and converts the accepted links into
+overlapping strand instances (Section~\ref{sec:mm-output}). Given a paired
+greyscale image, downstream stages estimate strand width and render ribbons
+(Section~\ref{sec:mm-stage4}) and infer depth order at crossings
+(Section~\ref{sec:mm-depth}); neither revises grouping.
 
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_scope}
-    \caption{Scope of PLECTA within the complete workflow. A single binary
-    axis mask is the method's only input, and every result in this paper
-    measures the stage inside the dashed boundary, which maps one binary mask
-    to a set of overlapping instance layers. The two
-    matchings are re-made over eight rounds as frame estimates improve along
-    the assembled chains, and the last round is returned. The depth stage reads a
-    greyscale image of the same field in addition to the mask, adds a third
-    dimension without revising any identity, and abstains at every crossing
-    when no image is supplied.}
+    \caption{Scope of PLECTA. The dashed grouping stage maps a binary axis mask
+    to overlapping instances; the loop denotes eight rounds of frame refitting
+    and matching. The grey branch uses a paired greyscale image to infer depth
+    order without changing strand identity.}
     \label{fig:scope}
 \end{figure}
-
-The central difficulty is the single crossing: the mask contains one
-connected component from which several arms leave, and no local evidence
-states which arm continues into which. The output is a set of layers rather than a
-partition, so a pixel inside that component is counted in both strands that
-contain it.
-
 
 \subsection{Synthetic data and evaluation split}
 \label{sec:mm-synth}
@@ -162,6 +151,7 @@ skeleton graph derived from the mask, the pairing cost, the junction
 matching, the gap bridging, and the iteration schedule.
 
 \subsubsection{Skeleton graph and stub frames}
+\label{sec:mm-graph}
 
 PLECTA skeletonises the mask using the Zhang--Suen thinning algorithm
 \citep{zhang1984thinning} and removes the short spurs skeletonisation
@@ -179,6 +169,7 @@ frames are re-estimated over the expanded chain-level support, which is why
 the method iterates rather than deciding once.
 
 \subsubsection{The pairing cost}
+\label{sec:mm-cost}
 
 The pairwise linking cost comprises three geometric terms
 (Figure~\ref{fig:cost}): the reversal between the two outward directions,
@@ -229,6 +220,7 @@ the scale of the angular terms are fixed parameters, listed in
 \end{figure}
 
 \subsubsection{Candidate gates and exact matching}
+\label{sec:mm-matching}
 
 Leaving a stub unmatched carries a penalty rather than a prohibition, and
 that penalty serves two purposes: it also fixes what may be included as a
@@ -320,6 +312,7 @@ second whether the terms it matches on are redundant.
 \end{figure}
 
 \subsubsection{Strand output}
+\label{sec:mm-output}
 
 Connected components of accepted arm links define strands. PLECTA
 paints every arm pixel and every junction cluster touched by a chain into that

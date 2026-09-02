@@ -1,113 +1,80 @@
 \section{Introduction}
 \label{sec:intro}
 
-Many materials are composed of long, thin strands laid over one another, some
-tangled at random and some deliberately twisted \citep{wang2015twisting}:
-sheets of carbon nanotubes,
-collagen in connective tissue, paper, felt, nonwoven textiles,
-fibre-reinforced composites, aramid fibre ropes and synthetic fibre mats. The
-effective properties of such a material (tensile and flexural stiffness,
-electrical and thermal conductivity, fracture, tear and impact resistance) are
-governed as much by the architecture of the network as by the constituents
-themselves, and often more so: the stiffness and strength of a nanotube
-assembly are bounded by load transfer between tubes rather than by the very
-high modulus of any one of them
+Many materials comprise networks of long, overlapping strands: carbon-nanotube
+sheets, collagen in connective tissue, paper, nonwoven textiles,
+fibre-reinforced composites and twisted ropes
+\citep{wang2015twisting,allan2025rope}. Their effective properties, from
+stiffness and strength to conductivity and fracture resistance, depend on
+network geometry, constituent behaviour and inter-strand interactions. For
+example, load transfer between nanotubes can limit the stiffness and strength
+of a nanotube assembly despite the high modulus of each tube
 \citep{devolder2013cnt,coleman2006small,volkov2010structural,%
-ostanin2013distinct,ostanin2019size,wittmaack2018mesoscopic,allan2025rope}. The governing
-descriptors are therefore geometric: the length of each strand, its thickness,
-its orientation, its local curvature, and its connectivity to the strands
-around it. The same descriptors are the measurement target well outside
-materials science. A DNA fibre spreading assay reads the length ratio between
-two labelled replication tracts along an individual fibre
-\citep{playout2026dnai}, and time-resolved imaging of the actin cytoskeleton
-follows how its filaments reorganise inside a living cell
-\citep{osterlund2026graft}.
+ostanin2013distinct,ostanin2019size,wittmaack2018mesoscopic}.
+Predictive models therefore combine constitutive and interaction laws with
+geometric inputs: each strand's length, thickness, orientation, local curvature
+and connectivity. Outside materials science, DNA fibre spreading assays measure
+the length ratio between two labelled replication tracts along individual
+fibres \citep{playout2026dnai}, while time-resolved actin imaging tracks
+filament reorganisation within living cells \citep{osterlund2026graft}.
 
-Although micrographs directly visualise strand networks, extracting
-quantitative network descriptors remains challenging. Routine image analysis measures the network in
-bulk (what fraction of the frame is covered, which way the texture points
-\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}) and does
-not resolve individual strands. To measure a distribution of strand lengths,
-or to ask how often one strand crosses another, every strand must first be
-recovered as a separate object, addressable from one end to the other.
+Micrographs show strand networks, but routine image analysis yields only bulk
+measures such as coverage and orientation
+\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}. Measuring
+strand-length distributions or crossings requires each strand to be recovered
+as a separate, end-to-end object.
 
-That is an instance-segmentation problem with an unfavourable geometry: the
-objects are elongated, open curves whose identities must be inferred from
-directional continuity rather than from shape or size. The consequence is a
-pair of failures of opposite character. Crossings create false connectivity
-between distinct strands, since a crossing produces the same connected
-component that a genuine merge error would; signal gaps fragment one strand
-into disconnected components that are locally indistinguishable from genuine
-ends. Resolving both failure modes requires determining which pairs of arms
-represent continuous strands at each junction. This paper addresses that
-step: the reconstruction of individual strands across crossings and gaps from
-a binary strand-axis mask.
+This is an instance-segmentation problem with unusual geometry: the objects are
+elongated, open curves whose identities must be inferred from directional
+continuity rather than from shape or size. Crossings merge distinct strands
+into one mask component, whereas signal gaps split one strand into fragments
+indistinguishable from genuine ends. Reconstruction must therefore decide which
+arms continue through each junction and which tips reconnect across a gap. This
+paper addresses that task from a binary strand-axis mask.
 
-The essential original component of PLECTA is degree-general exact
-maximum-weight \emph{partial} matching at each junction, with an explicit
-penalty for leaving an arm unmatched: junctions of any degree are solved by
-one formulation, and a strand may genuinely terminate rather than receive a
-forced continuation. From a binary mask alone, that matching is integrated
-with globally gated bridging of mask gaps, iterative re-fitting of tangent
-and curvature frames along the assembling chains, and overlapping instance
-output, in which a crossing pixel may be assigned to multiple strands. The
-individual ingredients, among them skeleton graphs, junction excision,
-continuation angles and combinatorial optimisation, are established; to our
-knowledge no prior method combines them, and Section~\ref{sec:related}
-substantiates that claim.
+PLECTA's core contribution is exact maximum-weight \emph{partial} matching of
+all arms at junctions of any degree. Its explicit unmatched-arm penalty allows
+genuine terminations rather than forcing every arm into a continuation. Using
+only a binary mask, PLECTA combines this matching with global gap-bridging
+gates, iterative refitting of tangent and curvature frames along assembled
+chains, and overlapping output, so crossing pixels may belong to multiple
+strands. These ingredients are individually established; to our knowledge no
+prior method combines them, as Section~\ref{sec:related} shows. The
+implementation is deterministic: identical inputs and fixed parameters produce
+identical outputs.
 
-PLECTA assumes that directional information remains reliable over the
-spatial scale of a junction: the evidence it reads is the tangent, the turns
-onto the chord between two tips, and the continuity of signed curvature, each
-estimated over tens of pixels of arclength. The assumption holds for
-semiflexible networks such as nanotube bundles, actin, collagen and synthetic
-fibres, and the method is not applicable where tangent correlation is lost
-within the junction scale, as for freely flexible chains;
-Section~\ref{sec:limitations} returns to this limit.
+PLECTA assumes that strand direction remains reliable across a junction, using
+tangent and signed-curvature continuity measured over tens of pixels of
+arclength. It therefore targets semiflexible networks such as nanotube bundles,
+actin, collagen and synthetic fibres rather than chains whose tangent
+correlation is lost at that scale; Section~\ref{sec:limitations} returns to this
+limit.
 
-We name the method PLECTA, after the Latin \emph{plecta}, a braid. PLECTA
-is deterministic in the sense that identical input masks produce identical
-outputs: every parameter is fixed in a published configuration and the
-implementation uses no random number generator.
+For SEM images, an upstream CycleGAN/nnU-Net trained on synthetic rather than
+annotated pairs converts the raw micrograph to a binary strand-axis mask
+\citep{ruehle2021workflow}; PLECTA begins at that mask. This separation isolates
+instance grouping and prevents width rendering from affecting the identity
+metrics. We evaluate PLECTA on \PlectaHeldoutSceneCount{} procedurally generated
+scenes spanning 20 to 60\,\% areal coverage; paired clean and degraded masks
+from a further \PlectaRobustnessSceneCount{} scenes isolate mask degradation on
+fixed geometry; and \PlectaRealFieldCount{} annotated CNT-sheet SEM fields
+demonstrate the complete workflow.
 
-Application to real micrographs requires one additional component, and the
-workflow is divided in two. An upstream route turns a raw SEM micrograph into
-a binary strand-axis mask by a synthetic-data-driven CycleGAN/nnU-Net whose
-training pairs are synthesised rather than annotated \citep{ruehle2021workflow};
-PLECTA comprises only the reconstruction stages downstream of mask
-generation. This separation enables independent evaluation of instance
-grouping, against references whose identities are known exactly, and prevents
-width rendering from affecting the identity metrics. We
-evaluate PLECTA on \PlectaHeldoutSceneCount{} procedurally generated scenes
-spanning 20 to 60\,\% areal coverage, render a further
-\PlectaRobustnessSceneCount{} scenes once from a clean axis and once from a
-degraded one so that the cost of degradation is measured on unchanged
-geometry, and demonstrate both stages together on \PlectaRealFieldCount{}
-annotated CNT-sheet SEM fields.
+Depth ordering is a separate task: deciding which strand is uppermost at a
+crossing. PLECTA infers it non-destructively from brightness continuity in the
+corresponding greyscale image: the upper strand retains its appearance through
+the crossing, whereas the lower strand's appearance is occluded. The stage
+abstains when the intensity evidence does not exceed local noise. To our
+knowledge this is the first depth decomposition of a strand network from a
+single micrograph. We report it as a demonstration with measured accuracy, not
+as a validated three-dimensional reconstruction.
 
-Depth ordering constitutes a separate task: determining which strand is
-uppermost at each crossing. PLECTA estimates this order non-destructively
-from the corresponding greyscale image, using the continuity of each strand's
-own brightness: the upper strand keeps the appearance it has on either side
-of the crossing, while the lower strand's is overwritten by the strand above
-it. The stage abstains where that difference
-is no larger than the local image noise. To our knowledge this is the first
-depth decomposition of a strand network from a single micrograph; it is
-reported as a demonstration with a measured accuracy, not as a validated
-three-dimensional reconstruction.
+Across held-out synthetic scenes at every tested density, PLECTA preserved
+strand identity more accurately than the compared methods, although performance
+declined as centreline density increased and remained sensitive to upstream-mask
+quality.
 
-In evaluation, PLECTA preserved strand identity more accurately than the
-compared alternatives across held-out synthetic scenes at all tested
-densities; performance decreased with centreline density and
-remained sensitive to the quality of the upstream mask. The image-informed
-extension recovered depth order reliably where sufficient local intensity
-evidence was available, and abstained otherwise.
-
-The remainder of the paper is organised as follows.
-Section~\ref{sec:related} reviews the neighbouring branches of the literature
-and places the present method among them. Section~\ref{sec:methods} describes
-the synthetic and SEM data, the reconstruction itself, and the evaluation
-protocol. Section~\ref{sec:results} reports accuracy on held-out synthetic
-scenes, a comparison with four published methods on identical masks,
-ablations, the depth stage, and a proof of concept on real SEM fields.
-Section~\ref{sec:conclusions} states conclusions, scope and limitations.
+Section~\ref{sec:related} reviews related work; Section~\ref{sec:methods}
+describes the data, reconstruction and evaluation; Section~\ref{sec:results}
+reports the results; and Section~\ref{sec:conclusions} states the conclusions,
+scope and limitations.
