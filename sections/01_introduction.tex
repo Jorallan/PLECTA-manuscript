@@ -43,36 +43,22 @@ prior method combines them, as Section~\ref{sec:related} shows. The
 implementation is deterministic: identical inputs and fixed parameters produce
 identical outputs.
 
-PLECTA assumes that strand direction remains reliable across a junction, using
-tangent and signed-curvature continuity measured over tens of pixels of
-arclength. It therefore targets semiflexible networks such as nanotube bundles,
-actin, collagen and synthetic fibres rather than chains whose tangent
-correlation is lost at that scale; Section~\ref{sec:limitations} returns to this
-limit.
+PLECTA assumes directional continuity across junctions and therefore targets
+semiflexible strand networks; Section~\ref{sec:limitations} discusses this
+limitation.
 
-For SEM images, an upstream CycleGAN/nnU-Net trained on synthetic rather than
-annotated pairs converts the raw micrograph to a binary strand-axis mask
-\citep{ruehle2021workflow}; PLECTA begins at that mask. This separation isolates
-instance grouping and prevents width rendering from affecting the identity
-metrics. We evaluate PLECTA on \PlectaHeldoutSceneCount{} procedurally generated
-scenes spanning 20 to 60\,\% areal coverage; paired clean and degraded masks
-from a further \PlectaRobustnessSceneCount{} scenes isolate mask degradation on
-fixed geometry; and \PlectaRealFieldCount{} annotated CNT-sheet SEM fields
-demonstrate the complete workflow.
+For SEM images, PLECTA operates on binary strand-axis masks supplied by an
+upstream segmenter \citep{ruehle2021workflow}. We evaluate it on synthetic
+scenes and annotated CNT-sheet micrographs; paired clean and degraded masks
+isolate the effect of mask degradation.
 
-Depth ordering is a separate task: deciding which strand is uppermost at a
-crossing. PLECTA infers it non-destructively from brightness continuity in the
-corresponding greyscale image: the upper strand retains its appearance through
-the crossing, whereas the lower strand's appearance is occluded. The stage
-abstains when the intensity evidence does not exceed local noise. To our
-knowledge this is the first depth decomposition of a strand network from a
-single micrograph. We report it as a demonstration with measured accuracy, not
-as a validated three-dimensional reconstruction.
+A separate image-informed stage estimates which strand lies on top at each
+crossing from the corresponding greyscale image. We present this depth ordering
+as a proof of concept, not a validated three-dimensional reconstruction.
 
-Across held-out synthetic scenes at every tested density, PLECTA preserved
-strand identity more accurately than the compared methods, although performance
-declined as centreline density increased and remained sensitive to upstream-mask
-quality.
+Across the evaluated datasets, PLECTA reconstructed strand identity more
+accurately than the compared methods, while performance remained sensitive to
+network density and mask quality.
 
 Section~\ref{sec:related} reviews related work; Section~\ref{sec:methods}
 describes the data, reconstruction and evaluation; Section~\ref{sec:results}
