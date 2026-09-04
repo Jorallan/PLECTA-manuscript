@@ -1,9 +1,10 @@
-Many materials and tissues are built from long, thin strands laid over one
-another: carbon-nanotube sheets, collagen networks, paper, nonwoven textiles.
-Their effective properties are governed by the architecture of the strand
-network, so that architecture must be measured from micrographs, with every
-strand recovered as a separate object that remains addressable through every
-crossing. Dense crossings remain challenging because intersecting strands form a
+Many materials and tissues comprise networks of long, overlapping strands,
+including carbon-nanotube sheets, collagen, paper and nonwoven textiles. Their
+effective properties depend on network architecture, so predictive models
+require quantitative descriptions of that geometry. Extracting such
+descriptions from micrographs requires each strand to be recovered as a
+separate object through every crossing. Dense crossings remain challenging
+because intersecting strands form a
 single connected component, whereas signal loss can divide one strand into
 multiple disconnected fragments. We present PLECTA, a deterministic method
 that reconstructs individual strands using only a binary image in which
@@ -12,12 +13,11 @@ degree, PLECTA solves an exact
 maximum-weight partial-matching problem with an explicit penalty for
 unmatched arms. This formulation permits genuine strand terminations and
 produces overlapping instance layers in which crossing pixels may be assigned
-to multiple strands. On held-out synthetic scenes, PLECTA reconstructed strand
+to multiple strands. On procedurally generated scenes, PLECTA reconstructed strand
 identities more accurately than three released alternatives across all
 evaluated densities, and this ranking was preserved on an independently
 published generator evaluated using its original settings. A secondary
-image-informed stage uses the corresponding greyscale
-micrograph to estimate the depth order at each crossing and abstains when the
-intensity evidence does not exceed the local noise. The complete workflow is demonstrated on scanning electron micrographs of
+image-informed stage uses the corresponding greyscale micrograph to estimate
+the depth order at each crossing. The complete workflow is demonstrated on scanning electron micrographs of
 carbon-nanotube sheets, from raw image to stacked strand instances, without
 manually annotated images used for training or as pipeline inputs.
