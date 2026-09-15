@@ -11,55 +11,41 @@
   \label{fig:graphical-abstract}
 \end{figure}
 
-This paper recovers the individual strands of a network from a single greyscale
-scanning electron micrograph, and estimates which strand lies on top at each
-crossing, placing them in depth (Figure~\ref{fig:graphical-abstract}). It does
-so because the effective properties of a strand network are influenced by the
-arrangement of its individual strands, which a micrograph shows only as an
-overlapping tangle. The problem is not specific to one material.
+Carbon-nanotube (CNT) sheets, collagen networks, paper and nonwoven textiles
+consist of overlapping strands whose arrangement influences their effective
+properties. Their stiffness, strength and conductivity depend on network
+geometry, constituent behaviour and inter-strand interactions. Load transfer
+between nanotubes, for example, can limit an assembly's stiffness and strength
+despite the high modulus of each tube. Predictive models therefore require
+geometric descriptors of individual strands, whose identities must be recovered
+from the overlapping network visible in a micrograph.
 
-Such networks include carbon-nanotube (CNT) sheets, collagen in connective
-tissue, paper and nonwoven textiles. Their stiffness, strength and conductivity
-depend on network geometry, constituent behaviour and inter-strand
-interactions; load transfer between nanotubes, for example, can limit an
-assembly's stiffness and strength despite the high modulus of each tube.
-Predictive models therefore require per-strand geometric descriptors.
+Recovering those identities is an instance-segmentation problem in which the
+objects are long, open curves that overlap one another. Crossings merge
+distinct strands into one foreground component, whereas signal gaps split one
+strand into fragments whose tips may be indistinguishable from genuine ends.
+Reconstruction must therefore determine which segments continue through each
+junction, which reconnect across a gap and which terminate.
 
-Recovering those descriptors is an instance-segmentation problem in which the
-objects are long, open curves that overlap one another. Crossings merge distinct strands into one mask
-component, whereas signal gaps split one strand into fragments whose tips can
-be indistinguishable from genuine ends. Reconstruction must therefore decide
-which segments continue through each junction and which reconnect across a
-gap. Section~\ref{sec:related} reviews existing approaches, with the
-corresponding references, and their relation to the present work.
+We present a workflow that recovers individual strands and estimates their
+depth order from a single greyscale micrograph
+(Figure~\ref{fig:graphical-abstract}). First, a segmenter trained on synthetic
+image--mask pairs produces a binary mask marking the strand axes, without
+requiring manually annotated micrographs for training.
 
-We approach this in two steps. First, a greyscale micrograph is reduced to a
-binary mask marking the strand axes; the segmenter that does so is trained on
-synthetic image and mask pairs, so that no micrograph has to be annotated by
-hand. That mask records where the network lies, but not which segments belong
-to the same strand. Second, PLECTA recovers the individual strands from that
-mask alone, allowing genuine ends, reconnecting gaps and leaving each crossing
-to every strand that runs through it. This second step is the subject of the
-present work.
+The central reconstruction stage, PLECTA, then resolves individual strands from
+this mask alone. At each junction, it considers the possible strand
+continuations together while allowing genuine strand ends. It also reconnects
+fragments across signal gaps. This stage requires no training and is intended
+for networks whose strands approximately maintain their direction through
+crossings. Finally, a depth-ordering stage uses the reconstructed strands and
+the greyscale image to estimate which strand lies on top at each crossing; this
+stage is a proof of concept.
 
-At each junction, PLECTA jointly selects pairs of arms, the strand
-segments entering it, while allowing arms to remain unpaired. It
-solves an exact maximum-weight \emph{partial}-matching problem there,
-with an explicit penalty for unmatched arms and no restriction on junction
-degree. It combines this decision with geometric checks for reconnecting gaps
-and updates to direction and curvature estimates as longer strands are
-assembled.
-Reconstruction is deterministic for fixed inputs and parameters and assumes
-directional continuity, targeting semiflexible networks whose strands maintain
-their direction locally through crossings.
-
-We evaluate PLECTA on synthetic scenes and on annotated scanning electron
-microscopy (SEM) images of CNT sheets, where it reconstructed strand identity
-more accurately than the compared methods, though performance remained
-sensitive to network density and mask quality. A separate stage estimates
-which strand lies on top at each crossing: a proof of concept for depth
-ordering, not a validated three-dimensional reconstruction.
-Section~\ref{sec:methods} describes the workflow and evaluation,
-Section~\ref{sec:results} the results, and Section~\ref{sec:conclusions} the
-conclusions and limitations.
+We evaluate PLECTA on synthetic scenes and annotated scanning electron
+microscopy (SEM) images of CNT sheets. It reconstructs strand identity more
+accurately than the compared methods. Section~\ref{sec:related} reviews related
+work, Section~\ref{sec:methods} describes the workflow and evaluation,
+Section~\ref{sec:results} presents the results, and
+Section~\ref{sec:conclusions} discusses the conclusions and limitations.
 \Igor{After this intro, i still do not have clear image on what is the contribution of the paper. "Combination of ingridients" does not sound good. Maybe some early image -- not necessarily exhaustive, but simple and schematic -- could help.}
