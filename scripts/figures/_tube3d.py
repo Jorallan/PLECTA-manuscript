@@ -31,7 +31,7 @@ _INSTANCE = matplotlib.colormaps["tab20"]
 
 def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
                       light=(0.4, -0.45, 0.80), elev=34, azim=-56,
-                      zoom=1.35, z_stretch=0.62, colour="depth"):
+                      zoom=1.35, z_stretch=0.62, colour="depth", colours=None):
     """Draw (verts, faces, z_ref) tubes as lit solids into a 3-D axes.
 
     ``colour`` selects what a hue means, and the choice is not cosmetic:
@@ -43,6 +43,13 @@ def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
     * ``"instance"`` -- a qualitative colour per tube, which separates objects
       that touch. It says nothing about height and must not be read as if it
       did.
+
+    ``colours`` overrides all three with one colour per tube, in the order the
+    tubes are given, and is how a 3-D panel carries the *same* instance hues as
+    a 2-D panel beside it.  Without it, "instance" reaches for this module's own
+    ``tab20``, which is not the repository's ``INSTANCE_CYCLE``, so two panels
+    of one figure would colour the same strand differently and imply a
+    correspondence that does not hold.
 
     ``z_stretch`` is the z box aspect against x and y at 1. Pass
     ``span / extent`` for a true 1:1 axis, which draws the film at its real
@@ -65,7 +72,10 @@ def draw_tubes_shaded(ax, tubes, z_lo, span, extent=512,
         #  flatter, more neutral material.  The ceiling stays below 1 so the
         #  top of a tube never blows out to white.
         shade = 0.55 + 0.40 * lam
-        if colour == "grey":
+        if colours is not None:
+            base = np.asarray(matplotlib.colors.to_rgb(
+                colours[idx % len(colours)]))
+        elif colour == "grey":
             base = np.array([0.72, 0.72, 0.74])
         elif colour == "instance":
             base = np.asarray(_INSTANCE(idx % 20)[:3])

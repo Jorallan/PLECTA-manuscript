@@ -58,16 +58,17 @@ from _style import FIG_W, MIN_PT, SCRIPT_SHRINK
 #: type is the document's own and needs no gate.  The generators moved to
 #: SUPERSEDED below and write to figures/archive/.
 SHIPPED = [
-    ("fig_plecta_frame_cost", 1),
-    ("fig_plecta_exact_matching", 2),
-    ("fig_depth_evidence", 3),
-    ("fig_depth_order", 4),
-    ("fig_f1_example", 5),
-    ("fig_plecta_examples", 6),
-    ("fig_resem_synth", 7),
-    ("fig_resem_real", 8),
-    ("fig_real_sem", 9),
-    ("fig_metric_panels", 10),
+    ("fig_graphical_abstract", 1),
+    ("fig_plecta_frame_cost", 2),
+    ("fig_plecta_exact_matching", 3),
+    ("fig_depth_evidence", 4),
+    ("fig_depth_order", 5),
+    ("fig_f1_example", 6),
+    ("fig_plecta_examples", 7),
+    ("fig_resem_synth", 8),
+    ("fig_resem_real", 9),
+    ("fig_real_sem", 10),
+    ("fig_metric_panels", 11),
 ]
 
 
