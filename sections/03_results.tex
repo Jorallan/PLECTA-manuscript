@@ -48,8 +48,7 @@ smallest at high density, where junction ambiguity dominates gap-related
 error.
 Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
-Section~\ref{sec:res-comparators} measures cost systematically, where the
-transferable quantity is the scaling exponent rather than any absolute time.
+Section~\ref{sec:res-comparators} measures cost systematically.
 
 Areal coverage labels these strata but does not cause the difficulty they
 report, and it cannot: \label{sec:res-factorial}PLECTA is handed a centreline
@@ -453,10 +452,7 @@ accuracy. Per-scene cost was measured warm, single-threaded and pinned to
 one core, timing each method's own computation only
 (Table~\ref{tab:plecta-comparators}). These
 are independently optimised codebases, so absolute times measure
-implementation as much as algorithm; the transferable quantity is scaling, and
-the log--log exponents against foreground pixels are
-\RuntimeDnaiScalingExponent{}, \RuntimePlectaScalingExponent{} and at
-least \RuntimeGraftScalingExponent{}.
+implementation as much as algorithm.
 
 \textbf{On real imaging.} The two comparators that read a binary axis were run
 over the \PlectaRealFieldCountLower{} annotated fields as well, on the
