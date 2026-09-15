@@ -4,14 +4,10 @@
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_graphical_abstract.pdf}
-  \caption{From micrograph to individual strands, on one carbon-nanotube SEM
-    field held out of the segmenter's training data. \textbf{(a)} A fixed
-    central crop. \textbf{(b)} The strand-axis mask from the upstream
-    segmenter. \textbf{(c)} The instances PLECTA reconstructs from that mask
-    alone, each drawn at the width measured for it across its own centreline.
-    \textbf{(d)} The layered arrangement estimated for the same instances, at
-    the same widths and without vertical exaggeration. Colour carries instance
-    identity in both (c) and (d) and nothing else.}
+  \caption{From micrograph to individual strands. \textbf{(a)} A fixed
+    central crop of a carbon-nanotube SEM field. \textbf{(b)} The strand-axis
+    mask from the upstream segmenter. \textbf{(c)} PLECTA segmentation output.
+    \textbf{(d)} The layered arrangement estimated for the same instances.}
   \label{fig:graphical-abstract}
 \end{figure}
 
@@ -22,16 +18,12 @@ so because the effective properties of a strand network are influenced by the
 arrangement of its individual strands, which a micrograph shows only as an
 overlapping tangle. The problem is not specific to one material.
 
-Many materials comprise networks of long, overlapping strands, including
-carbon-nanotube (CNT) sheets, collagen in connective tissue, paper and nonwoven
-textiles. Their stiffness, strength and conductivity depend on network
-geometry, constituent behaviour and inter-strand interactions. For example,
-load transfer between nanotubes can limit an assembly's stiffness and strength
-despite the high modulus of each tube. Predictive models therefore require
-geometric inputs such as strand length, orientation, curvature and
-connectivity. Bulk image measurements such as coverage and orientation do not
-establish which visible segments belong to the same strand. Recovering that
-identity is necessary to measure individual strands end to end.
+Such networks include carbon-nanotube (CNT) sheets, collagen in connective
+tissue, paper and nonwoven textiles. Their stiffness, strength and conductivity
+depend on network geometry, constituent behaviour and inter-strand
+interactions; load transfer between nanotubes, for example, can limit an
+assembly's stiffness and strength despite the high modulus of each tube.
+Predictive models therefore require per-strand geometric descriptors.
 
 This is an instance-segmentation problem in which the objects are long, open
 curves that overlap one another. Crossings merge distinct strands into one mask
