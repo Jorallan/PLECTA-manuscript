@@ -42,17 +42,18 @@ which segments continue through each junction and which reconnect across a
 gap. Section~\ref{sec:related} reviews existing approaches, with the
 corresponding references, and their relation to the present work.
 
-We approach this in two steps. A greyscale micrograph is first reduced to a
-binary mask marking the strand axes, by a segmenter trained on synthetic image
-and mask pairs, so that no micrograph has to be annotated by hand. That mask
-records where the network lies, but not which segments belong to the same
-strand. Here, we address the step that follows: recovering the individual
-strands from that mask alone, while allowing genuine ends, reconnecting gaps
-and leaving each crossing to every strand that runs through it.
+We approach this in two steps. First, a greyscale micrograph is reduced to a
+binary mask marking the strand axes; the segmenter that does so is trained on
+synthetic image and mask pairs, so that no micrograph has to be annotated by
+hand. That mask records where the network lies, but not which segments belong
+to the same strand. Second, PLECTA recovers the individual strands from that
+mask alone, allowing genuine ends, reconnecting gaps and leaving each crossing
+to every strand that runs through it. This second step is the subject of the
+present work.
 
-PLECTA does this by jointly selecting pairs of arms, the strand
-segments entering a junction, while allowing arms to remain unpaired. It
-solves an exact maximum-weight \emph{partial}-matching problem at each junction,
+At each junction, PLECTA jointly selects pairs of arms, the strand
+segments entering it, while allowing arms to remain unpaired. It
+solves an exact maximum-weight \emph{partial}-matching problem there,
 with an explicit penalty for unmatched arms and no restriction on junction
 degree. It combines this decision with geometric checks for reconnecting gaps
 and updates to direction and curvature estimates as longer strands are
@@ -61,16 +62,13 @@ Reconstruction is deterministic for fixed inputs and parameters and assumes
 directional continuity, targeting semiflexible networks whose strands maintain
 their direction locally through crossings.
 
-We evaluate PLECTA on synthetic scenes and annotated scanning electron
-microscopy (SEM) images of CNT sheets, using paired clean and degraded masks
-to isolate the effect of mask quality. Across the evaluated datasets, PLECTA
-reconstructed strand identity more accurately than the compared methods,
-although performance remained sensitive to network density and mask quality.
-For SEM images, an upstream segmenter supplies the strand-axis masks. A
-separate stage uses the corresponding greyscale image to estimate which strand
-lies on top at each crossing; this is a proof of concept for depth ordering,
-not a validated three-dimensional reconstruction.
+We evaluate PLECTA on synthetic scenes and on annotated scanning electron
+microscopy (SEM) images of CNT sheets, where it reconstructed strand identity
+more accurately than the compared methods, though performance remained
+sensitive to network density and mask quality. A separate stage estimates
+which strand lies on top at each crossing: a proof of concept for depth
+ordering, not a validated three-dimensional reconstruction.
 Section~\ref{sec:methods} describes the workflow and evaluation,
-Section~\ref{sec:results} reports the results, and
-Section~\ref{sec:conclusions} discusses conclusions and limitations.
+Section~\ref{sec:results} the results, and Section~\ref{sec:conclusions} the
+conclusions and limitations.
 \Igor{After this intro, i still do not have clear image on what is the contribution of the paper. "Combination of ingridients" does not sound good. Maybe some early image -- not necessarily exhaustive, but simple and schematic -- could help.}
