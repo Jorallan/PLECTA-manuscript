@@ -49,6 +49,13 @@ DEFAULT_APP = r"C:\Repos\PLECTA_APP"
 DEFAULT_PLECTA = r"C:\Repos\PLECTA"
 CROP = 512
 
+#: Nominal calibration of the stored fields, from Methods: the horizontal field
+#: width is 1.66 um across the long, 1536-px axis, i.e. 1.08 nm/px.  The crop
+#: is taken from that same grid, so the pitch carries over unchanged.
+#: ``fig_real_sem.py`` draws its 500 nm bar from the same figure.
+NM_PER_PX = 1660.0 / 1536.0
+BAR_NM = 100.0
+
 #: The crops the engine reads.  Derived from the scene on every run, so they
 #: are scratch rather than data and do not belong beside the generator.
 WORK = os.path.join(tempfile.gettempdir(), "plecta_fig_graphical_abstract")
@@ -182,18 +189,18 @@ def main(argv=None):
         rgb[sel] = matplotlib.colors.to_rgb(instance_colour(inst))
     axes[2].imshow(rgb, interpolation="nearest", extent=(0, CROP, CROP, 0))
 
-    #  A scale bar in pixels: the scene carries no calibrated pixel size
-    #  (``scale.measured`` is false), so the bar is not labelled in nm.  It
-    #  sits on its own dark plate, having been unreadable against the bare
-    #  micrograph wherever the crop happened to be bright.
-    bar, pad = 100.0, 9.0
+    #  The scale bar, at the nominal pitch above.  It sits on its own dark
+    #  plate, having been unreadable against the bare micrograph wherever the
+    #  crop happened to be bright.
+    bar, pad = BAR_NM / NM_PER_PX, 9.0
     axes[0].add_patch(Rectangle((CROP - bar - 2 * pad, CROP - 40),
                                 bar + 2 * pad, 40, fc="black", ec="none",
                                 alpha=0.62, zorder=6))
     axes[0].add_patch(Rectangle((CROP - bar - pad, CROP - 15), bar, 4.0,
                                 fc="white", ec="none", zorder=7))
-    axes[0].text(CROP - bar / 2.0 - pad, CROP - 20, "100 px", color="white",
-                 fontsize=PT_MIN, ha="center", va="bottom", zorder=7)
+    axes[0].text(CROP - bar / 2.0 - pad, CROP - 20, "%g nm" % BAR_NM,
+                 color="white", fontsize=PT_MIN, ha="center", va="bottom",
+                 zorder=7)
 
     #  (d) the same instances as solid tubes at their estimated heights,
     #  carrying the hues of (c) so a reader can see that the layered objects
