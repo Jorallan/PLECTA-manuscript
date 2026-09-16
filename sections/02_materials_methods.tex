@@ -43,17 +43,10 @@ renders the scene from above. Occlusion, depth-dependent defocus and width
 broadening are included, with imaging cues randomised independently so that
 no single cue reliably determines crossing order.
 
-Every parameter was fixed on a separate development set and never on the scenes
-reported here. The \PlectaHeldoutSceneCount{} evaluation scenes comprise 32 at
-each of 20, 30, 40 and 60\,\% areal coverage, defined as the fraction of the
-image area occupied by full-width strands. Their seeds are distinct from those
-used for development. \suppsplit{} gives the seed blocks and the verifier that
-checks their disjointness.
-
-A separate controlled paired set of \PlectaRobustnessSceneCount{} scenes,
-ten at each of 20, 30, 40, 50, and 60\% coverage, was scored once from each
-geometry's clean axis and once from its degraded mask, after the configuration
-was fixed.
+Evaluation uses clean axis masks and masks degraded with gaps and raster
+irregularities at areal coverages of 20, 30, 40 and 60\,\%, with 50\,\% also
+included in the robustness evaluation. Areal coverage is the fraction of the
+image area occupied by full-width strands.
 
 
 \subsection{CNT SEM data and mask sources}
