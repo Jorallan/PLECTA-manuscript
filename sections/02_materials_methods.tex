@@ -32,6 +32,10 @@ greyscale image, downstream stages estimate strand width and render ribbons
 \subsection{Synthetic data}
 \label{sec:mm-synth}
 
+Strand centrelines are generated as random walks with Gaussian-smoothed
+angular increments, producing gradual bends with controllable curvature.
+Strands are placed at random positions and orientations until their combined
+full-width area reaches the target coverage.
 Each synthetic scene provides strand centrelines $\mathcal C_k$, their
 corresponding pixel sets $\Omega_k$, and four image representations: a
 one-pixel axis mask; a version with gaps and raster irregularities; a
