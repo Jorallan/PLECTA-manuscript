@@ -29,11 +29,11 @@ greyscale image, downstream stages estimate strand width and render ribbons
     \label{fig:scope}
 \end{figure}
 
-\subsection{Synthetic data and evaluation split}
+\subsection{Synthetic data}
 \label{sec:mm-synth}
 
-Because the scenes are generated rather than annotated, the reference
-identities are known exactly. For every strand $k$ the generator records its ordered centreline
+The ground-truth strand identities are known exactly, because the scenes are
+generated rather than annotated. For every strand $k$ the generator records its ordered centreline
 $\mathcal C_k$ and the pixels it was drawn onto, its support $\Omega_k$. The
 supports are kept one per strand instead of being merged, so a crossing pixel
 belongs to both strands that pass through it and the reference is
