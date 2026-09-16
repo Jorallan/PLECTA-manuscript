@@ -65,18 +65,17 @@ in immersion mode and a through-lens detector, at 2.00\,kV, 400\,pA and a
 working distance of 4.3\,mm. Each frame integrated 35 passes at a dwell time
 of 100\,ns with drift correction.
 
-The first author (annotator~A) annotated each bundle using an in-house tool
-that permits overlapping strand masks. Ridge snapping and spline smoothing
-assisted tracing, while strand connections and suggested gap bridges required
-manual decisions. A second annotator, B, independently annotated
-\PlectaInterAnnotatorFieldCount{} fields. These annotations provide human
-reference interpretations of ambiguous crossings; scores are reported
-separately against each annotator, with their agreement discussed in
+The first author (O.A.) and an independent second annotator each annotated
+all \PlectaInterAnnotatorFieldCount{} fields using an in-house tool that permits
+overlapping strand masks. Ridge snapping and spline smoothing assisted
+tracing, while strand connections and suggested gap bridges required manual
+decisions. Scores are reported separately against each annotator, with their
+agreement discussed in
 Section~\ref{sec:limitations}. Supplementary Section~S7 describes the
 annotation procedure.
 
 Two input masks were evaluated for each field: a skeletonised mask derived
-from annotator~A's reference and an automatically generated mask from the
+from the first author's reference and an automatically generated mask from the
 upstream CycleGAN/nnU-Net segmentation (Section~\ref{sec:res-qualitative})
 \citep{ruehle2021workflow,isensee2021nnunet}. These inputs assess reconstruction
 from manually curated and automatically extracted strand axes, respectively.
