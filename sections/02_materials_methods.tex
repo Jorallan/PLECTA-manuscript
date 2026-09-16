@@ -4,14 +4,6 @@
 \subsection{Scope and workflow}
 \label{sec:mm-workflow}
 
-PLECTA maps a one-pixel-wide binary strand-axis mask
-$M\in\{0,1\}^{H\times W}$, with foreground $F=\{x:M(x)=1\}$, to an
-overlap-aware set $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$. Every output
-pixel therefore comes from the mask, while a crossing pixel may belong to
-several instances. Grouping reads only $M$; a secondary stage can then use the
-paired greyscale image alongside $M$ to estimate instance width and depth
-ordering (Section~\ref{sec:mm-image}).
-
 The workflow proceeds as follows (Figure~\ref{fig:scope}). First, the mask
 is generated synthetically or derived from an SEM image
 (Sections~\ref{sec:mm-synth} and~\ref{sec:mm-real}). PLECTA then builds a graph
@@ -23,7 +15,15 @@ across admissible gaps over eight frame-refitting rounds
 overlapping strand instances (Section~\ref{sec:mm-output}). Given a paired
 greyscale image, downstream stages estimate strand width and render ribbons
 (Section~\ref{sec:mm-stage4}) and infer depth order at crossings
-(Section~\ref{sec:mm-depth}); neither revises grouping.
+(Section~\ref{sec:mm-depth}).
+
+PLECTA maps a one-pixel-wide binary strand-axis mask
+$M\in\{0,1\}^{H\times W}$, with foreground $F=\{x:M(x)=1\}$, to an
+overlap-aware set $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$. Every output
+pixel therefore comes from the mask, while a crossing pixel may belong to
+several instances. Grouping reads only $M$; a secondary stage can then use the
+paired greyscale image alongside $M$ to estimate instance width and depth
+ordering (Section~\ref{sec:mm-image}).
 
 \begin{figure}[!ht]
     \centering
