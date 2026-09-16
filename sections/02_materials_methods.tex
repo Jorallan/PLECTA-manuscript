@@ -35,7 +35,8 @@ greyscale image, downstream stages estimate strand width and render ribbons
 Strand centrelines are generated as random walks with Gaussian-smoothed
 angular increments, producing gradual bends with controllable curvature.
 Strands are placed at random positions and orientations until their combined
-full-width area reaches the target coverage.
+full-width area reaches the target coverage of 20, 30, 40, 50 or 60\,\% of
+the image area.
 Each synthetic scene provides strand centrelines $\mathcal C_k$, their
 corresponding pixel sets $\Omega_k$, and four image representations: a
 one-pixel axis mask; a version with gaps and raster irregularities; a
@@ -46,11 +47,6 @@ variant assigns strand heights and radii, prevents interpenetration and
 renders the scene from above. Occlusion, depth-dependent defocus and width
 broadening are included, with imaging cues randomised independently so that
 no single cue reliably determines crossing order.
-
-Evaluation uses clean axis masks and masks degraded with gaps and raster
-irregularities at areal coverages of 20, 30, 40 and 60\,\%, with 50\,\% also
-included in the robustness evaluation. Areal coverage is the fraction of the
-image area occupied by full-width strands.
 
 
 \subsection{CNT SEM data and mask sources}
