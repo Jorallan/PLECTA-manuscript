@@ -43,17 +43,11 @@ renders the scene from above. Occlusion, depth-dependent defocus and width
 broadening are included, with imaging cues randomised independently so that
 no single cue reliably determines crossing order.
 
-Scenes are labelled throughout by areal coverage, the fraction of the frame
-the full-width strands cover rather than the fraction the thin axis occupies.
-Coverage serves as a proxy for scene difficulty but does not directly affect
-either the input or the metric, both of which operate on centreline geometry.
-Under this generator, coverage correlates with centreline length density, and
-Section~\ref{sec:res-factorial} separates the two effects.
-
 Every parameter was fixed on a separate development set and never on the scenes
-reported here; the \PlectaHeldoutSceneCount{} evaluation scenes, 32 at each of
-20, 30, 40 and 60\,\% coverage, use seeds that appear nowhere in that
-development set. \suppsplit{} gives the seed blocks and the verifier that
+reported here. The \PlectaHeldoutSceneCount{} evaluation scenes comprise 32 at
+each of 20, 30, 40 and 60\,\% areal coverage, defined as the fraction of the
+image area occupied by full-width strands. Their seeds are distinct from those
+used for development. \suppsplit{} gives the seed blocks and the verifier that
 checks their disjointness.
 
 A separate controlled paired set of \PlectaRobustnessSceneCount{} scenes,
