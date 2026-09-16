@@ -97,7 +97,9 @@ requires a graph produced by an upstream stage, rather than an axis mask. Both
 also reassemble at most three pieces at a time, which limits how much of a
 fragmented neighbourhood a single round can repair.
 
-De et al.\ reason globally. Branches and junction
+De et al.\ also weigh a whole neighbourhood at once, but reach a decision by
+propagating labels rather than reassembling pieces directly. Branches and
+junction
 contacts become a graph, and
 labels spread across it so that a decision at one node constrains its
 neighbours rather than resting on that node's own angles \citep{de2016graph}.
@@ -105,24 +107,21 @@ The labels, however, require initialisation. In their images they start at
 anatomical roots, the stained cell bodies of neurons or the optic disc of a
 retina, and the method returns as many strands as there are roots. A tangle of
 open-ended strands offers no such starting point, and how many strands it
-holds is precisely the unknown. Reasoning globally, with no
-seed and no strand count supplied in advance, is the problem addressed in this
-paper. Four of these methods are measured against PLECTA directly in
-Section~\ref{sec:res-comparators}, on identical masks and through one scorer.
+holds is precisely the unknown.
 
-\subsection{Complete workflows, and depth from a single view}
+\subsection{Complete workflows and monocular depth ordering}
 \label{sec:rel-workflows}
 
-The closest complete workflow is that of Peters et al., who join a U-Net-like
-segmentation trained on over a thousand annotated SEM micrographs to
-algorithms that trace fibres through intersections, and validate against human
-evaluators on fibre number, length and width \citep{peters2026fibre}. Both
-workflows separate semantic segmentation from instance reconstruction but
-evaluate the reconstruction stage differently: Peters et al.\ assess the
-replacement of human counting and measurement, whereas PLECTA is isolated
-behind a binary mask and evaluated on the preservation of strand identity
-across crossings, against overlap-aware references in which every pairing is
-known.
+Complete workflows separate semantic segmentation from instance reconstruction
+and validate the combined pipeline against a measurement task. Peters et al.\
+join a U-Net-like segmentation trained on over a thousand annotated SEM
+micrographs to algorithms that trace fibres through intersections, and
+validate against human evaluators on fibre number, length and width
+\citep{peters2026fibre}. The two workflows evaluate the reconstruction stage
+differently, though: Peters et al.\ assess the replacement of human counting
+and measurement, whereas PLECTA is isolated behind a binary mask and evaluated
+on the preservation of strand identity across crossings, against overlap-aware
+references in which every pairing is known.
 
 Which strand lies on top at a crossing is a further question, and for
 nanostructured networks it is normally answered destructively, by
@@ -137,3 +136,8 @@ resolves the layering of intersecting strands by analogous reasoning
 two objects overlap, which a bundle a few pixels across in a noisy micrograph
 does not reliably provide; the evidence used in this paper is instead the
 continuity of each strand's own brightness across the crossing.
+
+Weighing a whole neighbourhood at once, with no seed and no strand count
+supplied in advance, is the problem addressed in this paper. Four of these
+methods are measured against PLECTA directly in
+Section~\ref{sec:res-comparators}, on identical masks and through one scorer.
