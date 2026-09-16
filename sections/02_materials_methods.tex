@@ -5,9 +5,10 @@
 \label{sec:mm-workflow}
 
 PLECTA turns a binary strand-axis mask into a set of overlap-aware strand
-instances, in the stages summarised in Figure~\ref{fig:scope}. First, the mask
-is generated synthetically or derived from an SEM image
-(Sections~\ref{sec:mm-synth} and~\ref{sec:mm-real}). PLECTA then builds a graph
+instances, as shown in the workflow diagram in Figure~\ref{fig:scope}. For
+validation and comparison against a known ground truth, the mask can be
+generated synthetically; masks derived from SEM images are also tested in this
+paper (Sections~\ref{sec:mm-synth} and~\ref{sec:mm-real}). PLECTA then builds a graph
 of arms, stubs and junction nodes and fits a tangent and curvature frame to
 each stub (Section~\ref{sec:mm-graph}). It scores candidate continuations
 (Section~\ref{sec:mm-cost}), solves exact partial matchings at junctions and
