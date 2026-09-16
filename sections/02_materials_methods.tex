@@ -32,23 +32,16 @@ greyscale image, downstream stages estimate strand width and render ribbons
 \subsection{Synthetic data}
 \label{sec:mm-synth}
 
-Synthetic strand networks provide reference data for evaluating reconstruction.
-For each strand $k$, the generator records its ordered centreline
-$\mathcal C_k$ and the set of pixels it occupies, $\Omega_k$.
-
-Each scene is written out four ways: the exact one-pixel axis; that axis
-degraded with small gaps and raster irregularities; the strands at full width,
-merged into a single foreground; and an SEM-like greyscale image, in which
-each strand carries its own brightness and a slow variation along its length,
-blurred by one point-spread function over a low-frequency background with
-grain. A depth-resolved variant of the
-generator supplies the missing structure for the depth stage of
-Section~\ref{sec:mm-depth}. The generator assigns each strand a height and a radius, enforces
-non-interpenetration, and renders the stack from the top down, so the image
-exhibits occlusion, defocus that grows with distance from a randomised focal
-plane, and width broadening. Those cues are randomised
-independently of one another, so no single rule such as brighter-is-higher
-recovers the order.
+Each synthetic scene provides strand centrelines $\mathcal C_k$, their
+corresponding pixel sets $\Omega_k$, and four image representations: a
+one-pixel axis mask; a version with gaps and raster irregularities; a
+full-width foreground mask; and an SEM-like greyscale image with
+strand-specific brightness, gradual intensity variation, blur and background
+noise. For depth evaluation (Section~\ref{sec:mm-depth}), a depth-resolved
+variant assigns strand heights and radii, prevents interpenetration and
+renders the scene from above. Occlusion, depth-dependent defocus and width
+broadening are included, with imaging cues randomised independently so that
+no single cue reliably determines crossing order.
 
 Scenes are labelled throughout by areal coverage, the fraction of the frame
 the full-width strands cover rather than the fraction the thin axis occupies.
