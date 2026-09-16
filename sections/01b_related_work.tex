@@ -40,13 +40,13 @@ established fibre-analysis packages return network statistics rather than
 resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
 flormann2021finta,hotaling2015diameterj}, as do image-level measures of
 coverage and alignment \citep{dong2022detecting,imtiaz2023facile,%
-beigzadeh2024utilizing}. Where the imaging is volumetric, strands that appear to meet in projection
-occupy disjoint volumes, and that separation is exploitable: in X-ray
-tomography of fibrous solids and of twisted ropes, individual fibres are
-separated by seeded watershed and morphological reasoning on the
-reconstructed volume \citep{depriester2022fibre,allan2025rope}. In a
-projection this separation is unavailable, because two crossing strands
-genuinely share the same pixels.
+beigzadeh2024utilizing}. Volumetric imaging avoids the problem altogether, because strands that appear
+to meet in a projection lie at different depths and are therefore already
+apart. X-ray tomography of fibrous solids and of twisted ropes recovers
+individual fibres on that basis, by seeded watershed and morphological
+reasoning on the reconstructed volume
+\citep{depriester2022fibre,allan2025rope}. A single projection offers no such
+separation, because two crossing strands genuinely share the same pixels.
 
 \subsection{Greedy continuation from a mask}
 \label{sec:rel-greedy}
