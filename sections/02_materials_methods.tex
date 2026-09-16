@@ -52,66 +52,41 @@ no single cue reliably determines crossing order.
 \subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
 
-\PlectaRealFieldCountWord{} manually annotated CNT-sheet SEM fields were
-available, each $1536\times1024$ px:
-B58\_100 (\PlectaBFiveEightOneZeroZeroReferenceCount{} visible CNT bundles),
-B58\_110 (\PlectaBFiveEightOneOneZeroReferenceCount{}) and B58\_300
-(\PlectaBFiveEightThreeZeroZeroReferenceCount{}). The annotated strand is
-the visible bundle, not the individual nanotube, which SEM does not resolve at
-this magnification. The nominal horizontal field
-width is $1.66~\um$ across the long, 1536-px axis of the stored images, which is
-$1.08~\mathrm{nm\,px^{-1}}$. Each annotation is one human interpretation of
-projected, locally ambiguous crossings.
+\PlectaRealFieldCountWord{} CNT-sheet SEM fields were analysed, each comprising
+$1536\times1024$ pixels: B58\_100, B58\_110 and B58\_300, containing
+\PlectaBFiveEightOneZeroZeroReferenceCount{},
+\PlectaBFiveEightOneOneZeroReferenceCount{} and
+\PlectaBFiveEightThreeZeroZeroReferenceCount{} annotated bundles, respectively.
+Each strand annotation represents a visible bundle, as individual nanotubes
+are unresolved at this magnification. The horizontal field width was
+$1.66~\um$, corresponding to $1.08~\mathrm{nm\,px^{-1}}$. Images were acquired
+using a Thermo Fisher Helios 5~UX DualBeam with an Elstar field-emission column
+in immersion mode and a through-lens detector, at 2.00\,kV, 400\,pA and a
+working distance of 4.3\,mm. Each frame integrated 35 passes at a dwell time
+of 100\,ns with drift correction.
 
-The reference annotations were drawn with an in-house interactive
-instance-segmentation tool for greyscale SEM of thin, crossing strands. Its
-data model is per-instance masks rather than a flat label image, so a pixel
-may belong to several strands at once, which makes the reference
-overlap-aware and comparable with PLECTA's output. The file the tool saves is
-the file the evaluation reads, with no export or conversion step in between.
-The annotator paints each visible bundle as its own strand, with two forms of
-assistance: strokes may snap onto the local intensity ridge, with polarity
-calibrated from the existing annotation, and may be re-rendered through a
-smoothing-spline fit whose centreline is shifted onto the measured intensity
-crest only where that crest is consistent. Widths are measured from
-perpendicular full-width-at-half-maximum profiles, referenced to the local
-minima on either side of the peak and reported as twice the nearer
-half-width, so a crossing strand fusing into the profile does not bias the
-measurement wide. Candidate gap bridges, collinear endpoint pairs of
-different strands, are suggested but never applied automatically; each is
-accepted or rejected by the annotator, so identity through every crossing is
-a human decision.
+The first author (annotator~A) annotated each bundle using an in-house tool
+that permits overlapping strand masks. Ridge snapping and spline smoothing
+assisted tracing, while strand connections and suggested gap bridges required
+manual decisions. A second annotator, B, independently annotated
+\PlectaInterAnnotatorFieldCount{} fields. These annotations provide human
+reference interpretations of ambiguous crossings; scores are reported
+separately against each annotator, with their agreement discussed in
+Section~\ref{sec:limitations}. Supplementary Section~S7 describes the
+annotation procedure.
 
-The following limitations apply to the annotation protocol. The reference
-annotations were drawn by the first author (O.A.), hereafter annotator~A.
-These are manual references, not the ground truth. A second annotator, B, who
-is not an author, has annotated \PlectaInterAnnotatorFieldCount{} of these
-fields independently, and
-Section~\ref{sec:limitations} reports what that measurement shows: the two
-annotators do not implement one strand definition, so every real-data score in
-this paper is reported against a named annotator and the two are never
-averaged. Scores throughout are computed on centreline fragments, not on
-strand widths.
+Two input masks were evaluated for each field: a skeletonised mask derived
+from annotator~A's reference and an automatically generated mask from the
+upstream CycleGAN/nnU-Net segmentation (Section~\ref{sec:res-qualitative})
+\citep{ruehle2021workflow,isensee2021nnunet}. These inputs assess reconstruction
+from manually curated and automatically extracted strand axes, respectively.
+The automatic segmentation required no manual annotations for training or
+inference.
 
-Two inputs per field were derived. The first is the skeleton of annotator~A's
-strand annotation, an oracle-like condition that asks what the grouping can do
-when the axis evidence is curated. The second is an automatic mask from the
-upstream CycleGAN/nnU-Net segmentation of Section~\ref{sec:res-qualitative}
-\citep{ruehle2021workflow,isensee2021nnunet}, which asks what an
-automatic mask allows it to do. That segmentation is a separate contribution
-with its own evaluation; all that matters here is that its output is a binary
-mask produced without seeing any annotation.
-
-Mask quality was compared after skeletonisation with the
-symmetric \PlectaPlacementTolerance{}-px tolerance used throughout, which avoids
-rewarding mask thickness, and reconstruction scores were computed within each
-mask's own visible common-fragment population.
-
-The fields were acquired on a Thermo Fisher Helios 5~UX DualBeam with an
-Elstar field-emission column in immersion mode, imaged with the through-lens
-detector at 2.00\,kV and 400\,pA and a working distance of 4.3\,mm. Each
-frame is an integration of 35 passes at 100\,ns dwell with drift correction
-enabled.
+Mask quality was assessed after skeletonisation using a symmetric
+\PlectaPlacementTolerance{}-pixel tolerance. Strand reconstruction was
+evaluated on the common centreline fragments visible within each input mask,
+using the metrics defined in Section~\ref{sec:mm-metrics}.
 
 
 \subsection{PLECTA reconstruction}

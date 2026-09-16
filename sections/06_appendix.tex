@@ -429,3 +429,27 @@ them by at most \PlectaSmoothMaxSpread{}, and the one series of
 non-monotonic with its minimum at the default, for which no mechanistic
 explanation was identified. Both sweeps are development-scene measurements,
 \PlectaCurvinessSceneCount{} scenes per level, reported as plain means.
+
+
+\section{Manual annotation procedure}
+\label{sec:supp-annotation}
+
+Reference annotations were created with an in-house interactive
+instance-segmentation tool for greyscale SEM images of crossing strands.
+Each bundle is stored as a separate mask, allowing crossing pixels to belong
+to multiple strands. The saved annotation file is read directly by the
+evaluation without an intermediate export or conversion.
+
+Tracing has two optional forms of assistance. Strokes can snap to the local
+intensity ridge, with polarity calibrated from the existing annotation, and
+can be re-rendered using a smoothing spline whose centreline shifts to the
+measured intensity crest only where that crest is consistent. Apparent widths
+are measured from perpendicular full-width-at-half-maximum profiles,
+referenced to the local minima on either side of the peak. The reported width
+is twice the nearer half-width, limiting inflation when a crossing strand
+merges into the profile. These widths do not enter the centreline-based
+reconstruction scores.
+
+The tool suggests gap bridges between collinear endpoints of different
+strands, but each suggestion requires the annotator's acceptance. Strand
+identity through crossings and gaps therefore remains a manual decision.
