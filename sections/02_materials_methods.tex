@@ -32,11 +32,9 @@ greyscale image, downstream stages estimate strand width and render ribbons
 \subsection{Synthetic data}
 \label{sec:mm-synth}
 
-Strand identity in the synthetic scenes is known by construction. For every strand $k$ the generator records its ordered centreline
-$\mathcal C_k$ and the pixels it was drawn onto, its support $\Omega_k$. The
-supports are kept one per strand instead of being merged, so a crossing pixel
-belongs to both strands that pass through it and the reference is
-overlap-aware by construction.
+Synthetic strand networks provide reference data for evaluating reconstruction.
+For each strand $k$, the generator records its ordered centreline
+$\mathcal C_k$ and pixel support $\Omega_k$.
 
 Each scene is written out four ways: the exact one-pixel axis; that axis
 degraded with small gaps and raster irregularities; the strands at full width,
