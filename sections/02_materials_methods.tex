@@ -8,8 +8,9 @@ PLECTA maps a one-pixel-wide binary strand-axis mask
 $M\in\{0,1\}^{H\times W}$, with foreground $F=\{x:M(x)=1\}$, to an
 overlap-aware set $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$. Every output
 pixel therefore comes from the mask, while a crossing pixel may belong to
-several instances. Grouping reads only $M$; optional image-informed stages run
-afterwards and cannot change strand identity.
+several instances. Grouping reads only $M$; a secondary stage can then use the
+paired greyscale image alongside $M$ to estimate instance width and depth
+ordering (Section~\ref{sec:mm-image}).
 
 The workflow proceeds as follows (Figure~\ref{fig:scope}). First, the mask
 is generated synthetically or derived from an SEM image
