@@ -34,13 +34,15 @@ greyscale image, downstream stages estimate strand width and render ribbons
 
 Strand centrelines are generated as random walks with Gaussian-smoothed
 angular increments, producing gradual bends with controllable curvature.
-Strands are placed at random positions and orientations until their combined
-full-width area reaches the target coverage of 20, 30, 40, 50 or 60\,\% of
-the image area.
-Each synthetic scene provides strand centrelines $\mathcal C_k$, their
-corresponding pixel sets $\Omega_k$, and four image representations: a
-one-pixel axis mask; a version with gaps and raster irregularities; a
-full-width foreground mask; and an SEM-like greyscale image with
+The principal synthetic reconstruction scenes are $512\times512$ pixels.
+Each full-width bundle is assigned a width sampled uniformly from 7 to 16
+pixels, and strands are placed at random positions and orientations until
+their combined full-width area reaches the target areal coverage of 20, 30,
+40, 50 or 60\,\% of the image area. Each scene provides strand centrelines
+$\mathcal C_k$, their corresponding pixel sets $\Omega_k$, and four image
+representations: a clean one-pixel axis mask; a one-pixel axis mask degraded
+with gaps and raster irregularities; a full-width foreground mask; and an
+SEM-like greyscale image with
 strand-specific brightness, gradual intensity variation, blur and background
 noise. For depth evaluation (Section~\ref{sec:mm-depth}), a depth-resolved
 variant assigns strand heights and radii, prevents interpenetration and

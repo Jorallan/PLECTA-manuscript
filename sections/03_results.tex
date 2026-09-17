@@ -12,14 +12,12 @@ of the reconstruction method.
 \subsection{Reconstruction on synthetic images}
 \label{sec:res-density}
 
-Across the \PlectaHeldoutSceneCount{} held-out synthetic scenes, PLECTA
+Across the \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA
 achieved a mean common-fragment pairwise \Fone{} of
 \PlectaHeldoutFOneMean{} (95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]).
 Table~\ref{tab:plecta-heldout} summarises reconstruction scores overall and by
-areal coverage. These scenes used previously unseen seeds from the development
-generator; evaluation on an independent generator is reported in
-Section~\ref{sec:res-comparators}.
+areal coverage.
 
 \begin{table}[tbp]
     \centering
@@ -41,24 +39,18 @@ Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
 Section~\ref{sec:res-comparators} measures cost systematically.
 
-\label{sec:res-factorial}
-Areal coverage describes the rendered scene, whereas PLECTA operates on its
-centreline mask. We therefore examined whether the observed performance decline
-reflects strand width or centreline length density.
-Across \PlectaFactorialSceneCount{} development scenes, rendering each geometry
-at three bundle widths left the input mask and overlap-aware reference
-unchanged while areal coverage varied by up to a factor of
-\PlectaFactorialMaxCoverageRatio{}. The corresponding variation in \Fone{} was
-\PlectaFactorialMaxFOneRange{}. Increasing centreline length
-density reduced mean \Fone{} from \PlectaFactorialLowFOne{} to
-\PlectaFactorialHighFOne{}. A coverage stratum should therefore be read as a
-proxy for the length density accompanying it under this generator.
-
+PLECTA operates on the strand-axis mask, so reconstruction difficulty depends
+on centreline density and geometry rather than areal coverage alone. The same
+areal coverage can arise from a different centreline density under another
+bundle-width distribution and may therefore produce different reconstruction
+performance. Within the fixed $512\times512$-pixel frame and 7--16-pixel
+bundle-width range used here, areal coverage provides a consistent within-study
+stratification.
 
 \label{sec:res-mask}%
 To assess sensitivity to gaps and raster irregularities, we compared
-reconstruction from clean and degraded masks of the same scenes. On the
-\PlectaRobustnessSceneCount{}-scene controlled set,
+reconstruction from clean and degraded masks of the same scenes. Across the
+\PlectaRobustnessSceneCount{} synthetic scenes,
 mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
 \PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
 clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
