@@ -91,18 +91,15 @@ using the metrics defined in Section~\ref{sec:mm-metrics}.
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
 
-This section describes the method itself. It reads the binary axis mask,
-and the subsections follow the order of execution: the
-skeleton graph derived from the mask, the pairing cost, the junction
-matching, the gap bridging, and the iteration schedule.
-
-PLECTA maps a one-pixel-wide binary strand-axis mask
-$M\in\{0,1\}^{H\times W}$, with foreground $F=\{x:M(x)=1\}$, to an
-overlap-aware set $\{I_1,\ldots,I_N\}$ with $I_n\subseteq F$. Every output
-pixel therefore comes from the mask, while a crossing pixel may belong to
-several instances. Grouping reads only $M$; a secondary stage can then use the
-paired greyscale image alongside $M$ to estimate instance width and depth
-ordering (Section~\ref{sec:mm-image}).
+Starting from a binary strand-axis mask $M\in\{0,1\}^{H\times W}$, PLECTA
+reconstructs individual strands by resolving connections through junctions and
+across gaps. It builds a skeleton graph and jointly selects compatible links
+using local strand geometry, refining direction and curvature estimates as
+longer strands are assembled. The output is a set of strand instances
+$\{I_1,\ldots,I_N\}$, with $I_n\subseteq F=\{x:M(x)=1\}$; crossing pixels
+may belong to multiple instances. Reconstruction uses the mask alone, while
+subsequent width and depth estimates also use the greyscale image
+(Section~\ref{sec:mm-image}).
 
 \subsubsection{Skeleton graph and stub frames}
 \label{sec:mm-graph}
