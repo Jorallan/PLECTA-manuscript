@@ -102,7 +102,7 @@ may belong to multiple instances. Reconstruction uses the mask alone, while
 subsequent width and depth estimates also use the greyscale image
 (Section~\ref{sec:mm-image}).
 
-\subsubsection{Skeleton graph and stub frames}
+\subsubsection{Skeleton graph and local geometry}
 \label{sec:mm-graph}
 
 PLECTA skeletonises the input mask using the Zhang--Suen thinning algorithm
@@ -121,7 +121,7 @@ Stubs with insufficient support for a reliable direction estimate are marked
 as unreliable. As arms are linked into longer chains, these estimates are
 updated using the additional strand geometry.
 
-\subsubsection{The pairing cost}
+\subsubsection{Pairing cost function}
 \label{sec:mm-cost}
 
 The cost $C_{ab}$ of linking stubs $a$ and $b$ combines directional alignment,
@@ -169,7 +169,7 @@ and curvature scaling factor of 30 are fixed parameters listed in
     \label{fig:cost}
 \end{figure}
 
-\subsubsection{Candidate gates and exact matching}
+\subsubsection{Candidate selection and iterative matching}
 \label{sec:mm-matching}
 
 Leaving a stub unmatched carries a penalty rather than a prohibition, and
@@ -261,7 +261,7 @@ second whether the terms it matches on are redundant.
     \label{fig:matching}
 \end{figure}
 
-\subsubsection{Strand output}
+\subsubsection{Strand instance assembly}
 \label{sec:mm-output}
 
 Connected components of accepted arm links define strands. PLECTA
