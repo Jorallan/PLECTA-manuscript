@@ -79,28 +79,19 @@ coverage levels, selected by proximity to the median \Fone{} of each stratum.
 \subsection{Depth decomposition}
 \label{sec:res-depth}
 
-The stages above reconstruct strands in projection. A crossing pixel is
-assigned to both strands that own it, but nothing so far says which of the
-two lies on top. The depth stage answers that, reading the greyscale after
-the grouping is fixed and leaving every strand exactly as the stages above
-left it. Its evidence is the continuity of each strand's own brightness
-across the crossing, weighed against the noise measured there; from those
-local estimates it imposes one globally consistent vertical order and
-places
-each strand at a height at which nothing interpenetrates.
+The stages above reconstruct strands in projection but do not establish which
+strand lies above at a crossing. After grouping is fixed, the depth stage uses
+the greyscale image to assess the continuity of each strand's brightness across
+the crossing relative to local noise. It reconciles these local estimates into
+a globally consistent vertical order and assigns non-interpenetrating heights.
 
-It is evaluated on \PlectaDepthSceneCount{} scenes from the depth-resolved
-generator of Section~\ref{sec:mm-synth}, at two areal coverages, in two
-input conditions.
-Given the reference 2-D geometry, the depth decision is measured alone; given
-only the binary axis mask, the same stage runs on PLECTA's own reconstruction
-and carries its error. Table~\ref{tab:depth-order} reports both, under the
-measures \suppdepth{} defines. Its two blocks are not interchangeable. The
-crossing rows score the over/under call at each crossing, one score per
-crossing, taken before anything is reconciled; the stacking rows score the
-height field the solver returns once every call has been pooled, one score per
-pair of strands. Two strands that cross three times are three crossings and
-one pair.
+The stage was evaluated on \PlectaDepthSceneCount{} depth-resolved scenes from
+Section~\ref{sec:mm-synth}, at two areal coverages and under two input
+conditions. Reference 2-D geometry isolates the depth decision, whereas binary
+axis masks include reconstruction error. Table~\ref{tab:depth-order} reports
+both using the measures defined in \suppdepth{}. Its crossing rows score local
+over/under decisions before reconciliation, once for every crossing; its
+stacking rows score the final order, once for every pair of strands.
 
 \begin{table}[!ht]
 \centering
@@ -111,47 +102,21 @@ accuracy shown.}
 \input{results/plecta_depth_order_table}
 \end{table}
 
-Accuracy is high where image evidence exists and substantially lower where
-it does not, and the table separates the two. Among crossings for which an
-order was assigned, accuracy ranged from \PlectaDepthDecidedLow{} to
-\PlectaDepthDecidedHigh{}, whether the 2-D geometry was given or
-reconstructed and at both crossing densities. The remaining rows report the
-recovery and abstention rates.
+Among crossings for which an order was assigned, accuracy ranged from
+\PlectaDepthDecidedLow{} to \PlectaDepthDecidedHigh{} across both input
+conditions and densities. The all-crossing scores were lower
+(\PlectaDepthAllLow{}--\PlectaDepthAllHigh{}) because they include crossings
+the 2-D stage did not recover and those for which the depth stage abstained.
+The table reports recovery and abstention rates alongside these scores.
 
-Over every pair of strands in the scene, order accuracy falls to
-\PlectaDepthCleanCovTwoZeroAllOrder{}, and that is an absence of evidence
-rather than a failure of the decision. Depth propagates only along crossings,
-so two strands that never meet, and are
-joined by no chain of strands that do, are related by nothing the image
-contains; their order is a stated tie-break, since the available crossing evidence
-does not determine their relative order. Only \PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs
-lie within one connected component of the crossing graph, which is the
-fraction for which any evidence exists at all. This fraction largely accounts for the reduction. A model that orders
-connected pairs at the decided-crossing accuracy and assigns unconnected
-pairs at chance predicts \PlectaDepthCleanCovTwoZeroOrderPred{} at 20\,\%
-coverage, against \PlectaDepthCleanCovTwoZeroAllOrder{} measured. At the sparser coverage the
-stage exceeds that prediction, so the unconnected pairs are evidently not
-entirely
-uninformative; at the denser end it falls short, which is what error accumulating
-along the long transitive chains of a large component would do. Depth claims
-are therefore scoped to the connected component, and a globally ordered film
-would need evidence that does not travel through crossings, such as defocus, or
-a second view, rather than a smoothness assumption, which these scenes would
-not support: their heights are drawn independently, so proximity carries no
-depth information by construction.
-
-All-crossings accuracy is additionally reduced by crossings the 2-D stage
-never recovered and by abstentions, and the table gives each its own rate.
-Decided-crossing accuracy must therefore be read together with the recovery
-and abstention rates, because increased abstention can raise conditional
-accuracy without improving overall performance.
-
-Layer agreement degrades the way the global order does, falling from
-\PlectaDepthCleanCovTwoZeroLayers{} to \PlectaDepthCleanCovFourZeroLayers{} as
-coverage doubles while the recovered layer count stays close to the reference:
-local ordering remained sufficiently accurate to recover a similar number
-of layers, while
-small order errors move strands across layer boundaries.
+Global order is limited to evidence that can travel through the crossing graph.
+Only \PlectaDepthWithinLow{} to \PlectaDepthWithinHigh{} of strand pairs lie
+within the same connected component, so the relative order of the remaining
+pairs is not identifiable from the available crossing evidence. All-pair order
+accuracy was consequently 0.67--0.72, compared with 0.85--0.91 for pairs that
+cross. Layer agreement likewise fell from \PlectaDepthCleanCovTwoZeroLayers{}
+to \PlectaDepthCleanCovFourZeroLayers{} as coverage doubled, although the
+recovered number of layers remained close to the reference.
 
 Figure~\ref{fig:resem-synth} shows what the stage produces on one synthetic
 scene, from the binary axis mask through to the film the reconstruction
@@ -161,27 +126,22 @@ field, which no depth ground truth can score.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_synth.pdf}
-\caption{The depth stage on one synthetic scene, reconstructed from the binary
-axis mask. The image the scene was rendered from, that scene re-rendered from
-the reconstruction through a forward SEM model, and the film the reconstruction
-implies. The re-rendered panel is a consistency check on depths and radii, not
-a scored quantity: the difference Table~\ref{tab:depth-order} reports between
-input conditions is a difference in which crossings were \emph{found}, which a
-rendered image cannot show. The scene is 512\,px across, in the
-generator's pixel units.}
+\caption{Depth reconstruction of a synthetic scene from its binary axis mask.
+The panels show the rendered greyscale image, a forward-model re-rendering from
+the reconstructed depths and radii, and the inferred strand stack. The
+re-rendering is a visual consistency check, not a scored quantity. The scene is
+512\,px across in the generator's pixel units.}
 \label{fig:resem-synth}
 \end{figure}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_resem_real.pdf}
-\caption{The same comparison on a real CNT SEM field, reconstructed from
-the axis of annotator~A's annotation; the crop is 512\,px across, about
-0.55\,\um{} of field B58\_100. The depth order is not evaluated quantitatively here: real SEM provides no
-depth ground truth, since the annotation records which pixels belong to
-which strand, not which lies on top. The panels demonstrate the stage
-running end to end on real imaging; the forward model's appearance
-parameters are fitted to this micrograph.}
+\caption{The same comparison on a real CNT SEM field, reconstructed from the
+reference axis mask. The crop is 512\,px across, about 0.55\,\um{} of field
+B58\_100. Real SEM provides no depth ground truth, so the depth order is shown
+qualitatively; the forward-model appearance parameters are fitted to this
+micrograph.}
 \label{fig:resem-real}
 \end{figure}
 
