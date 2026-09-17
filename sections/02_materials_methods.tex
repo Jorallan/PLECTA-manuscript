@@ -105,20 +105,21 @@ subsequent width and depth estimates also use the greyscale image
 \subsubsection{Skeleton graph and stub frames}
 \label{sec:mm-graph}
 
-PLECTA skeletonises the mask using the Zhang--Suen thinning algorithm
-\citep{zhang1984thinning} and removes the short spurs skeletonisation
-produces. Skeleton pixels where three or more paths meet form junction
-clusters, and clusters close enough together are merged into a single
-\emph{node}: at this resolution a crossing is an extended cluster rather
-than a point, and neighbouring crossings often touch. What remains between nodes is an \emph{arm}, an
-unambiguous run of strand, carrying a \emph{stub} at each end.
+PLECTA skeletonises the input mask using the Zhang--Suen thinning algorithm
+\citep{zhang1984thinning} and removes short spurs. Pixels where three or more
+skeleton branches meet are grouped into junction clusters, with nearby
+clusters merged into a single \emph{node}. This accounts for crossings that
+span several pixels or lie too close together to resolve separately. The
+remaining strand segments form \emph{arms}, each with a \emph{stub} at either
+end.
 
-Each stub is given a frame comprising its tip position, outward tangent and
-curvature, estimated over a short arclength interval behind the tip. A stub
-whose support is too short to yield a reliable direction is marked as
-unreliable rather than estimated. Once arms are linked into chains, the
-frames are re-estimated over the expanded chain-level support, which is why
-the method iterates rather than deciding once.
+Each stub is characterised by its tip position, outward tangent
+($\mathbf{t}$) and signed curvature ($\kappa$), estimated from a short segment
+of the adjoining strand (Figure~\ref{fig:cost}a). Subscripts identify the stub,
+so $\mathbf{t}_a$ and $\kappa_a$ denote the tangent and curvature of stub $a$.
+Stubs with insufficient support for a reliable direction estimate are marked
+as unreliable. As arms are linked into longer chains, these estimates are
+updated using the additional strand geometry.
 
 \subsubsection{The pairing cost}
 \label{sec:mm-cost}
