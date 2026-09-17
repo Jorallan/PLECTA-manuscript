@@ -224,23 +224,22 @@ matching and the contributions of individual components.
 \subsubsection{Strand instance assembly}
 \label{sec:mm-output}
 
-Connected components of accepted arm links define strands. PLECTA
-paints every arm pixel and every junction cluster touched by a chain into that
-strand, so intersecting strands share crossing pixels. Accepted gap links determine identity
-but are not painted into the fixed centreline output. All parameters are fixed in a
-published configuration (\supprecon{}).
+After the final matching round, connected components of the accepted arm
+links define individual strands. Each strand contains the pixels of its
+constituent arms and associated junction clusters, allowing intersecting
+strands to share crossing pixels. Accepted gap links connect fragments
+belonging to the same strand without adding pixels across the gap. These
+strand instances provide the input to the image-based stages described next.
 
 \subsection{Image-informed reconstruction}
 \label{sec:mm-image}
 
-The grouping above reads the mask alone and is what this paper evaluates.
-Where a greyscale image of the same field exists, three further stages can
-read it: two give each strand a width, and one orders the strands at their
-crossings. All three run after the grouping is fixed and none can move a pixel
-from one strand to another, so no identity score in this paper depends on any
-of them. All are governed by fixed parameters (\supprecon{}), and none is specific
-to SEM: they take whatever image accompanies the mask, and
-SEM is simply the case demonstrated here.
+The reconstructed strands are combined with the corresponding greyscale image
+to estimate their apparent widths, render ribbons and infer crossing order.
+These stages preserve the strand identities established during reconstruction
+and do not affect the identity scores. They use fixed parameters
+(\supprecon{}) and are demonstrated here on SEM images, although the procedure
+accepts other greyscale images.
 
 \subsubsection{Width and ribbon rendering}
 \label{sec:mm-stage4}
