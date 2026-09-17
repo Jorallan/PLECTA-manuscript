@@ -270,8 +270,9 @@ pixels occupied by the other strand. The pooled core median $m_c$ is compared
 with each strand's flank median, $m_i$ or $m_j$; the closer match indicates the
 upper strand.
 
-The signed score $s$ measures the difference between these two intensity
-mismatches, normalised by the larger of the flank-median separation
+The signed score $s$ compares how closely the crossing intensity matches each
+strand's flank intensity (Figure~\ref{fig:depth-evidence}c). It measures the
+difference between these two mismatches, normalised by the larger of the flank-median separation
 $\lvert m_i-m_j\rvert$ and twice the local noise estimate $\hat\sigma$.
 Its sign identifies the upper strand and its magnitude weights the evidence.
 No local order is assigned when $\lvert s\rvert$ falls below a fixed threshold
