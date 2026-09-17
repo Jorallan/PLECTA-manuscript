@@ -296,10 +296,8 @@ lie above $B$, $B$ above $C$, and $C$ above $A$. These relations form a directed
 graph whose nodes are strands and whose edges carry weights $\lvert s\rvert$
 (Figure~\ref{fig:depth-order}). Within each connected component, a consistent
 strand order is sought with the objective of maximising the total weight of
-satisfied relations. Crossing orders are updated accordingly, and any
-reversals are recorded with their original scores. Strands in disconnected
-components have no image-based relative order; their placement follows a
-predefined tie-break. \suppdepthstage{} describes the ordering procedure.
+satisfied relations. Crossing orders are updated accordingly.
+\suppdepthstage{} describes the ordering procedure.
 
 \begin{figure}[!ht]
     \centering
@@ -324,8 +322,7 @@ assumption, each strand is assigned the lowest height compatible with the
 chosen order and the estimated radii, preventing interpenetration.
 
 Without a greyscale image, placement follows the predefined tie-break rather
-than measured crossing evidence. The method reports the fraction of crossings
-with usable evidence. Section~\ref{sec:res-depth} evaluates depth ordering
+than measured crossing evidence. Section~\ref{sec:res-depth} evaluates depth ordering
 using the measures defined in \suppdepth{}.
 
 \subsection{Metrics and statistical analysis}
