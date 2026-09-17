@@ -178,13 +178,12 @@ that no stub is assigned to more than one connection. Leaving stub $i$
 unmatched incurs a penalty $p_i$. Connecting stubs $i$ and $j$ avoids both
 unmatched penalties but incurs the linking cost $C_{ij}$ defined in
 Equation~\ref{eq:cost}. The net benefit of the connection is therefore
-$p_i+p_j-C_{ij}$, and only links with a positive benefit are admitted.
+$p_i+p_j-C_{ij}$. A link is admissible only if $C_{ij}<p_i+p_j$.
 Exact maximum-weight partial matching then selects the set of disjoint stub
 pairs $\Gamma$ with the greatest total benefit:
 \begin{equation}
   \max_{\Gamma}\sum_{(i,j)\in\Gamma}
-  \bigl(p_i+p_j-C_{ij}\bigr),
-  \qquad \text{admissible iff } C_{ij}<p_i+p_j,
+  \bigl(p_i+p_j-C_{ij}\bigr).
   \label{eq:matching}
 \end{equation}
 Each stub can belong to at most one pair or remain unmatched, allowing genuine
