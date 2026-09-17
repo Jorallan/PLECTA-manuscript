@@ -124,14 +124,16 @@ updated using the additional strand geometry.
 \subsubsection{The pairing cost}
 \label{sec:mm-cost}
 
-The pairwise linking cost comprises three geometric terms
-(Figure~\ref{fig:cost}): the reversal between the two outward directions,
-which vanishes when one strand continues into the other; the turns from each
-direction onto the tip-to-tip chord, which penalise parallel arms that run
-past one another; and the continuity of signed curvature, which penalises
-joins that would require a kink. For gap candidates the tip separation is
-charged as well; the distance term is omitted for junction links. The
-cost of linking stubs $a$ and $b$ is therefore
+The cost $C_{ab}$ of linking stubs $a$ and $b$ combines directional alignment,
+chord alignment and curvature continuity (Equation~\ref{eq:cost};
+Figure~\ref{fig:cost}). The reversal angle $\theta$, measured between
+$\mathbf{t}_a$ and $-\mathbf{t}_b$, is zero when the outward tangents form a
+straight continuation. The chord angles $\varphi_a$ and $\varphi_b$ measure
+how far each tangent turns towards the opposite tip, penalising lateral
+offset between otherwise aligned arms. The curvature mismatch
+$\lvert\kappa_a+\kappa_b\rvert$ penalises changes in bending; the sum reflects
+the opposite orientations of the outward frames. Gap links also incur a
+penalty for tip separation $d$:
 \begin{equation}
   C_{ab}=w_d\,\theta
         +w_t\,q(d)\,(\varphi_a+\varphi_b)
@@ -140,19 +142,14 @@ cost of linking stubs $a$ and $b$ is therefore
   \qquad q(d)=\min\!\left(1,\tfrac{d}{d_0}\right),
   \label{eq:cost}
 \end{equation}
-with $d$ the tip separation, $\theta$ the reversal angle between the two
-outward tangents, and $\varphi_a$, $\varphi_b$ the turns from each tangent onto
-the tip-to-tip chord, measured at their own vertices; junction links set
-$w_\ell=0$.
+where $w_d$, $w_t$, $w_\ell$ and $w_\kappa$ weight the four terms, and
+$\ell_0$ normalises the gap distance. Junction links set $w_\ell=0$.
 
-Three properties of that expression are deliberate. The reversal angle ignores
-the chord, which keeps it meaningful when the tips are three pixels apart and
-the chord direction is quantisation noise. The chord turns do see lateral
-offset, so two parallel arms that never meet are penalised. And because it is
-the chord terms that degrade over short separations, the fade $q(d)$ withdraws
-them as the tips approach rather than letting an unstable angle dominate. The
-weights, the scales $\ell_0$ and $d_0$, and the constant placing curvature on
-the scale of the angular terms are fixed parameters, listed in
+The reversal angle $\theta$ is independent of the tip-to-tip chord and remains
+useful when nearby tips make the chord direction sensitive to pixel
+quantisation. The factor $q(d)$ therefore reduces the chord-angle contribution
+at separations below $d_0$. The weights, distance scales $\ell_0$ and $d_0$,
+and curvature scaling factor of 30 are fixed parameters listed in
 \supprecon{}.
 
 \begin{figure}[tbp]
