@@ -150,7 +150,8 @@ useful when nearby tips make the chord direction sensitive to pixel
 quantisation. The factor $q(d)$ therefore reduces the chord-angle contribution
 at separations below $d_0$. The weights, distance scales $\ell_0$ and $d_0$,
 and curvature scaling factor of 30 are fixed parameters listed in
-\supprecon{}.
+\supprecon{}. These costs quantify the suitability of individual connections;
+the next step selects a compatible set of links.
 
 \begin{figure}[tbp]
     \centering
@@ -172,13 +173,14 @@ and curvature scaling factor of 30 are fixed parameters listed in
 \subsubsection{Candidate selection and iterative matching}
 \label{sec:mm-matching}
 
-PLECTA selects compatible connections by balancing the cost of linking two
-stubs against the penalties for leaving them unmatched. For stubs $i$ and $j$,
-a link is admissible when its cost $C_{ij}$ is less than the combined unmatched
-penalties $p_i+p_j$. Exact maximum-weight partial matching selects a set of
-disjoint pairs $\mathcal M$:
+Using the costs from Equation~\ref{eq:cost}, PLECTA selects links jointly so
+that no stub is assigned to more than one connection. Leaving stub $i$
+unmatched incurs a penalty $p_i$, so linking stubs $i$ and $j$ gives a net
+benefit of $p_i+p_j-C_{ij}$. Only links with a positive benefit are admitted.
+Exact maximum-weight partial matching then selects the set of disjoint stub
+pairs $\mathcal P$ with the greatest total benefit:
 \begin{equation}
-  \max_{\mathcal M}\sum_{(i,j)\in\mathcal M}
+  \max_{\mathcal P}\sum_{(i,j)\in\mathcal P}
   \bigl(p_i+p_j-C_{ij}\bigr),
   \qquad \text{admissible iff } C_{ij}<p_i+p_j,
   \label{eq:matching}
