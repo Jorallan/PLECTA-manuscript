@@ -91,11 +91,12 @@ using the metrics defined in Section~\ref{sec:mm-metrics}.
 \subsection{PLECTA reconstruction}
 \label{sec:mm-plecta}
 
-Starting from a binary strand-axis mask $M\in\{0,1\}^{H\times W}$, PLECTA
-reconstructs individual strands by resolving connections through junctions and
-across gaps. It builds a skeleton graph and jointly selects compatible links
-using local strand geometry, refining direction and curvature estimates as
-longer strands are assembled. The output is a set of strand instances
+Starting from a binary strand mask, PLECTA reconstructs individual strands by
+resolving connections through junctions and across gaps. The following
+subsections describe the main steps: constructing the skeleton graph, scoring
+candidate connections and selecting compatible links, with iterative
+refinement as longer strands are assembled. For an input mask
+$M\in\{0,1\}^{H\times W}$, the output is a set of strand instances
 $\{I_1,\ldots,I_N\}$, with $I_n\subseteq F=\{x:M(x)=1\}$; crossing pixels
 may belong to multiple instances. Reconstruction uses the mask alone, while
 subsequent width and depth estimates also use the greyscale image
