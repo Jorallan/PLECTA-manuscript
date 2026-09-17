@@ -144,18 +144,6 @@ the mask never brought within reach counts against nobody, so the measure
 is insensitive to a strand the mask lost entirely, and it is always quoted with the number of
 decisions each mask posed.
 
-\textbf{Completeness, correctness and quality} characterise the input
-\emph{mask}: no reconstruction is opened to compute them and no method can
-change them. Reference axis and test mask are both skeletonised and each tested
-against the other dilated by the tolerance. Completeness is tolerant recall of
-the reference axis, correctness tolerant precision of the test axis, and
-quality the tolerant Jaccard index
-$\mathrm{TP}/(\mathrm{TP}+\mathrm{FP}+\mathrm{FN})$ with $\mathrm{TP}$ the
-smaller of the two matched counts, so quality cannot exceed either component.
-Quality is also GraFT's published Jaccard index in its intended reading. Blind
-spot: the tolerance carries the measure, since at zero tolerance it reports raster
-placement rather than geometry, so it is never quoted without one.
-
 \textbf{Shared-pixel precision and recall} are precision and recall over the
 pixels the reference gives to more than one instance, computed on the raw
 instance masks. They exist because the pairwise measure discards junction
@@ -198,9 +186,7 @@ A reference is therefore admitted only if it reproduces itself, that is, only
 if scoring it as though it were a prediction of itself returns a perfect score
 on every measure. Anything less means the reference disagrees with its own
 fragment assignment, and the shortfall bounds what any method could score
-against it. The completeness, correctness and quality triple cannot serve
-this purpose, because those characterise a mask while this check
-characterises the identities carried on it.
+against it.
 
 
 \subsection{Statistical analysis}

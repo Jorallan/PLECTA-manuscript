@@ -82,9 +82,8 @@ from manually curated and automatically extracted strand axes, respectively.
 The automatic segmentation required no manual annotations for training or
 inference.
 
-Mask quality was assessed after skeletonisation using a symmetric
-\PlectaPlacementTolerance{}-pixel tolerance. Strand reconstruction was
-evaluated on the common centreline fragments visible within each input mask,
+Strand reconstruction was evaluated on the common centreline fragments
+visible within each input mask,
 using the metrics defined in Section~\ref{sec:mm-metrics}.
 
 
@@ -328,52 +327,42 @@ using the measures defined in \suppdepth{}.
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 
-The primary endpoint is common-fragment pairwise \Fone{}. The input mask is cut
-into fragments, each one unambiguous arm between crossings, by a rule that
-reads neither the reference nor any prediction, so every method compared is cut
-into the same pieces; each fragment then takes a reference and a predicted
-identity by one rule applied to both sides alike, and the score counts the
-pairs of fragments the prediction groups as the reference does.
-Figure~\ref{fig:f1-example} illustrates the endpoint on the smallest case
-that contains a crossing, including the two conditions under which it is
-undefined rather than zero.
+The primary reconstruction metric is common-fragment pairwise \Fone{}, which
+measures whether strand fragments are grouped consistently with the reference.
+Each input mask is divided into fragments between crossings, independently of
+the reference and predictions. The same assignment rule then gives each
+fragment a reference identity and a predicted identity. Pairwise precision
+penalises joining fragments from different reference strands, while recall
+penalises separating fragments from the same strand.
+Figure~\ref{fig:f1-example} illustrates these cases and the conditions under
+which the score is undefined.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_f1_example.pdf}
-    \caption{Illustration of the endpoint metric on the smallest case that
-    contains a crossing. The scorer removes a neighbourhood of the junction
-    (red) and evaluates, for each of the six pairs of the four remaining
-    arms, whether the grouping joins it as the reference~(a) does; arms
-    sharing a tip marker belong to the same instance. Splits~(b)
-    reduce recall and merges~(c) reduce precision; the all-separate
-    grouping~(e) produces no pair, so precision and \Fone{} are undefined
-    rather than zero, one reason the adjusted Rand index and variation of
-    information are reported alongside.}
+    \caption{Pairwise scoring at a crossing. Removing junction pixels (red)
+    leaves four arms and six fragment pairs. Tip markers identify arms assigned
+    to the same strand. \textbf{(a)}~Reference grouping.
+    \textbf{(b)}~A split reduces recall. \textbf{(c)}~A merge reduces precision.
+    \textbf{(d)}~Incorrect pairing changes strand identities.
+    \textbf{(e)}~Separating every arm produces no predicted positive pair, so
+    precision and \Fone{} are undefined.}
     \label{fig:f1-example}
 \end{figure}
 
-\suppmeasures{} gives the construction and the assignment rule in
-full. Because junction pixels are deleted before
-fragments are labelled, the measure is insensitive to whether an emitted
-crossing pixel is given one owner or two; it registers only whether the arms
-meeting there are grouped as the reference groups them.
+Because junction pixels are excluded, this metric evaluates strand continuity
+through crossings rather than ownership of the crossing pixels themselves.
+Strands containing more fragments contribute more pairs and therefore carry
+greater weight. We also report the adjusted Rand index and variation of
+information \citep{hubert1985comparing,meila2007comparing}, together with
+detection \Fone{} and Crossing Fidelity, to characterise complementary aspects
+of reconstruction. For the real SEM fields, Join \Fone{} evaluates joining
+decisions between nearby fragments, reducing the influence of differences in
+fragmentation between mask sources.
 
-No single metric is quoted alone, because the metrics are sensitive to
-different error types: pairwise \Fone{} evaluates relationships between
-fragments and is quadratic in fragmentation, while object-detection metrics
-evaluate object existence and are insensitive to an arm exchange at a
-crossing, which they rate 1.000 where the pairwise score is 0.000. The
-adjusted Rand index and variation of information
-\citep{hubert1985comparing,meila2007comparing} are therefore quoted beside the
-pairwise score, with detection \Fone{} and Crossing Fidelity. The input masks themselves are characterised
-by a tolerant recall, precision and Jaccard index, called completeness,
-correctness and quality in the thin-structure literature, matched within a
-tolerance
-rather than pixel for pixel, because two skeletonisations of one strand
-seldom fall on the same pixels.
-\suppmeasures{} defines each in full, with its equation, what it rewards
-and what it is insensitive to.
-
-\suppmeasures{} states the interval construction, the resampling unit and
-the cases where no inference is drawn.
+Held-out synthetic reconstruction means are accompanied by 95\,\% bootstrap
+confidence intervals, with scenes resampled within each density level.
+Comparisons between clean and degraded masks preserve scene pairing. For
+real SEM data, the field is the unit of statistical inference.
+\suppmeasures{} provides the metric definitions, assignment rules and
+statistical procedures.
