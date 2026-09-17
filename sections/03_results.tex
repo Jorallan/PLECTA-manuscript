@@ -213,13 +213,16 @@ example, the automatic axis gave join precision
 \PlectaJoinBFiveEightOneOneZeroUNetPrecision{} and recall
 \PlectaJoinBFiveEightOneOneZeroUNetRecall{}.
 
-These three fields cannot separate segmentation error from annotation
-ambiguity. Replacing the automatic axis with the independent annotation's
-skeleton gave \Fone{}=\PlectaInterAnnotatorBOnAFOneMean{} against the
-reference, within the direct inter-annotator agreement range of
-\PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}. The
-automatic-axis result should therefore be interpreted alongside annotation
-ambiguity, as discussed in Section~\ref{sec:limitations}.
+These three fields cannot disentangle segmentation error from ambiguity in
+manual strand identity. When PLECTA was given the independent annotation's
+skeleton instead of the automatic axis, it achieved
+\Fone{}=\PlectaInterAnnotatorBOnAFOneMean{} against the reference. This lies
+within the direct inter-annotator agreement range of
+\PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}, showing
+that plausible manual readings can differ substantially where local occlusions
+obscure strand continuity. The automatic-axis result should therefore be
+interpreted relative to this reference ambiguity, as discussed in
+Section~\ref{sec:limitations}.
 
 \subsection{Development ablations}
 \label{sec:res-ablation}
