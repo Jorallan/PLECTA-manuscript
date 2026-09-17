@@ -1,30 +1,25 @@
 \section{Results}
 \label{sec:results}
 
-Results are presented for synthetic reconstruction, depth decomposition,
-real SEM images, component ablations, and comparisons with published
-methods.
+We first evaluate strand reconstruction on synthetic scenes
+(Section~\ref{sec:res-density}), then examine depth ordering
+(Section~\ref{sec:res-depth}) and application to real SEM images
+(Section~\ref{sec:res-real}). Component ablations
+(Section~\ref{sec:res-ablation}) and comparisons with published methods
+(Section~\ref{sec:res-comparators}) assess the contributions and performance
+of the reconstruction method.
 
 \subsection{Reconstruction on synthetic images}
 \label{sec:res-density}
 
-PLECTA is scored first where the reference identities are known exactly:
-the held-out
-synthetic scenes, under the measures of Section~\ref{sec:mm-metrics} and
-against the overlap-aware reference the generator recorded when it drew them.
-Table~\ref{tab:plecta-heldout} reports every measure overall and by density
-stratum; the text then analyses the overall score, its dependence on
-density, and the interpretation of the density label.
-
-Mean common-fragment pairwise \Fone{} over the
-\PlectaHeldoutSceneCount{} held-out scenes was
-\PlectaHeldoutFOneMean{} (density-stratified 95\% bootstrap CI
-[\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]);
-Table~\ref{tab:plecta-heldout} gives precision, recall, the
-adjusted Rand index and both variation-of-information components,
-overall and by density. These scenes used unseen seeds from the same
-procedural generator as development data, so this is same-generator
-generalisation and not distribution transfer (\suppsplit{}).
+Across the \PlectaHeldoutSceneCount{} held-out synthetic scenes, PLECTA
+achieved a mean common-fragment pairwise \Fone{} of
+\PlectaHeldoutFOneMean{} (95\% bootstrap CI
+[\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]).
+Table~\ref{tab:plecta-heldout} summarises reconstruction scores overall and by
+areal coverage. These scenes used previously unseen seeds from the development
+generator; evaluation on an independent generator is reported in
+Section~\ref{sec:res-comparators}.
 
 \begin{table}[tbp]
     \centering
@@ -41,41 +36,41 @@ Performance decreased with scene density: mean \Fone{} fell from
 [\PlectaDensityTwoZeroFOneCILow{}, \PlectaDensityTwoZeroFOneCIHigh{}] at 20\%
 coverage to \PlectaDensitySixZeroFOneMean{}
 [\PlectaDensitySixZeroFOneCILow{}, \PlectaDensitySixZeroFOneCIHigh{}] at 60\%,
-monotonically through the intermediate strata. The same decline appears on the
-paired clean-against-degraded set below, where the clean and the degraded
-curves separate at low coverage and meet at 50--60\,\%: the effect of degradation was
-smallest at high density, where junction ambiguity dominates gap-related
-error.
+monotonically through the intermediate strata.
 Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
 Section~\ref{sec:res-comparators} measures cost systematically.
 
-Areal coverage labels these strata but does not cause the difficulty they
-report, and it cannot: \label{sec:res-factorial}PLECTA is handed a centreline
-mask and never a width. Rendering one geometry at three bundle widths was
-tested directly on \PlectaFactorialSceneCount{} development scenes, and it
-leaves the input mask and the overlap-aware reference byte-identical while
-areal coverage varies by up to a factor of
-\PlectaFactorialMaxCoverageRatio{}; \Fone{} moved across those renderings by
-\PlectaFactorialMaxFOneRange{}. What does move the score is centreline length
-density, mean \Fone{} falling from \PlectaFactorialLowFOne{} to
+\label{sec:res-factorial}
+Areal coverage describes the rendered scene, whereas PLECTA operates on its
+centreline mask. We therefore examined whether the observed performance decline
+reflects strand width or centreline length density.
+Across \PlectaFactorialSceneCount{} development scenes, rendering each geometry
+at three bundle widths left the input mask and overlap-aware reference
+unchanged while areal coverage varied by up to a factor of
+\PlectaFactorialMaxCoverageRatio{}. The corresponding variation in \Fone{} was
+\PlectaFactorialMaxFOneRange{}. Increasing centreline length
+density reduced mean \Fone{} from \PlectaFactorialLowFOne{} to
 \PlectaFactorialHighFOne{}. A coverage stratum should therefore be read as a
 proxy for the length density accompanying it under this generator.
 
 
 \label{sec:res-mask}%
-How much of that score the input mask fixes, rather than the grouping, is
-separable. On the separate \PlectaRobustnessSceneCount{}-scene controlled set,
+To assess sensitivity to gaps and raster irregularities, we compared
+reconstruction from clean and degraded masks of the same scenes. On the
+\PlectaRobustnessSceneCount{}-scene controlled set,
 mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
 \PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
 clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
-irregularities therefore caused a small resolved loss under this generator.
+irregularities therefore caused a small reduction in reconstruction accuracy
+under this generator. The difference was greatest at low coverage and narrowed
+at 50--60\,\%, consistent with junction ambiguity becoming more influential
+at higher density.
 
-Figure~\ref{fig:examples} shows what the score corresponds to scene by
-scene, showing at each of three coverage levels the scene whose \Fone{} is
-closest to the stratum median.
+Figure~\ref{fig:examples} shows representative reconstructions at three
+coverage levels, selected by proximity to the median \Fone{} of each stratum.
 
 \begin{figure}[tbp]
     \centering
