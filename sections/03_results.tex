@@ -224,75 +224,60 @@ obscure strand continuity. The automatic-axis result should therefore be
 interpreted relative to this reference ambiguity, as discussed in
 Section~\ref{sec:limitations}.
 
-\subsection{Development ablations}
+\subsection{Component ablations}
 \label{sec:res-ablation}
 
-Component contributions were evaluated by removing one component at a time
-and rescoring, together with two controls that are not components of the
-method. All ablations are measured on the development scenes.
+The real-SEM results show the effect of input-mask quality. To isolate the
+contribution of PLECTA's reconstruction components, we removed one component
+at a time on the development scenes. Table~\ref{tab:plecta-ablation} also
+includes two controls that replace, rather than remove, part of the method.
 
-\textbf{Contribution of each component.} Table~\ref{tab:plecta-ablation} varies one
-thing at a time. Two rows change what a link costs, dropping the junction
-chord-turn term or the curvature term; two change the graph the linker reads,
-leaving neighbouring junction clusters unconsolidated or arms too short to
-merge the crossings they join; two change the iteration, running a single
-round or removing the schedule that relaxes the gates; and one removes gap
-bridging, so identity never crosses a break in the mask. The three largest
-losses are the junction chord-turn term, gap bridging and junction-cluster
-consolidation.
+The largest losses followed removal of the junction chord-turn term, gap
+bridging and junction-cluster consolidation. The remaining rows test the
+curvature term, graph construction and iterative refinement; their smaller
+effects indicate that these components refine the core reconstruction rather
+than replace it.
 
-Two rows are controls rather than components. The greedy control retains
-all other PLECTA components but pairs each node's arms in ascending order of
-edge cost, rather than by whichever complete pairing of that node is cheapest
-overall; an early low-cost selection can preclude a later mutually compatible
-pairing, thereby causing fragmentation rather than erroneous merging. It also runs at parameters that were selected using the exact
-matcher, a bias in the exact matcher's favour. The last row replaces the
-linker outright, skeletonising the same mask and greedily pairing the branch
-ends that turn least inside fixed distance and angle gates, which is the
-pairing principle shared by SIFNE, GraFT's path cover and Wegmayr et
-al.\ \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
+The first control replaces joint junction matching with greedy arm pairing
+while retaining the rest of PLECTA, showing the cost of decisions that are
+locally cheap but jointly incompatible. The second replaces the linker with a
+fixed-gate greedy endpoint-pairing baseline, the principle used by several
+published methods \citep{zhang2017sifne,osterlund2026graft,wegmayr2020microplastic}.
 
 \begin{table}[tbp]
     \centering
-    \caption{Component ablations and the two controls, on development scenes.
-    The three blocks use different scene sets, so $n$ is given per row and
-    each $\Delta F_1$ is against PLECTA on that row's own scenes; the column is
-    not comparable across rows of different $n$.}
+    \caption{Component ablations and replacement controls on development
+    scenes. Each $\Delta F_1$ is relative to PLECTA evaluated on the
+    corresponding scene set.}
     \label{tab:plecta-ablation}
     \small
     \input{results/plecta_ablation_table}
 \end{table}
 
 
-\subsection{Published methods on identical masks}
+\subsection{Comparison with published methods}
 \label{sec:res-comparators}
 
-PLECTA was compared with four published methods on two data sets: the
-\PlectaGreedySceneCount{} synthetic scenes the comparison was designed on, and
-the \PlectaRealFieldCountLower{} annotated CNT SEM fields of
-Section~\ref{sec:res-real}, where the manual-derived axis lets the same
-comparison run on real imaging. All four are scored beside PLECTA on identical masks, through the same
-conversion and metric code, over scenes generated after every configuration
-was fixed. What is compared is narrow: the
-overlap-aware grouping of a binary axis mask of dense, crossing strands, at
-the coverages and tangling of the scenes described in
-Section~\ref{sec:mm-synth}. Each of these methods was built for a different
-setting, and how it performs in that setting is not what these numbers
-measure. DNAi \citep{playout2026dnai}, GraFT \citep{osterlund2026graft} and
-SIFNE \citep{zhang2017sifne} are run from their own released sources. For the
-fourth, \citet{basu2015extraction}, no implementation was found, and it is
-reimplemented here. Adapting each method to a common input and evaluation pipeline required
-methodological choices, and each of those choices is stated here.
+The ablations identify the components that support reconstruction. We next
+compare the complete method with four published approaches on the
+\PlectaGreedySceneCount{} synthetic comparator scenes. The two methods that
+accept binary axes were also evaluated on the \PlectaRealFieldCountLower{}
+annotated CNT SEM fields of Section~\ref{sec:res-real}. All methods receive
+the same binary masks and are scored by the same pipeline. The comparison
+therefore concerns overlap-aware grouping of dense, crossing strand axes, not
+performance in each method's native application. DNAi \citep{playout2026dnai}, GraFT
+\citep{osterlund2026graft} and SIFNE \citep{zhang2017sifne} use released
+implementations; \citet{basu2015extraction} is reimplemented because no
+implementation was available.
 
 
 \begin{table}[!ht]
     \centering
-    \caption{PLECTA against four published methods, identical masks and one
-    scorer, ordered by \Fone{}. The upper block is the degraded synthetic
-    scenes; the lower is the annotated CNT SEM
-    fields of Section~\ref{sec:res-real} on the manual-derived axis, a plain
-    mean over the \PlectaRealFieldCountLower{}. Variation of
-    information in bits, lower better; higher better for the rest.\\[2pt]
+    \caption{PLECTA and four published methods on identical masks, ordered by
+    \Fone{}. The upper block uses degraded synthetic axes; the lower uses
+    reference-derived axes from the CNT SEM fields of
+    Section~\ref{sec:res-real}. Variation of information is in bits and lower
+    is better; higher is better for the remaining metrics.\\[2pt]
     $^{*}$\,our reimplementation; no implementation of that paper was found.
     \suppcomparators{} details it.}
     \label{tab:plecta-comparators}
@@ -300,95 +285,56 @@ methodological choices, and each of those choices is stated here.
     \input{results/plecta_comparator_table}
 \end{table}
 
-\textbf{How each was run.} Each released method has a front end that precedes
-the stage assigning identity, and in each case the mask is injected where that
-stage begins, so grouping is not confounded with segmentation and all
-identity-assignment stages run the original authors' code. Each was also run at a configuration
-selected on the same \PlectaDevelopmentSceneCount{} development scenes PLECTA
-was configured on rather than at its own defaults. These adaptations favour the comparators, and by a wide margin: run end to
-end on the greyscale, GraFT scores \PlectaGraFTNativeFOne{} against
-\PlectaGraFTFOne{} injected, and reconfiguration increased \Fone{} from
-\PlectaDNAiShippedFOne{} to \PlectaDNAiFOne{} for DNAi and from
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{} for SIFNE. Both are
-reported.
-\suppcomparators{} gives each injection point, each selection, what was not
-attempted, and how each method fails.
+For each released method, the mask was supplied at the start of its
+identity-assignment stage so that segmentation did not affect the comparison.
+Configurations were selected on the same development scenes used for PLECTA,
+rather than left at their defaults. The injection points, configurations and
+native end-to-end results are documented in \suppcomparators{}.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
-  \caption{Five methods on identical masks, by coverage stratum. Rows: the
-    undegraded axis, panels \textbf{(a)} and \textbf{(b)}, above the
-    degraded one, panels \textbf{(c)} and \textbf{(d)}. Columns: pairwise
-    \Fone{}, which counts pairs of fragments, and detection \Fone{} at IoU
-    \PlectaDetectionIoU{} with a
-    \PlectaPlacementTolerance{}\,px tolerance, which counts objects
-    (Section~\ref{sec:mm-metrics}). The two disagree where a method
-    fragments, since only the first is quadratic in fragmentation. Crossing
-    Fidelity is in Table~\ref{tab:plecta-comparators}. Means of ten scenes.
-    $^{*}$\,our reimplementation; none was found.}
+  \caption{Five methods on identical masks, by coverage. The upper row uses
+    clean axes and the lower row degraded axes. Columns show pairwise \Fone{}
+    and detection \Fone{} (Section~\ref{sec:mm-metrics}); their difference
+    reflects fragmentation. Crossing Fidelity is reported in
+    Table~\ref{tab:plecta-comparators}. Means are over ten scenes.
+    $^{*}$\,our reimplementation; no implementation was available.}
   \label{fig:metric-panels}
 \end{figure}
 
-Under these comparator-favouring settings, the ranking of
-Table~\ref{tab:plecta-comparators} remained constant across density levels
-and mask conditions (Figure~\ref{fig:metric-panels}). SIFNE is the
-strongest of them, so the margin is measured against a method configured for
-this data rather than against an unsuitable default. Two entries qualify that ordering. The first is
-DNAi, whose deficit is a limitation of domain and density rather than a
-general ranking: it is built for DNA-fibre micrographs, which are sparse, and
-where the network is sparse and the axis clean it recovers
-\PlectaDNAiCleanSparseFOne{} at 20\% coverage. The second is
-\citet{basu2015extraction}, the closest structural relative PLECTA's junction
-matching has in that it too optimises over a neighbourhood and penalises
-joins by curvature. It stands second only to PLECTA on Crossing Fidelity while its
-pairwise \Fone{} is substantially below both released methods, so the curvature-priced
-matching is effective at the junctions, and the deficit arises in the
-stages around that decision. That is why the unmatched-arm penalty of
-Section~\ref{sec:mm-plecta} is claimed as part of a combination rather than
-on its own. \suppcomparators{} gives both in full.
+Under these comparator-favouring settings, PLECTA ranked first at every
+density and under both mask conditions (Figure~\ref{fig:metric-panels});
+SIFNE was the strongest comparator. DNAi was designed for sparse DNA-fibre
+micrographs and recovered \PlectaDNAiCleanSparseFOne{} from clean axes at
+20\,\% coverage. Basu ranked second on Crossing Fidelity but substantially
+lower on pairwise \Fone{}, indicating that curvature-based junction matching
+alone is insufficient for the full reconstruction task. Detailed results are
+given in \suppcomparators{}.
 
-\textbf{Each method in its own regime.} That ordering is drawn from one
-generator, so it was tested in the regimes the two released methods were built
-for. On GraFT's own generator, run unmodified at its published settings over
-\PlectaRegimeSceneCount{} scenes in \PlectaRegimeStratumCount{} density
-strata, PLECTA achieved the highest \Fone{} at every density and no rank
-reversals occurred, including inside the range GraFT itself published, and
-the field-standard measures order the three identically. Overall it
-achieved
-\Fone{}=\PlectaRegimeOverallPlectaFOne{} there, against
-\PlectaRegimeOverallGraFTFOne{} for GraFT on its own scenes and
-\PlectaRegimeOverallDNAiFOne{} for DNAi. SIFNE released no generator, so the sparse cobweb
-topology its paper validates against was rebuilt here from that description;
-on that reconstruction the two methods are level in the regime the SIFNE
-publication addresses,
-\PlectaSifneOwnSparsePlectaFOne{} against \PlectaSifneOwnSparseSifneFOne{},
-and separate only slightly at the denser end. That places the difference in
-the degree of crossing entanglement rather than in the total strand content
-of the frame,
-though a topology we rebuilt is weaker evidence than a generator its authors
-released. \suppcomparators{} gives both density series in full.
+\textbf{Other regimes.} On GraFT's released generator, run at its published
+settings over \PlectaRegimeSceneCount{} scenes, PLECTA again achieved the
+highest \Fone{} at every density
+(\PlectaRegimeOverallPlectaFOne{} overall, compared with
+\PlectaRegimeOverallGraFTFOne{} for GraFT and
+\PlectaRegimeOverallDNAiFOne{} for DNAi). SIFNE released no generator; on a
+reconstruction of its sparse cobweb topology, PLECTA and SIFNE were similar
+at low density and separated only slightly as density increased. This supports
+crossing entanglement, rather than strand content alone, as the relevant
+difference, although the reconstructed topology is weaker evidence than a
+released generator.
 
 
-\textbf{Cost.} The methods differ in computational cost as well as in
-accuracy. Per-scene cost was measured warm, single-threaded and pinned to
-one core, timing each method's own computation only
-(Table~\ref{tab:plecta-comparators}). These
-are independently optimised codebases, so absolute times measure
-implementation as much as algorithm.
+\textbf{Cost.} Table~\ref{tab:plecta-comparators} reports warm,
+single-threaded per-scene times. Because the implementations are independently
+optimised, these times reflect implementation as well as algorithm.
 
-\textbf{On real imaging.} The two comparators that read a binary axis were run
-over the \PlectaRealFieldCountLower{} annotated fields as well, on the
-manual-derived masks of Section~\ref{sec:res-real} and through the same
-scoring pipeline as PLECTA on those fields.
-Averaged over the \PlectaRealFieldCountLower{}, PLECTA achieved
-\Fone{}=\PlectaRealManualFOneMean{}, against \PlectaRealSifneFOneMean{} for
-SIFNE and \PlectaRealBasuFOneMean{} for Basu, and the highest value on every
-measure reported. The ordering established on synthetic scenes therefore holds on
-masks read off real micrographs.
-
-The margin is narrower than on the synthetic scenes, which likely reflects
-the quality of the manually derived axes: a skeleton of a hand annotation is
-unbroken, thin and placed where a person judged the strand to be, so it
-contains few of the fragmentation and displacement artefacts responsible for
-the differences observed in the synthetic evaluation.
+\textbf{Real SEM.} On reference-derived axes from the
+\PlectaRealFieldCountLower{} CNT fields, PLECTA achieved
+\Fone{}=\PlectaRealManualFOneMean{}, compared with
+\PlectaRealSifneFOneMean{} for SIFNE and \PlectaRealBasuFOneMean{} for Basu,
+and ranked highest on every reported measure. The smaller margin than on
+synthetic scenes is consistent with these curated axes containing fewer gaps,
+fragmentation and placement errors. Together, the ablations and comparisons
+show PLECTA's advantage for matched-mask reconstruction in dense crossing
+networks; the scope of that claim is considered in the conclusions.
