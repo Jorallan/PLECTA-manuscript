@@ -246,108 +246,95 @@ accepts other greyscale images.
 \subsubsection{Width and ribbon rendering}
 \label{sec:mm-stage4}
 
-Perpendicular intensity profiles, sampled along each ordered chain away from
-junctions, attach an apparent width, a brightness, an uncertainty and a quality
-flag to an existing strand without altering its arm membership. Ribbon
-rendering then interpolates accepted gaps, resamples and smooths the centreline,
-and draws the chain at its fitted width, excluding junction blobs. Neither
-silhouette absorption, which would union rendered strands, nor any other step
-merges two strands after the fact, and none contributed to the held-out
-result.
+Intensity profiles sampled perpendicular to each strand, away from junctions,
+provide estimates of apparent width and brightness, together with uncertainty
+and quality indicators. The centreline is then resampled and smoothed, with
+accepted gaps interpolated, to render a ribbon at the estimated width.
+Junction clusters are excluded from this rendering, and strands remain
+separate. The resulting ribbons describe their projected shapes; their
+relative positions in depth are estimated in Section~\ref{sec:mm-depth}.
 
-\subsubsection{Depth decomposition}
+\subsubsection{Depth ordering and height assignment}
 \label{sec:mm-depth}
 
-A projected crossing belongs to both intersecting strands but does not
-encode their relative depth. The depth stage estimates that order.
+The depth stage first estimates which strand lies above the other at each
+crossing, then combines these local estimates into a consistent ordering and
+assigns heights using the estimated strand radii.
 
-\textbf{Evidence at one crossing} (Figure~\ref{fig:depth-evidence}).
-Where two strand centrelines intersect, a
-short arc of each is taken through the crossing (the shared \emph{core}, a fixed
-length, the same at every crossing), together with the \emph{flanks} on either
-side of it, kept clear of the other strand's stroke so that they measure one
-strand and not the union. One channel is read on both: median intensity. The
-physical argument is occlusion. Whichever strand lies on top presents the same
-surface through the crossing as it does beside it, so its core matches its own
-flanks in brightness; the lower strand is overwritten there, so its own
-continuity breaks. For each strand, the difference between the pooled core intensity and its
-own flank intensity is computed, and the strand with the smaller difference
-is assigned as upper. The score $s$ quantifies the difference between the two
-matches, normalised by the larger of the inter-strand brightness separation
-and the noise measured at that crossing. No order is assigned when
-$\lvert s\rvert$ falls below a fixed threshold: the crossing \emph{abstains}
-rather than being decided by noise. Dividing by the noise,
-rather than by the separation alone, is what makes a confident score mean
-\emph{separated by more than the noise} rather than merely separated.
+\textbf{Local crossing evidence.} The method assumes that the upper strand
+retains its brightness through a crossing, while occlusion interrupts the
+brightness of the lower strand (Figure~\ref{fig:depth-evidence}). Intensities
+are sampled along fixed-length centreline segments through the crossing
+(the \emph{core}) and on either side (the \emph{flanks}). Flank samples exclude
+pixels occupied by the other strand. The pooled core median $m_c$ is compared
+with each strand's flank median, $m_i$ or $m_j$; the closer match indicates the
+upper strand.
+
+The signed score $s$ measures the difference between these two intensity
+mismatches, normalised by the larger of the flank-median separation
+$\lvert m_i-m_j\rvert$ and twice the local noise estimate $\hat\sigma$.
+Its sign identifies the upper strand and its magnitude weights the evidence.
+No local order is assigned when $\lvert s\rvert$ falls below a fixed threshold
+or too few flank samples are available. \suppdepthstage{} gives the sampling
+procedure and score equation.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_evidence.pdf}
-    \caption{What the depth stage measures, at one crossing where two strands
-    meet at $83.8^{\circ}$, chosen as a legible example rather than at random.
-    All positions and grey levels were obtained directly from the stage
-    output.
-    \textbf{(a)}~The core arc shared by the two strands, and each strand's own
-    flanks, which the window keeps clear of the other's stroke; open dots are
-    core samples, filled ones flanks. \textbf{(b)}~The same samples against
-    arclength: the pooled core median $m_c$ sits by strand $i$'s flank level
-    and far from $j$'s, which is the occlusion. \textbf{(c)}~The two distances
-    the score compares, over the larger of the strands' contrast and twice the
-    flank noise. That ratio is the score $s$ of \suppdepthstage{}, whose sign
-    names the upper strand and whose size weights the crossing below.}
+    \caption{Local depth evidence at a crossing angle of $83.8^{\circ}$,
+    selected for clarity. Positions and intensities are taken from the stage
+    output. \textbf{(a)}~Core samples (open dots) and flank samples (filled
+    dots), with flanks kept clear of the other strand.
+    \textbf{(b)}~Intensity along each strand: the pooled core median $m_c$
+    is closer to strand $i$'s flank median than to strand $j$'s, supporting
+    $i$ as the upper strand. \textbf{(c)}~Intensity mismatches used to
+    calculate $s$, normalised by the larger of the flank-median separation
+    and twice the local noise estimate (\suppdepthstage{}).}
     \label{fig:depth-evidence}
 \end{figure}
 
-\textbf{One order for the whole field.} Local decisions need not be mutually
-consistent: they can assert that $A$ is above $B$, $B$ above $C$ and $C$ above
-$A$, which no assignment of heights satisfies. Each decided crossing therefore contributes a directed edge weighted by
-$\lvert s\rvert$, the strength of its own evidence
-(Figure~\ref{fig:depth-order}). Within each connected component of the
-crossing graph, one total order over its strands is estimated by maximising
-the total weight of satisfied edges, which is equivalent to reversing the
-minimum-weight set of relations that leaves no contradiction: the
-minimum-weight feedback arc set objective. The objective is solved exactly
-for components small enough to search and greedily for larger ones. All
-pairwise relations are then derived from the component-level order, so even a
-relation not involved in any local contradiction may be reversed. Each
-reversal and its original local score are retained, to quantify how far the
-global reconciliation moved. Depth
-propagates only along crossings, so two strands in different components are
-related by no evidence at all and
-their order is a stated tie-break, not a measurement.
-\suppdepthstage{} gives the sampling geometry, the score in full, the
-measurement that replaced an earlier two-channel rule with it, and the solver.
+\textbf{Consistent strand ordering.} Local estimates can form cycles, such as
+$A$ above $B$, $B$ above $C$ and $C$ above $A$. To resolve these contradictions,
+strands form the nodes of a directed graph, with each estimated crossing order
+represented by an edge weighted by $\lvert s\rvert$
+(Figure~\ref{fig:depth-order}). Within each connected component, the method
+seeks the strand order that maximises the total weight of satisfied edges.
+This is equivalent to the minimum-weight feedback arc set problem and is
+solved exactly for small components and greedily for larger ones
+(\suppdepthstage{}).
+
+Pairwise orders are then derived from the component-level ordering. Any
+reversed local estimate is recorded with its original score, including
+reversals outside the original cycles. Strands in disconnected components
+have no image-based relative order; a predefined tie-break determines their
+placement.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_depth_order.pdf}
-    \caption{Global reconciliation of local depth-order estimates, on a
-    contradiction encountered by the stage.
-    \textbf{(a)}~Four strands and the four local estimates made at
-    their crossings. \textbf{(b)}~Those estimates as a graph: each arrow points from
-    the strand called upper to the one called lower, and following them returns
-    to where it started, so no stack of heights satisfies all four.
-    \textbf{(c)}~The order satisfying the most evidence by weight retains the
-    two heaviest estimates and reverses the two lightest, which are recorded
-    rather than discarded. Layer numbers are not shown: a strand's layer follows from
-    its whole component, and these four sit in a scene of seven.}
+    \caption{Resolving contradictory local depth estimates.
+    \textbf{(a)}~Four strands and their estimated crossing orders.
+    \textbf{(b)}~The corresponding graph, with arrows from the estimated
+    upper strand to the lower strand. The directed cycle prevents a
+    consistent height assignment. \textbf{(c)}~The selected order retains
+    the two highest-weight estimates and reverses the two lowest-weight
+    estimates. Reversals are recorded with their original scores. The four
+    strands shown belong to a seven-strand scene; layer assignments depend
+    on the complete connected component.}
     \label{fig:depth-order}
 \end{figure}
 
-\textbf{Layers and height.} The corrected relations form a directed acyclic
-graph whose longest path fixes the smallest number of layers consistent with
-them; strands that never conflict share a layer, so the layer count follows
-from the ordering rather than from the number of strands. Each strand is
-then placed at a height that respects its order and keeps strands from
-interpenetrating at their measured radii, with the stack compacted so that the
-film is as thin as those constraints allow.
+\textbf{Layer and height assignment.} The corrected crossing relations form a
+directed acyclic graph. Its longest path determines the minimum number of
+layers needed to satisfy those relations, allowing strands without ordering
+constraints between them to share a layer. Heights are then assigned using
+the estimated radii to prevent interpenetration, while keeping the stack as
+thin as the ordering and geometric constraints allow.
 
-Without a greyscale image no local depth relations are estimated and the
-predefined tie-break determines the output order: the stage requires image
-evidence and reports how much of it was usable.
-Section~\ref{sec:res-depth} evaluates it, and
-\suppdepth{} defines the measures used, which are
-disjoint from those above because none of them can see depth.
+Without a greyscale image, placement follows the predefined tie-break rather
+than measured crossing evidence. The method reports the fraction of crossings
+with usable evidence. Section~\ref{sec:res-depth} evaluates depth ordering
+using the measures defined in \suppdepth{}.
 
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
