@@ -257,27 +257,24 @@ relative positions in depth are estimated in Section~\ref{sec:mm-depth}.
 \subsubsection{Depth ordering and height assignment}
 \label{sec:mm-depth}
 
-The depth stage first estimates which strand lies above the other at each
-crossing, then combines these local estimates into a consistent ordering and
-assigns heights using the estimated strand radii.
+Depth estimation proceeds in three steps: estimating local crossing orders,
+combining them into a consistent strand order, and assigning layers and heights.
 
-\textbf{Local crossing evidence.} The method assumes that the upper strand
-retains its brightness through a crossing, while occlusion interrupts the
-brightness of the lower strand (Figure~\ref{fig:depth-evidence}). Intensities
-are sampled along fixed-length centreline segments through the crossing
-(the \emph{core}) and on either side (the \emph{flanks}). Flank samples exclude
-pixels occupied by the other strand. The pooled core median $m_c$ is compared
-with each strand's flank median, $m_i$ or $m_j$; the closer match indicates the
-upper strand.
+\textbf{1. Estimate crossing order.} The method assumes that the upper strand
+retains its brightness through a crossing, while the lower strand is occluded.
+Intensity is sampled through the crossing (the \emph{core}) and along each
+strand on either side (the \emph{flanks}), excluding flank pixels occupied by
+the other strand (Figure~\ref{fig:depth-evidence}a,b). The pooled core median
+$m_c$ is compared with the flank medians $m_i$ and $m_j$; the closer match
+indicates the upper strand.
 
-The signed score $s$ compares how closely the crossing intensity matches each
-strand's flank intensity (Figure~\ref{fig:depth-evidence}c). It measures the
-difference between these two mismatches, normalised by the larger of the flank-median separation
-$\lvert m_i-m_j\rvert$ and twice the local noise estimate $\hat\sigma$.
-Its sign identifies the upper strand and its magnitude weights the evidence.
-No local order is assigned when $\lvert s\rvert$ falls below a fixed threshold
-or too few flank samples are available. \suppdepthstage{} gives the sampling
-procedure and score equation.
+The signed score $s$ summarises this comparison
+(Figure~\ref{fig:depth-evidence}c). It compares the two intensity mismatches,
+normalised by the larger of $\lvert m_i-m_j\rvert$ and twice the local noise
+estimate $\hat\sigma$. Its sign identifies the upper strand and its magnitude
+weights the evidence. Crossings with insufficient flank samples or a score
+below the threshold in magnitude remain undecided. \suppdepthstage{} gives
+the sampling procedure and score equation.
 
 \begin{figure}[!ht]
     \centering
@@ -294,21 +291,15 @@ procedure and score equation.
     \label{fig:depth-evidence}
 \end{figure}
 
-\textbf{Consistent strand ordering.} Local estimates can form cycles, such as
-$A$ above $B$, $B$ above $C$ and $C$ above $A$. To resolve these contradictions,
-strands form the nodes of a directed graph, with each estimated crossing order
-represented by an edge weighted by $\lvert s\rvert$
-(Figure~\ref{fig:depth-order}). Within each connected component, the method
-seeks the strand order that maximises the total weight of satisfied edges.
-This is equivalent to the minimum-weight feedback arc set problem and is
-solved exactly for small components and greedily for larger ones
-(\suppdepthstage{}).
-
-Pairwise orders are then derived from the component-level ordering. Any
-reversed local estimate is recorded with its original score, including
-reversals outside the original cycles. Strands in disconnected components
-have no image-based relative order; a predefined tie-break determines their
-placement.
+\textbf{2. Combine crossing orders.} Local estimates can conflict: $A$ may
+lie above $B$, $B$ above $C$, and $C$ above $A$. These relations form a directed
+graph whose nodes are strands and whose edges carry weights $\lvert s\rvert$
+(Figure~\ref{fig:depth-order}). Within each connected component, a consistent
+strand order is sought with the objective of maximising the total weight of
+satisfied relations. Crossing orders are updated accordingly, and any
+reversals are recorded with their original scores. Strands in disconnected
+components have no image-based relative order; their placement follows a
+predefined tie-break. \suppdepthstage{} describes the ordering procedure.
 
 \begin{figure}[!ht]
     \centering
@@ -325,12 +316,12 @@ placement.
     \label{fig:depth-order}
 \end{figure}
 
-\textbf{Layer and height assignment.} The corrected crossing relations form a
-directed acyclic graph. Its longest path determines the minimum number of
-layers needed to satisfy those relations, allowing strands without ordering
-constraints between them to share a layer. Heights are then assigned using
-the estimated radii to prevent interpenetration, while keeping the stack as
-thin as the ordering and geometric constraints allow.
+\textbf{3. Assign layers and heights.} The corrected relations form a graph
+without directed cycles. Its longest path determines the minimum number of
+layers needed to respect the crossing orders; strands without ordering
+constraints between them may share a layer. Under the compact-stack
+assumption, each strand is assigned the lowest height compatible with the
+chosen order and the estimated radii, preventing interpenetration.
 
 Without a greyscale image, placement follows the predefined tie-break rather
 than measured crossing evidence. The method reports the fraction of crossings
