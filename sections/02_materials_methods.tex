@@ -235,7 +235,9 @@ strand instances provide the input to the image-based stages described next.
 \label{sec:mm-image}
 
 The reconstructed strands are combined with the corresponding greyscale image
-to estimate their apparent widths, render ribbons and infer crossing order.
+to estimate their apparent widths and render ribbons
+(Section~\ref{sec:mm-stage4}), and to infer crossing order
+(Section~\ref{sec:mm-depth}).
 These stages preserve the strand identities established during reconstruction
 and do not affect the identity scores. They use fixed parameters
 (\supprecon{}) and are demonstrated here on SEM images, although the procedure
