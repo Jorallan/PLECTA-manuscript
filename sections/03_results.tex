@@ -145,108 +145,81 @@ micrograph.}
 \label{fig:resem-real}
 \end{figure}
 
-\subsection{Proof of concept on real SEM}
+\subsection{Reconstruction on CNT SEM images}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
-Application to real SEM images requires an upstream mask-generation method;
-here the binary axes are supplied by the segmenter of
-Figure~\ref{fig:pipeline-upstream}.
+An upstream segmenter produces the binary strand-axis mask from each SEM
+micrograph (Figure~\ref{fig:pipeline-upstream}), and PLECTA uses that mask
+alone.
 
 \begin{figure}[!ht]
     \centering
     \input{figures/fig_pipeline_upstream}
-    \caption{Upstream generation of the strand-axis mask. In training,
-    image and mask pairs are generated procedurally and the procedural mask
-    serves as the corresponding training label, so no annotator is involved
-    in training; at inference the trained segmenter reads the
-    micrograph, never an annotation, and ends in the binary strand-axis mask
-    that is the whole interface to PLECTA. The segmenter is not a contribution
-    of this paper and is not evaluated here; it carries its own evaluation
-    \citep{ruehle2021workflow}, and only the stage in the dashed boundary is
-    measured.}
+    \caption{Upstream generation of the binary strand-axis mask. The segmenter
+    is trained on procedurally generated image--mask pairs and requires no
+    manual annotations for training or inference. Only the PLECTA stages inside
+    the dashed boundary are evaluated here; the segmenter has its own
+    evaluation \citep{ruehle2021workflow}.}
     \label{fig:pipeline-upstream}
 \end{figure}
 
-The upstream segmenter (Figure~\ref{fig:pipeline-upstream}) ends in a binary
-strand-axis mask \citep{ruehle2021workflow}, and PLECTA reads
-that mask and nothing else. \PlectaRealFieldCountWord{} manually annotated
-CNT-sheet fields separate the two: PLECTA is run once on the skeleton of
-annotator~A's annotation and once on the nnU-Net axis, with annotator~A's
-annotation as the reference in both cases, so the two conditions differ only
-in the mask. The first is an oracle-like input condition rather than an
-end-to-end result, asking what the grouping can do when the axis evidence is
-curated; only the second says what an automatic mask allows.
-Figure~\ref{fig:real-sem} shows both on one field, whole frame, with each
-input axis beside the corresponding PLECTA reconstruction.
+We evaluated \PlectaRealFieldCountLower{} manually annotated CNT-sheet fields
+under two input conditions: the skeleton of the reference annotation and the
+automatic nnU-Net axis \citep{ruehle2021workflow}. Both were scored against
+the reference annotation, so the conditions differ only in the input mask. The
+reference-derived axis tests grouping from curated real-image geometry; the
+automatic axis evaluates the complete image-to-reconstruction workflow.
+Figure~\ref{fig:real-sem} shows both conditions on one whole field.
 
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{One CNT SEM field, B58\_110, whole frame, a row per mask
-    source; the scale bar in (a) is 500\,nm, and every panel shows the same
-    field. \textbf{(a)}~the reference annotation (annotator~A); \textbf{(b)}~its skeleton, the
-    manual-derived axis, and \textbf{(c)}~PLECTA from it; \textbf{(d)}~the
-    segmenter's axis, and \textbf{(e)}~PLECTA from that, same parameters. (b)
-    and (d) are the input masks, in one colour, dilated a pixel for legibility;
-    the rest are at width, through the layer of Section~\ref{sec:mm-stage4},
-    which runs after the grouping is fixed and moves no pixel between strands.
-    A predicted strand takes the colour of the annotated strand it matched;
-    crimson matched none.}
+    \caption{Reconstruction of the whole B58\_110 field from two input-mask
+    sources; the scale bar in (a) is 500\,nm. \textbf{(a)}~Reference
+    annotation; \textbf{(b)}~reference-derived axis; \textbf{(c)}~PLECTA from
+    that axis; \textbf{(d)}~automatic axis; and \textbf{(e)}~PLECTA from that
+    axis with the same parameters. Input axes are dilated by one pixel for
+    legibility. Predicted strands take the colour of their matched reference
+    strand; crimson indicates no match.}
     \label{fig:real-sem}
 \end{figure}
 
 \begin{table}[tbp]
     \centering
-    \caption{Reconstruction from the manual-derived and the nnU-Net axis in
-    three CNT SEM fields, under the measures of
-    Section~\ref{sec:mm-metrics}. \emph{Coverage} is the fraction of the frame
-    the full-width reference strands cover (Section~\ref{sec:mm-synth}), not
-    the thin axis mask's. Detection \Fone{} is at IoU \PlectaDetectionIoU{},
-    tolerance \PlectaPlacementTolerance{}\,px.}
+    \caption{Reconstruction from reference-derived and automatic axes in three
+    CNT SEM fields. Coverage is the fraction of the frame covered by full-width
+    reference strands. Metrics are defined in Section~\ref{sec:mm-metrics};
+    detection \Fone{} uses IoU \PlectaDetectionIoU{} and tolerance
+    \PlectaPlacementTolerance{}\,px.}
     \label{tab:plecta-real-masks}
     \footnotesize
     \input{results/plecta_real_masks_table}
 \end{table}
 
-Table~\ref{tab:plecta-real-masks} reports the \PlectaRealFieldCountLower{}
-fields, per field and per condition. Averaged over them, PLECTA
-achieved \Fone{}=\PlectaRealManualFOneMean{} from the manual-derived axis and
-\PlectaRealUNetFOneMean{} from the nnU-Net axis. The first condition evaluates grouping from curated real-image geometry,
-and establishes that the grouping holds on axis masks derived from real
-micrographs and not only on the generator's. The second quantifies
-sensitivity to an automatically generated mask, and is interpreted in
-Section~\ref{sec:limitations} against what a second human annotator achieves
-on these same fields, which is less.
-\PlectaRealFieldCount{} fields cannot estimate a population, and the
-inferential unit is the field.
+Table~\ref{tab:plecta-real-masks} reports each field and condition. Mean
+\Fone{} was \PlectaRealManualFOneMean{} from the reference-derived axis and
+\PlectaRealUNetFOneMean{} from the automatic axis. The reference-derived
+result establishes grouping on axes from real micrographs; the automatic
+result measures sensitivity to the input mask. With only
+\PlectaRealFieldCount{} fields, these results are descriptive and the field is
+the independent sample.
 
-The difference between the two conditions is attributable primarily to mask
-quality, and the errors consist predominantly of missed links rather than
-erroneous strand mergers. Beside annotator~A's axis, the nnU-Net axis is a
-second, independent reading of the same strands, and it is thicker, broken
-into more pieces and displaced by a pixel or two almost everywhere, which panels~(b) and~(d) of
-Figure~\ref{fig:real-sem} show side by side.
-The consequence is fragmentation, which pairwise \Fone{} weights
-quadratically: a strand broken into several pieces is penalised once for
-every pair of pieces left unjoined. Join \Fone{}, defined in
-\suppmeasures{}, assigns one error to each recoverable break instead; under
-it the difference between the conditions is reduced but not eliminated.
-The residual errors are predominantly missed links: on B58\_110's nnU-Net
-axis, a join precision of
-\PlectaJoinBFiveEightOneOneZeroUNetPrecision{} against a recall of
-\PlectaJoinBFiveEightOneOneZeroUNetRecall{}, which panel~(e) of
-Figure~\ref{fig:real-sem} shows.
+The automatic axes were thicker, displaced and more fragmented than the
+reference-derived axes (Figure~\ref{fig:real-sem}), and the additional errors
+were mainly missed links rather than erroneous mergers. Join \Fone{} narrows
+but does not remove the difference between the conditions. On B58\_110, for
+example, the automatic axis gave join precision
+\PlectaJoinBFiveEightOneOneZeroUNetPrecision{} and recall
+\PlectaJoinBFiveEightOneOneZeroUNetRecall{}.
 
-These data do not permit separate estimation of segmentation error and
-inter-annotator ambiguity. Given annotator~B's skeleton in place of the
-network's, PLECTA scores \PlectaInterAnnotatorBOnAFOneMean{} against
-annotator~A, below what the network's axis reaches on every field and inside
-the \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{} at
-which the two annotators agree without algorithmic processing. A second human
-reading of these strands is therefore no better an axis than the segmenter's,
-and the nnU-Net figure is bounded by how far one annotator's definition of a
-strand can be reproduced at all, which Section~\ref{sec:limitations} examines.
+These three fields cannot separate segmentation error from annotation
+ambiguity. Replacing the automatic axis with the independent annotation's
+skeleton gave \Fone{}=\PlectaInterAnnotatorBOnAFOneMean{} against the
+reference, within the direct inter-annotator agreement range of
+\PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}. The
+automatic-axis result should therefore be interpreted alongside annotation
+ambiguity, as discussed in Section~\ref{sec:limitations}.
 
 \subsection{Development ablations}
 \label{sec:res-ablation}
