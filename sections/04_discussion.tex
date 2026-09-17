@@ -4,82 +4,50 @@
 \label{sec:limitations}
 
 PLECTA reconstructs overlapping strand instances from a binary strand-axis
-mask alone. It solves every junction, of any degree, as a single exact maximum-weight
-partial matching with an explicit penalty for unmatched arms, so a strand may
-terminate rather than receive a forced continuation, and a crossing pixel is
-assigned to every strand that passes through it.
+mask using deterministic junction matching that permits both continuations and
+genuine endpoints. Its grouping core requires no training data and produces
+identical output from identical input masks. The upstream segmenter is trained
+on synthetic image--mask pairs, so the full workflow requires no manually
+annotated training micrographs.
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item Over \PlectaHeldoutSceneCount{} held-out synthetic scenes from unseen
-        seeds it achieved mean pairwise
+  \item Across \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA achieved mean pairwise
         \Fone{}=\PlectaHeldoutFOneMean{} [\PlectaHeldoutFOneCILow{},
         \PlectaHeldoutFOneCIHigh{}], falling from
         \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as
         areal coverage rises from 20 to 60\,\%.
-  \item On identical masks it achieved the highest scores against four
-        published methods at every density, and the ranking was preserved on
-        a competitor's own generator, run unmodified at its published
-        settings.
+  \item In matched-mask comparisons, PLECTA achieved the highest scores among
+        the evaluated methods across the tested densities. Its lead was also
+        retained on GraFT's released generator at published settings.
   \item The ablation analysis identified the junction chord-turn term and
         gap bridging as the largest contributors to reconstruction
         performance.
-  \item A secondary stage reads the greyscale to order strands in depth. It is
-        correct on \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} of the
-        crossings it commits to, against a chance level of
-        \PlectaDepthChance{}, and abstains where the image does not separate
-        the pair by more than the local noise.
-  \item The grouping core uses no random number generator and no training data,
-        and its configuration is published, so identical input masks produce
-        identical outputs.
-  \item The end-to-end workflow does not require manually annotated
-        training images: the upstream segmenter is trained on synthetic image
-        and mask pairs in which the generating mask provides the label. The
-        workflow therefore requires training, but not manual training
-        annotations.
+  \item The greyscale depth stage ordered crossings that it decided with
+        \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} accuracy, against
+        chance level \PlectaDepthChance{}. Its global order is limited to
+        strands connected through crossings.
 \end{itemize}
 
 \noindent\textbf{Scope and limitations.}
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item Within the generator, performance was insensitive to the evaluated
-        strand-shape parameters: sweeping its bending stiffness over
-        \PlectaCurvinessSweepLow{}--\PlectaCurvinessSweepHigh{}\,\% of default,
-        and its curve wavelength over
-        \PlectaSmoothLow{}--\PlectaSmoothHigh{}\,px, moves the level means of
-        \Fone{} by at most \PlectaCurvinessMaxSpread{} and, respectively,
-        \PlectaSmoothMaxSpread{}, against a scene-to-scene scatter of
-        \PlectaCurvinessMinSceneSD{} within a level (\suppsplit{}).
-  \item The comparison runs four methods on data none of them was built for. It
-        supports a methodological claim: that pairing endpoints greedily, or
-        committing with no option to decline, loses identity in dense
-        crossings.
-  \item Performance remains sensitive to errors in upstream segmentation.
-        PLECTA can bridge a short omission, but it cannot infer a strand the mask omits, nor reliably
-        reject a false axis introduced upstream.
-  \item The real-material demonstration is a case study of
-        \PlectaRealFieldCountLower{} CNT SEM fields. Scored against the
-        annotator whose skeleton it was given, PLECTA achieved
-        \PlectaInterAnnotatorSameFLow{}--\PlectaInterAnnotatorSameFHigh{}, and
-        across annotators
-        \PlectaInterAnnotatorCrossFLow{}--\PlectaInterAnnotatorCrossFHigh{},
-        while annotators~A and~B agree at
-        \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{}
-        without algorithmic processing. The disagreement is systematic rather
-        than error: B exports
-        \PlectaInterAnnotatorObjectRatioLow{}--\PlectaInterAnnotatorObjectRatioHigh{}
-        times as many objects as~A, shorter and far more fragmented, which
-        reflects systematic differences in the operational definition of a
-        strand instance. A real-data score is
-        therefore bounded by that disagreement rather than by the method,
-        and manual annotation cannot uniquely determine strand identity
-        through locally ambiguous occlusions.
-  \item Applicability is limited to networks in which directional
-        continuity persists across the junction scale; reconstruction
-        accuracy may decrease substantially when that assumption is violated,
-        as for freely flexible chains.
+  \item PLECTA assumes directional continuity through crossings and remains
+        sensitive to upstream mask errors. It can bridge short gaps but cannot
+        recover omitted strands or reliably correct false axes.
+  \item The real-material evaluation is a case study of
+        \PlectaRealFieldCountLower{} CNT SEM fields. The automatic-axis mean
+        \Fone{} of \PlectaRealUNetFOneMean{} lies within the direct
+        inter-annotator agreement range of
+        \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{},
+        so it should be interpreted alongside ambiguity in defining strand
+        identity through local occlusions.
+  \item The comparisons evaluate overlap-aware grouping of matched binary
+        masks in the tested density regimes. They support the value of
+        PLECTA's combination of junction-level matching, endpoint handling
+        and gap bridging, but do not establish performance in every method's
+        native application.
 \end{itemize}
 
-Stronger conclusions would require an independent real-image test set
-defined before parameter selection, validated physical-width measurements,
-further released implementations evaluated under matched conditions, and an
-external-generator benchmark using previously unseen seeds.
+Broader validation will require independent real-image test sets across
+materials and imaging conditions, validated physical-width measurements and
+further matched implementations of competing methods.

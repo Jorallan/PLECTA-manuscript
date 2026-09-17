@@ -191,7 +191,7 @@ against it.
 
 \subsection{Statistical analysis}
 
-Held-out means and density strata are accompanied by 95\% nonparametric
+Synthetic-scene means and density strata are accompanied by 95\% nonparametric
 bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
 stratification by density; the clean-minus-degraded analysis resamples paired
 scene differences within density. Per-coverage points in the comparison figures
@@ -201,8 +201,8 @@ real SEM fields the inferential unit is the field, and the
 are a count pooled over six condition-specific evaluations of the three
 fields, not a sample size.
 Active-component ablations are one-at-a-time development experiments on all
-\PlectaDevelopmentSceneCount{} development scenes and do not reuse the held-out
-set.
+\PlectaDevelopmentSceneCount{} development scenes and do not reuse the
+evaluation set.
 \section{Comparator configuration}
 \label{app:comparators}
 
@@ -392,18 +392,12 @@ round schedule were settled there, as was each comparator's parameter
 translation, so that no method was tuned on the scenes it is scored on and all
 were tuned on the same ones.
 
-The evaluation set is \PlectaHeldoutSceneCount{} scenes, 32 at each of 20, 30,
-40 and 60\,\% coverage, generated from seed blocks disjoint from development.
-Disjointness is verified programmatically: a compact manifest records every
-seed
-block, and an executable verifier confirms the counts, the disjointness and
-the scene metadata it can reach.
+The evaluation set comprises \PlectaHeldoutSceneCount{} scenes, 32 at each of
+20, 30, 40 and 60\,\% coverage.
 
-The evaluation scenes are fresh draws from the generator that produced the
-development scenes, so their intervals describe sampling within that
-generator; the ranking is therefore re-tested on an independently published
-generator and on real SEM masks. The generator's own shape parameters were
-also swept. Taking its bending stiffness from
+The synthetic intervals describe sampling within this generator; the ranking
+is also tested on an independently published generator and on real SEM masks.
+The generator's own shape parameters were also swept. Taking its bending stiffness from
 \PlectaCurvinessSweepLow{} to \PlectaCurvinessSweepHigh{}\,\% of default, which
 moves the median centreline radius from \PlectaCurvinessRadiusHigh{} to
 \PlectaCurvinessRadiusLow{}\,px, moved the level means of \Fone{} by at most

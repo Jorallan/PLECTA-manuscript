@@ -224,14 +224,12 @@ decision variable.
 
 \subsubsection*{What the replacement is worth}
 
-The two rules were compared on a held-out set of
-\PlectaDepthRuleHeldoutScenes{} optically rendered synthetic scenes carrying
-\PlectaDepthRuleHeldoutCrossings{} crossings, whose seeds are disjoint from
-every set used to develop either rule and to choose between them. Its
-constants are a weaker claim: the flat core half-size
+The two rules were compared on \PlectaDepthRuleHeldoutScenes{} optically
+rendered synthetic scenes carrying \PlectaDepthRuleHeldoutCrossings{}
+crossings. The constants are a weaker claim: the flat core half-size
 (\PlectaParamCorePx{}\,px) was settled by a sweep run on this same set, and
 the abstention threshold's flatness was checked on it, so with respect to
-those two values the set is not held out. Both values are inherited rather than newly selected:
+those two values the set is not independent. Both values are inherited rather than newly selected:
 \PlectaParamCorePx{}\,px is exactly what the previous rule's radius-free
 fallback already computed, and both sit on a plateau rather than a
 peak, a flat core being no worse than oracle per-rod radii anywhere over
@@ -284,7 +282,7 @@ reversed that nothing contradicts, which an exact solution never does; a
 reversal lying on no cycle only loses weight. Fed ground-truth crossings with
 their true directions, input that is acyclic by construction and that an exact
 solver would leave untouched, the pass still reverses 24 relations across the
-\PlectaDepthRuleHeldoutScenes{} held-out scenes, capping layer agreement at
+\PlectaDepthRuleHeldoutScenes{} evaluation scenes, capping layer agreement at
 $0.886$ where it should reach $1.000$; a condense-then-order variant, which
 orders the condensation of the strongly connected components and reorders only
 inside genuine cycles, reverses none of them but measured worse on the actual
