@@ -1,9 +1,6 @@
 \section{Materials and methods}
 \label{sec:methods}
 
-\subsection{Scope and workflow}
-\label{sec:mm-workflow}
-
 PLECTA turns a binary strand-axis mask into a set of overlap-aware strand
 instances, as shown in the workflow diagram in Figure~\ref{fig:scope}. For
 validation and comparison against a known ground truth, the mask can be
@@ -17,7 +14,8 @@ across admissible gaps over eight frame-refitting rounds
 overlapping strand instances (Section~\ref{sec:mm-output}). Given a paired
 greyscale image, downstream stages estimate strand width and render ribbons
 (Section~\ref{sec:mm-stage4}) and infer depth order at crossings
-(Section~\ref{sec:mm-depth}).
+(Section~\ref{sec:mm-depth}). Section~\ref{sec:mm-metrics} defines the
+measures all results are scored through and their statistical treatment.
 
 \begin{figure}[!ht]
     \centering
@@ -54,7 +52,8 @@ no single cue reliably determines crossing order.
 \subsection{CNT SEM data and mask sources}
 \label{sec:mm-real}
 
-\PlectaRealFieldCountWord{} CNT-sheet SEM fields were analysed, each comprising
+\PlectaRealFieldCountWord{} carbon-nanotube (CNT) sheet fields, imaged by
+scanning electron microscopy (SEM), were analysed, each comprising
 $1536\times1024$ pixels: B58\_100, B58\_110 and B58\_300, containing
 \PlectaBFiveEightOneZeroZeroReferenceCount{},
 \PlectaBFiveEightOneOneZeroReferenceCount{} and
