@@ -12,6 +12,9 @@ of the segmentation method.
 \subsection{Instance segmentation on synthetic images}
 \label{sec:res-density}
 
+These scenes carry exact reference identities, so every junction and gap
+decision can be checked against the grouping the generator recorded when it
+drew them.
 Across the \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA
 achieved a mean common-fragment pairwise \Fone{} of
 \PlectaHeldoutFOneMean{} (95\% bootstrap CI
@@ -176,7 +179,8 @@ Figure~\ref{fig:real-sem} shows both conditions on one whole field.
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
     \caption{Segmentation of the whole B58\_110 field from two input-mask
-    sources; the scale bar in (a) is 500\,nm. \textbf{(a)}~Reference
+    sources; the scale bar in (a) is 500\,nm. B58\_110 is the densest of the
+    three fields and the lowest-scoring on the reference-derived axis. \textbf{(a)}~Reference
     annotation; \textbf{(b)}~reference-derived axis; \textbf{(c)}~PLECTA from
     that axis; \textbf{(d)}~automatic axis; and \textbf{(e)}~PLECTA from that
     axis with the same parameters. Input axes are dilated by one pixel for
@@ -294,9 +298,13 @@ native end-to-end results are documented in \suppcomparators{}.
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
   \caption{Five methods on identical masks, by coverage. The upper row uses
-    clean axes and the lower row degraded axes. Columns show pairwise \Fone{}
-    and detection \Fone{} (Section~\ref{sec:mm-metrics}); their difference
-    reflects fragmentation. Crossing Fidelity is reported in
+    clean axes and the lower row degraded axes. Columns: pairwise \Fone{}, which counts
+    pairs of fragments, and detection \Fone{} at IoU \PlectaDetectionIoU{}
+    with a \PlectaPlacementTolerance{}\,px tolerance, which counts objects
+    (Section~\ref{sec:mm-metrics}). The two disagree where a method
+    fragments, since only the first is quadratic in fragmentation. All
+    methods receive the same masks and are scored by the same code, and each
+    was configured on development scenes rather than left at its defaults. Crossing Fidelity is reported in
     Table~\ref{tab:plecta-comparators}. Means are over ten scenes.
     $^{*}$\,our reimplementation; no implementation was available.}
   \label{fig:metric-panels}
