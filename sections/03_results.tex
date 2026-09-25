@@ -290,9 +290,12 @@ implementation was available.
 
 For each released method, the mask was supplied at the start of its
 identity-assignment stage so that segmentation did not affect the comparison.
-Configurations were selected on the same development scenes used for PLECTA,
-rather than left at their defaults. The injection points, configurations and
-native end-to-end results are documented in \suppcomparators{}.
+All methods therefore received the same masks and were scored by the same
+code. Configurations were selected on the same development scenes used for
+PLECTA, separate from the scored ones, rather than left at their defaults. The
+ranking also holds on GraFT's independently published generator, reported
+below. The injection points, configurations and native end-to-end results are
+documented in \suppcomparators{}.
 
 \begin{figure}[!t]
   \centering
@@ -303,9 +306,7 @@ native end-to-end results are documented in \suppcomparators{}.
     \PlectaDetectionIoU{} with a \PlectaPlacementTolerance{}\,px tolerance,
     which counts objects (Section~\ref{sec:mm-metrics}). The two disagree
     where a method fragments, since only the first is quadratic in
-    fragmentation. All methods receive the same masks and are scored by the
-    same code, and each was configured on development scenes rather than left
-    at its defaults. Crossing Fidelity is reported in
+    fragmentation. Crossing Fidelity is reported in
     Table~\ref{tab:plecta-comparators}. $^{*}$\,our reimplementation; no
     implementation was available.}
   \label{fig:metric-panels}

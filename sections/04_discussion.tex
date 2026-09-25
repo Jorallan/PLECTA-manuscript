@@ -56,17 +56,15 @@ so the full workflow requires no manually annotated training micrographs.
 \noindent\textbf{Outlook.}
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item \textbf{Improved binary segmentation.} A more accurate upstream segmenter,
-        trained on synthetic data better matched to real micrographs, would
-        improve the masks PLECTA receives.
-  \item \textbf{Validation on real data.} CNT sheets stacked in a known order, or
-        focused-ion-beam cross-sections of the imaged region, would give the true
-        crossing order for the depth stage; a real development set, kept separate
-        from the evaluation fields, would let parameters be tuned on imaging rather
-        than on synthetic scenes alone.
-  \item \textbf{Broader application.} Other materials, magnifications and SEM
-        applications.
-  \item \textbf{Mechanical models.} The segmented strands, with their depth order
-        and widths, can serve as input geometry for mesoscale mechanical
-        simulations.
+  \item A more accurate upstream segmenter, trained on synthetic data better
+        matched to real micrographs, would improve the masks PLECTA receives.
+  \item CNT sheets stacked in a known order, or focused-ion-beam cross-sections
+        of the imaged region, would give the true crossing order for the depth
+        stage; a real development set, kept separate from the evaluation fields,
+        would let parameters be tuned on imaging rather than on synthetic scenes
+        alone.
+  \item The workflow remains to be tested on other materials, magnifications and
+        SEM applications.
+  \item The segmented strands, with their depth order and widths, can serve as
+        input geometry for mesoscale mechanical simulations.
 \end{itemize}
