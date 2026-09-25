@@ -27,7 +27,7 @@ Recovering those identities is an instance-segmentation problem in which the
 objects are long, open curves that overlap one another. Crossings merge
 distinct strands into one foreground component, whereas signal gaps split one
 strand into fragments whose tips may be indistinguishable from genuine ends.
-Reconstruction must therefore determine which segments continue through each
+Segmentation must therefore determine which segments continue through each
 junction, which reconnect across a gap and which terminate.
 
 We present a workflow that recovers individual strands and estimates their
@@ -36,13 +36,15 @@ depth order from a single greyscale micrograph
 image--mask pairs produces a binary mask marking the strand axes, without
 requiring manually annotated micrographs for training.
 
-The central reconstruction stage, PLECTA, then resolves individual strands from
+The central segmentation stage, PLECTA, then resolves individual strands from
 this mask alone. At each junction, it considers the possible strand
 continuations together while allowing genuine strand ends. It also reconnects
 fragments across signal gaps. This stage requires no training and is intended
 for networks whose strands approximately maintain their direction through
-crossings. Finally, a depth-ordering stage uses the reconstructed strands and
+crossings. Finally, a depth-ordering stage uses the segmented strands and
 the greyscale image to estimate which strand lies on top at each crossing.
+Identity is resolved in the image plane; depth ordering is a separate
+downstream stage, and no volumetric reconstruction is performed.
 
 We evaluate PLECTA on synthetic scenes and annotated scanning electron
 microscopy (SEM) images of CNT sheets. It achieves higher strand-identity

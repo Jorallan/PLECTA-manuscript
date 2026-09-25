@@ -3,7 +3,7 @@
 \label{sec:discussion}
 \label{sec:limitations}
 
-PLECTA reconstructs overlapping strand instances from a binary strand-axis
+PLECTA segments overlapping strand instances from a binary strand-axis
 mask using deterministic junction matching that permits both continuations and
 genuine endpoints. Its grouping core requires no training data and produces
 identical output from identical input masks. The upstream segmenter is trained
@@ -20,7 +20,7 @@ annotated training micrographs.
         the evaluated methods across the tested densities. Its lead was also
         retained on GraFT's released generator at published settings.
   \item The ablation analysis identified the junction chord-turn term and
-        gap bridging as the largest contributors to reconstruction
+        gap bridging as the largest contributors to segmentation
         performance.
   \item The greyscale depth stage ordered crossings that it decided with
         \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} accuracy, against

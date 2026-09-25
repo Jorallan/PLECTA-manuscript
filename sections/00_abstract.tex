@@ -1,19 +1,19 @@
-Many materials and tissues, including carbon-nanotube sheets, collagen, paper
-and nonwoven textiles, comprise overlapping strands whose arrangement
-influences their effective properties. Quantifying this geometry from
-micrographs requires individual strands to be recovered through crossings and
+Many materials and tissues, including carbon-nanotube sheets, collagen and
+paper, comprise overlapping strands whose arrangement influences their
+effective properties. Measuring this geometry from
+micrographs requires individual strands to be traced through crossings and
 signal gaps, which merge distinct strands or split one strand into disconnected
-fragments. We present PLECTA, a deterministic method that reconstructs
+fragments. We present PLECTA, a deterministic method that segments
 individual strands using only a binary image whose foreground pixels mark
 strand centrelines. At each junction, PLECTA selects which strand segments
 continue into one another while allowing segments to terminate. It formulates
 this decision as an exact maximum-weight partial-matching problem, with an
 explicit penalty for unpaired segments and no restriction on the number of
 segments entering a junction. The output permits crossing pixels to belong to
-multiple strands. On procedurally generated scenes, PLECTA reconstructed
-strand identities more accurately than three released alternatives across all
-evaluated densities, and this ranking was preserved on an independently
-published generator evaluated using its original settings. A separate stage
+multiple strands. On synthetic scenes, PLECTA resolved strand identities
+more accurately than three released alternatives at every density tested. The
+same ranking held on an independently published generator run at its own
+settings. A separate stage
 uses the corresponding greyscale micrograph to estimate which strand lies on
 top at each crossing. The
 complete workflow is demonstrated on scanning electron micrographs of

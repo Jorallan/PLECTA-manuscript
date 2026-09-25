@@ -34,7 +34,7 @@ greyscale image, downstream stages estimate strand width and render ribbons
 
 Strand centrelines are generated as random walks with Gaussian-smoothed
 angular increments, producing gradual bends with controllable curvature.
-The principal synthetic reconstruction scenes are $512\times512$ pixels.
+The principal synthetic segmentation scenes are $512\times512$ pixels.
 Each full-width bundle is assigned a width sampled uniformly from 7 to 16
 pixels, and strands are placed at random positions and orientations until
 their combined full-width area reaches the target areal coverage of 20, 30,
@@ -79,27 +79,27 @@ annotation procedure.
 Two input masks were evaluated for each field: a skeletonised mask derived
 from the first author's reference and an automatically generated mask from the
 upstream CycleGAN/nnU-Net segmentation (Section~\ref{sec:res-qualitative})
-\citep{ruehle2021workflow,isensee2021nnunet}. These inputs assess reconstruction
+\citep{ruehle2021workflow,isensee2021nnunet}. These inputs assess segmentation
 from manually curated and automatically extracted strand axes, respectively.
 The automatic segmentation required no manual annotations for training or
 inference.
 
-Strand reconstruction was evaluated on the common centreline fragments
+Strand segmentation was evaluated on the common centreline fragments
 visible within each input mask,
 using the metrics defined in Section~\ref{sec:mm-metrics}.
 
 
-\subsection{PLECTA reconstruction}
+\subsection{PLECTA instance segmentation}
 \label{sec:mm-plecta}
 
-Starting from a binary strand mask, PLECTA reconstructs individual strands by
+Starting from a binary strand mask, PLECTA segments individual strands by
 resolving connections through junctions and across gaps. The following
 subsections describe the main steps: constructing the skeleton graph, scoring
 candidate connections and selecting compatible links, with iterative
 refinement as longer strands are assembled. For an input mask
 $M\in\{0,1\}^{H\times W}$, the output is a set of strand instances
 $\{I_1,\ldots,I_N\}$, with $I_n\subseteq F=\{x:M(x)=1\}$; crossing pixels
-may belong to multiple instances. Reconstruction uses the mask alone, while
+may belong to multiple instances. Segmentation uses the mask alone, while
 subsequent width and depth estimates also use the greyscale image
 (Section~\ref{sec:mm-image}).
 
@@ -232,14 +232,14 @@ strands to share crossing pixels. Accepted gap links connect fragments
 belonging to the same strand without adding pixels across the gap. These
 strand instances provide the input to the image-based stages described next.
 
-\subsection{Image-informed reconstruction}
+\subsection{Image-informed stages}
 \label{sec:mm-image}
 
-The reconstructed strands are combined with the corresponding greyscale image
+The segmented strands are combined with the corresponding greyscale image
 to estimate their apparent widths and render ribbons
 (Section~\ref{sec:mm-stage4}), and to infer crossing order
 (Section~\ref{sec:mm-depth}).
-These stages preserve the strand identities established during reconstruction
+These stages preserve the strand identities established during segmentation
 and do not affect the identity scores. They use fixed parameters
 (\supprecon{}) and are demonstrated here on SEM images, although the procedure
 accepts other greyscale images.
@@ -329,7 +329,7 @@ using the measures defined in \suppdepth{}.
 \subsection{Metrics and statistical analysis}
 \label{sec:mm-metrics}
 
-The primary reconstruction metric is common-fragment pairwise \Fone{}, which
+The primary segmentation metric is common-fragment pairwise \Fone{}, which
 measures whether strand fragments are grouped consistently with the reference.
 Each input mask is divided into fragments between crossings, independently of
 the reference and predictions. The same assignment rule then gives each
@@ -358,11 +358,11 @@ Strands containing more fragments contribute more pairs and therefore carry
 greater weight. We also report the adjusted Rand index and variation of
 information \citep{hubert1985comparing,meila2007comparing}, together with
 detection \Fone{} and Crossing Fidelity, to characterise complementary aspects
-of reconstruction. For the real SEM fields, Join \Fone{} evaluates joining
+of segmentation. For the real SEM fields, Join \Fone{} evaluates joining
 decisions between nearby fragments, reducing the influence of differences in
 fragmentation between mask sources.
 
-Synthetic reconstruction means are accompanied by 95\,\% bootstrap
+Synthetic segmentation means are accompanied by 95\,\% bootstrap
 confidence intervals, with scenes resampled within each density level.
 Comparisons between clean and degraded masks preserve scene pairing. For
 real SEM data, each image field is treated as one independent sample.

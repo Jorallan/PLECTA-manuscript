@@ -771,7 +771,7 @@ def depth_order_table(payload: dict) -> str:
         r"\begin{tabular}{lcccc}",
         r"\toprule",
         r"& \multicolumn{2}{c}{Given 2-D geometry} "
-        r"& \multicolumn{2}{c}{Reconstructed 2-D} \\",
+        r"& \multicolumn{2}{c}{Segmented 2-D} \\",
         r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}",
         "Areal coverage & " + head + " & " + head + r" \\",
         r"\midrule",

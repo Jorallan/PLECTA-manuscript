@@ -1,27 +1,27 @@
 \section{Results}
 \label{sec:results}
 
-We first evaluate strand reconstruction on synthetic scenes
+We first evaluate strand segmentation on synthetic scenes
 (Section~\ref{sec:res-density}), then examine depth ordering
 (Section~\ref{sec:res-depth}) and application to real SEM images
 (Section~\ref{sec:res-real}). Component ablations
 (Section~\ref{sec:res-ablation}) and comparisons with published methods
 (Section~\ref{sec:res-comparators}) assess the contributions and performance
-of the reconstruction method.
+of the segmentation method.
 
-\subsection{Reconstruction on synthetic images}
+\subsection{Instance segmentation on synthetic images}
 \label{sec:res-density}
 
 Across the \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA
 achieved a mean common-fragment pairwise \Fone{} of
 \PlectaHeldoutFOneMean{} (95\% bootstrap CI
 [\PlectaHeldoutFOneCILow{}, \PlectaHeldoutFOneCIHigh{}]).
-Table~\ref{tab:plecta-heldout} summarises reconstruction scores overall and by
+Table~\ref{tab:plecta-heldout} summarises segmentation scores overall and by
 areal coverage.
 
 \begin{table}[tbp]
     \centering
-    \caption{Reconstruction scores overall and by target areal
+    \caption{Segmentation scores overall and by target areal
     coverage. VI denotes variation of information, for which lower is better;
     higher is better for the other metrics.}
     \label{tab:plecta-heldout}
@@ -39,35 +39,35 @@ Per-scene runtime had median \PlectaHeldoutRuntimeMedian{}~s, ranging to
 \PlectaHeldoutRuntimeMaximum{}~s on the densest scenes;
 Section~\ref{sec:res-comparators} measures cost systematically.
 
-PLECTA operates on the strand-axis mask, so reconstruction difficulty depends
+PLECTA operates on the strand-axis mask, so segmentation difficulty depends
 on centreline density and geometry rather than areal coverage alone. The same
 areal coverage can arise from a different centreline density under another
-bundle-width distribution and may therefore produce different reconstruction
+bundle-width distribution and may therefore produce different segmentation
 performance. Within the fixed $512\times512$-pixel frame and 7--16-pixel
 bundle-width range used here, areal coverage provides a consistent within-study
 stratification.
 
 \label{sec:res-mask}%
 To assess sensitivity to gaps and raster irregularities, we compared
-reconstruction from clean and degraded masks of the same scenes. Across the
+segmentation from clean and degraded masks of the same scenes. Across the
 \PlectaRobustnessSceneCount{} synthetic scenes,
 mean \Fone{} was \PlectaRobustnessDegradedFOneMean{} from degraded axes and
 \PlectaRobustnessCleanFOneMean{} from the corresponding clean axes. The paired
 clean-minus-degraded change was \PlectaCleanMinusDegradedFOneMean{} (95\% CI
 [\PlectaCleanMinusDegradedFOneCILow{},
 \PlectaCleanMinusDegradedFOneCIHigh{}]). Modelled gaps and raster
-irregularities therefore caused a small reduction in reconstruction accuracy
+irregularities therefore caused a small reduction in segmentation accuracy
 under this generator. The difference was greatest at low coverage and narrowed
 at 50--60\,\%, consistent with junction ambiguity becoming more influential
 at higher density.
 
-Figure~\ref{fig:examples} shows representative reconstructions at three
+Figure~\ref{fig:examples} shows representative segmentations at three
 coverage levels, selected by proximity to the median \Fone{} of each stratum.
 
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_plecta_examples.pdf}
-    \caption{Reconstruction at three coverage levels, each the scene closest
+    \caption{Segmentation at three coverage levels, each the scene closest
     to the median \Fone{} of its stratum, shown as a horizontal window of the
     scene. Columns: the degraded input mask, the overlap-aware reference, and
     PLECTA's strands at their fitted widths. The score beside each row is the
@@ -79,7 +79,7 @@ coverage levels, selected by proximity to the median \Fone{} of each stratum.
 \subsection{Depth decomposition}
 \label{sec:res-depth}
 
-The stages above reconstruct strands in projection but do not establish which
+The stages above segment strands in projection but do not establish which
 strand lies above at a crossing. After grouping is fixed, the depth stage uses
 the greyscale image to assess the continuity of each strand's brightness across
 the crossing relative to local noise. It reconciles these local estimates into
@@ -88,7 +88,7 @@ a globally consistent vertical order and assigns non-interpenetrating heights.
 The stage was evaluated on \PlectaDepthSceneCount{} depth-resolved scenes from
 Section~\ref{sec:mm-synth}, at two areal coverages and under two input
 conditions. Reference 2-D geometry isolates the depth decision, whereas binary
-axis masks include reconstruction error. Table~\ref{tab:depth-order} reports
+axis masks include segmentation error. Table~\ref{tab:depth-order} reports
 both using the measures defined in \suppdepth{}. Its crossing rows score local
 over/under decisions before reconciliation, once for every crossing; its
 stacking rows score the final order, once for every pair of strands.
@@ -145,7 +145,7 @@ micrograph.}
 \label{fig:resem-real}
 \end{figure}
 
-\subsection{Reconstruction on CNT SEM images}
+\subsection{Instance segmentation on CNT SEM images}
 \label{sec:res-real}
 \label{sec:res-qualitative}
 
@@ -169,13 +169,13 @@ under two input conditions: the skeleton of the reference annotation and the
 automatic nnU-Net axis \citep{ruehle2021workflow}. Both were scored against
 the reference annotation, so the conditions differ only in the input mask. The
 reference-derived axis tests grouping from curated real-image geometry; the
-automatic axis evaluates the complete image-to-reconstruction workflow.
+automatic axis evaluates the complete image-to-instances workflow.
 Figure~\ref{fig:real-sem} shows both conditions on one whole field.
 
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\linewidth]{figures/fig_real_sem.pdf}
-    \caption{Reconstruction of the whole B58\_110 field from two input-mask
+    \caption{Segmentation of the whole B58\_110 field from two input-mask
     sources; the scale bar in (a) is 500\,nm. \textbf{(a)}~Reference
     annotation; \textbf{(b)}~reference-derived axis; \textbf{(c)}~PLECTA from
     that axis; \textbf{(d)}~automatic axis; and \textbf{(e)}~PLECTA from that
@@ -187,7 +187,7 @@ Figure~\ref{fig:real-sem} shows both conditions on one whole field.
 
 \begin{table}[tbp]
     \centering
-    \caption{Reconstruction from reference-derived and automatic axes in three
+    \caption{Segmentation from reference-derived and automatic axes in three
     CNT SEM fields. Coverage is the fraction of the frame covered by full-width
     reference strands. Metrics are defined in Section~\ref{sec:mm-metrics};
     detection \Fone{} uses IoU \PlectaDetectionIoU{} and tolerance
@@ -228,14 +228,14 @@ Section~\ref{sec:limitations}.
 \label{sec:res-ablation}
 
 The real-SEM results show the effect of input-mask quality. To isolate the
-contribution of PLECTA's reconstruction components, we removed one component
+contribution of PLECTA's segmentation components, we removed one component
 at a time on the development scenes. Table~\ref{tab:plecta-ablation} also
 includes two controls that replace, rather than remove, part of the method.
 
 The largest losses followed removal of the junction chord-turn term, gap
 bridging and junction-cluster consolidation. The remaining rows test the
 curvature term, graph construction and iterative refinement; their smaller
-effects indicate that these components refine the core reconstruction rather
+effects indicate that these components refine the core segmentation rather
 than replace it.
 
 The first control replaces joint junction matching with greedy arm pairing
@@ -257,7 +257,7 @@ fixed-gate greedy endpoint-pairing baseline.
 \subsection{Comparison with published methods}
 \label{sec:res-comparators}
 
-The ablations identify the components that support reconstruction. We next
+The ablations identify the components that support segmentation. We next
 compare the complete method with four published approaches on the
 \PlectaGreedySceneCount{} synthetic scenes. The two methods that
 accept binary axes were also evaluated on the \PlectaRealFieldCountLower{}
@@ -308,7 +308,7 @@ SIFNE was the strongest comparator. DNAi was designed for sparse DNA-fibre
 micrographs and recovered \PlectaDNAiCleanSparseFOne{} from clean axes at
 20\,\% coverage. Basu ranked second on Crossing Fidelity but substantially
 lower on pairwise \Fone{}, indicating that curvature-based junction matching
-alone is insufficient for the full reconstruction task. Detailed results are
+alone is insufficient for the full segmentation task. Detailed results are
 given in \suppcomparators{}.
 
 \textbf{Other regimes.} On GraFT's released generator, run at its published
@@ -317,10 +317,10 @@ highest \Fone{} at every density
 (\PlectaRegimeOverallPlectaFOne{} overall, compared with
 \PlectaRegimeOverallGraFTFOne{} for GraFT and
 \PlectaRegimeOverallDNAiFOne{} for DNAi). SIFNE released no generator; on a
-reconstruction of its sparse cobweb topology, PLECTA and SIFNE were similar
+recreation of its sparse cobweb topology, PLECTA and SIFNE were similar
 at low density and separated only slightly as density increased. This supports
 crossing entanglement, rather than strand content alone, as the relevant
-difference, although the reconstructed topology is weaker evidence than a
+difference, although the recreated topology is weaker evidence than a
 released generator.
 
 
@@ -335,5 +335,5 @@ optimised, these times reflect implementation as well as algorithm.
 and ranked highest on every reported measure. The smaller margin than on
 synthetic scenes is consistent with these curated axes containing fewer gaps,
 fragmentation and placement errors. Together, the ablations and comparisons
-show PLECTA's advantage for matched-mask reconstruction in dense crossing
+show PLECTA's advantage for matched-mask segmentation in dense crossing
 networks; the scope of that claim is considered in the conclusions.
