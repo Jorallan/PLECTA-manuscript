@@ -298,15 +298,16 @@ native end-to-end results are documented in \suppcomparators{}.
   \centering
   \includegraphics[width=\linewidth]{figures/fig_metric_panels.pdf}
   \caption{Five methods on identical masks, by coverage. The upper row uses
-    clean axes and the lower row degraded axes. Columns: pairwise \Fone{}, which counts
-    pairs of fragments, and detection \Fone{} at IoU \PlectaDetectionIoU{}
-    with a \PlectaPlacementTolerance{}\,px tolerance, which counts objects
-    (Section~\ref{sec:mm-metrics}). The two disagree where a method
-    fragments, since only the first is quadratic in fragmentation. All
-    methods receive the same masks and are scored by the same code, and each
-    was configured on development scenes rather than left at its defaults. Crossing Fidelity is reported in
-    Table~\ref{tab:plecta-comparators}. Means are over ten scenes.
-    $^{*}$\,our reimplementation; no implementation was available.}
+    clean axes and the lower row degraded axes. Columns: pairwise \Fone{},
+    which counts pairs of fragments, and detection \Fone{} at IoU
+    \PlectaDetectionIoU{} with a \PlectaPlacementTolerance{}\,px tolerance,
+    which counts objects (Section~\ref{sec:mm-metrics}). The two disagree
+    where a method fragments, since only the first is quadratic in
+    fragmentation. All methods receive the same masks and are scored by the
+    same code, and each was configured on development scenes rather than left
+    at its defaults. Crossing Fidelity is reported in
+    Table~\ref{tab:plecta-comparators}. $^{*}$\,our reimplementation; no
+    implementation was available.}
   \label{fig:metric-panels}
 \end{figure}
 
