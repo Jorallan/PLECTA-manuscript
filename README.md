@@ -22,8 +22,9 @@ greyscale enters nowhere else. The primary evaluation endpoint stops before
 SEM-based width rendering and compares equivalent per-instance centrelines
 against the baselines described in the Results.
 
-Names and author order are Oday Allan, Igor Ostanin and Stefan Luding; Igor
-Ostanin is the corresponding author.
+Names and author order are Oday Allan and Igor Ostanin; Igor Ostanin is the
+corresponding author. Stefan Luding asked on 2026-09-22 to be moved from the
+author list to the Acknowledgements, where he is now credited.
 
 ## Target venue
 
