@@ -3,10 +3,11 @@ paper, comprise overlapping strands whose arrangement influences their
 effective properties. Measuring this geometry from
 micrographs requires individual strands to be traced through crossings and
 signal gaps, which merge distinct strands or split one strand into disconnected
-fragments. We present PLECTA, a deterministic method that segments
-individual strands using only a binary image whose foreground pixels mark
-strand centrelines. At each junction, PLECTA selects which strand segments
-continue into one another while allowing segments to terminate. It formulates
+fragments. We present PLECTA (from Latin \emph{plecta}, a braid), a
+deterministic method that segments individual strands using only a binary
+image whose foreground pixels mark strand centrelines. At each junction,
+PLECTA selects which strand segments continue into one another while
+allowing segments to terminate. It formulates
 this decision as an exact maximum-weight partial-matching problem, with an
 explicit penalty for unpaired segments and no restriction on the number of
 segments entering a junction. The output permits crossing pixels to belong to

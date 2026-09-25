@@ -12,7 +12,8 @@ methods.
 
 Existing methods address complementary aspects of the problem. Semantic
 segmentation, which labels every pixel with a class but does not distinguish
-one object from another, is mature: U-Net and its self-configuring descendants
+one object from another, is mature: U-Net, named for its U-shaped
+encoder--decoder architecture, and its self-configuring descendants
 reliably separate strand foreground from background
 \citep{ronneberger2015unet,isensee2021nnunet}, including in materials imaging
 \citep{stan2020optimizing,davydzenka2022deep} and nanotube micrographs
@@ -51,11 +52,13 @@ earlier pairings can subsequently be revised.
 
 A large class of methods follows a common procedure: skeletonise the mask,
 remove the junction pixels, and pair the resulting arms according to
-directional continuity. Each pairing is accepted as soon as it is scored. SIFNE reads its tip
+directional continuity. Each pairing is accepted as soon as it is scored.
+SIFNE, an extractor for filament networks in localization-microscopy
+images, reads its tip
 directions from the excised stubs and recovers dense microtubule networks from
 the mask alone \citep{zhang2017sifne}. Wegmayr et al.\ pair skeleton branches
-by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT covers a
-Frangi-filtered skeleton greedily, longest path first
+by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT (graph of
+filaments over time) covers a Frangi-filtered skeleton greedily, longest path first
 \citep{osterlund2026graft}. This is inexpensive, and where crossings are rare
 it suffices. Its weakness is structural: once an arm is paired, a later
 contradictory candidate cannot revise the pairing.
