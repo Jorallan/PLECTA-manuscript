@@ -3,26 +3,32 @@
 \label{sec:discussion}
 \label{sec:limitations}
 
-PLECTA segments overlapping strand instances from a binary strand-axis
-mask using deterministic junction matching that permits both continuations and
-genuine endpoints. Its grouping core requires no training data and produces
-identical output from identical input masks. The upstream segmenter is trained
-on synthetic image--mask pairs, so the full workflow requires no manually
-annotated training micrographs.
+Micrographs of strand networks show crossings that merge distinct strands and
+gaps that split one strand into fragments, so each strand's identity is lost
+in the image. Recovering it is what makes per-strand length, orientation and
+curvature measurable. PLECTA recovers it from a binary image marking strand
+centrelines alone, deciding at each junction which segments continue into one
+another and allowing a strand to end rather than be forced onward. Crossing
+pixels are assigned to every strand passing through them. PLECTA's grouping
+core requires no training data and produces identical output from identical
+input masks. The upstream segmenter is trained on synthetic image--mask pairs,
+so the full workflow requires no manually annotated training micrographs.
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item Across \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA achieved mean pairwise
-        \Fone{}=\PlectaHeldoutFOneMean{} [\PlectaHeldoutFOneCILow{},
+  \item Across \PlectaHeldoutSceneCount{} synthetic scenes, PLECTA achieved a mean
+        pairwise \Fone{} (agreement on whether two fragments belong to the
+        same strand) of \PlectaHeldoutFOneMean{} [\PlectaHeldoutFOneCILow{},
         \PlectaHeldoutFOneCIHigh{}], falling from
         \PlectaDensityTwoZeroFOneMean{} to \PlectaDensitySixZeroFOneMean{} as
-        areal coverage rises from 20 to 60\,\%.
-  \item In matched-mask comparisons, PLECTA achieved the highest scores among
-        the evaluated methods across the tested densities. Its lead was also
-        retained on GraFT's released generator at published settings.
-  \item The ablation analysis identified the junction chord-turn term and
-        gap bridging as the largest contributors to segmentation
-        performance.
-  \item The greyscale depth stage ordered crossings that it decided with
+        areal coverage, the fraction of the frame the strands fill, rises from 20
+        to 60\,\%.
+  \item With every method given the same input mask, PLECTA achieved the highest
+        scores among the evaluated methods across the tested densities. Its lead
+        was also retained on GraFT's released generator at published settings.
+  \item The ablation analysis identified the junction term penalising turning, and
+        the reconnection of fragments across signal gaps, as the largest
+        contributors to segmentation performance.
+  \item The greyscale depth stage ordered the crossings it did not decline with
         \PlectaDepthDecidedLow{}--\PlectaDepthDecidedHigh{} accuracy, against
         chance level \PlectaDepthChance{}. Its global order is limited to
         strands connected through crossings.
@@ -36,8 +42,8 @@ annotated training micrographs.
         recover omitted strands or reliably correct false axes.
   \item The real-material evaluation is a case study of
         \PlectaRealFieldCountLower{} CNT SEM fields. The automatic-axis mean
-        \Fone{} of \PlectaRealUNetFOneMean{} lies within the direct
-        inter-annotator agreement range of
+        \Fone{} of \PlectaRealUNetFOneMean{} lies within the range over which
+        two human annotators agree with each other,
         \PlectaInterAnnotatorAgreeFLow{}--\PlectaInterAnnotatorAgreeFHigh{},
         so it should be interpreted alongside ambiguity in defining strand
         identity through local occlusions.
@@ -47,6 +53,20 @@ annotated training micrographs.
         for which it was originally developed.
 \end{itemize}
 
-Broader validation will require independent real-image test sets across
-materials and imaging conditions, validated physical-width measurements and
-further matched implementations of competing methods.
+\noindent\textbf{Outlook.}
+
+\begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
+  \item \textbf{Improved binary segmentation.} A more accurate upstream segmenter,
+        trained on synthetic data better matched to real micrographs, would
+        improve the masks PLECTA receives.
+  \item \textbf{Validation on real data.} CNT sheets stacked in a known order, or
+        focused-ion-beam cross-sections of the imaged region, would give the true
+        crossing order for the depth stage; a real development set, kept separate
+        from the evaluation fields, would let parameters be tuned on imaging rather
+        than on synthetic scenes alone.
+  \item \textbf{Broader application.} Other materials, magnifications and SEM
+        applications.
+  \item \textbf{Mechanical models.} The segmented strands, with their depth order
+        and widths, can serve as input geometry for mesoscale mechanical
+        simulations.
+\end{itemize}
