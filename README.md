@@ -28,8 +28,14 @@ author list to the Acknowledgements, where he is now credited.
 
 ## Target venue
 
-**Journal of Microscopy** (decided 2026-08-31, after the supervisor's venue
-comment). Grounds: the two closest method relatives in the bibliography
+**Image and Vision Computing** (decided 2026-10-13). Its scope asks for
+"quantitative comparison and performance evaluation of the proposed
+methodology", which is what the comparator study is, and its 4,500–7,500-word
+limit excludes captions, tables and supplementary material. The submission
+package and what is still open are in `submission/ivc/README.md`.
+
+*Previous decision, superseded:* **Journal of Microscopy** (decided
+2026-08-31, after the supervisor's venue comment). Grounds: the two closest method relatives in the bibliography
 published there (FIRE, stein2008fire, network extraction from collagen gels;
 and Depriester 2022, individual fibre separation in tomography), the journal's
 scope is exactly quantitative image-analysis methods for microscopy across
@@ -49,17 +55,17 @@ the generator in `scripts/results/` and re-run it.
 
 ## Build
 
-From this directory:
+From this directory, main first:
 
 ```bash
-pdflatex -interaction=nonstopmode main.tex
-bibtex main
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
+latexmk -pdf main.tex
+latexmk -pdf supplementary.tex
 ```
 
-and the same four commands for `supplementary.tex`. `latexmk -pdf main.tex` is
-equivalent where Perl is available.
+`.latexmkrc` sends every build by-product (`.aux`, `.log`, `.bbl`, ...) to
+`build/`, which git ignores, and leaves the two PDFs here. The supplement reads
+the article's section numbers from `build/main.aux`, which is why `main.tex`
+is built first.
 
 ## Project map
 
@@ -77,15 +83,19 @@ equivalent where Perl is available.
   tables and macros, plus `check_type_scale.py`
 - `reproducibility/`: `evaluation_manifest.csv`, scene/method provenance and
   hashes
-- `docs/`: `REPRODUCIBILITY.md`, `DEFINE_FEASIBILITY.md`, `refs_notes.md`
-- `docs/internal/`: working records not written for the reader -- the depth
-  architecture and handoff notes, the leakage/fairness and stage-gate audits,
-  and the literature matrix
 - `exploration/`: self-contained exploratory studies (gitignored), each with
-  its own README and memo; nothing here is a build input
+  its own README and memo; several generators in `scripts/results/` and
+  `scripts/figures/` read their inputs from it, so it stays here
+- `notes/`: the one record of measurements removed from the manuscript
+  (gitignored); two depth-rule generators read it
 - `software/`: the released `plecta` package and its tests, as shipped with
   the manuscript
-- `slides/`: the overview deck and its build script
+- `submission/`: the files prepared for a specific journal submission
+- `build/`: LaTeX build by-products (gitignored)
+
+The working documents that used to sit in `docs/` (the writing rules, the
+reproducibility record, the reference notes and the dated audits and design
+records) are in `C:\Repos\reports\plecta_manuscript\` since 2026-10-13.
 
 ## Conventions
 

@@ -1,11 +1,11 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[british]{babel}
 \usepackage{microtype}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -18,6 +18,11 @@
 \usepackage{enumitem}
 \setlength{\parindent}{1.5em}
 \usepackage{url}
+% Section numbers of the article, read from main.aux so that a renumbering
+% there cannot leave this file pointing at the wrong section. Build main.tex
+% first; \ref* keeps them plain text rather than links into another PDF.
+\usepackage{xr}
+\externaldocument[M-]{build/main}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
 \usepackage{doi}
@@ -39,7 +44,7 @@
 \newcounter{igorcomment}
 \newcommand{\Igor}[1]{}
 \newcommand{\igorreply}[1]{}
-\newif\ifaq \aqtrue
+\newif\ifaq \aqfalse
 \newcommand{\todo}[1]{\ifaq{\color{orange}\textbf{[To do: #1]}}\fi}
 
 \input{results/plecta_results}

@@ -1,435 +1,412 @@
 \section{Measures}
 \label{app:measures}
 
-Every measure this paper reports is defined here, with what it rewards and its
-blind spot; none reads the rendered width of an instance.
+This section defines every measure reported in the article, together with
+what it rewards and its principal limitation. None of the measures depends on
+the rendered width of an instance.
 
-\textbf{The common-fragment set}, shared by the first five measures below. The
-mask is skeletonised, spurs of at most 3\,px are pruned, skeleton pixels with
-three or more 8-neighbours are deleted, the remaining 8-connected pieces are
-labelled, and pieces shorter than 6\,px are discarded, so one fragment is one
-unambiguous arm between crossings. The partition reads neither the reference nor
-any prediction, so every method compared is cut into the same fragments. Each
-then takes a reference and a predicted identity by one rule, applied to both
-sides alike: the fragment is assigned to the instance whose mask overlaps the
-largest number of its pixels, the vote counted against each instance's full
-mask rather than a flattened label image, so an instance that overlaps another
-keeps its pixels, provided that the winning overlap covers at least 30\,\% of
-the fragment; failing that, it falls back to the most frequent nearest
-instance label within 6\,px of the fragment, read from a deterministically
-flattened field; failing both, it stays unassigned and is scored as its own
-singleton cluster, on the reference side and the prediction side equally, so
-every fragment enters the scored partition. Ties at any step resolve to the
-lowest instance id, and the flattening order is fixed, so the assignment is
-deterministic. Because junction pixels are deleted first, no fragment contains
-one: none of these measures can see whether an emitted crossing pixel is given
-one owner or two, only whether the arms meeting there are grouped as the
-reference groups them.
+\textbf{Common-fragment set.} All measures below except detection \Fone{} are
+computed on a common set of fragments. The mask is skeletonised, spurs of at
+most 3\,px are pruned, skeleton pixels with three or more 8-neighbours are
+deleted, the remaining 8-connected pieces are labelled, and pieces shorter than
+6\,px are discarded, so that each fragment is an unambiguous arm between
+crossings. This partition depends on neither the reference nor any prediction,
+so every method is evaluated on the same fragments. Each fragment then
+receives a reference identity and a predicted identity by the same rule. It is
+assigned to the instance whose mask overlaps the largest number of its pixels,
+counted on each instance's full mask rather than on a flattened label image so
+that overlapping instances retain their pixels, provided that this overlap
+covers at least 30\,\% of the fragment. Otherwise it is assigned to the most
+frequent nearest instance label within 6\,px, read from a deterministically
+flattened label image; failing both, it is treated as a singleton cluster on
+both sides, so that every fragment enters the evaluation. Ties are resolved in
+favour of the lowest instance identifier and the flattening order is fixed, so
+the assignment is deterministic. Because junction pixels are removed before
+labelling, these measures do not register whether a crossing pixel is assigned
+to one instance or to two, only whether the arms meeting at the crossing are
+grouped as in the reference.
 
-\textbf{Sensitivity to the scorer's constants.} Because the four constants
-above are shared with the method (the article's metrics section), the stored
-predictions of all four methods were re-scored under one-at-a-time
-perturbations of each constant, with the grid frozen in writing before any
-result was computed: spur pruning 2--4\,px, minimum fragment length
-4--8\,px, overlap threshold 0.20--0.50, fallback distance 3--9\,px. The
-perturbations affect scoring only; every stored prediction and every
-configuration predates them.
-Table~\ref{tab:scorer-sensitivity} reports PLECTA's mean \Fone{} and its
-plain paired margins over each comparator at every perturbation, over the
+\textbf{Sensitivity to the scorer's constants.} The four constants above are
+shared with the method (Section~\ref*{M-sec:mm-metrics}). The stored
+predictions of all four methods were therefore re-scored under one-at-a-time
+perturbations of each constant, on a grid fixed in writing before any result
+was computed: spur pruning 2--4\,px, minimum fragment length 4--8\,px, overlap
+threshold 0.20--0.50 and fallback distance 3--9\,px. The perturbations affect
+scoring only; all stored predictions and configurations predate them.
+Table~\ref{tab:scorer-sensitivity} reports PLECTA's mean \Fone{} and its paired
+margins over each comparator under every perturbation, over the
 \PlectaGreedySceneCount{} degraded comparison scenes. Across the
-\PlectaScorerSensitivityComboCount{} combinations PLECTA's mean \Fone{}
-spans \PlectaScorerSensitivityFOneLow{}--\PlectaScorerSensitivityFOneHigh{},
+\PlectaScorerSensitivityComboCount{} combinations, PLECTA's mean \Fone{} ranges
+from \PlectaScorerSensitivityFOneLow{} to \PlectaScorerSensitivityFOneHigh{},
 and the smallest paired margin over any comparator under any perturbation is
-\PlectaScorerSensitivityMarginMin{}. The level moves only with the minimum
-fragment length, and in the same direction for every method, because
-admitting shorter fragments adds hard, low-evidence units for everyone; the
-other three constants move the mean by less than 0.002, and no perturbation
-changes the ordering of the four methods.
+\PlectaScorerSensitivityMarginMin{}. Only the minimum fragment length changes
+the level appreciably, and it does so in the same direction for every method,
+because shorter fragments add difficult, low-evidence units for all of them.
+The other three constants change the mean by less than 0.002, and no
+perturbation changes the ranking of the four methods.
 
 \begin{table}[tbp]
     \centering
-    \caption{Scorer-constant sensitivity. Stored predictions re-scored under
-    one-at-a-time perturbations of the four common-fragment constants;
-    $\Delta$ columns are plain paired mean margins, PLECTA minus comparator,
-    over the scenes both methods completed. Sensitivity reporting only; the
-    published constants were not changed in response.}
+    \caption{Sensitivity to the scorer's constants. Stored predictions were
+    re-scored under one-at-a-time perturbations of the four common-fragment
+    constants; $\Delta$ columns are paired mean margins, PLECTA minus
+    comparator, over the scenes completed by both methods. The published
+    constants were not changed in response.}
     \label{tab:scorer-sensitivity}
     \input{results/plecta_scorer_sensitivity_table}
 \end{table}
 
-\textbf{Common-fragment pairwise \Fone{}}, the primary endpoint. A pair of
-fragments is a true positive when it shares both identities, a false positive
-when the prediction joins fragments of different reference strands, a false
-negative when it separates fragments of one:
+\textbf{Common-fragment pairwise \Fone{}} is the primary endpoint. A pair of
+fragments is a true positive when both identities agree, a false positive when
+the prediction joins fragments of different reference strands, and a false
+negative when it separates fragments of the same strand:
 \begin{equation}
     P=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}},\qquad
     R=\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\qquad
     \Fone{}=\frac{2PR}{P+R}.
     \label{eq:pairwise-f1}
 \end{equation}
-A clustering measure of the Rand family
+It is a clustering measure of the Rand family
 \citep{rand1971objective,amigo2009comparison,argandacarreras2015crowdsourcing},
-permutation-invariant in the instance labels; it rewards holding a strand
-together across every crossing and gap it passes. Blind spots: it is quadratic
-in fragmentation, so a strand arriving in $n$ pieces carries $\binom{n}{2}$
-pairs and a broken mask is charged many times for one missed join, and it
-weights long, much-crossed strands far above short ones.
+invariant to permutation of the instance labels, and it rewards keeping a
+strand together across every crossing and gap it passes. Limitations: it is
+quadratic in fragmentation, so a strand split into $n$ pieces contributes
+$\binom{n}{2}$ pairs and a single missed join in a fragmented mask is
+penalised many times; and it weights long strands with many crossings far
+more heavily than short ones.
 
-\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs
-corrected for chance, which matters because with a hundred strands per scene
-almost every pair genuinely belongs to different strands and the uncorrected
-index sits near 1 for anything. Blind spot: redundancy, since over the comparison
-set it never departs from pairwise \Fone{} by more than
-\PlectaPanelARIMaxGap{}, so it confirms rather than adds.
+\textbf{Adjusted Rand index} \citep{hubert1985comparing} counts the same pairs,
+corrected for chance. The correction matters because, with about a hundred
+strands per scene, almost every pair belongs to different strands and the
+uncorrected index is close to 1 for any prediction. Limitation: over the
+comparison set it never differs from pairwise \Fone{} by more than
+\PlectaPanelARIMaxGap{}, so it confirms rather than adds information.
 
-\textbf{Variation of information} \citep{meila2007comparing}, in bits, lower
-better, is the conditional-entropy distance between the partitions:
-$\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$ is paid
-for cutting one strand into several,
-$\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$ for
-fusing several into one, and reporting both is what separates a method that
-divides from one that fuses. Blind spot: each component alone is degenerate, since a method merging everything never splits anything and scores a perfect zero on
-the split component, so neither is ever quoted singly.
+\textbf{Variation of information} \citep{meila2007comparing}, in bits and lower
+for better agreement, is the conditional-entropy distance between the two
+partitions. Its split component,
+$\mathrm{VI}_{\mathrm{split}}=H(\text{prediction}\mid\text{reference})$,
+penalises dividing one strand into several, and its merge component,
+$\mathrm{VI}_{\mathrm{merge}}=H(\text{reference}\mid\text{prediction})$,
+penalises fusing several strands into one; together they distinguish methods
+that over-segment from methods that under-segment. Limitation: each component
+alone is degenerate, since a method that merges everything never splits and
+scores zero on the split component, so the two are always reported together.
 
-\textbf{Detection \Fone{}}, the measure DNAi reports, matches predicted to
-reference \emph{objects} greedily by highest intersection over union, stopping
-below \PlectaDetectionIoU{}, DNAi's own shipped threshold, with precision over
-predicted and recall over reference objects. It uses a symmetric
-\PlectaPlacementTolerance{}\,px placement tolerance, under which a reference
-pixel counts as found when the prediction passes within it and vice versa, the
-intersection being the smaller of the two counts. The tolerance is necessary:
-two independently read one-pixel centrelines two pixels apart intersect in
-\emph{nothing}, so a strict overlap reports placement rather than shape, a
-problem the thin-structure benchmark FISBe states as a design rationale
-\citep{mais2024fisbe}. What keeps that tolerance a correction rather than an
-inflation is measurable, and the real fields supply the control: on their
-manual-derived axes, where the input mask is a skeleton of the annotation
-itself and nothing is displaced, the tolerance moves detection \Fone{} from
-\PlectaDetectionBFiveEightOneOneZeroManualStrict{} to
-\PlectaDetectionBFiveEightOneOneZeroManualTolerant{} on B58\_110, against
-\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} rising to
-\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{} on the nnU-Net axis of the
-same field. It pays where two readings disagree in placement and nowhere else.
-Counting objects makes it the most forgiving reading of
-a fragmented mask and the least discriminative measure here. Blind spot: an arm
-swap, which it scores 1.000 where the pairwise score gives 0.000.
+\textbf{Detection \Fone{}}, the measure reported by DNAi, matches predicted to
+reference \emph{objects} greedily by highest intersection over union, down to
+\PlectaDetectionIoU{}, DNAi's own default threshold, with precision computed
+over predicted and recall over reference objects. A symmetric placement
+tolerance of \PlectaPlacementTolerance{}\,px is applied: a reference pixel
+counts as found when the prediction passes within this distance, and vice
+versa, and the intersection is taken as the smaller of the two counts. Without
+it, two independently traced one-pixel centrelines two pixels apart would not
+intersect at all, so a strict overlap would measure placement rather than
+shape, a problem also stated as a design consideration of the thin-structure
+benchmark FISBe \citep{mais2024fisbe}. The real fields show that the tolerance
+corrects rather than inflates the score. On the reference-derived axes, a
+skeleton of the annotation itself with no displacement, it changes detection
+\Fone{} on B58\_110 from \PlectaDetectionBFiveEightOneOneZeroManualStrict{} to
+\PlectaDetectionBFiveEightOneOneZeroManualTolerant{}, whereas on the nnU-Net
+axis of the same field it raises it from
+\PlectaDetectionBFiveEightOneOneZeroUNetStrict{} to
+\PlectaDetectionBFiveEightOneOneZeroUNetTolerant{}; the tolerance therefore
+matters only where two readings differ in placement. Because it counts objects,
+this is the most lenient measure of a fragmented mask and the least
+discriminative measure reported. Limitation: it is blind to an arm swap,
+which it scores 1.000 where the pairwise score gives 0.000.
 
-\textbf{Crossing Fidelity} states the contribution directly. At every junction
-node the reference induces a partition of the incident arms, two together
-exactly when the reference gives them the same strand, and so does the
-prediction; Crossing Fidelity is the fraction of crossings at which the two
-partitions are identical. Nodes are the junction clusters of the same pruned
-skeleton and a node's arms are the fragments 8-adjacent to it. Only nodes whose
-arms carry at least two distinct reference strands are scored, since a node
-where every arm belongs to one strand is a skeletonisation artefact and
-scoring it would reward doing nothing. It is a study-specific diagnostic,
-not an established metric, though it follows measures that score correctness at
-branch points rather than per pixel \citep{gillette2011diademmetric,reilly2018nri}. Blind spots, both of which govern its use: it is far less
-discriminative than the pairwise score, so it says what was solved and is never
-a ranking axis; and crossings carry no information about \emph{gaps}, so it is
-silent on the cost the pairwise score pays for bridging them. Sharing its
-skeleton and assignment with the pairwise score makes it a sharper view of the
-same evidence rather than independent confirmation, and it is always printed
-beside its all-unpaired baseline.
+\textbf{Crossing Fidelity} measures junction resolution directly. At every
+junction node the reference induces a partition of the incident arms, two arms
+being grouped together exactly when the reference assigns them to the same
+strand, and the prediction induces another; Crossing Fidelity is the fraction
+of crossings at which the two partitions are identical. Nodes are the junction
+clusters of the same pruned skeleton, and the arms of a node are the fragments
+8-adjacent to it. Only nodes whose arms carry at least two distinct reference
+strands are scored, since a node whose arms all belong to one strand is a
+skeletonisation artefact and scoring it would reward inaction. It is a
+diagnostic introduced for this study rather than an established metric,
+although it follows measures that assess correctness at branch points rather
+than per pixel \citep{gillette2011diademmetric,reilly2018nri}. Limitations: it
+is much less discriminative than the pairwise score, so it is used as a count
+of resolved crossings rather than for ranking; and it carries no information
+about gaps, so it does not reflect the cost of bridging them. Because it shares
+its skeleton and assignment with the pairwise score, it provides a finer view
+of the same evidence rather than independent confirmation, and it is always
+reported together with its all-unpaired baseline.
 
-\textbf{Join \Fone{}} counts decisions rather than pairs, for the real fields
-where the two mask sources fragment differently. A \emph{decision} is a pair of
-distinct fragments whose endpoints come within \PlectaRealJoinReach{}\,px, the
-gap this method will bridge; reference and prediction each say join or not, and
-precision, recall and their harmonic mean are taken over decisions. Being
-linear rather than quadratic in fragmentation, and conditioned on the mask, it
-asks two mask sources comparably hard questions, and splitting and merging
-appear separately as low recall and low precision. Blind spot: a fragment pair
-the mask never brought within reach counts against nobody, so the measure
-is insensitive to a strand the mask lost entirely, and it is always quoted with the number of
-decisions each mask posed.
+\textbf{Join \Fone{}} counts decisions rather than pairs and is used on the
+real fields, where the two mask sources fragment differently. A
+\emph{decision} is a pair of distinct fragments whose endpoints lie within
+\PlectaRealJoinReach{}\,px of each other, the largest gap the method bridges;
+reference and prediction each either join the pair or not, and precision,
+recall and their harmonic mean are computed over decisions. Because it is
+linear rather than quadratic in fragmentation and conditioned on the mask, it
+poses comparably difficult questions for both mask sources, and splitting and
+merging appear separately, as low recall and low precision respectively.
+Limitation: fragment pairs that the mask never brings within reach are not
+counted, so the measure does not register a strand missing from the mask
+entirely; it is therefore always reported with the number of decisions each
+mask poses.
 
-\textbf{Shared-pixel precision and recall} are precision and recall over the
-pixels the reference gives to more than one instance, computed on the raw
-instance masks. They exist because the pairwise measure discards junction
-pixels and is insensitive to whether a crossing pixel was marked as jointly
-owned at all: only a method emitting overlapping layers can score above zero on the
-recall, and one emitting a hard partition scores exactly zero by construction.
-Blind spot: neither component distinguishes a pixel shared for the right reason
-from one shared because a chain was painted with a whole junction cluster.
+\textbf{Measures computed but not used as endpoints.} GraFT's \emph{filament
+matched coverage} asks whether each reference strand is matched one-to-one to
+some detection, and on it PLECTA ranks \emph{below} both comparators: at the
+highest density of GraFT's own generator, \PlectaRegimeHighPlectaMatched{}
+against \PlectaRegimeHighGraFTMatched{} and \PlectaRegimeHighDNAiMatched{}. It
+is not used as an endpoint because it measures existence rather than
+correctness. A method that outputs more objects than the scene contains has a
+candidate for every strand, each method's matched coverage equals the smaller
+of one and its output-to-reference object ratio to within
+\PlectaRegimeCoverageCountResidual{}, and requiring each detection to cover
+half of the axis it claims restores the ranking. \emph{Centreline Dice}
+\citep{shit2021cldice} was evaluated as an alternative matching criterion and
+not adopted. It tests each side's skeleton against the other's \emph{volume},
+which a centreline grouping does not have, so it reduces to the placement test
+that the tolerance above is designed to correct. No clDice results are
+reported.
 
-\textbf{The runtime scaling exponent} is the slope of an ordinary least-squares
-fit of log seconds on log foreground pixels, so an exponent $b$ means cost
-grows as the $b$-th power of the amount of ink. It is reported instead of
-absolute time because these are independently optimised codebases, where
-absolute time measures implementation as much as algorithm. Blind spot: it
-describes a median trend and is silent on the tail, so it is quoted beside the
-per-density medians and the count of scenes stopped at the budget. Dropping
-those scenes biases the exponent downwards for any method whose slowest ones
-did not finish, which is why GraFT's is a lower bound.
-
-\textbf{Two measures were computed and are not endpoints.} GraFT's
-\emph{filament matched coverage} asks whether each reference strand was
-matched one-to-one to some detection, and PLECTA ranks \emph{below} both
-comparators on it: at the densest stratum of GraFT's own generator,
-\PlectaRegimeHighPlectaMatched{} against \PlectaRegimeHighGraFTMatched{} and
-\PlectaRegimeHighDNAiMatched{}. It is not an endpoint because it counts
-existence rather than correctness: a method emitting more objects than the
-scene contains has a spare for every strand, each method's matched coverage
-equals the smaller of one and its emission ratio to within
-\PlectaRegimeCoverageCountResidual{}, and requiring a detection to cover half
-the axis it claims restores the order. \emph{Centreline Dice}
-\citep{shit2021cldice} was tried as an alternative matching criterion and not
-adopted: it tests each side's skeleton against the other's \emph{volume}, and a
-centreline grouping has none, so it degenerates into the placement test the
-tolerance exists to correct. No clDice result is reported in this paper.
-
-\textbf{Admitting a reference at all.} Every measure above compares a
-prediction with a reference, so a defective reference is invisible to all of
-them: it will simply score every method a little lower and change no ordering.
-A reference is therefore admitted only if it reproduces itself, that is, only
-if scoring it as though it were a prediction of itself returns a perfect score
-on every measure. Anything less means the reference disagrees with its own
-fragment assignment, and the shortfall bounds what any method could score
-against it.
-
+\textbf{Validity of a reference.} A defective reference cannot be detected by
+any of the measures above: it lowers every method's score slightly without
+changing their ranking. A reference is therefore accepted only if, scored as a
+prediction of itself, it obtains a perfect score on every measure. Any
+shortfall indicates that the reference disagrees with its own fragment
+assignment and bounds the score any method could obtain against it.
 
 \subsection{Statistical analysis}
 
-Synthetic-scene means and density strata are accompanied by 95\% nonparametric
-bootstrap intervals (20,000 replicates; seed 20,260,810), resampled with
-stratification by density; the clean-minus-degraded analysis resamples paired
-scene differences within density. Per-coverage points in the comparison figures
-are plain means of ten scenes with no interval claimed. On the
-real SEM fields the inferential unit is the field, and the
-\PlectaRealCrossingTotal{} reference crossings entering the crossing measures
-are a count pooled over six condition-specific evaluations of the three
-fields, not a sample size.
-Active-component ablations are one-at-a-time development experiments on all
-\PlectaDevelopmentSceneCount{} development scenes and do not reuse the
-evaluation set.
+Synthetic-scene means and density strata are reported with 95\,\%
+nonparametric bootstrap intervals (20,000 replicates; seed 20,260,810),
+resampled with stratification by density; the comparison between clean and
+degraded masks resamples paired scene differences within density.
+Per-coverage points in the comparison figures are plain means of ten scenes,
+without intervals. On the real SEM fields the inferential unit is the field,
+and the \PlectaRealCrossingTotal{} reference crossings entering the crossing
+measures are a count pooled over six condition-specific evaluations of the
+three fields, not a sample size. Component ablations are one-at-a-time
+experiments on all \PlectaDevelopmentSceneCount{} development scenes and do
+not use the evaluation set.
+
 \section{Comparator configuration}
 \label{app:comparators}
 
-The article's comparator section states each adaptation and its cost; this
-section documents the mechanism behind each, so that the comparison can be
-verified. \textbf{DNAi} clusters junction pixels by single linkage and erases a
-disk at each cluster. At its released 10\,px linkage distance, crossings closer
-than that chain into one cluster, which at 60\,\% coverage reaches 89\,px across
-and is replaced by a single small erasure disk, leaving a whole tangle as one
-instance, which is why its shipped default is not a fair measure of it.
-Reducing the distance to 2\,px on development scenes raised development \Fone{}
-and cut variation-of-information merge by about a factor of three, confirming
-the mechanism; the tuned configuration is the one reported. Two structural
-choices account for the residual difference: it commits to a pairing at every
-junction of degree two to four with no cost threshold, so it cannot decline a
-continuation the way a priced unmatched option can, and it attempts no junction
-above degree four, resolving \PlectaJunctionDNAiDegreeFivePlus{} of the
-crossings above it. Those are about a tenth of the crossings, but they carry
-\PlectaEvidenceHighDegree{}\,\% of same-strand fragment pairs on the degraded
-masks, one such junction severing every pair that spans it. \textbf{GraFT}'s
-errors are divisions rather than merges (variation-of-information split
-\PlectaGraFTVISplit{} against merge \PlectaGraFTVIMerge{}), which follows from a
-greedy longest-first path cover that cannot revise an early commitment once the
-scene collapses into one connected graph, as it does above 30\,\% coverage.
+Section~\ref*{M-sec:res-comparators} of the article summarises how each
+comparator was adapted and at what cost. This section describes the mechanism
+behind each adaptation, so that the comparison can be verified.
+
+\textbf{DNAi} clusters junction pixels by single linkage and erases a disk at
+each cluster. At its released linkage distance of 10\,px, nearby crossings
+chain into one cluster, which at 60\,\% coverage reaches 89\,px across and is
+replaced by a single small erasure disk, leaving a whole tangle as one
+instance. The released default therefore does not reflect the method's
+capability on these scenes. Reducing the distance to 2\,px on development
+scenes raised development \Fone{} and reduced the merge component of the
+variation of information by about a factor of three, confirming this
+mechanism; the tuned configuration is the one reported. Two design choices
+account for the remaining difference. DNAi commits to a pairing at every
+junction of degree two to four without a cost threshold, so it cannot decline
+a continuation in the way a penalised unmatched option allows; and it attempts
+no junction above degree four, resolving
+\PlectaJunctionDNAiDegreeFivePlus{} of those crossings. These are about a
+tenth of all crossings, but they carry \PlectaEvidenceHighDegree{}\,\% of
+same-strand fragment pairs on the degraded masks, since a single unresolved
+junction separates every pair that spans it.
+
+\textbf{GraFT}'s errors are predominantly splits rather than merges (split
+component of the variation of information \PlectaGraFTVISplit{}, merge
+component \PlectaGraFTVIMerge{}). This follows from its greedy longest-path
+cover, which cannot revise an early decision once the scene forms a single
+connected graph, as it does above 30\,\% coverage.
 
 \textbf{SIFNE} enhances the image with an orientation filter transform,
-thresholds it by Otsu, thins it, and then works from the binary skeleton alone:
-it marks every pixel whose eight-connected neighbourhood sum reaches three as a
-crossing, erases each such pixel together with a square neighbourhood, and
-pairs the resulting fragment termini inside an angular search fan, bidirectionally
-and one pairing at a time \citep{zhang2017sifne}. Because everything after the
-thinning reads a binary axis, its own re-entry point is the thinned array, and
-the mask is injected there; every stage downstream is its released source
-unmodified. Only its graphical callbacks are re-expressed, so that it can run
-unattended, and its manual-correction stage is never invoked, since every
-comparator here runs without a human in the loop. One shipped default is
-degenerate at these densities and is re-selected on development scenes.
+thresholds it by Otsu's method and thins it, and thereafter operates on the
+binary skeleton alone. It marks every pixel whose eight-connected neighbourhood
+sum reaches three as a crossing, erases each such pixel together with a square
+neighbourhood, and pairs the resulting fragment termini within an angular
+search fan, bidirectionally and one pairing at a time \citep{zhang2017sifne}.
+Since every step after thinning operates on a binary axis, the mask is
+supplied as the thinned array, and all subsequent stages run as released. Only
+the graphical callbacks were re-implemented, to allow unattended execution,
+and the manual-correction stage was not used, since no comparator here
+involves manual intervention.
 
-The erasure neighbourhood is
-\PlectaSifneShippedJuncSize{} pixels square, applied at every pixel whose
-eight-connected neighbourhood sum reaches three, so the erasures multiply
-with the crossings: on scenes at 20, 40 and 60\,\% coverage the surviving
-mask is 51, 44 and 31\,\% of the input mask, and the evidence is removed
-before any pairing is attempted. On the sparse single-molecule fields the
-method was built for, the erased fraction is small. Selection was staged and both grids were fixed
-before either ran: first the three settings that govern how much mask survives,
-then the linkage gates at the winner of the first. Only the ten development
-scenes were read, never the comparison set. The chosen configuration reduces
-the erasure to \PlectaSifneJuncSize{} pixels square and the search radius to
+One released default is degenerate at these densities and was re-selected on
+development scenes. The erasure neighbourhood is
+\PlectaSifneShippedJuncSize{} pixels square and is applied at every pixel whose
+eight-connected neighbourhood sum reaches three, so the erased area grows with
+the number of crossings: on scenes at 20, 40 and 60\,\% coverage, the
+remaining mask is 51, 44 and 31\,\% of the input, and the evidence is removed
+before any pairing is attempted. On the sparse single-molecule images for
+which the method was designed, the erased fraction is small. Selection
+proceeded in two stages, with both grids fixed in advance: first the three
+settings that determine how much of the mask is retained, then the linkage
+gates at the best setting of the first stage. Only the ten development scenes
+were used. The selected configuration reduces the erasure to
+\PlectaSifneJuncSize{} pixels square and the search radius to
 \PlectaSifneFanR{} pixels, raising development \Fone{} from 0.537 to 0.749 and
-crossing fidelity from 0.502, below the all-unpaired baseline, to 0.831 well
-above it. On the comparison set the same change is worth
-\PlectaSifneShippedFOne{} to \PlectaSifneFOne{}, and both are reported.
+Crossing Fidelity from 0.502, below the all-unpaired baseline, to 0.831. On the
+comparison set, the same change raises \Fone{} from \PlectaSifneShippedFOne{}
+to \PlectaSifneFOne{}; both values are reported.
 
-Two further points bear on reading its column. The search-fan angle turns out
-to be inert at the selected angular gate, because the gate is the stricter of
-the two tests for every fan wider than sixty degrees and therefore binds first;
-as verified in the source code. And the neighbourhood radius that its front end uses for
-orientation filtering is \emph{not} inert once the mask is injected, because
-the same value sets the arclength over which every tip direction is estimated,
-which is the whole evidence its pairing sees.
+Inspection of the source code shows that the search-fan angle has no effect at
+the selected angular gate, because for any fan wider than sixty degrees the
+gate is the stricter of the two tests. The neighbourhood radius used by the
+orientation filter, by contrast, remains effective when the mask is supplied
+directly, because the same value sets the arclength over which every tip
+direction is estimated, which is the only evidence its pairing uses. SIFNE's
+crossing excision does not bias the scoring: although the deleted crossing
+pixels are never restored, the common-fragment scorer also removes junction
+pixels and evaluates only whether the arms meeting there are grouped as in the
+reference, and SIFNE links across the excised crossing, so it makes exactly the
+decision that the endpoint measures.
 
-Its crossing excision is not a scoring artefact. It deletes each crossing pixel
-and its neighbourhood and never restores them, but the common-fragment scorer
-also deletes junction pixels before labelling, and scores only whether the arms
-meeting there are grouped as the reference groups them. SIFNE links across the
-excised crossing, so it makes exactly the decision the endpoint measures. It
-does score zero on the shared-pixel measures, which is a structural property of
-a method that assigns no crossing pixel to anything.
-
-\textbf{Basu et al.} is the one comparator with no released implementation: the
-only code its authors published covers the earlier centreline-localisation
-paper, at a departmental address that no longer resolves and that no archive
-captured. What is measured here is therefore a reimplementation of the
-published principle rather than the authors' program, and it is reported as
-a reimplementation baseline rather than as an external result. Only the geometric half of the method is reimplemented: a
-minimum spanning tree over the centreline pixels, deletion of every bifurcation
-node, and recombination of two- and three-segment groups scored by the
-curvature energy of a fitted smoothing cubic spline
-\citep{dierckx1993curve} less a bond energy, chosen by a
-set-partitioning integer program that is re-solved until the segment set stops
-changing. That half reads geometry alone and so accepts an axis mask directly.
-The other half, an intensity filter bank and a reverse diffusion that converges
-particles onto brightness crests, is not reimplemented, because scoring our own
-front end would measure the reimplementation rather than the published
-method; this arm therefore evaluates the recombination logic only.
+\textbf{Basu et al.} has no released implementation: the only code published
+by its authors accompanies their earlier centreline-localisation paper, and its
+address no longer resolves, with no archived copy available. The method is
+therefore reimplemented from its published description and reported as a
+reimplementation baseline rather than as an external result. Only its
+geometric part is reimplemented: a minimum spanning tree over the centreline
+pixels, removal of every bifurcation node, and recombination of two- and
+three-segment groups scored by the curvature energy of a fitted smoothing cubic
+spline \citep{dierckx1993curve} minus a bond energy, selected by a
+set-partitioning integer program that is re-solved until the segment set no
+longer changes. This part uses geometry alone and therefore accepts an axis
+mask directly. The intensity-based part, a filter bank followed by a reverse
+diffusion that moves particles onto intensity ridges, is not reimplemented,
+because evaluating a substitute front end would measure that substitute rather
+than the published method; this baseline therefore evaluates the recombination
+step only.
 
 Its two user parameters, the maximum linking distance and the maximum tangent
-mismatch, were selected on the same ten development scenes and by the same
-criterion used for the others. Their published values, fixed in that paper for
-its own simulated benchmark, score \PlectaBasuDelta{} and \PlectaBasuTheta{}
-here only after selection; at the published pair the reimplementation scores
-0.076 on these masks, because a two-pixel linking distance admits almost no
-recombination on a mask whose gaps are wider than that. Both figures are
-recorded. Because the paper underdetermines two further quantities that change
+mismatch, were selected on the same ten development scenes, by the same
+criterion as for the other comparators. The values published for the original
+simulated benchmark are replaced by \PlectaBasuDelta{} and \PlectaBasuTheta{}
+here; with the published pair, the reimplementation scores 0.076 on these
+masks, because a linking distance of two pixels permits almost no
+recombination when the gaps in the mask are wider. Both results are recorded.
+The original description leaves two further quantities unspecified that affect
 the result, the smoothing of the fitted spline and the quadrature of the bond
-energy, each was resolved in whichever direction favours the method, and the
-direction is recorded alongside the choice.
+energy; each was set in the direction favourable to the method, and the choice
+is recorded. On Crossing Fidelity the recombination decides junctions almost as
+well as the exact matching does, but it loses the pairwise margin in the
+assembly built from those decisions, because a pairwise score over fragments
+is quadratic in fragmentation, whereas a junction count is not.
 
-The comparison is read on crossing fidelity as well as on the pairwise score,
-and the two separate cleanly here: the recombination decides junctions almost
-as well as the exact matcher does, and loses the pairwise margin on the
-assembly built from those decisions, because a pairwise score over fragments is
-quadratic in fragmentation while a junction count is not.
+\subsection{Paired margins}
 
-
-\subsection{Margins the main text states without their intervals}
-
-The article's comparator section gives the crossing-resolution rates and the
-restricted DNAi comparison in summary. The paired figures are here.
-
-
-Crossing Fidelity, paired against PLECTA over the degraded set:
+Paired against PLECTA over the degraded set, the Crossing Fidelity margins are
 \PlectaJunctionGreedyDelta{} [\PlectaJunctionGreedyDeltaCILow{},
 \PlectaJunctionGreedyDeltaCIHigh{}] over the greedy baseline,
 \PlectaJunctionGraFTDelta{} [\PlectaJunctionGraFTDeltaCILow{},
 \PlectaJunctionGraFTDeltaCIHigh{}] over GraFT and \PlectaJunctionDNAiDelta{}
 [\PlectaJunctionDNAiDeltaCILow{}, \PlectaJunctionDNAiDeltaCIHigh{}] over DNAi.
-On clean axes PLECTA resolves \PlectaJunctionCleanPlectaRate{}. Leaving every
-arm unpaired resolves \PlectaJunctionChance{} of these crossings, which is the
-all-unpaired baseline the rate is read against: a deterministic
-all-unpaired policy rather than a chance level.
+On clean axes PLECTA resolves \PlectaJunctionCleanPlectaRate{} of crossings.
+Leaving every arm unpaired resolves \PlectaJunctionChance{} of them; this is
+the all-unpaired baseline against which the rate is read, a deterministic
+policy rather than a chance level. Crossing Fidelity is much less
+discriminative than the pairwise score: at 60\,\% coverage it spans
+\PlectaJunctionSpreadHigh{} between the best and worst methods, whereas
+pairwise \Fone{} spans \PlectaPairwiseSpreadHigh{}. Resolution rates decline
+for every method at the highest-degree nodes: pooled over the
+\PlectaJunctionCount{} reference crossings of the degraded set, PLECTA
+resolves \PlectaJunctionPlectaRate{} exactly, but only
+\PlectaJunctionPlectaDegreeFivePlus{} above degree four, where no comparator
+is higher.
 
-Two things about that column belong with it. It is far less discriminative
-than the pairwise score, spanning \PlectaJunctionSpreadHigh{} between best and
-worst method at 60\,\% coverage where pairwise \Fone{} spans
-\PlectaPairwiseSpreadHigh{}, so it should be read as a count of what was solved
-and not as a ranking. Resolution rates decline for every method at the
-highest-degree nodes: pooled over the \PlectaJunctionCount{} reference
-crossings of the degraded set, PLECTA partitions
-\PlectaJunctionPlectaRate{} exactly, but above degree four it resolves only
-\PlectaJunctionPlectaDegreeFivePlus{}, and no comparator is higher there.
-
-The restricted DNAi comparison, which scores only the evidence a
-degree-limited, gap-blind method can reach, moves the clean-axis difference
-from \PlectaDNAiCleanDeltaFOne{} to \PlectaDNAiRestrictedCleanDeltaFOne{}
+A restricted comparison with DNAi scores only the evidence that a method
+limited to junctions of degree four or less, and unable to bridge gaps, can
+reach. It changes the clean-axis difference from \PlectaDNAiCleanDeltaFOne{}
+to \PlectaDNAiRestrictedCleanDeltaFOne{}
 [\PlectaDNAiRestrictedCleanDeltaCILow{},
-\PlectaDNAiRestrictedCleanDeltaCIHigh{}], still favouring PLECTA in
+\PlectaDNAiRestrictedCleanDeltaCIHigh{}], still in favour of PLECTA in
 \PlectaDNAiRestrictedCleanWinCount{} of \PlectaDNAiCleanSceneCount{} scenes.
+
 \section{Depth measures}
 \label{sec:app-depth-measures}
 
-The measures of Section~\ref{app:measures} score which centreline
-fragments belong to one instance. None of them can see depth: two
-reconstructions that agree on every instance but disagree about which strand
-lies on top at every crossing are indistinguishable to all of them. The
-2.5-D stage is therefore scored by its own family, defined here.
+The measures of Section~\ref{app:measures} assess which centreline fragments
+belong to the same instance and are insensitive to depth: two reconstructions
+that agree on every instance but disagree on which strand lies on top at every
+crossing receive identical scores. The depth stage is therefore evaluated with
+the following measures.
 
-\paragraph{Crossing order accuracy.} Each reference crossing names the instance
-physically on top; the reconstruction either names one or abstains. Three
-quantities are reported and none is quoted alone: \emph{decided only}, the
-fraction of committed decisions that are correct, which by itself is not
-evidence because abstaining on every hard crossing scores $1.000$;
-\emph{all crossings}, which counts an abstention as an error and is the
-headline; and the \emph{abstention rate} beside both. Chance is exactly
-$\PlectaDepthChance{}$, the decision being binary and symmetric, so only the
-margin above it carries information. A predicted crossing is credited only when
-it involves the same instance pair as a reference crossing and lies within the
-placement tolerance, so inventing crossings cannot help.
+\textbf{Crossing-order accuracy.} Each reference crossing specifies which
+instance lies on top; the reconstruction either names one or abstains. Three
+quantities are reported, never in isolation: \emph{decided only}, the fraction
+of committed decisions that are correct, which alone is not informative
+because abstaining on every difficult crossing yields $1.000$; \emph{all
+crossings}, which counts an abstention as an error and is the primary
+quantity; and the \emph{abstention rate}. The decision is binary and
+symmetric, so chance is exactly $\PlectaDepthChance{}$ and only the margin
+above it is informative. A predicted crossing is credited only if it involves
+the same instance pair as a reference crossing and lies within the placement
+tolerance, so spurious crossings cannot improve the score.
 
-\paragraph{Depth order over instance pairs.} Crossing accuracy is local. The
-global counterpart asks, for two instances, whether the reconstruction places
-the deeper one deeper, and is reported twice. Over \emph{crossing pairs} it
-measures the stack where evidence exists. Over \emph{all pairs} it includes
-instances that never cross and are therefore constrained by no evidence at all,
-whose relative depth is fixed by the solver's tie-break rather than by the
-image. The two are never pooled, and the fraction of pairs sharing a component
-is reported beside them so the second can be read against what it could
-possibly measure. Both are invariant to monotone rescaling of depth, so they
-describe the arrangement rather than its units. Kendall's~$\tau$ over the same
-pairs is $2a-1$ for accuracy $a$ and is not reported separately.
+\textbf{Depth order over instance pairs.} This global counterpart asks, for a
+pair of instances, whether the reconstruction places the deeper one deeper. It
+is reported over two sets. Over \emph{crossing pairs}, it measures the stack
+where evidence exists. Over \emph{all pairs}, it also includes instances that
+never cross, whose relative depth is set by the solver's tie-breaking rule
+rather than by the image. The two are never pooled, and the fraction of pairs
+that share a connected component is reported alongside them, so that the
+second can be interpreted. Both are invariant to monotone rescaling of depth
+and therefore describe the arrangement rather than its units. Kendall's
+$\tau$ over the same pairs equals $2a-1$ for accuracy $a$ and is not reported
+separately.
 
-\paragraph{Layer structure.} Layers are an ordinal quotient of depth: a
-reconstruction can order every pair correctly yet cut the film into a different
-number of layers. Layer agreement, the fraction of instances placed in the
-reference layer, is therefore reported separately.
+\textbf{Layer structure.} Layers are an ordinal quotient of depth: a
+reconstruction can order every pair correctly but divide the film into a
+different number of layers. Layer agreement, the fraction of instances placed
+in the reference layer, is therefore reported separately.
 
-\section{Evaluation split and seeds}
+\section{Development and evaluation split}
 \label{app:split}
 
-This section documents how every parameter was fixed on a separate
-development set and never on the scenes the article reports.
+All parameters were fixed on a separate development set and never on the
+scenes reported in the article. Development used \PlectaDevelopmentSceneCount{}
+scenes spanning 20--60\,\% coverage. All segmentation parameters, gates,
+penalties and the round schedule were set on these scenes, as was each
+comparator's configuration, so that no method was tuned on the scenes on which
+it is scored and all were tuned on the same scenes. The evaluation set
+comprises \PlectaHeldoutSceneCount{} scenes, 32 at each of 20, 30, 40 and
+60\,\% coverage. The generator seeds of both sets are listed in the seed
+manifest released with the code.
 
-Development used \PlectaDevelopmentSceneCount{} scenes spanning 20--60\,\%
-coverage. Every parameter of the segmentation, every gate and price, and the
-round schedule were settled there, as was each comparator's parameter
-translation, so that no method was tuned on the scenes it is scored on and all
-were tuned on the same ones.
-
-The evaluation set comprises \PlectaHeldoutSceneCount{} scenes, 32 at each of
-20, 30, 40 and 60\,\% coverage.
-
-The synthetic intervals describe sampling within this generator; the ranking
-is also tested on an independently published generator and on real SEM masks.
-The generator's own shape parameters were also swept. Taking its bending stiffness from
-\PlectaCurvinessSweepLow{} to \PlectaCurvinessSweepHigh{}\,\% of default, which
-moves the median centreline radius from \PlectaCurvinessRadiusHigh{} to
-\PlectaCurvinessRadiusLow{}\,px, moved the level means of \Fone{} by at most
-\PlectaCurvinessMaxSpread{} over \PlectaCurvinessSeriesCount{} series, against
-a within-level scene-to-scene scatter of \PlectaCurvinessMinSceneSD{}; taking
-the curve wavelength from \PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px moved
-them by at most \PlectaSmoothMaxSpread{}, and the one series of
-\PlectaSmoothSeriesCount{} whose spread exceeded its own noise is
-non-monotonic with its minimum at the default, for which no mechanistic
-explanation was identified. Both sweeps are development-scene measurements,
-\PlectaCurvinessSceneCount{} scenes per level, reported as plain means.
-
+The synthetic intervals describe sampling variability within this generator;
+the ranking is additionally tested on an independently published generator
+and on real SEM masks. The generator's shape parameters were also varied.
+Changing its bending stiffness from \PlectaCurvinessSweepLow{} to
+\PlectaCurvinessSweepHigh{}\,\% of the default, which moves the median
+centreline radius from \PlectaCurvinessRadiusHigh{} to
+\PlectaCurvinessRadiusLow{}\,px, changed the level means of \Fone{} by at most
+\PlectaCurvinessMaxSpread{} over \PlectaCurvinessSeriesCount{} series,
+compared with a within-level scene-to-scene standard deviation of
+\PlectaCurvinessMinSceneSD{}. Changing the curve wavelength from
+\PlectaSmoothLow{} to \PlectaSmoothHigh{}\,px changed them by at most
+\PlectaSmoothMaxSpread{}; the one series of \PlectaSmoothSeriesCount{} whose
+variation exceeded its own noise is non-monotonic, with its minimum at the
+default, and no mechanism for this was identified. Both variations were
+measured on development scenes, \PlectaCurvinessSceneCount{} scenes per level,
+and are reported as plain means.
 
 \section{Manual annotation procedure}
 \label{sec:supp-annotation}
 
-Reference annotations were created with an in-house interactive
-instance-segmentation tool for greyscale SEM images of crossing strands.
-Each bundle is stored as a separate mask, allowing crossing pixels to belong
-to multiple strands. The saved annotation file is read directly by the
-evaluation without an intermediate export or conversion.
+Reference annotations were created with an interactive instance-segmentation
+tool for greyscale SEM images of crossing strands, developed in-house. Each
+bundle is stored as a separate mask, so that crossing pixels can belong to
+several strands, and the saved annotation file is read directly by the
+evaluation, without intermediate export or conversion.
 
-Tracing has two optional forms of assistance. Strokes can snap to the local
-intensity ridge, with polarity calibrated from the existing annotation, and
-can be re-rendered using a smoothing spline whose centreline shifts to the
-measured intensity crest only where that crest is consistent. Apparent widths
-are measured from perpendicular full-width-at-half-maximum profiles,
-referenced to the local minima on either side of the peak. The reported width
-is twice the nearer half-width, limiting inflation when a crossing strand
-merges into the profile. These widths do not enter the centreline-based
-segmentation scores.
-
-The tool suggests gap bridges between collinear endpoints of different
-strands, but each suggestion requires the annotator's acceptance. Strand
-identity through crossings and gaps therefore remains a manual decision.
+Two optional forms of assistance are available during tracing. Strokes can
+snap to the local intensity ridge, with polarity calibrated from the existing
+annotation, and can be re-rendered as a smoothing spline whose centreline is
+shifted to the measured intensity crest only where that crest is consistent.
+Apparent widths are measured from perpendicular full-width-at-half-maximum
+profiles, referenced to the local minima on either side of the peak; the
+reported width is twice the smaller half-width, which limits overestimation
+when a crossing strand merges into the profile. These widths are not used by
+the centreline-based segmentation scores. The tool proposes gap bridges
+between collinear endpoints of different strands, but each proposal must be
+accepted by the annotator, so strand identity through crossings and gaps
+remains a manual decision.

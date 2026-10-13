@@ -1,51 +1,47 @@
 \section{Instance segmentation: cost function, gates and schedule}
 \label{supp:recon}
 
-This section gives the arithmetic behind Section~2.4 of the article. Values
-are those of the released configuration, selected exclusively on development
-data.
+This section gives the numerical detail of Section~\ref*{M-sec:mm-plecta} of
+the article. All values are those of the released configuration and were
+selected on development data only.
 
 \subsection{Skeleton graph}
 
-The mask $M$ is binarised at $>0$, skeletonised, and spurs no longer than
+The mask $M$ is binarised at $>0$ and skeletonised, and spurs no longer than
 \PlectaParamSpurPx{}\,px are removed iteratively. Skeleton pixels of degree at
 least three form junction clusters, and adjacent clusters merge into nodes:
 connectors up to \PlectaParamAbsorbPx{}\,px are absorbed into one node,
 connectors up to \PlectaParamJoinPx{}\,px merge nearby nodes while remaining
-real arms, and free debris up to \PlectaParamFreeDebrisPx{}\,px is absorbed.
-Each remaining connected path is stored as an ordered arm carrying one stub at
-each end.
+arms, and free debris up to \PlectaParamFreeDebrisPx{}\,px is absorbed. Each
+remaining connected path is stored as an ordered arm with one stub at each
+end.
 
 \subsection{Stub frames}
 
-A stub frame holds its tip, outward tangent and signed curvature, estimated by
-a least-squares arclength polynomial fit read outward from the tip. The fit is
-quadratic when the span reaches \PlectaParamMinQuadratic{}\,px and linear
-otherwise, and a frame counts as reliable only with at least three samples
-spanning at least \PlectaParamSpurPx{}\,px. Local frames use
-\PlectaParamWindowLocal{}\,px of support; once links form chains that support
-expands to \PlectaParamWindowChain{}\,px, so a stub too short to have a
-direction of its own borrows one from the chain it has joined.
+A stub frame consists of the tip position, the outward tangent and the signed
+curvature, estimated by a least-squares polynomial fit in arclength measured
+outward from the tip. The fit is quadratic when the span reaches
+\PlectaParamMinQuadratic{}\,px and linear otherwise, and a frame is considered
+reliable only if it rests on at least three samples spanning at least
+\PlectaParamSpurPx{}\,px. Local frames use \PlectaParamWindowLocal{}\,px of
+support. Once links form chains, the support extends to
+\PlectaParamWindowChain{}\,px, so that a stub too short to define a direction
+of its own inherits one from the chain it has joined.
 
 \subsection{Weights and scales of the pairing cost}
 
-The cost function itself is stated in the article, which also gives the
-reasoning behind its three deliberate properties. What follows are the values
-it is evaluated with.
-
-Junction and gap links use separate weight sets, because a junction link is
-scored on direction alone while a gap link must also answer for the distance it
-spans. The curvature term carries a constant of \PlectaParamKappaScale{}, which
-places curvature, in px$^{-1}$, on the scale of the angular terms; without it a
-term in reciprocal pixels and a term in radians could not be added. Junction
-links set
-$w_\ell=0$, a junction having no gap to pay for, and $\ell_0$ and $d_0$ set the
-length scale of the gap penalty and the width of the chord fade respectively.
+Junction and gap links use separate weight sets
+(Table~\ref{tab:cost-weights}). A junction link is scored on direction alone,
+whereas a gap link is also charged for the distance it spans; junction links
+therefore set $w_\ell=0$. The curvature term carries a constant of
+\PlectaParamKappaScale{}, which brings curvature, in px$^{-1}$, onto the scale
+of the angular terms. The parameters $\ell_0$ and $d_0$ set the length scale of
+the gap penalty and the width of the chord fade, respectively.
 
 \begin{table}[tbp]
   \centering
   \caption{Cost weights and scales of the released configuration. Junction
-  and gap links are scored with separate sets; only the gap set carries a
+  and gap links are scored with separate sets; only the gap set includes a
   length term.}
   \label{tab:cost-weights}
   \input{results/plecta_parameter_table}
@@ -53,266 +49,225 @@ length scale of the gap penalty and the width of the chord fade respectively.
 
 \subsection{Penalties, gates and admissibility}
 
-Leaving a stub unmatched carries a penalty rather than a prohibition, and
-the penalty $p_i$
-also fixes admissibility: an edge is a candidate only when
-$C_{ij}<p_i+p_j$. Exact
-maximum-weight partial matching then maximises $\sum(p_i+p_j-C_{ij})$ over
-disjoint pairs, which minimises total link cost plus $p_i$ for every stub left
-free.
+Leaving a stub unmatched incurs a penalty $p_i$ rather than being prohibited.
+Exact maximum-weight partial matching maximises $\sum(p_i+p_j-C_{ij})$ over
+disjoint pairs, which is equivalent to minimising the total link cost plus
+$p_i$ for every stub left unmatched. The same penalty determines
+admissibility, $C_{ij}<p_i+p_j$. This is not an additional threshold: an edge
+with $C_{ij}\ge p_i+p_j$ makes no positive contribution to the objective and
+would never be selected by a partial matching.
 
-The admissibility limit is not a separate threshold. An edge with
-$C_{ij}\ge p_i+p_j$ contributes nothing positive to the objective, so a
-maximum-weight \emph{partial} matching would never select it, and declining to
-offer it removes an edge that could not have been chosen.
+Junction stubs carry $p_i=\PlectaParamJunctionPrice{}$, so a junction edge
+requires $C<\PlectaParamJunctionLimit{}$. Gap stubs carry
+$p_i=\PlectaParamGapPrice{}$, so a gap edge requires $C<\PlectaParamGapLimit{}$
+and, in addition, $d\le\PlectaParamGapMaxLen{}$\,px,
+$\theta\le\PlectaParamGapMaxTheta{}$\,rad and
+$\varphi\le\PlectaParamGapMaxPhi{}$\,rad at each end. The gap gates are
+stricter because a gap link asserts continuity across missing, rather than
+ambiguous, evidence. All values were fixed on development scenes.
 
-At the configured penalties junction stubs carry
-$p_i=\PlectaParamJunctionPrice{}$, so a junction edge needs
-$C<\PlectaParamJunctionLimit{}$. Gap stubs carry
-$p_i=\PlectaParamGapPrice{}$, so a gap edge needs
-$C<\PlectaParamGapLimit{}$, and must in addition satisfy
-$d\le\PlectaParamGapMaxLen{}$\,px, $\theta\le\PlectaParamGapMaxTheta{}$\,rad
-and $\varphi\le\PlectaParamGapMaxPhi{}$\,rad at each end. The gap gates are the
-tighter set because a gap link asserts a continuation across evidence that is
-missing rather than merely ambiguous. The values were fixed on development
-scenes.
-
-\subsection{The round schedule}
+\subsection{Round schedule}
 
 Rounds $r=0,\ldots,\PlectaParamRounds{}-1$ apply a schedule fraction
-$\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/7$ that
-scales the unmatched penalties and the two gap angle limits, and nothing
-else.
-Scaling a penalty \emph{down} admits fewer edges, admissibility being
-$C_{ij}<p_i+p_j$, and scaling an angle limit down narrows the gap gates, so
-early rounds are the conservative ones and are deliberately under-linked: while
-the frames are least reliable, only pairings that survive the reduced
-penalties and
-narrowed gates are committed, and the constraints relax towards their configured
-values as the chains assembled so far improve the frame estimates. The
-final round,
-$\alpha_7=1$, is the only one run at the configured parameters, and is the one
-returned.
-
-In full:
+$\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/7$ to the
+unmatched penalties and to the two gap angle limits, and to nothing else. A
+lower penalty admits fewer edges and a lower angle limit narrows the gap gates,
+so the early rounds, in which frame estimates are least reliable, are
+deliberately conservative; the constraints relax as the assembled chains
+improve the frame estimates. Only the final round, $\alpha_7=1$, runs at the
+configured parameters, and its result is returned. The complete procedure is:
 \begin{enumerate}[nosep,leftmargin=1.5em,label=\arabic*.]
   \item Skeletonise $M$, prune spurs, merge junction clusters into nodes, and
         store the remaining paths as arms with a stub at each end.
   \item For $r=0,\ldots,7$, re-solving both matchings from scratch and carrying
         only the chain structure forward from round $r-1$:
   \begin{enumerate}[nosep,leftmargin=1.5em,label=(\alph*)]
-    \item Re-fit every stub frame along the chain it now belongs to.
+    \item Re-fit every stub frame along the chain to which it now belongs.
     \item At each node, form candidate edges between stubs of different arms
-          with finite frames and cost, keep those admissible at $\alpha_r$, and
-          solve one maximum-weight matching per node.
-    \item From the still-unmatched reliable stubs, form gap candidates on
+          with finite frames and cost, retain those admissible at $\alpha_r$,
+          and solve one maximum-weight matching per node.
+    \item From the still-unmatched reliable stubs, form gap candidates between
           different arms and different nodes that pass the distance gate and
           the $\alpha_r$-scaled angle gates, and solve one global
-          maximum-weight matching over the admissible ones.
+          maximum-weight matching over the admissible candidates.
   \end{enumerate}
   \item Return the links of round $r=7$.
 \end{enumerate}
 
-\subsection{Why the junction is solved as a whole}
+\subsection{Joint versus sequential matching}
 
-Joint and sequential solutions coincide at plain crossings and diverge only as
-nodes grow dense. Over 20 development scenes they never disagreed at nodes of
-degree 2--4 ($n=542$), disagreed at 22\,\% of nodes with 5--8 stubs ($n=187$)
-and at 69\,\% of nodes with 9 or more ($n=233$), where the joint solution was
-better by a median of 0.90 in total cost.
-
-That comparison holds one node's costs fixed. Run inside the rounds, where each
-matching sets the frames the next is scored against, an early low-cost
-choice affects subsequent frame estimates and the difference is no longer
+Joint and sequential solutions coincide at simple crossings and diverge only
+at dense nodes. Over 20 development scenes they never differed at nodes of
+degree 2--4 ($n=542$), differed at 22\,\% of nodes with 5--8 stubs ($n=187$)
+and at 69\,\% of nodes with 9 or more ($n=233$); at these nodes the joint
+solution had a lower total cost, by a median of 0.90. This comparison holds
+the costs of a single node fixed. Within the round schedule, where each
+matching determines the frames against which the next is scored, an early
+low-cost choice alters later frame estimates, so the difference is not
 confined to dense nodes.
 
 \subsection{Instance output}
 
-Connected components of accepted arm links define instances. PLECTA paints
-every arm pixel and every junction cluster touched by a chain into that
-instance, so intersecting instances share crossing pixels. An isolated one-arm
-component shorter than 6\,px is omitted. Accepted gap links determine identity
-but are not painted into the fixed centreline output. All effective parameters,
-including values previously inherited as code defaults, are materialised in the
+Connected components of accepted arm links define instances. Every arm pixel,
+and every junction cluster touched by a chain, is assigned to that chain's
+instance, so intersecting instances share crossing pixels. Isolated one-arm
+components shorter than 6\,px are omitted. Accepted gap links determine
+identity but are not drawn into the centreline output. All effective
+parameters, including former code defaults, are stated explicitly in the
 released JSON configuration.
 
 \section{Depth stage: evidence and solver}
 \label{supp:depthstage}
 
-This section gives the detail behind Section~2.6 of the article.
+This section gives the detail of Section~\ref*{M-sec:mm-depth} of the
+article.
 
 \subsection{Sampling geometry at a crossing}
 
-Where two instance centrelines intersect, a short arc of each is taken through
-the crossing (the shared \emph{core}, a flat \PlectaParamCorePx{}\,px of arc,
-the same at every crossing), together with the \emph{flanks} on either side of
-it. Flank samples are kept clear of the other strand's stroke, because a
-sample taken inside it measures the union of two rods rather than one of them.
-A crossing with too few usable flank samples abstains rather than being decided
-on thin evidence.
+Where two instance centrelines intersect, a short arc of each is sampled
+through the crossing: the shared \emph{core}, a fixed \PlectaParamCorePx{}\,px
+of arc at every crossing, and the \emph{flanks} on either side of it. Flank
+samples are kept clear of the other strand, because a sample inside it would
+measure the superposition of both strands rather than one. A crossing with too
+few usable flank samples abstains. Earlier versions sized the core from the
+radii of the two strands; with a fixed core, no radius estimate enters the
+evidence, and radius errors cannot affect a depth decision. Radii enter only
+downstream, in the non-interpenetration constraints that determine metric
+height.
 
-The core length was previously sized from the two strands' radii so that it
-spanned both silhouettes. It is now the constant above, and no per-rod radius
-enters the evidence path at all, so a radius estimate can no longer move a depth
-decision. Radii re-enter only downstream, in the non-interpenetration
-constraints that set metric height.
+\subsection{Intensity score and noise floor}
 
-\subsection{One channel, and its noise floor}
-
-One quantity is read on core and flanks alike: median intensity. Write $m_i$ and
-$m_j$ for the two strands' flank medians and $m_c$ for the pooled core median.
-The evidence at the crossing is the score
+A single quantity, the median intensity, is read on the core and on the
+flanks. Let $m_i$ and $m_j$ denote the flank medians of the two strands and
+$m_c$ the pooled core median. The evidence at the crossing is the score
 \begin{equation}
   s \;=\; 2\,
   \frac{\lvert m_c-m_j\rvert-\lvert m_c-m_i\rvert}
        {\max\!\bigl(\lvert m_i-m_j\rvert,\;2\hat\sigma\bigr)},
   \label{eq:depth-score}
 \end{equation}
-whose sign names the upper strand, the one whose flanks the core resembles
-more closely, and whose magnitude $\lvert s\rvert$ is the weight that decision
-carries. A crossing abstains when
-$\lvert s\rvert<\PlectaParamAbstainScore{}$; the threshold is set directly in
-score units rather than as a band around a probability. Here
-$\hat\sigma$ is a noise estimate belonging to that crossing alone: $1.4826$
-times the median absolute deviation of the within-rod flank residuals, each
-strand's flank samples being centred on their own median and the two residual
-sets pooled. It therefore measures the scatter within a rod's own appearance,
-not the difference between the two rods.
+whose sign identifies the upper strand, namely the one whose flanks the core
+resembles more closely, and whose magnitude $\lvert s\rvert$ is the weight of
+that decision. A crossing abstains when
+$\lvert s\rvert<\PlectaParamAbstainScore{}$, a threshold defined directly in
+score units. The noise estimate $\hat\sigma$ is computed per crossing as
+$1.4826$ times the median absolute deviation of the within-strand flank
+residuals, obtained by centring each strand's flank samples on their own
+median and pooling the two residual sets. It therefore measures the variation
+within each strand's appearance, not the difference between the two strands.
+For compatibility with the output format, each crossing record also contains a
+probability $p$; this is a monotone transformation of $s$, not a calibrated
+confidence, and is not used in any decision or weighting.
 
-A probability $p$ is still written into the per-crossing record so that the
-output keeps its schema, but it is a monotone relabelling of $s$. It is neither
-a calibrated confidence nor the quantity anything is decided or weighted on, and
-should not be read as one.
+\textbf{Noise floor in the denominator.} By the reverse triangle inequality,
+the numerator of \eqref{eq:depth-score} is bounded in magnitude by
+$\lvert m_i-m_j\rvert$, so a denominator equal to that separation drives the
+score to $\pm1$ whenever the two strands differ at all. A previous version of
+the rule bounded the denominator below by a small fixed constant in grey
+levels, well below the noise level of these images. A maximal score could then
+arise from a separation smaller than the noise, and because a maximal score
+exceeds any abstention threshold, such crossings could never abstain. This
+case was common: a substantial fraction of crossings saturated in this way,
+and those whose separation was below the noise level were markedly less
+accurate than those separated by more. Bounding the denominator by
+$2\hat\sigma$ ensures that a high score indicates a separation larger than the
+noise, and allows the stage to abstain where the evidence is weak.
 
-\subsubsection*{Why the denominator is a noise floor}
+\textbf{Removed gradient channel.} An earlier version also read the median
+gradient magnitude along each strand's two edges, at centreline
+$\pm r\,\mathbf{n}$, on the premise that the upper strand's edges remain sharp
+through the crossing while those of the lower strand are occluded. On real
+crossings this channel decided almost no crossings, agreed with the intensity
+channel no better than chance, and was itself at chance level. Because the
+channel is not part of the released implementation, these measurements are not
+reported quantitatively. The cause lies in the sampling geometry: within the
+core, the $\pm r$ offsets fall inside the other strand, so the measurement is
+contaminated exactly where it is needed. Removing the channel also removed the
+gradient image, the two channel weights and the logistic function that
+combined the channels; with a single channel, $s$ is itself the decision
+variable.
 
-By the reverse triangle inequality the numerator of \eqref{eq:depth-score} is
-bounded in magnitude by $\lvert m_i-m_j\rvert$, so a denominator equal to that
-separation drives the ratio to $\pm1$ whenever the two strands differ at all.
-The previous form of this rule floored the denominator at a small fixed constant
-in grey levels, far below the noise of any of these images. The consequence was
-structural rather than statistical: a maximal score was then
-reachable on a separation smaller than the noise, and a maximal score exceeded
-any abstention threshold, so the rule could not abstain on such a crossing
-regardless of the evidence. Nor was that regime rare: a substantial
-fraction of crossings saturated this way, and among the saturated ones those
-whose separation fell below the noise were markedly less accurate than those
-separated by more than it. Flooring at
-$2\hat\sigma$ instead makes a confident score mean \emph{separated by more than
-the noise} rather than merely separated, and restores the stage's ability to
-abstain where it should.
+\textbf{Comparison with the two-channel rule.} The one- and two-channel rules
+were compared on \PlectaDepthRuleHeldoutScenes{} optically rendered synthetic
+scenes containing \PlectaDepthRuleHeldoutCrossings{} crossings. The core
+half-size (\PlectaParamCorePx{}\,px) was chosen by a sweep on the same set, and
+the insensitivity of the result to the abstention threshold was also checked
+on it, so the comparison is in-sample with respect to these two values. Both
+values were nevertheless inherited rather than newly selected:
+\PlectaParamCorePx{}\,px is the value the previous rule's radius-free fallback
+already used, and both lie on a plateau. A fixed core performs no worse than
+oracle per-strand radii anywhere between 6 and 14\,px, and accuracy is
+unchanged over a band of thresholds around \PlectaParamAbstainScore{}.
 
-\subsubsection*{The gradient channel, and why it was removed}
+At matched coverage, with both rules answering as often as the released rule
+does at \PlectaDepthRuleCovShipped{}\,\%, the one-channel rule matches the
+accuracy of the two-channel rule, with a difference of
+$\PlectaDepthRuleAccDelta{}$ (95\,\% CI $\PlectaDepthRuleAccCI{}$). When both
+rules are forced to decide every crossing, including those on which they would
+abstain, the one-channel rule is less accurate by
+$\PlectaDepthRuleAccDeltaFull{}$ (CI $\PlectaDepthRuleAccFullCI{}$); neither
+rule is operated in this mode. The one-channel rule orders its confidence
+better: the area under the curve of correctness against $\lvert s\rvert$
+increases from $\PlectaDepthRuleAucOld{}$ to $\PlectaDepthRuleAucNew{}$, a gain
+of $\PlectaDepthRuleAucDelta{}$ (CI $\PlectaDepthRuleAucCI{}$). Because
+$\lvert s\rvert$ is the edge weight of the global ordering described below,
+better-ordered confidence means that contradictions are resolved at the
+weakest relations. It also translates into higher accuracy when more
+abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
+\PlectaDepthRuleCovAPct{}\,\% coverage and by $\PlectaDepthRuleAccAtCovB{}$ at
+\PlectaDepthRuleCovBPct{}\,\%. The one-channel rule therefore matches the
+accuracy of the two-channel rule, with better-ordered confidence and a simpler
+evidence path.
 
-An earlier version of this stage read a second quantity beside intensity: median
-gradient magnitude sampled on each strand's own two edges at centreline
-$\pm r\,\mathbf{n}$, the axis gradient being near zero and therefore
-uninformative. The argument was that the upper strand's edges stay crisp
-through the crossing while the lower strand's are overwritten. It did not
-survive measurement. Standing alone the channel decided almost no real
-crossings, agreed with the intensity channel at chance, and was itself at
-chance; those readings were taken on the removed channel, and no configuration
-of the shipped code reproduces them, so they are recorded outside this
-manuscript rather than reported here. The reason is structural, and is visible in
-the channel's own sampling geometry: within the core those $\pm r$ offsets fall
-inside the \emph{other} strand's stroke, so the quantity is contaminated
-exactly where it would have
-had to be read. The channel is removed, and with it the gradient image it
-required, the two channel weights that combined it with intensity, and the
-logistic, since with one channel there is nothing to combine and $s$ is already the
-decision variable.
+\subsection{Global ordering}
 
-\subsubsection*{What the replacement is worth}
+Each decided crossing contributes a directed edge, oriented according to the
+sign of $s$ and weighted by $\lvert s\rvert$; $p$ is not used. Within each
+connected component of the crossing graph, a total order of the instances is
+derived that maximises the total weight of satisfied relations, and every
+relation in the component is then re-read from this order. Relations that
+disagree with the order are reversed rather than discarded, and both the
+reversal and the original local score are recorded.
 
-The two rules were compared on \PlectaDepthRuleHeldoutScenes{} optically
-rendered synthetic scenes carrying \PlectaDepthRuleHeldoutCrossings{}
-crossings. The constants are a weaker claim: the flat core half-size
-(\PlectaParamCorePx{}\,px) was settled by a sweep run on this same set, and
-the abstention threshold's flatness was checked on it, so with respect to
-those two values the set is not independent. Both values are inherited rather than newly selected:
-\PlectaParamCorePx{}\,px is exactly what the previous rule's radius-free
-fallback already computed, and both sit on a plateau rather than a
-peak, a flat core being no worse than oracle per-rod radii anywhere over
-6--14\,px and the accuracy unchanged across a band of thresholds around
-\PlectaParamAbstainScore{}, so nothing below turns on either value, but
-the comparison is in-sample with respect to them.
-
-At matched coverage, meaning both rules made to answer as often as the shipped
-one does at \PlectaDepthRuleCovShipped{}\,\%, the one-channel rule matches the
-two-channel rule's accuracy: the difference is $\PlectaDepthRuleAccDelta{}$,
-95\,\% CI $\PlectaDepthRuleAccCI{}$, which is no difference. One reading
-goes against the replacement: forced to decide \emph{every} crossing, including
-those it would decline, the one-channel rule is worse by
-$\PlectaDepthRuleAccDeltaFull{}$, CI $\PlectaDepthRuleAccFullCI{}$. That is the
-expected direction, because abstention is exactly where an ordered confidence
-pays, and removing it removes the advantage; it is also not how either rule is
-run. What improves is the ordering of the stage's own confidence. The area
-under the curve of correctness against $\lvert s\rvert$ rises from
-$\PlectaDepthRuleAucOld{}$ to $\PlectaDepthRuleAucNew{}$, a gain of
-$\PlectaDepthRuleAucDelta{}$, CI $\PlectaDepthRuleAucCI{}$. That matters
-because $\lvert s\rvert$ is the edge weight the global ordering below is solved
-with:
-better-ordered confidence means contradictions are broken at the genuinely
-weakest relations rather than at arbitrary ones. It also converts into accuracy
-wherever more abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
-\PlectaDepthRuleCovAPct{}\,\% coverage and $\PlectaDepthRuleAccAtCovB{}$ at
-\PlectaDepthRuleCovBPct{}\,\%. The claim is therefore the same accuracy with
-better-ordered confidence, from a simpler evidence path.
-
-\subsection{One order for the whole field}
-
-Each decided crossing contributes a directed edge weighted by $\lvert s\rvert$
-itself, oriented toward the relation the sign of $s$ names. The score is the
-primitive: the reported $p$ is a relabelling of it and enters no computation
-here. Within each connected component of the crossing graph one total order
-over its instances is derived so as to maximise the total satisfied weight,
-and every relation in the component is then re-read from that order: the ones
-the order disagrees with are flipped rather than discarded, and both the flip
-and the original local score are recorded, to quantify how much the global
-correction moved. Which relations that turns out to be is the subject of
-the paragraph below.
-
-Maximising satisfied weight is the minimum-weight feedback arc set objective,
-but only components of at most \PlectaParamExactMaxNodes{} instances attain
-it, by dynamic programming over subsets; larger ones get a greedy order
-refined with adjacent swaps, which carries no optimality guarantee. Because
-the order is re-derived for the component as a whole rather than only where
-relations conflict, a greedily ordered component can return a relation
-reversed that nothing contradicts, which an exact solution never does; a
-reversal lying on no cycle only loses weight. Fed ground-truth crossings with
-their true directions, input that is acyclic by construction and that an exact
-solver would leave untouched, the pass still reverses 24 relations across the
-\PlectaDepthRuleHeldoutScenes{} evaluation scenes, capping layer agreement at
-$0.886$ where it should reach $1.000$; a condense-then-order variant, which
-orders the condensation of the strongly connected components and reorders only
-inside genuine cycles, reverses none of them but measured worse on the actual
+Maximising the satisfied weight is the minimum-weight feedback arc set
+problem. Components of at most \PlectaParamExactMaxNodes{} instances are
+solved exactly by dynamic programming over subsets; larger components receive
+a greedy order refined by adjacent swaps, without an optimality guarantee.
+Because the order is derived for the whole component, a greedily ordered
+component can reverse a relation that is not contradicted by any other, which
+an exact solution never does; a reversal that lies on no cycle only reduces
+the satisfied weight. When supplied with ground-truth crossings and their true
+directions, which are acyclic by construction, the procedure still reverses 24
+relations across the \PlectaDepthRuleHeldoutScenes{} evaluation scenes,
+limiting layer agreement to $0.886$ instead of $1.000$. A variant that orders
+the condensation of the strongly connected components and reorders only within
+them reverses none of these relations, but performed worse on the actual,
 noisy predictions and is not used in the released implementation.
 
 \subsection{Layers and metric height}
 
-The corrected relations form a directed acyclic graph whose longest path fixes
-the smallest number of layers consistent with them; strands that never
-conflict share a layer, so the layer count follows from the ordering rather
-than from the number of instances. Each instance is then placed at a height
-respecting its order that keeps strands from interpenetrating at their
-measured radii, with the stack compacted so the film is as thin as those
+The corrected relations form a directed acyclic graph, whose longest path
+determines the smallest number of layers consistent with them. Strands that
+are never in conflict share a layer, so the number of layers follows from the
+ordering rather than from the number of instances. Each instance is then
+assigned a height that respects the order and prevents interpenetration at the
+measured radii, with the stack compacted to the minimum thickness these
 constraints allow.
 
 \subsection{Configuration}
 
-Every tunable quantity of both stages (the cost weights and gates above, the
-core and window sizes, the abstention threshold in score units, and the
-exact-solver size limit) is carried in a single released parameter file,
-grouped by the stage it belongs to. Table~\ref{tab:cost-weights} gives that
-file's 2-D half; Table~\ref{tab:depth-params} gives its depth half. Every
-value in either table, and every parameter this section quotes, is taken
-from the released file.
+All tunable quantities of both stages, namely the cost weights and gates
+above, the core and window sizes, the abstention threshold and the size limit
+of the exact solver, are stored in a single released parameter file, grouped
+by stage. Table~\ref{tab:cost-weights} lists the in-plane parameters and
+Table~\ref{tab:depth-params} the depth parameters; every value quoted in this
+section is taken from that file.
 
 \begin{table}[tbp]
   \centering
-  \caption{The depth stage's own entries in the released parameter file. The
-  abstention threshold is in score units, not a band around a probability, and
-  the core is flat: no per-rod radius enters the evidence path.}
+  \caption{Depth-stage entries of the released parameter file. The abstention
+  threshold is in score units, and the core length is fixed, so no strand
+  radius enters the evidence.}
   \label{tab:depth-params}
   \input{results/plecta_depth_parameter_table}
 \end{table}

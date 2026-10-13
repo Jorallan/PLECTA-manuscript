@@ -62,7 +62,7 @@ PLECTA to another imaging system.
 The matching behavior is otherwise unchanged from the evaluated core. In
 particular, the frozen annealing schedule has only one fully strict round, so the
 last round is returned. That behavior is retained for result parity and is
-documented in `docs/internal/stage_gate_audit.md` rather than silently changed.
+recorded in the authors' stage-and-gate audit rather than silently changed.
 
 ## Dependencies and licensing
 

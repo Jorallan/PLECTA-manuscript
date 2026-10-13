@@ -31,11 +31,13 @@ import matplotlib                                               # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt                                 # noqa: E402
 from matplotlib.patches import FancyArrowPatch, Rectangle       # noqa: E402
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection         # noqa: E402
 from PIL import Image                                           # noqa: E402
 
 import _style                                                   # noqa: E402
 from _style import (plecta_style, save_fig, FIG_W, framed,      # noqa: E402
-                    INSTANCE_CYCLE, INK, GRAY, GREEN, PT_TITLE, PT_MIN)
+                    INSTANCE_CYCLE, INK, GRAY, GREEN, PT_TITLE, PT_MIN,
+                    PT_ANNOT)
 from _tube3d import draw_tubes_shaded, tube_mesh                # noqa: E402
 
 #  The width layer, and the alias shim it needs, are set up by the repository's
@@ -132,6 +134,10 @@ def main(argv=None):
     ap.add_argument("--scene", default=DEFAULT_SCENE)
     ap.add_argument("--app", default=DEFAULT_APP)
     ap.add_argument("--plecta", default=DEFAULT_PLECTA)
+    ap.add_argument("--ivc", metavar="DIR", default=None,
+                    help="draw the journal's graphical-abstract version "
+                         "(13 x 5.2 cm, Image and Vision Computing) into DIR "
+                         "instead of Figure 1 into figures/")
     args = ap.parse_args(argv)
 
     from pathlib import Path
@@ -150,22 +156,29 @@ def main(argv=None):
         raise SystemExit("body face did not resolve; refusing to draw the "
                          "graphical abstract in the fallback face")
 
-    FIG_H = 1.68
-    fig = plt.figure(figsize=(FIG_W, FIG_H), facecolor="white")
+    if args.ivc:
+        #  The journal's graphical-abstract box is 531 x 1328 px (h x w) and
+        #  must read at 5 x 13 cm, so it is drawn at exactly 13 x 5.2 cm and a
+        #  glyph set at n pt prints at n pt there, as in the article.
+        W, H = 13.0 / 2.54, 5.2 / 2.54
+        left_in, gap_in, top_in = 0.07, 0.24, 0.62
+        titles = [("a", "Micrograph"), ("b", "Axis mask"),
+                  ("c", "Strand instances"), ("d", "Depth order")]
+    else:
+        W, H = FIG_W, 1.68
+        left_in, gap_in, top_in = 0.09, 0.30, 0.30
+        titles = [("a", "Micrograph"), ("b", "Strand-axis mask"),
+                  ("c", "Strand instances"), ("d", "Layered arrangement")]
+    fig = plt.figure(figsize=(W, H), facecolor="white")
     #  Laid out in inches and converted once: a title placed in axes fractions
     #  moves when the panel width does.
-    fx = lambda v: v / FIG_W                                    # noqa: E731
-    fy = lambda v: v / FIG_H                                    # noqa: E731
+    fx = lambda v: v / W                                        # noqa: E731
+    fy = lambda v: v / H                                        # noqa: E731
 
-    left_in, gap_in = 0.09, 0.30
-    w_in = (FIG_W - 2 * left_in - 3 * gap_in) / 4.0
-    top_in = 0.30
+    w_in = (W - 2 * left_in - 3 * gap_in) / 4.0
     xs = [fx(left_in + k * (w_in + gap_in)) for k in range(4)]
     w, h = fx(w_in), fy(w_in)                                   # square
     top = 1.0 - fy(top_in)
-
-    titles = [("a", "Micrograph"), ("b", "Strand-axis mask"),
-              ("c", "Strand instances"), ("d", "Layered arrangement")]
 
     axes = []
     for k in range(3):
@@ -192,13 +205,15 @@ def main(argv=None):
     #  The scale bar, at the nominal pitch above.  It sits on its own dark
     #  plate, having been unreadable against the bare micrograph wherever the
     #  crop happened to be bright.
+    #  The plate is centred on the bar.  At the journal's smaller panel the
+    #  label is wider than the bar, so the plate widens to hold it.
     bar, pad = BAR_NM / NM_PER_PX, 9.0
-    axes[0].add_patch(Rectangle((CROP - bar - 2 * pad, CROP - 40),
-                                bar + 2 * pad, 40, fc="black", ec="none",
-                                alpha=0.62, zorder=6))
-    axes[0].add_patch(Rectangle((CROP - bar - pad, CROP - 15), bar, 4.0,
-                                fc="white", ec="none", zorder=7))
-    axes[0].text(CROP - bar / 2.0 - pad, CROP - 20, "%g nm" % BAR_NM,
+    plate = max(bar + 2 * pad, 160.0) if args.ivc else bar + 2 * pad
+    axes[0].add_patch(Rectangle((CROP - plate, CROP - 40), plate, 40,
+                                fc="black", ec="none", alpha=0.62, zorder=6))
+    axes[0].add_patch(Rectangle((CROP - plate / 2.0 - bar / 2.0, CROP - 15),
+                                bar, 4.0, fc="white", ec="none", zorder=7))
+    axes[0].text(CROP - plate / 2.0, CROP - 20, "%g nm" % BAR_NM,
                  color="white", fontsize=PT_MIN, ha="center", va="bottom",
                  zorder=7)
 
@@ -208,25 +223,44 @@ def main(argv=None):
     #  through rather than left to the 3-D module's own ramp, which is a
     #  different palette; ``colours`` is aligned with ``tubes`` by
     #  construction.
+    #  The journal version raises every strand's *height* by Z_EXAG and keeps
+    #  the axis 1:1, so the layers separate while each tube stays round; the
+    #  factor is printed under the panel.  The article's Figure 1 draws the
+    #  film at its true flatness.
+    Z_EXAG = 3.0 if args.ivc else 1.0
     tubes, tube_cols, zs = [], [], []
     for inst in instances:
         xy = np.asarray(inst["xy"], float)
-        z = float(inst["z"])
+        z = Z_EXAG * float(inst["z"])
         #  The measured half-width, so a tube is as thick as its strand is
         #  wide; the engine's own radius here is the fixed placeholder that
         #  only sets the contact separation for the depth solve.
         r = 0.5 * float(width_px[inst["id"]])
-        v, f = tube_mesh(xy, z, r, n_theta=12)
+        v, f = tube_mesh(xy, z, r, n_theta=20 if args.ivc else 12)
         tubes.append((v, f, z))
         tube_cols.append(instance_colour(inst))
         zs.append(z)
     z_lo, z_hi = min(zs), max(zs)
     span = max(z_hi - z_lo, 1.0)
-    ax3 = fig.add_axes([xs[3], top - h, w, h], projection="3d")
+    if args.ivc:
+        #  Fitted inside its own panel (the article's zoom lets it spill),
+        #  seen from higher, over a faint ground plane that anchors the stack.
+        ax3 = fig.add_axes([xs[3] - fx(0.06), top - h - fy(0.04),
+                            w + fx(0.12), h + fy(0.08)], projection="3d")
+        ax3.computed_zorder = False
+        ground = Poly3DCollection(
+            [[(0, 0, z_lo - 8), (CROP, 0, z_lo - 8),
+              (CROP, CROP, z_lo - 8), (0, CROP, z_lo - 8)]],
+            facecolors=GRAY, edgecolors="none", alpha=0.16, zorder=0)
+        ax3.add_collection3d(ground)
+        view = dict(zoom=0.96, elev=32, azim=-58,
+                    z_stretch=(span + 20.0) / CROP)
+    else:
+        ax3 = fig.add_axes([xs[3], top - h, w, h], projection="3d")
+        view = dict(zoom=1.70, elev=24, azim=-62, z_stretch=span / CROP)
     ax3.set_facecolor("none")
-    draw_tubes_shaded(ax3, tubes, z_lo, span, extent=CROP, zoom=1.70,
-                      elev=24, azim=-62, colours=tube_cols,
-                      z_stretch=span / CROP)
+    draw_tubes_shaded(ax3, tubes, z_lo, span, extent=CROP,
+                      colours=tube_cols, **view)
     axes.append(ax3)
 
     #  Titles: tag bold, words regular, offset by a fixed inch gap.
@@ -244,7 +278,35 @@ def main(argv=None):
             transform=fig.transFigure, arrowstyle="-|>", mutation_scale=7.5,
             lw=0.9, color=GREEN, shrinkA=0, shrinkB=0, zorder=5))
 
-    save_fig(fig, "fig_graphical_abstract", pdf_dpi=300, bbox_inches=None)
+    if args.ivc:
+        #  Standing alone, the abstract has no caption, so it carries its own
+        #  one-line statement and names the stage behind each panel.
+        fig.text(fx(left_in), 1.0 - fy(0.07),
+                 "PLECTA: individual strands through crossings, "
+                 "from a binary mask", fontsize=9.5, fontweight="bold",
+                 color=INK, ha="left", va="top")
+        fig.text(fx(left_in), 1.0 - fy(0.27),
+                 "Exact partial matching at junctions · no training data"
+                 " · depth order from the greyscale image",
+                 fontsize=PT_ANNOT, color=GRAY, ha="left", va="top")
+        stages = ["SEM field", "upstream segmenter", "PLECTA",
+                  "depth stage (height ×%g)" % Z_EXAG]
+        for k, stage in enumerate(stages):
+            fig.text(xs[k] + w / 2.0, top - h - fy(0.07), stage,
+                     fontsize=PT_ANNOT, ha="center", va="top",
+                     color=GREEN if stage == "PLECTA" else GRAY,
+                     fontweight="bold" if stage == "PLECTA" else "normal")
+        os.makedirs(args.ivc, exist_ok=True)
+        base = os.path.join(args.ivc, "graphical_abstract")
+        fig.savefig(base + ".pdf", dpi=300, metadata={"CreationDate": None})
+        fig.savefig(base + ".png", dpi=600)
+        Image.open(base + ".png").convert("RGB").save(
+            base + ".tif", compression="tiff_lzw", dpi=(600, 600))
+        print("[saved]", base + ".pdf / .png / .tif",
+              Image.open(base + ".png").size, "px (w, h)")
+    else:
+        save_fig(fig, "fig_graphical_abstract", pdf_dpi=300,
+                 bbox_inches=None)
     print("field              :", os.path.basename(os.path.dirname(args.scene)))
     print("crop origin (y, x) :", origin)
     print("instances drawn    :", len(tubes))

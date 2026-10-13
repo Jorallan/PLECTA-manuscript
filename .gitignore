@@ -94,6 +94,8 @@ input/
 output/
 raw_results/
 sandbox/
+# Assembled for 4TU.ResearchData; deposited there, never committed here.
+4tu_deposit_plecta/
 
 # ---------------------------------------------------------------------------
 # Guard rails: pipeline source lives in the coding repository
@@ -115,3 +117,6 @@ sandbox/
 # future reference; not published.
 # ---------------------------------------------------------------------------
 notes/depth_rule_transcribed_measurements.md
+
+# Regenerable copies of figures/ (scripts/submission/export_figures.py).
+submission/*/figures/

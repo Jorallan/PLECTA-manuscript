@@ -18,13 +18,16 @@ reliably separate strand foreground from background
 \citep{ronneberger2015unet,isensee2021nnunet}, including in materials imaging
 \citep{stan2020optimizing,davydzenka2022deep} and nanotube micrographs
 specifically \citep{trujillo2017segmentation,nguyen2023cntsegnet,%
-dedonato2025deep}. But a foreground mask encodes no identity, so it inherits
-both failures rather than resolving them. Instance methods go further and
+dedonato2025deep}. Variants with explicit topology enhancement target the
+connectivity of that foreground \citep{lin2026vetunet}, but a foreground mask
+still encodes no identity, so it inherits both failures rather than resolving
+them. Instance methods go further and
 label each object separately, but they assume those objects are compact, in
 materials microscopy \citep{he2026instance} as in the general-purpose
-families: bounded blobs, centre-directed flows, star-convex outlines, none of
-which describes a long open curve that may overlap another
-\citep{stringer2021cellpose,schmidt2018stardist,kirillov2023sam}. Ridge and
+families: bounded blobs, centre-directed flows, star-convex outlines,
+overlapping ellipses, none of which describes a long open curve that may
+overlap another \citep{gu2022instancereview,stringer2021cellpose,%
+schmidt2018stardist,kirillov2023sam,panagiotakis2020rfove}. Ridge and
 vesselness filters, which score each pixel by how strongly the local image
 curvature resembles a line or a tube, sharpen curvilinear signal but assign
 nothing across a junction
@@ -131,7 +134,9 @@ pairwise depth from local occlusion evidence, assembled those relations into a
 depth-order graph and corrected the contradictions among them
 \citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
 resolves the layering of intersecting strands by analogous reasoning
-\citep{chai2012singleview}. Those methods read the shape of the outlines where
+\citep{chai2012singleview}. Amodal instance segmentation also predicts the
+hidden extent of each occluded object, guided in DBNet by estimated depth
+\citep{zhang2025dbnet}. Those methods read the shape of the outlines where
 two objects overlap, which a bundle a few pixels across in a noisy micrograph
 does not reliably provide; the evidence used in this paper is instead the
 continuity of each strand's own brightness across the crossing.
