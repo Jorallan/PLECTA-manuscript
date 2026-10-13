@@ -9,7 +9,7 @@ submission; the manuscript sources stay in the repository root.
 | `graphical_abstract.{pdf,tif,png}` | 13 × 5.2 cm (2.5 : 1), 3070 × 1228 px | `python scripts/figures/fig_graphical_abstract.py --ivc submission/ivc` |
 | `figures/Figure_N.pdf` | the 13 article figures, one file each, numbered as in the PDF | `python scripts/submission/export_figures.py` (build `main.tex` first) |
 | `declaration_of_interests.docx` | the "no competing interests" declaration | mirrors the text of Elsevier's declarations tool |
-| `cover_letter.docx` | cover letter from the corresponding author | written; two DOIs still to insert |
+| `cover_letter.docx` | cover letter from the corresponding author | written; the 4TU DOI still to insert |
 
 Upload alongside these: `main.tex`, `sections/*.tex`, `results/*.tex`,
 `figures/fig_pipeline_*.tex`, `references.bib` (or `main.bbl`) and
@@ -28,10 +28,11 @@ Upload alongside these: `main.tex`, `sections/*.tex`, `results/*.tex`,
 3. **Generative-AI declaration.** Required only if AI tools were used in
    preparing the manuscript; the authors decide. It goes in its own section
    before the references.
-4. **Code: archived already.** Zenodo version DOI `10.5281/zenodo.22688093`
+4. **Code: archived and cited.** Zenodo version DOI `10.5281/zenodo.22688093`
    (v0.1.1, 2026-09-10; concept DOI `10.5281/zenodo.22687992`). The 14 later
-   commits add only opt-in options, so v0.1.1 reproduces the paper. Cite the
-   *version* DOI, or cut a new release first and cite that one.
+   commits add only opt-in options, so v0.1.1 reproduces the paper. The
+   version DOI is in the Data availability section (`allan2026plectazenodo`)
+   and the cover letter.
 5. **Data: `4tu_deposit_plecta/` is ready to upload except for one
    question.** Its README's last comment asks who supplied and imaged the CNT
    material and whether that party agrees to CC BY 4.0 for the micrographs.
