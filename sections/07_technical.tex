@@ -230,13 +230,9 @@ disagree with the order are reversed rather than discarded, and both the
 reversal and the original local score are recorded.
 
 Maximising the satisfied weight is the minimum-weight feedback arc set
-problem. Components of at most \PlectaParamExactMaxNodes{} instances are
-solved exactly by dynamic programming over subsets; larger components receive
-a greedy order refined by adjacent swaps, without an optimality guarantee.
-Because the order is derived for the whole component, a greedily ordered
-component can reverse a relation that is not contradicted by any other, which
-an exact solution never does; a reversal that lies on no cycle only reduces
-the satisfied weight. When supplied with ground-truth crossings and their true
+problem. Because the order is derived for the whole component, it can reverse
+a relation that is not contradicted by any other; a reversal that lies on no
+cycle only reduces the satisfied weight. When supplied with ground-truth crossings and their true
 directions, which are acyclic by construction, the procedure still reverses 24
 relations across the \PlectaDepthRuleHeldoutScenes{} evaluation scenes,
 limiting layer agreement to $0.886$ instead of $1.000$. A variant that orders
@@ -257,8 +253,8 @@ constraints allow.
 \subsection{Configuration}
 
 All tunable quantities of both stages, namely the cost weights and gates
-above, the core and window sizes, the abstention threshold and the size limit
-of the exact solver, are stored in a single released parameter file, grouped
+above, the core and window sizes and the abstention threshold, are stored in a
+single released parameter file, grouped
 by stage. Table~\ref{tab:cost-weights} lists the in-plane parameters and
 Table~\ref{tab:depth-params} the depth parameters; every value quoted in this
 section is taken from that file.

@@ -87,10 +87,6 @@ DEPTH_ROWS = (
     ("PlectaParamAbstainScore", "evidence_weights.abstain_score", "%.2f",
      "abstain $\\lvert s\\rvert$",
      "abstention threshold, in score units, not a probability band"),
-    ("PlectaParamExactMaxNodes", "solver.exact_max_nodes", "%g",
-     "exact limit",
-     "components to this many nodes are ordered exactly, larger ones "
-     "greedily"),
 )
 
 
