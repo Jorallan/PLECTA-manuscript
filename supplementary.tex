@@ -22,7 +22,8 @@
 % there cannot leave this file pointing at the wrong section. Build main.tex
 % first; \ref* keeps them plain text rather than links into another PDF.
 \usepackage{xr}
-\externaldocument[M-]{build/main}
+% build/main.aux locally (.latexmkrc); main.aux on systems without it.
+\IfFileExists{build/main.aux}{\externaldocument[M-]{build/main}}{\externaldocument[M-]{main}}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
 \usepackage{doi}
