@@ -79,8 +79,10 @@ is built first.
   `figures/archive/` holds rendered output no `\includegraphics` reaches
 - `results/`: the JSON records, the generated macro files and the generated
   tables
-- `scripts/figures/`, `scripts/results/`: the generators for those figures,
-  tables and macros, plus `check_type_scale.py`
+- `scripts/results/`: the generators for those tables and macros
+- `scripts/figures/`, `scripts/submission/`: the figure generators, the
+  type-scale check and the submission exporter; kept locally and not
+  published (gitignored), so this repository carries the rendered figures only
 - `reproducibility/`: `evaluation_manifest.csv`, scene/method provenance and
   hashes
 - `exploration/`: self-contained exploratory studies (gitignored), each with

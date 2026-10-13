@@ -120,3 +120,8 @@ notes/depth_rule_transcribed_measurements.md
 
 # Regenerable copies of figures/ (scripts/submission/export_figures.py).
 submission/*/figures/
+
+# Figure generators are kept locally; only their rendered output in figures/
+# is published.
+scripts/figures/
+scripts/submission/
