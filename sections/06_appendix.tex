@@ -105,9 +105,8 @@ intersect at all, so a strict overlap would measure placement rather than
 shape, a problem also stated as a design consideration of the thin-structure
 benchmark FISBe \citep{mais2024fisbe}. The real fields show that the tolerance
 corrects rather than inflates the score. On the reference-derived axes, a
-skeleton of the annotation itself with no displacement, it changes detection
-\Fone{} on B58\_110 from \PlectaDetectionBFiveEightOneOneZeroManualStrict{} to
-\PlectaDetectionBFiveEightOneOneZeroManualTolerant{}, whereas on the nnU-Net
+skeleton of the annotation itself with no displacement, it leaves detection
+\Fone{} on B58\_110 unchanged at \PlectaDetectionBFiveEightOneOneZeroManualTolerant{}, whereas on the nnU-Net
 axis of the same field it raises it from
 \PlectaDetectionBFiveEightOneOneZeroUNetStrict{} to
 \PlectaDetectionBFiveEightOneOneZeroUNetTolerant{}; the tolerance therefore
@@ -176,7 +175,7 @@ assignment and bounds the score any method could obtain against it.
 \subsection{Statistical analysis}
 
 Synthetic-scene means and density strata are reported with 95\,\%
-nonparametric bootstrap intervals (20,000 replicates; seed 20,260,810),
+nonparametric bootstrap intervals (20,000 replicates; seed 20260810),
 resampled with stratification by density; the comparison between clean and
 degraded masks resamples paired scene differences within density.
 Per-coverage points in the comparison figures are plain means of ten scenes,
@@ -260,7 +259,7 @@ pixels and evaluates only whether the arms meeting there are grouped as in the
 reference, and SIFNE links across the excised crossing, so it makes exactly the
 decision that the endpoint measures.
 
-\textbf{Basu et al.} has no released implementation: the only code published
+\textbf{Basu et al.}\ \citep{basu2015extraction} has no released implementation: the only code published
 by its authors accompanies their earlier centreline-localisation paper, and its
 address no longer resolves, with no archived copy available. The method is
 therefore reimplemented from its published description and reported as a
@@ -309,7 +308,7 @@ discriminative than the pairwise score: at 60\,\% coverage it spans
 pairwise \Fone{} spans \PlectaPairwiseSpreadHigh{}. Resolution rates decline
 for every method at the highest-degree nodes: pooled over the
 \PlectaJunctionCount{} reference crossings of the degraded set, PLECTA
-resolves \PlectaJunctionPlectaRate{} exactly, but only
+resolves \PlectaJunctionPlectaRate{} of them, but only
 \PlectaJunctionPlectaDegreeFivePlus{} above degree four, where no comparator
 is higher.
 
@@ -375,9 +374,9 @@ manifest released with the code.
 The synthetic intervals describe sampling variability within this generator;
 the ranking is additionally tested on an independently published generator
 and on real SEM masks. The generator's shape parameters were also varied.
-Changing its bending stiffness from \PlectaCurvinessSweepLow{} to
+Changing its curvature parameter from \PlectaCurvinessSweepLow{} to
 \PlectaCurvinessSweepHigh{}\,\% of the default, which moves the median
-centreline radius from \PlectaCurvinessRadiusHigh{} to
+radius of curvature from \PlectaCurvinessRadiusHigh{} to
 \PlectaCurvinessRadiusLow{}\,px, changed the level means of \Fone{} by at most
 \PlectaCurvinessMaxSpread{} over \PlectaCurvinessSeriesCount{} series,
 compared with a within-level scene-to-scene standard deviation of

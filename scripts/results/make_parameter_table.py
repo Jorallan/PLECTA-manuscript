@@ -76,8 +76,8 @@ MACROS = (
 DEPTH_ROWS = (
     ("PlectaParamCorePx", "crossing_detection.core_px", "%g",
      "core (px)",
-     "half-length of the shared crossing arc; flat at every crossing, so no "
-     "per-rod radius enters the evidence path"),
+     "half-length of the shared crossing arc; fixed at every crossing, so no "
+     "strand radius enters the evidence path"),
     ("PlectaParamWindowPx", "crossing_detection.window_px", "%g",
      "window (px)",
      "arclength sampled either side of a crossing for evidence"),

@@ -11,8 +11,8 @@ The mask $M$ is binarised at $>0$ and skeletonised, and spurs no longer than
 \PlectaParamSpurPx{}\,px are removed iteratively. Skeleton pixels of degree at
 least three form junction clusters, and adjacent clusters merge into nodes:
 connectors up to \PlectaParamAbsorbPx{}\,px are absorbed into one node,
-connectors up to \PlectaParamJoinPx{}\,px merge nearby nodes while remaining
-arms, and free debris up to \PlectaParamFreeDebrisPx{}\,px is absorbed. Each
+connectors up to \PlectaParamJoinPx{}\,px merge the two nodes they join into
+one matching problem while being kept as arms, and free debris up to \PlectaParamFreeDebrisPx{}\,px is absorbed. Each
 remaining connected path is stored as an ordered arm with one stub at each
 end.
 
@@ -68,8 +68,8 @@ ambiguous, evidence. All values were fixed on development scenes.
 
 \subsection{Round schedule}
 
-Rounds $r=0,\ldots,\PlectaParamRounds{}-1$ apply a schedule fraction
-$\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/7$ to the
+Rounds $r=0,\ldots,\the\numexpr\PlectaParamRounds-1\relax$ apply a schedule fraction
+$\alpha_r=\PlectaParamAnnealStart{}+(1-\PlectaParamAnnealStart{})\,r/\the\numexpr\PlectaParamRounds-1\relax$ to the
 unmatched penalties and to the two gap angle limits, and to nothing else. A
 lower penalty admits fewer edges and a lower angle limit narrows the gap gates,
 so the early rounds, in which frame estimates are least reliable, are
@@ -113,7 +113,7 @@ and every junction cluster touched by a chain, is assigned to that chain's
 instance, so intersecting instances share crossing pixels. Isolated one-arm
 components shorter than 6\,px are omitted. Accepted gap links determine
 identity but are not drawn into the centreline output. All effective
-parameters, including former code defaults, are stated explicitly in the
+parameters, including those that take default values in the code, are stated explicitly in the
 released JSON configuration.
 
 \section{Depth stage: evidence and solver}
