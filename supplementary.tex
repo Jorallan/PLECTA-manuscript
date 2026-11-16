@@ -27,6 +27,13 @@
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
 \usepackage{doi}
+% \mainref{label}{number}: the article's number for label, read from main.aux.
+% Overleaf compiles one root file at a time, so main.aux can be missing; the
+% second argument, the number in the current article, is then printed instead
+% of ??, with a warning in the log so that a stale fallback is noticed.
+\newcommand{\mainref}[2]{%
+  \ifcsname r@M-#1\endcsname\ref*{M-#1}%
+  \else#2\PackageWarning{supplementary}{main.aux not read; fallback used for #1}\fi}
 \hypersetup{
   pdftitle={PLECTA: supplementary material},
   pdfauthor={Oday Allan, Igor Ostanin}
