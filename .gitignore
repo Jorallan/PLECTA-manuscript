@@ -125,3 +125,6 @@ submission/*/figures/
 # is published.
 scripts/figures/
 scripts/submission/
+
+# Built alongside main.tex on Overleaf (.latexmkrc)
+supplementary-preview.*

@@ -23,7 +23,10 @@
 % first; \ref* keeps them plain text rather than links into another PDF.
 \usepackage{xr}
 % build/main.aux locally (.latexmkrc); main.aux on systems without it.
-\IfFileExists{build/main.aux}{\externaldocument[M-]{build/main}}{\externaldocument[M-]{main}}
+% \plectamainaux names the article's .aux when the article build starts this
+% one (Overleaf names it after its job, not main).
+\ifdefined\plectamainaux\externaldocument[M-]{\plectamainaux}\else
+\IfFileExists{build/main.aux}{\externaldocument[M-]{build/main}}{\externaldocument[M-]{main}}\fi
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=teal!60!black,%
             urlcolor=blue!55!black,breaklinks=true]{hyperref}
 \usepackage{doi}

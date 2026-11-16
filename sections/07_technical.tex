@@ -129,8 +129,8 @@ through the crossing: the shared \emph{core}, a fixed \PlectaParamCorePx{}\,px
 of arc at every crossing, and the \emph{flanks} on either side of it. Flank
 samples are kept clear of the other strand, because a sample inside it would
 measure the superposition of both strands rather than one. A crossing with too
-few usable flank samples abstains. Earlier versions sized the core from the
-radii of the two strands; with a fixed core, no radius estimate enters the
+few usable flank samples abstains. The core is not sized from the radii of
+the two strands: with a fixed core, no radius estimate enters the
 evidence, and radius errors cannot affect a depth decision. Radii enter only
 downstream, in the non-interpenetration constraints that determine metric
 height.
@@ -162,30 +162,24 @@ confidence, and is not used in any decision or weighting.
 \textbf{Noise floor in the denominator.} By the reverse triangle inequality,
 the numerator of \eqref{eq:depth-score} is bounded in magnitude by
 $\lvert m_i-m_j\rvert$, so a denominator equal to that separation drives the
-score to $\pm1$ whenever the two strands differ at all. A previous version of
-the rule bounded the denominator below by a small fixed constant in grey
-levels, well below the noise level of these images. A maximal score could then
-arise from a separation smaller than the noise, and because a maximal score
-exceeds any abstention threshold, such crossings could never abstain. This
-case was common: a substantial fraction of crossings saturated in this way,
-and those whose separation was below the noise level were markedly less
-accurate than those separated by more. Bounding the denominator by
+score to $\pm1$ whenever the two strands differ at all. A floor fixed in grey
+levels does not prevent this when it lies below the noise level of the image:
+a maximal score can then arise from a separation smaller than the noise, and
+because a maximal score exceeds any abstention threshold, such a crossing can
+never abstain, however weak its evidence. Bounding the denominator by
 $2\hat\sigma$ ensures that a high score indicates a separation larger than the
 noise, and allows the stage to abstain where the evidence is weak.
 
-\textbf{Removed gradient channel.} An earlier version also read the median
+\textbf{Why no gradient channel.} A second channel would read the median
 gradient magnitude along each strand's two edges, at centreline
 $\pm r\,\mathbf{n}$, on the premise that the upper strand's edges remain sharp
-through the crossing while those of the lower strand are occluded. On real
-crossings this channel decided almost no crossings, agreed with the intensity
-channel no better than chance, and was itself at chance level. Because the
-channel is not part of the released implementation, these measurements are not
-reported quantitatively. The cause lies in the sampling geometry: within the
-core, the $\pm r$ offsets fall inside the other strand, so the measurement is
-contaminated exactly where it is needed. Removing the channel also removed the
-gradient image, the two channel weights and the logistic function that
-combined the channels; with a single channel, $s$ is itself the decision
-variable.
+through the crossing while those of the lower strand are occluded. The
+sampling geometry defeats this premise: within the core, the $\pm r$ offsets
+fall inside the other strand, so the measurement is contaminated exactly where
+it is needed, and in development tests on real crossings the channel did not
+improve on the intensity score. It is therefore not used. With a single
+channel, $s$ is itself the decision variable, and no channel weights or
+combining function are required.
 
 \textbf{Comparison with the two-channel rule.} The one- and two-channel rules
 were compared on \PlectaDepthRuleHeldoutScenes{} optically rendered synthetic
@@ -194,7 +188,7 @@ half-size (\PlectaParamCorePx{}\,px) was chosen by a sweep on the same set, and
 the insensitivity of the result to the abstention threshold was also checked
 on it, so the comparison is in-sample with respect to these two values. Both
 values were nevertheless inherited rather than newly selected:
-\PlectaParamCorePx{}\,px is the value the previous rule's radius-free fallback
+\PlectaParamCorePx{}\,px is the value the two-channel rule's radius-free fallback
 already used, and both lie on a plateau. A fixed core performs no worse than
 oracle per-strand radii anywhere between 6 and 14\,px, and accuracy is
 unchanged over a band of thresholds around \PlectaParamAbstainScore{}.
