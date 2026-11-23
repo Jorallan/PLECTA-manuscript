@@ -16,34 +16,27 @@ one object from another, is mature: U-Net, named for its U-shaped
 encoder--decoder architecture, and its self-configuring descendants
 reliably separate strand foreground from background
 \citep{ronneberger2015unet,isensee2021nnunet}, including in materials imaging
-\citep{stan2020optimizing} and nanotube micrographs
-specifically \citep{nguyen2023cntsegnet}. Variants with explicit topology enhancement target the
-connectivity of that foreground \citep{lin2026vetunet}, learned trackers
-refine a coarse curvilinear segmentation by following it to repair breaks
-\citep{heng2026curvitracker}, and dedicated detectors predict the centreline
-together with its orientation \citep{jiang2024centerline}, but a foreground mask
+\citep{stan2020optimizing,davydzenka2022deep} and nanotube micrographs
+specifically \citep{trujillo2017segmentation,nguyen2023cntsegnet,%
+dedonato2025deep}. Variants with explicit topology enhancement target the
+connectivity of that foreground \citep{lin2026vetunet}, but a foreground mask
 still encodes no identity, so it inherits both failures rather than resolving
 them. Instance methods go further and
 label each object separately, but they assume those objects are compact, in
 materials microscopy \citep{he2026instance} as in the general-purpose
-families reviewed by \citet{gu2022instancereview}: bounded regions, as in the
-promptable masks of Segment Anything \citep{kirillov2023sam};
-centre-directed flows, as in Cellpose \citep{stringer2021cellpose};
-star-convex outlines, as in StarDist \citep{schmidt2018stardist}; and
-overlapping ellipses, as in RFOVE \citep{panagiotakis2020rfove}. None of
-these shapes describes a long open curve that may overlap another. Ridge and
+families: bounded blobs, centre-directed flows, star-convex outlines,
+overlapping ellipses, none of which describes a long open curve that may
+overlap another \citep{gu2022instancereview,stringer2021cellpose,%
+schmidt2018stardist,kirillov2023sam,panagiotakis2020rfove}. Ridge and
 vesselness filters, which score each pixel by how strongly the local image
 curvature resembles a line or a tube, sharpen curvilinear signal but assign
 nothing across a junction
-\citep{steger1998unbiased,frangi1998vesselness}. The
+\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}. The
 established fibre-analysis packages return network statistics rather than
-resolved objects: FIRE extracts the network geometry of collagen gels
-\citep{stein2008fire} and CT-FIRE applies it to collagen fibres in
-second-harmonic images \citep{bredfeldt2014ctfire}; SOAX
-\citep{xu2015soax} and FiNTA \citep{flormann2021finta} trace biopolymer
-and cytoskeletal networks for network-level quantification. Image-level measures of
-coverage and alignment likewise describe the network as a whole
-\citep{beigzadeh2024utilizing}.
+resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
+flormann2021finta,hotaling2015diameterj}, as do image-level measures of
+coverage and alignment
+\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}.
 
 Volumetric imaging avoids the problem altogether, because strands that appear
 to meet in a projection lie at different depths and are therefore already
@@ -71,12 +64,7 @@ by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT (graph of
 filaments over time) covers a Frangi-filtered skeleton greedily, longest path first
 \citep{osterlund2026graft}. This is inexpensive, and where crossings are rare
 it suffices. Its weakness is structural: once an arm is paired, a later
-contradictory candidate cannot revise the pairing. Minimal-path models take a
-different route, tracing one curve at a time along a geodesic and discouraging
-shortcuts through crossings by penalising curvature \citep{liu2023geodesics}
-or with an anisotropic, crossing-adaptive metric \citep{liu2020minimalpath}.
-Each path is extracted separately from seed points, so competing
-continuations at a shared junction are not resolved together.
+contradictory candidate cannot revise the pairing.
 
 Two remedies have been tried. The first is to incorporate additional image
 evidence beyond the mask. The stronger of Wegmayr et al.'s two variants drops the
@@ -125,11 +113,7 @@ The labels, however, require initialisation. In their images they start at
 anatomical roots, the stained cell bodies of neurons or the optic disc of a
 retina, and the method returns as many strands as there are roots. A tangle of
 open-ended strands offers no such starting point, and how many strands it
-holds is precisely the unknown. Graph matching has also been applied to
-vessel graphs, labelling coronary-artery segments by matching the extracted
-tree to labelled templates \citep{zhao2023agmn,zhao2026multigraph}. There the
-labels and a template are known in advance; in a strand network neither
-exists, and PLECTA's matching is between the arms of a single junction.
+holds is precisely the unknown.
 
 \subsection{From micrograph to measurement}
 \label{sec:rel-workflows}
@@ -148,7 +132,9 @@ focused-ion-beam sectioning and tomographic reconstruction
 topography rather than height. Monocular depth ordering has long derived
 pairwise depth from local occlusion evidence, assembled those relations into a
 depth-order graph and corrected the contradictions among them
-\citep{palou2013monocular,lee2022instancewise}. Amodal instance segmentation also predicts the
+\citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
+resolves the layering of intersecting strands by analogous reasoning
+\citep{chai2012singleview}. Amodal instance segmentation also predicts the
 hidden extent of each occluded object, guided in DBNet by estimated depth
 \citep{zhang2025dbnet}. Those methods read the shape of the outlines where
 two objects overlap, which a bundle a few pixels across in a noisy micrograph

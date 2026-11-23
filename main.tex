@@ -1,16 +1,11 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-% Pattern Recognition layout: Times 10 pt, single column, double spaced,
-% margins 4.3/4.8/4.3/4.8 cm (top/right/bottom/left), captions 8 pt.
-\IfFileExists{newtxtext.sty}{\usepackage{newtxtext,newtxmath}}{\usepackage{mathptmx}}
+\usepackage{lmodern}
 \usepackage[british]{babel}
 \usepackage{microtype}
-\usepackage[top=4.3cm,right=4.8cm,bottom=4.3cm,left=4.8cm]{geometry}
-\usepackage{setspace}
-\doublespacing
-\usepackage{adjustbox}
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -94,7 +89,7 @@
 \displaywidowpenalty=10000
 \brokenpenalty=10000
 \raggedbottom
-\captionsetup{font={footnotesize,singlespacing},labelfont=bf,labelsep=period}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
 \newcommand{\Fone}{F\textsubscript{1}}
@@ -111,18 +106,18 @@
 \newcommand{\suppsplit}{Supplementary Section~S6}
 \newcommand{\suppannotation}{Supplementary Section~S7}
 
-\title{\vspace{-1.2cm}\fontsize{14}{17}\selectfont\bfseries PLECTA: Overlap-aware instance
+\title{\vspace{-1.2cm}\bfseries PLECTA: Overlap-aware instance
 segmentation of dense strand networks from binary masks}
 
 \author{%
   \begin{minipage}{0.94\textwidth}
-  \centering\footnotesize\singlespacing
+  \centering
   Oday Allan\textsuperscript{a}\quad
   Igor Ostanin\textsuperscript{a,}\thanks{Corresponding author:
   \texttt{i.ostanin@utwente.nl}}\\[5pt]
-  {\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of Engineering
+  {\small\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of Engineering
   Technology, University of Twente, Enschede, The Netherlands}\\[4pt]
-  {ORCID: Oday Allan
+  {\small ORCID: Oday Allan
   \href{https://orcid.org/0000-0002-6341-4695}{0000-0002-6341-4695};\quad
   Igor Ostanin
   \href{https://orcid.org/0000-0003-4233-4255}{0000-0003-4233-4255}}
@@ -181,17 +176,5 @@ the authors thank their maintainers.
 \renewcommand{\bibfont}{\footnotesize}
 \bibliographystyle{unsrtnat}
 \bibliography{references}
-
-% Pattern Recognition prints a short biography of each author after the
-% references (about 100 words each; counted in the page limit).
-\section*{Author biographies}
-\noindent\textbf{Oday Allan} \textcolor{red}{[Biography to be written by the
-author, about 100 words: current position and institution, degrees with
-institutions and years, research interests.]}
-
-\medskip
-\noindent\textbf{Igor Ostanin} \textcolor{red}{[Biography to be written by the
-author, about 100 words: current position and institution, degrees with
-institutions and years, research interests.]}
 
 \end{document}

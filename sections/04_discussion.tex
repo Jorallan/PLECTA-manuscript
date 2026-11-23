@@ -53,18 +53,9 @@ so the full workflow requires no manually annotated training micrographs.
         for which it was originally developed.
 \end{itemize}
 
-\noindent\textbf{Future work.}
+\noindent\textbf{Outlook.}
 
 \begin{itemize}[leftmargin=1.5em,label=\textbullet,topsep=6pt,itemsep=2pt,parsep=0pt]
-  \item PLECTA's input is a centreline mask and its decisions use only local
-        geometry at junctions and gaps, so the same formulation can be applied
-        to other curvilinear structures for which such a mask is available,
-        such as fibres, filaments, vessels or neurites; whether its cost terms
-        transfer without retuning remains to be tested.
-  \item The cost weights and penalties are set once, on development scenes.
-        Learning them from annotated junctions, while keeping the exact
-        matching as the decision step, would adapt the method to a new
-        structure class without changing the algorithm.
   \item A more accurate upstream segmenter, trained on synthetic data better
         matched to real micrographs, would improve the masks PLECTA receives.
   \item CNT sheets stacked in a known order, or focused-ion-beam cross-sections
