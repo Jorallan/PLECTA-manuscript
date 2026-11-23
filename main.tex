@@ -89,11 +89,15 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
 
-\widowpenalty=10000
-\clubpenalty=10000
-\displaywidowpenalty=10000
-\brokenpenalty=10000
+% Strongly discourage, rather than forbid, a lone first or last line of a
+% paragraph: forbidding them made pages end early and left large gaps.
+\widowpenalty=1000
+\clubpenalty=1000
+\displaywidowpenalty=1000
 \raggedbottom
+% Let lines stretch slightly more before overflowing or leaving wide gaps in
+% the narrow justified column.
+\setlength{\emergencystretch}{1.5em}
 \captionsetup{font={footnotesize,singlespacing},labelfont=bf,labelsep=period}
 \sisetup{detect-all,round-mode=places,round-precision=3}
 \newcommand{\um}{\si{\micro\metre}}
