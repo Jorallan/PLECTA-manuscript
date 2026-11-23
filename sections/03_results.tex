@@ -28,7 +28,7 @@ areal coverage.
     coverage. VI denotes variation of information, for which lower is better;
     higher is better for the other metrics.}
     \label{tab:plecta-heldout}
-    \small
+\setlength{\tabcolsep}{3pt}
     \input{results/plecta_heldout_table}
 \end{table}
 
@@ -102,7 +102,8 @@ stacking rows score the final order, once for every pair of strands.
 true vertical order is known. Chance is \PlectaDepthChance{} for every
 accuracy shown.}
 \label{tab:depth-order}
-{\footnotesize\input{results/plecta_depth_order_table}}
+\setlength{\tabcolsep}{3pt}
+\input{results/plecta_depth_order_table}
 \end{table}
 
 Among crossings for which an order was assigned, accuracy ranged from
@@ -197,7 +198,7 @@ Figure~\ref{fig:real-sem} shows both conditions on one whole field.
     detection \Fone{} uses IoU \PlectaDetectionIoU{} and tolerance
     \PlectaPlacementTolerance{}\,px.}
     \label{tab:plecta-real-masks}
-    \footnotesize
+    \setlength{\tabcolsep}{3pt}
     \input{results/plecta_real_masks_table}
 \end{table}
 
@@ -253,7 +254,7 @@ fixed-gate greedy endpoint-pairing baseline.
     scenes. Each $\Delta F_1$ is relative to PLECTA evaluated on the
     corresponding scene set.}
     \label{tab:plecta-ablation}
-    \small
+    \setlength{\tabcolsep}{3pt}
     \input{results/plecta_ablation_table}
 \end{table}
 
@@ -284,7 +285,7 @@ implementation was available.
     $^{*}$\,our reimplementation; no implementation of that paper was found.
     \suppcomparators{} details it.}
     \label{tab:plecta-comparators}
-    \footnotesize
+    \setlength{\tabcolsep}{2pt}
     \input{results/plecta_comparator_table}
 \end{table}
 

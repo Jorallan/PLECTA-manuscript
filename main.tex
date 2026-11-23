@@ -1,10 +1,10 @@
-\documentclass[10pt,a4paper]{article}
+\PassOptionsToPackage{sort&compress}{natbib}
+\documentclass[times, review, 10pt]{elsarticle}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-% Pattern Recognition layout: Times 10 pt, single column, double spaced,
-% margins 4.3/4.8/4.3/4.8 cm (top/right/bottom/left), captions 8 pt.
-\IfFileExists{newtxtext.sty}{\usepackage{newtxtext,newtxmath}}{\usepackage{mathptmx}}
+% Pattern Recognition layout: elsarticle with Times 10 pt (class options),
+% single column, double spaced, margins 4.3/4.8/4.3/4.8 cm, captions 8 pt.
 \usepackage[british]{babel}
 \usepackage{microtype}
 \usepackage[top=4.3cm,right=4.8cm,bottom=4.3cm,left=4.8cm]{geometry}
@@ -19,7 +19,6 @@
 \usepackage{siunitx}
 \usepackage{caption}
 \usepackage{float}
-\usepackage[numbers,sort&compress]{natbib}
 \usepackage{enumitem}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
@@ -115,35 +114,37 @@
 \newcommand{\suppsplit}{Supplementary Section~S6}
 \newcommand{\suppannotation}{Supplementary Section~S7}
 
-\title{\vspace{-1.2cm}\setstretch{1}\fontsize{14}{17}\selectfont\bfseries PLECTA: Overlap-aware instance
-segmentation of dense strand networks from binary masks}
-
-\author{%
-  \begin{minipage}{0.94\textwidth}
-  \centering\footnotesize\singlespacing
-  Oday Allan\textsuperscript{a}\quad
-  Igor Ostanin\textsuperscript{a,}\thanks{Corresponding author:
-  \texttt{i.ostanin@utwente.nl}}\\[5pt]
-  {\textsuperscript{a}\,Multi-Scale Mechanics (MSM), Faculty of Engineering
-  Technology, University of Twente, P.O. Box 217, 7500~AE Enschede, The Netherlands}\\[4pt]
-  {ORCID: Oday Allan
-  \href{https://orcid.org/0000-0002-6341-4695}{0000-0002-6341-4695};\quad
-  Igor Ostanin
-  \href{https://orcid.org/0000-0003-4233-4255}{0000-0003-4233-4255}}
-  \end{minipage}
-}
-\date{}
+\journal{Pattern Recognition}
 
 \begin{document}
-\maketitle
+\begin{frontmatter}
 
+\title{PLECTA: Overlap-aware instance segmentation of dense strand networks
+from binary masks}
 
-% Full-width abstract, no indent (the article class indents and narrows it).
-\noindent\textbf{Abstract}\par\noindent\input{sections/00_abstract}\par\medskip
+\author[a]{Oday Allan}
+\author[a]{Igor Ostanin\corref{cor1}}
+\ead{i.ostanin@utwente.nl}
+\cortext[cor1]{Corresponding author}
 
-\noindent\textbf{Keywords:} strand networks; instance segmentation;
-graph matching; geometric reconstruction; carbon nanotubes; scanning electron
-microscopy.
+\affiliation[a]{organization={Multi-Scale Mechanics (MSM), Faculty of
+  Engineering Technology, University of Twente},
+  addressline={P.O. Box 217},
+  postcode={7500 AE},
+  city={Enschede},
+  country={The Netherlands}}
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\begin{keyword}
+strand networks \sep instance segmentation \sep graph matching \sep
+geometric reconstruction \sep carbon nanotubes \sep scanning electron
+microscopy
+\end{keyword}
+
+\end{frontmatter}
 
 \input{sections/01_introduction}
 \input{sections/01b_related_work}
@@ -190,7 +191,7 @@ responsibility for the content of the published article.
 
 \setlength{\bibsep}{0pt plus 0.3ex}
 \renewcommand{\bibfont}{\footnotesize}
-\bibliographystyle{unsrtnat}
+\bibliographystyle{elsarticle-num}
 \bibliography{references}
 
 \end{document}
