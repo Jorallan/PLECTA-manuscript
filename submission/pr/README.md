@@ -5,7 +5,8 @@ sources stay in the repository root; `main.tex` is already in the journal's
 layout (single column, double spaced, Times 10 pt, 8 pt captions and title
 block, margins 4.3/4.8/4.3/4.8 cm, numbered pages). In that layout the article
 is 33 pages; the limit is 20–35 including figures, tables, references and
-biographies.
+any biographies. Author biographies are not required at submission (the guide
+mentions them only in the page limit); add them if the editor asks.
 
 | file | what it is | how it was made |
 |---|---|---|
@@ -14,17 +15,15 @@ biographies.
 
 ## Still open before submitting
 
-1. **Author biographies** (about 100 words each) replace the red placeholders
-   at the end of `main.tex`.
-2. **Pattern Recognition references.** The journal asks for recent work from
-   the pattern-recognition field; the article cites none from this journal.
-   Keep the total within 35–55 (currently 54).
-3. **Research data** must be deposited and linked at submission (the journal
+References: six recent Pattern Recognition papers are cited in Section 2,
+and the article cites 50 references (the journal asks for 35–55).
+
+1. **Research data** must be deposited and linked at submission (the journal
    applies Elsevier's Option C). The 4TU deposit and its DOI are still open;
    the DOI also goes into the cover letter.
-4. **Title page:** full postal address of the affiliation.
-5. **Generative-AI declaration**, before the references, if AI tools were used
+2. **Title page:** full postal address of the affiliation.
+3. **Generative-AI declaration**, before the references, if AI tools were used
    beyond grammar and spelling checks.
-6. **CRediT roles and the declarations-tool document** in the submission
+4. **CRediT roles and the declarations-tool document** in the submission
    system.
-7. Date the cover letter.
+5. Date the cover letter.
