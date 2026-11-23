@@ -181,37 +181,28 @@ improve on the intensity score. It is therefore not used. With a single
 channel, $s$ is itself the decision variable, and no channel weights or
 combining function are required.
 
-\textbf{Comparison with the two-channel rule.} The one- and two-channel rules
-were compared on \PlectaDepthRuleHeldoutScenes{} optically rendered synthetic
-scenes containing \PlectaDepthRuleHeldoutCrossings{} crossings. The core
-half-size (\PlectaParamCorePx{}\,px) was chosen by a sweep on the same set, and
-the insensitivity of the result to the abstention threshold was also checked
-on it, so the comparison is in-sample with respect to these two values. Both
-values were nevertheless inherited rather than newly selected:
-\PlectaParamCorePx{}\,px is the value the two-channel rule's radius-free fallback
-already used, and both lie on a plateau. A fixed core performs no worse than
-oracle per-strand radii anywhere between 6 and 14\,px, and accuracy is
-unchanged over a band of thresholds around \PlectaParamAbstainScore{}.
-
-At matched coverage, with both rules answering as often as the released rule
-does at \PlectaDepthRuleCovShipped{}\,\%, the one-channel rule matches the
-accuracy of the two-channel rule, with a difference of
-$\PlectaDepthRuleAccDelta{}$ (95\,\% CI $\PlectaDepthRuleAccCI{}$). When both
-rules are forced to decide every crossing, including those on which they would
-abstain, the one-channel rule is less accurate by
-$\PlectaDepthRuleAccDeltaFull{}$ (CI $\PlectaDepthRuleAccFullCI{}$); neither
-rule is operated in this mode. The one-channel rule orders its confidence
-better: the area under the curve of correctness against $\lvert s\rvert$
-increases from $\PlectaDepthRuleAucOld{}$ to $\PlectaDepthRuleAucNew{}$, a gain
-of $\PlectaDepthRuleAucDelta{}$ (CI $\PlectaDepthRuleAucCI{}$). Because
-$\lvert s\rvert$ is the edge weight of the global ordering described below,
-better-ordered confidence means that contradictions are resolved at the
-weakest relations. It also translates into higher accuracy when more
-abstention is acceptable, by $\PlectaDepthRuleAccAtCovA{}$ at
-\PlectaDepthRuleCovAPct{}\,\% coverage and by $\PlectaDepthRuleAccAtCovB{}$ at
-\PlectaDepthRuleCovBPct{}\,\%. The one-channel rule therefore matches the
-accuracy of the two-channel rule, with better-ordered confidence and a simpler
-evidence path.
+\textbf{Comparison with the two-channel rule.} On
+\PlectaDepthRuleHeldoutScenes{} optically rendered synthetic scenes
+(\PlectaDepthRuleHeldoutCrossings{} crossings), the one-channel rule matches
+the accuracy of the two-channel rule at matched coverage
+(\PlectaDepthRuleCovShipped{}\,\%; difference $\PlectaDepthRuleAccDelta{}$,
+95\,\% CI $\PlectaDepthRuleAccCI{}$). Forced to decide every crossing, a mode
+in which neither rule is operated, it is less accurate by
+$\PlectaDepthRuleAccDeltaFull{}$ (CI $\PlectaDepthRuleAccFullCI{}$). It orders
+its confidence better: the area under the curve of correctness against
+$\lvert s\rvert$ rises from $\PlectaDepthRuleAucOld{}$ to
+$\PlectaDepthRuleAucNew{}$ ($\PlectaDepthRuleAucDelta{}$, CI
+$\PlectaDepthRuleAucCI{}$), so contradictions in the global ordering are
+resolved at the weakest relations, and accuracy is higher when more abstention
+is acceptable ($\PlectaDepthRuleAccAtCovA{}$ at
+\PlectaDepthRuleCovAPct{}\,\% coverage, $\PlectaDepthRuleAccAtCovB{}$ at
+\PlectaDepthRuleCovBPct{}\,\%). The core half-size and the abstention
+threshold were checked on the same scenes, so the comparison is in-sample for
+these two values. Both lie on plateaus: a fixed core performs no worse than
+oracle per-strand radii between 6 and 14\,px, accuracy is unchanged over a
+band of thresholds around \PlectaParamAbstainScore{}, and
+\PlectaParamCorePx{}\,px was inherited from the two-channel rule's radius-free
+fallback.
 
 \subsection{Global ordering}
 

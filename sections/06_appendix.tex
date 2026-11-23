@@ -392,21 +392,12 @@ reported as plain means; no parameter was changed in response.
 \section{Manual annotation procedure}
 \label{sec:supp-annotation}
 
-Reference annotations were created with an interactive instance-segmentation
-tool for greyscale SEM images of crossing strands, developed in-house. Each
-bundle is stored as a separate mask, so that crossing pixels can belong to
-several strands, and the saved annotation file is read directly by the
-evaluation, without intermediate export or conversion.
-
-Two optional forms of assistance are available during tracing. Strokes can
-snap to the local intensity ridge, with polarity calibrated from the existing
-annotation, and can be re-rendered as a smoothing spline whose centreline is
-shifted to the measured intensity crest only where that crest is consistent.
-Apparent widths are measured from perpendicular full-width-at-half-maximum
-profiles, referenced to the local minima on either side of the peak; the
-reported width is twice the smaller half-width, which limits overestimation
-when a crossing strand merges into the profile. These widths are not used by
-the centreline-based segmentation scores. The tool proposes gap bridges
-between collinear endpoints of different strands, but each proposal must be
-accepted by the annotator, so strand identity through crossings and gaps
-remains a manual decision.
+Reference annotations were traced with an interactive tool developed
+in-house. Each bundle is stored as a separate mask, so crossing pixels can
+belong to several strands, and the evaluation reads the saved file directly.
+Strokes can optionally snap to the local intensity ridge and be smoothed by a
+spline, and the tool proposes gap bridges between collinear endpoints of
+different strands, but every proposal must be accepted by the annotator, so
+strand identity through crossings and gaps remains a manual decision. Apparent
+widths, measured from perpendicular half-maximum profiles, are not used by the
+segmentation scores.
