@@ -19,7 +19,10 @@ reliably separate strand foreground from background
 \citep{stan2020optimizing,davydzenka2022deep} and nanotube micrographs
 specifically \citep{trujillo2017segmentation,nguyen2023cntsegnet,%
 dedonato2025deep}. Variants with explicit topology enhancement target the
-connectivity of that foreground \citep{lin2026vetunet}, but a foreground mask
+connectivity of that foreground \citep{lin2026vetunet}, learned trackers
+refine a coarse curvilinear segmentation by following it to repair breaks
+\citep{heng2026curvitracker}, and dedicated detectors predict the centreline
+together with its orientation \citep{jiang2024centerline}, but a foreground mask
 still encodes no identity, so it inherits both failures rather than resolving
 them. Instance methods go further and
 label each object separately, but they assume those objects are compact, in
@@ -70,7 +73,12 @@ by lowest mutual angle \citep{wegmayr2020microplastic}. GraFT (graph of
 filaments over time) covers a Frangi-filtered skeleton greedily, longest path first
 \citep{osterlund2026graft}. This is inexpensive, and where crossings are rare
 it suffices. Its weakness is structural: once an arm is paired, a later
-contradictory candidate cannot revise the pairing.
+contradictory candidate cannot revise the pairing. Minimal-path models take a
+different route, tracing one curve at a time along a geodesic and discouraging
+shortcuts through crossings by penalising curvature \citep{liu2023geodesics}
+or with an anisotropic, crossing-adaptive metric \citep{liu2020minimalpath}.
+Each path is extracted separately from seed points, so competing
+continuations at a shared junction are not resolved together.
 
 Two remedies have been tried. The first is to incorporate additional image
 evidence beyond the mask. The stronger of Wegmayr et al.'s two variants drops the
@@ -119,7 +127,11 @@ The labels, however, require initialisation. In their images they start at
 anatomical roots, the stained cell bodies of neurons or the optic disc of a
 retina, and the method returns as many strands as there are roots. A tangle of
 open-ended strands offers no such starting point, and how many strands it
-holds is precisely the unknown.
+holds is precisely the unknown. Graph matching has also been applied to
+vessel graphs, labelling coronary-artery segments by matching the extracted
+tree to labelled templates \citep{zhao2023agmn,zhao2026multigraph}. There the
+labels and a template are known in advance; in a strand network neither
+exists, and PLECTA's matching is between the arms of a single junction.
 
 \subsection{From micrograph to measurement}
 \label{sec:rel-workflows}
