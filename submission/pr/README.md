@@ -21,9 +21,5 @@ and the article cites 50 references (the journal asks for 35–55).
 1. **Research data** must be deposited and linked at submission (the journal
    applies Elsevier's Option C). The 4TU deposit and its DOI are still open;
    the DOI also goes into the cover letter.
-2. **Title page:** full postal address of the affiliation.
-3. **Generative-AI declaration**, before the references, if AI tools were used
-   beyond grammar and spelling checks.
-4. **CRediT roles and the declarations-tool document** in the submission
+2. **CRediT roles and the declarations-tool document** in the submission
    system.
-5. Date the cover letter.
