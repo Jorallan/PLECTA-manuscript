@@ -111,7 +111,7 @@
 \newcommand{\suppsplit}{Supplementary Section~S6}
 \newcommand{\suppannotation}{Supplementary Section~S7}
 
-\title{\vspace{-1.2cm}\fontsize{14}{17}\selectfont\bfseries PLECTA: Overlap-aware instance
+\title{\vspace{-1.2cm}\setstretch{1}\fontsize{14}{17}\selectfont\bfseries PLECTA: Overlap-aware instance
 segmentation of dense strand networks from binary masks}
 
 \author{%
@@ -134,9 +134,8 @@ segmentation of dense strand networks from binary masks}
 \maketitle
 
 
-\begin{abstract}
-\input{sections/00_abstract}
-\end{abstract}
+% Full-width abstract, no indent (the article class indents and narrows it).
+\noindent\textbf{Abstract}\par\noindent\input{sections/00_abstract}\par\medskip
 
 \noindent\textbf{Keywords:} strand networks; instance segmentation;
 graph matching; geometric reconstruction; carbon nanotubes; scanning electron
