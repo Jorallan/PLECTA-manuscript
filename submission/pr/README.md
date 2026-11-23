@@ -18,8 +18,9 @@ mentions them only in the page limit); add them if the editor asks.
 References: six recent Pattern Recognition papers are cited in Section 2,
 and the article cites 50 references (the journal asks for 35–55).
 
-1. **Research data** must be deposited and linked at submission (the journal
-   applies Elsevier's Option C). The 4TU deposit and its DOI are still open;
-   the DOI also goes into the cover letter.
+1. **Research data:** the article and the cover letter state that the manual
+   annotations will be deposited in 4TU.ResearchData upon acceptance (the
+   journal's Option C allows a statement instead of a link). Deposit them on
+   acceptance and replace the sentence with the DOI.
 2. **CRediT roles and the declarations-tool document** in the submission
    system.
