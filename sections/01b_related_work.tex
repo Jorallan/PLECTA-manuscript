@@ -16,9 +16,8 @@ one object from another, is mature: U-Net, named for its U-shaped
 encoder--decoder architecture, and its self-configuring descendants
 reliably separate strand foreground from background
 \citep{ronneberger2015unet,isensee2021nnunet}, including in materials imaging
-\citep{stan2020optimizing,davydzenka2022deep} and nanotube micrographs
-specifically \citep{trujillo2017segmentation,nguyen2023cntsegnet,%
-dedonato2025deep}. Variants with explicit topology enhancement target the
+\citep{stan2020optimizing} and nanotube micrographs
+specifically \citep{nguyen2023cntsegnet}. Variants with explicit topology enhancement target the
 connectivity of that foreground \citep{lin2026vetunet}, learned trackers
 refine a coarse curvilinear segmentation by following it to repair breaks
 \citep{heng2026curvitracker}, and dedicated detectors predict the centreline
@@ -36,16 +35,15 @@ these shapes describes a long open curve that may overlap another. Ridge and
 vesselness filters, which score each pixel by how strongly the local image
 curvature resembles a line or a tube, sharpen curvilinear signal but assign
 nothing across a junction
-\citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}. The
+\citep{steger1998unbiased,frangi1998vesselness}. The
 established fibre-analysis packages return network statistics rather than
 resolved objects: FIRE extracts the network geometry of collagen gels
 \citep{stein2008fire} and CT-FIRE applies it to collagen fibres in
 second-harmonic images \citep{bredfeldt2014ctfire}; SOAX
 \citep{xu2015soax} and FiNTA \citep{flormann2021finta} trace biopolymer
-and cytoskeletal networks for network-level quantification; and DiameterJ
-measures nanofibre diameters \citep{hotaling2015diameterj}. Image-level measures of
+and cytoskeletal networks for network-level quantification. Image-level measures of
 coverage and alignment likewise describe the network as a whole
-\citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}.
+\citep{beigzadeh2024utilizing}.
 
 Volumetric imaging avoids the problem altogether, because strands that appear
 to meet in a projection lie at different depths and are therefore already
@@ -150,9 +148,7 @@ focused-ion-beam sectioning and tomographic reconstruction
 topography rather than height. Monocular depth ordering has long derived
 pairwise depth from local occlusion evidence, assembled those relations into a
 depth-order graph and corrected the contradictions among them
-\citep{palou2013monocular,lee2022instancewise}, and single-view hair modelling
-resolves the layering of intersecting strands by analogous reasoning
-\citep{chai2012singleview}. Amodal instance segmentation also predicts the
+\citep{palou2013monocular,lee2022instancewise}. Amodal instance segmentation also predicts the
 hidden extent of each occluded object, guided in DBNet by estimated depth
 \citep{zhang2025dbnet}. Those methods read the shape of the outlines where
 two objects overlap, which a bundle a few pixels across in a noisy micrograph
