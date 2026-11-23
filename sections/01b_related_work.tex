@@ -24,18 +24,24 @@ still encodes no identity, so it inherits both failures rather than resolving
 them. Instance methods go further and
 label each object separately, but they assume those objects are compact, in
 materials microscopy \citep{he2026instance} as in the general-purpose
-families: bounded blobs, centre-directed flows, star-convex outlines,
-overlapping ellipses, none of which describes a long open curve that may
-overlap another \citep{gu2022instancereview,stringer2021cellpose,%
-schmidt2018stardist,kirillov2023sam,panagiotakis2020rfove}. Ridge and
+families reviewed by \citet{gu2022instancereview}: bounded regions, as in the
+promptable masks of Segment Anything \citep{kirillov2023sam};
+centre-directed flows, as in Cellpose \citep{stringer2021cellpose};
+star-convex outlines, as in StarDist \citep{schmidt2018stardist}; and
+overlapping ellipses, as in RFOVE \citep{panagiotakis2020rfove}. None of
+these shapes describes a long open curve that may overlap another. Ridge and
 vesselness filters, which score each pixel by how strongly the local image
 curvature resembles a line or a tube, sharpen curvilinear signal but assign
 nothing across a junction
 \citep{steger1998unbiased,frangi1998vesselness,sato1998linefilter}. The
 established fibre-analysis packages return network statistics rather than
-resolved objects \citep{stein2008fire,bredfeldt2014ctfire,xu2015soax,%
-flormann2021finta,hotaling2015diameterj}, as do image-level measures of
-coverage and alignment
+resolved objects: FIRE extracts the network geometry of collagen gels
+\citep{stein2008fire} and CT-FIRE applies it to collagen fibres in
+second-harmonic images \citep{bredfeldt2014ctfire}; SOAX
+\citep{xu2015soax} and FiNTA \citep{flormann2021finta} trace biopolymer
+and cytoskeletal networks for network-level quantification; and DiameterJ
+measures nanofibre diameters \citep{hotaling2015diameterj}. Image-level measures of
+coverage and alignment likewise describe the network as a whole
 \citep{dong2022detecting,imtiaz2023facile,beigzadeh2024utilizing}.
 
 Volumetric imaging avoids the problem altogether, because strands that appear

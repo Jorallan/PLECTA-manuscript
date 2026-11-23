@@ -102,7 +102,7 @@ stacking rows score the final order, once for every pair of strands.
 true vertical order is known. Chance is \PlectaDepthChance{} for every
 accuracy shown.}
 \label{tab:depth-order}
-\input{results/plecta_depth_order_table}
+{\footnotesize\input{results/plecta_depth_order_table}}
 \end{table}
 
 Among crossings for which an order was assigned, accuracy ranged from
@@ -158,7 +158,7 @@ alone.
 
 \begin{figure}[!ht]
     \centering
-    \input{figures/fig_pipeline_upstream}
+    \begin{adjustbox}{max width=\linewidth}\input{figures/fig_pipeline_upstream}\end{adjustbox}
     \caption{Upstream generation of the binary strand-axis mask. The segmenter
     is trained on procedurally generated image--mask pairs and requires no
     manual annotations for training or inference. Only the PLECTA stages inside
@@ -284,7 +284,7 @@ implementation was available.
     $^{*}$\,our reimplementation; no implementation of that paper was found.
     \suppcomparators{} details it.}
     \label{tab:plecta-comparators}
-    \small
+    \footnotesize
     \input{results/plecta_comparator_table}
 \end{table}
 
