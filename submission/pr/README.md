@@ -11,8 +11,7 @@ mentions them only in the page limit); add them if the editor asks.
 | file | what it is | how it was made |
 |---|---|---|
 | `cover_letter.docx` | answers the journal's three required questions (state of the art, public datasets, measures) | `python scripts/submission/make_pr_cover_letter.py` |
-| `declaration_of_interests.docx` | Elsevier declarations-tool output: Igor Ostanin reports financial support from ASML Netherlands B.V. | declarations.elsevier.com |
-| highlights, graphical abstract | reuse `../ivc/highlights.docx`, `../ivc/graphical_abstract.*`; both meet this journal's limits | — |
+| highlights, graphical abstract, declaration | reuse `../ivc/highlights.docx`, `../ivc/graphical_abstract.*`, `../ivc/declaration_of_interests.docx` (no competing interests); all meet this journal's limits | — |
 
 ## Still open before submitting
 
