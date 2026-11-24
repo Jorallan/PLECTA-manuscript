@@ -1,5 +1,8 @@
 # Submission package: Pattern Recognition
 
+**Submitted 2026-11-24 as manuscript PR-D-26-17411** (corresponding author:
+Igor Ostanin, so the submission is tracked from his Editorial Manager account).
+
 Prepared 2026-11-23 against the journal's Guide for Authors. The manuscript
 sources stay in the repository root; `main.tex` is already in the journal's
 layout (single column, double spaced, Times 10 pt, 8 pt captions and title
